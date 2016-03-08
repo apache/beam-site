@@ -75,7 +75,7 @@ members:
     roles: committer, PPMC
     time_zone: "-8"
   - name: Luke Cwik
-    apache_id:
+    apache_id: lcwik
     email: lcwik [at] google [dot] com
     organization: Google
     roles: committer, PPMC
