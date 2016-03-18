@@ -49,13 +49,8 @@ website directory:
 
     $ jekyll build
 
-One built, all of the static content will be placed in the folder `_site` inside
-of the root directory. The entire (static) Apache Beam website lives in `_site`.
-
-### Publishing the Site
-The Apache Beam website uses `svnpubsub`. The `_site` folder contains the
-website's content. When the content in `_site` is  committed to the svn
-repository, the Apache Beam website will automatically be updated.
+One built, all of the static content will be placed in the folder `content` inside
+of the root directory. The entire (static) Apache Beam website lives in `content`.
 
 ### Apache License
 ---
