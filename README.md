@@ -1,0 +1,76 @@
+# Apache Beam (incubating) website
+
+This is the website for [Apache Beam](http://beam.incubator.apache.org)
+(incubating).
+
+### About this site
+The Beam website is built using [Jekyll](http://jekyllrb.com/). Additionally,
+for additional formatting capabilities, this website uses
+[Twitter Bootstrap](http://getbootstrap.com/).
+
+This website is presently hosted at:
+
+    http://beam.incubator.apache.org
+
+It is important to note there are two sets of "website code" when dealing with
+the Apache Beam website.
+
+1. The **Jekyll code** which contains all of the resources for building,
+testing, styling, and tinkering with the website. Think of it as a website SDK.
+1. The **static website** content which contains the raw content for the
+website - all compiled, structured, and ready to go. This is the content which
+is pushed for hosting as a static website.
+
+### Development setup
+Before working with the Jekyll code, you will need to install Jekyll:
+
+    $ gem install jekyll
+
+*If you are on a Mac, you may need to install
+[Ruby Gems](https://rubygems.org/pages/download).*
+
+### Live development
+While you are working with the website, you can test and develop live. Run the
+following command in the root folder of the website:
+
+    $ jekyll serve
+
+Jekyll will start a webserver on port `4000`. As you make changes to the
+content, Jekyll will rebuild the content - this is handy if you are actively
+writing content and want to preview how it looks.
+
+### Generating the static website
+Once you are done with your changes, you need to compile the static
+content of the website. This static content is what is actually hosted on the
+Apache Beam website.
+
+You can build the static content by running the following command in the root
+website directory:
+
+    $ jekyll build
+
+One built, all of the static content will be placed in the folder `_site` inside
+of the root directory. The entire (static) Apache Beam website lives in `_site`.
+
+### Publishing the Site
+The Apache Beam website uses `svnpubsub`. The `_site` folder contains the
+website's content. When the content in `_site` is  committed to the svn
+repository, the Apache Beam website will automatically be updated.
+
+### Apache License
+---
+Except as otherwise noted this software is licensed under the
+[Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
