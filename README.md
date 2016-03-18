@@ -49,7 +49,7 @@ website directory:
 
     $ jekyll build
 
-One built, all of the static content will be placed in the folder `content` inside
+Once built, all of the static content will be placed in the folder `content` inside
 of the root directory. The entire (static) Apache Beam website lives in `content`.
 
 ### Apache License
