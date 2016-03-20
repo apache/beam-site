@@ -12,7 +12,7 @@ This website is presently hosted at:
 
     http://beam.incubator.apache.org
 
-It is important to note there are two sets of "website code" when dealing with
+It is important to note there are two sets of "website code"  with respect to
 the Apache Beam website.
 
 1. The **Jekyll code** which contains all of the resources for building,
