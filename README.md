@@ -36,21 +36,23 @@ following command in the root folder of the website:
     $ jekyll serve
 
 Jekyll will start a webserver on port `4000`. As you make changes to the
-content, Jekyll will rebuild the content - this is handy if you are actively
-writing content and want to preview how it looks.
+content, Jekyll will rebuild it automatically. This is helpful if you want to see
+how your changes will render in realtime.
 
 ### Generating the static website
 Once you are done with your changes, you need to compile the static
-content of the website. This static content is what is actually hosted on the
-Apache Beam website.
+content for the website. This is what is actually hosted 
+on the Apache Beam website.
 
 You can build the static content by running the following command in the root
 website directory:
 
     $ jekyll build
 
-Once built, all of the static content will be placed in the folder `content` inside
-of the root directory. The entire (static) Apache Beam website lives in `content`.
+Once built, it will be placed in the folder `content` inside of the root directory. 
+This directory will include images, HTML, CSS, and so on. In a typical Jekyll install
+this content would live in `_site` - it has been changed for the Apache Beam website
+to work with the ASF Incubator publishing system.
 
 ### Apache License
 ---
