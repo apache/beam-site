@@ -17,9 +17,9 @@ the Apache Beam website.
 
 1. The **Jekyll code** which contains all of the resources for building,
 testing, styling, and tinkering with the website. Think of it as a website SDK.
-1. The **static website** content which contains the raw content for the
-website - all compiled, structured, and ready to go. This is the content which
-is pushed for hosting as a static website.
+1. The **static website** content which contains the content for the
+website. This is the static content is what is actually hosted on the Apache 
+Beam website.
 
 ### Development setup
 Before working with the Jekyll code, you will need to install Jekyll:
