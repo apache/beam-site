@@ -8,7 +8,7 @@ The Beam website is built using [Jekyll](http://jekyllrb.com/). Additionally,
 for additional formatting capabilities, this website uses
 [Twitter Bootstrap](http://getbootstrap.com/).
 
-This website is presently hosted at:
+This website is hosted at:
 
     http://beam.incubator.apache.org
 
