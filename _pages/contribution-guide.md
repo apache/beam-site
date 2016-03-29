@@ -244,7 +244,7 @@ We use the same general review-then-commit process for changes to the Beam websi
 * Make changes to the website
 * Test your changes
 
-#### Editing the websirte
+#### Editing the website
 You can checkout the website repository with the following commands. This will allow you to edit the website in a local environment provided you have installed [Jekyll](http://jekyllrb.com) and understand how to use it.
 
 <pre><code>git clone -b asf-site https://github.com/apache/incubator-beam-site.git
