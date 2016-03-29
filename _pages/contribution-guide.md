@@ -6,7 +6,9 @@ permalink: /contribution-guide/
 
 # How to Contribute
 
-## Overview
+* TOC
+{:toc}
+
 The Apache Beam community welcomes contributions from anyone with a passion for data processing! Beam has many different opportunities for contributions -- write new examples, add new user-facing libraries (new statistical libraries, new IO connectors, etc), work on the core programming model, build specific runners (Apache Flink, Apache Spark, Google Cloud Dataflow, etc), or participate on the documentation effort.
 
 We use a review-then-commit workflow in Beam for all contributions.
@@ -164,7 +166,7 @@ Committers should never commit anything without going through a pull request, si
 Committing is currently a manual process, but we are investigating tools to automate pieces of this process.
 
 ### One-time Setup
-Add the Apache Git remote In your local clone, by running:
+Add the Apache Git remote in your local clone, by running:
 
     $ git remote add apache https://git-wip-us.apache.org/repos/asf/incubator-beam.git
 
@@ -233,7 +235,7 @@ At this point, you want to ensure everything is right. Test it with `mvn verify`
 
 Done. You can delete the local <code>finish-pr-<b>&lt;pull-request-#&gt;</b></code> branch if you like.
 
-## Additional Details
+## Additional Projects
 
 ### Website
 We use the same general review-then-commit process for changes to the Beam website, which uses [this GitHub Mirror](https://github.com/apache/incubator-beam-site). The website uses the [Jekyll](http://jekyllrb.com) framework to make website development easier. The [README file](https://github.com/apache/incubator-beam-site/blob/asf-site/README.md) in the website repository has more information on how to:
@@ -242,7 +244,8 @@ We use the same general review-then-commit process for changes to the Beam websi
 * Make changes to the website
 * Test your changes
 
-In general:
+#### Editing the websirte
+You can checkout the website repository with the following commands. This will allow you to edit the website in a local environment provided you have installed [Jekyll](http://jekyllrb.com) and understand how to use it.
 
 <pre><code>git clone -b asf-site https://github.com/apache/incubator-beam-site.git
 cd incubator-beam-site
@@ -250,7 +253,9 @@ git remote add <b>&lt;GitHub_user&gt;</b> git@github.com:<b>&lt;GitHub_user&gt;<
 git fetch --all
 git checkout -b <b>&lt;my-branch&gt;</b> origin/asf-site</code></pre>
 
-Commiters:
+#### Committing website changes
+
+Committers can commit website changes with the following commands. **Changes to the website must follow the same process outlined above** for changes to the Apache Beam code base.
 
 <pre><code>git remote add apache https://git-wip-us.apache.org/repos/asf/incubator-beam-site.git
 git remote rename origin github
