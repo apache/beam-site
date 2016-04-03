@@ -4,7 +4,7 @@ title: "Apache Beam Presentation Materials"
 permalink: /presentation-materials/
 ---
 
-Are you interested in learning more about Apache Beam or giving a talk about Apache Beam? Excellent! The Apache Beam community has created this collection of materials to help you get started quickly. The Apache Beam community periodically reviews these materials to ensure they are accurate and up-to-date.
+Are you interested in learning more about Apache Beam or giving a talk about Apache Beam? Excellent! The Apache Beam community has created this collection of materials to help you get started. The Apache Beam community periodically reviews these materials to ensure they are accurate and up-to-date.
 
 <div class="panel panel-default">
   <div class="panel-body">
@@ -12,10 +12,10 @@ Are you interested in learning more about Apache Beam or giving a talk about Apa
   </div>
 </div>
 
-These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. Additionally, you will notice that some presentations are have `[Long]` or `[Short]` in their name. Some topics, such as the *Apache Beam Model*, have two different presentations (a long and short version) depending on your needs and time constraints.
-
 ### Using these materials
-These materials are free to use! If you do use these materials, please remember to give credit to the authors of the original materials.
+* These materials are free to use! If you do use these materials, please remember to give credit to the authors of the original materials.
+* These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**.
+* A set of presentations are have `[Long]` or `[Short]` in their name. Some topics, such as the *Apache Beam Model*, have two different presentations (a long and short version) depending on your needs and time constraints.
 
 ## Contributing new content
 The Apache Beam community is always looking for new content! Specifically, the community is currently focused on developing new content for these areas:
