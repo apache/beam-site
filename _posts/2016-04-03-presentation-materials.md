@@ -13,7 +13,7 @@ Are you interested in giving a presentation about Apache Beam? Perhaps you want 
 
 <!--more-->
 
-This is the first of many steps the Apache Beam community will take to create presentation materials. The Beam community has worked together to ensure these materials are accurate, up-to-date, and relevant. This initial release includes the following presentation materials:
+This is the first of many steps the Apache Beam community will take to create high quality presentation materials. The Beam community has worked together to ensure these materials are accurate, up-to-date, and relevant. This initial release includes the following presentation materials:
 
 * The Apache Beam model
     * Long version
@@ -21,4 +21,4 @@ This is the first of many steps the Apache Beam community will take to create pr
 * Using Apache Beam with runners
     * Google Cloud Dataflow
 
-As Apache Beam grows, so will this repository of presentation materials. Specifically, we will add new materials as the Apache Beam ecosystem grows with new runners, SDKs, and so on. If you are interested in contributing content or have a request, please see the [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/) page or email the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
+As Apache Beam grows, so will this repository of presentation materials. We are excited to add new materials as the Apache Beam ecosystem grows with new runners, SDKs, and so on. If you are interested in contributing content or have a request, please see the [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/) page or email the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list with your ideas or questions.
