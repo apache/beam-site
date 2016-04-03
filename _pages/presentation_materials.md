@@ -4,7 +4,7 @@ title: "Apache Beam Presentation Materials"
 permalink: /presentation-materials/
 ---
 
-Interested in learning more or giving a talk about Apache Beam? These materials are intended to help provide a jumpstart!
+Are you interested in learning more about Apache Beam or giving a talk about Apache Beam? Excellent! The Apache Beam community has created this collection of materials to help you get started quickly. The Apache Beam community periodically reviews these materials to ensure they are accurate and up-to-date.
 
 <div class="panel panel-default">
   <div class="panel-body">
@@ -12,14 +12,21 @@ Interested in learning more or giving a talk about Apache Beam? These materials 
   </div>
 </div>
 
-We encourage you to use this content for public presentations, as the content has been contributed and is periodically reviewed by the Apache Beam community. When you use these slides, please remember to give credit to the authors of the presentations. Additionally, these presentations include speaker notes, you can view them by clicking **`View`** and selecting **`Show speaker notes`**.
+These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. Additionally, you will notice that some presentations are have `[Long]` or `[Short]` in their name. Some topics, such as the *Apache Beam Model*, have two different presentations (a long and short version) depending on your needs and time constraints.
 
-Some presentations are have `[Long]` or `[Short]` in their name. These tags are used when one topic, such as the Apache Beam Model, has both a long form and short form presentation.
+### Using these materials
+These materials are free to use! If you do use these materials, please remember to give credit to the authors of the original materials.
+
+## Contributing new content
+The Apache Beam community is always looking for new content! Specifically, the community is currently focused on developing new content for these areas:
+
+* Using Apache Beam with various runners, including:
+    * Apache Spark
+    * Apache Flink
+* Examples of Apache Beam pipelines and use cases
+* Bootstrapping and getting started with the Apache Beam software development kits
+
+If you are interested in contributing new content, please send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list describing the content.
 
 ## Corrections and updates
 If you encounter missing, incorrect, or out of date material, please make a comment in the presentation or send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
-
-## Contributing new content
-If you are interested in contributing new content, please send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list describing the content.
-
-The Apache Beam community will continually be in the process of building public materials. For example, we will add new materials showing how Apache Beam can be used with new runners and SDKs as they are added.

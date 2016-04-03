@@ -9,11 +9,11 @@ authors:
   - takidau
 ---
 
-Are you interested in giving a presentation about Apache Beam? Perhaps you want to talk about Apache Beam at a local Meetup or a convention. We want to help you grow the Apache Beam community! To make things easier, we have added an initial set of [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/). These materials have been crafted by experts in the Apache Beam community and held to the same high quality standards as the Apache Beam codebase.
+Are you interested in giving a presentation about Apache Beam? Perhaps you want to talk about Apache Beam at a local Meetup or a convention. Excellent!  The Apache Beam community is excited to expand and grow the community. To help kickstart this process, we are excited to announce an initial set of [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/) which anyone can use to give a presentation about Apache Beam.
 
 <!--more-->
 
-This means you now have instant access to several high-quality presentations covering several Apache Beam topics, including:
+This is the first of many steps the Apache Beam community will take to create presentation materials. The Beam community has worked together to ensure these materials are accurate, up-to-date, and relevant. This initial release includes the following presentation materials:
 
 * The Apache Beam model
     * Long version
@@ -21,4 +21,4 @@ This means you now have instant access to several high-quality presentations cov
 * Using Apache Beam with runners
     * Google Cloud Dataflow
 
-We will add new materials as the Apache Beam ecosystem grows with new runners, SDKs, and so on. If you would like to see a specific topic covered, please email the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
+As Apache Beam grows, so will this repository of presentation materials. Specifically, we will add new materials as the Apache Beam ecosystem grows with new runners, SDKs, and so on. If you are interested in contributing content or have a request, please see the [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/) page or email the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
