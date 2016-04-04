@@ -13,7 +13,7 @@ Are you interested in giving a presentation about Apache Beam? Perhaps you want 
 
 <!--more-->
 
-This is the first of many steps the Apache Beam community will take to create high quality presentation materials. The Beam community has worked together to ensure these materials are accurate, up-to-date, and relevant. This initial release includes the following presentation materials:
+As a community, we want to build a shared collection of high quality presentation materials. This initial set includes the following slide decks:
 
 * The Apache Beam model
     * Long version

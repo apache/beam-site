@@ -12,24 +12,17 @@ Are you interested in learning more about Apache Beam or giving a talk about Apa
   </div>
 </div>
 
-### Using these materials
-These materials are free to use! If you do use these materials, please remember to give credit to the authors of the original materials. These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. A set of presentations are have `[Long]` or `[Short]` in their name. Some topics, such as the *Apache Beam Model*, have two different presentations (a long and short version) depending on your needs and time constraints.
+## Using these materials
+These materials can be used by anyone. If you do use these materials, please remember to give credit to the authors cited in each presentation. These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. Some presentations are have `[Long]` or `[Short]` in their name, such as the *Apache Beam Model*, which means there are two different presentations (a long and short version) depending on your needs and time constraints.
 
-If you use these materials and questions arise:
+If you have any questions about the these materials, please ask on the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
 
-  * If anyone asks questions to which you are unsure of the answer, please do not hesitate to contact or direct the question to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list. The Apache Beam community is here to help.
-  * The Beam community is also interested in knowing *common* questions which are asked. If you have time, please send some feedback to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list with questions which arose so we can help find ways to address these questions in the project documentation and these presentations.
+The Apache Beam community is looking for feedback on these materials to improve them over time. If you deliver a presentation based on these materials, we'd love to hear from you on the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list. Please share your thoughts, questions you were asked, and (if available and appropriate) a link to the recording of your talk so the rest of the Apache Beam community can benefit from it.
 
 ## Contributing new content
-The Apache Beam community is always looking for new core content and contributions! Specifically, the community is focused on developing new content in these areas:
+The Apache Beam community is always looking for new core content and contributions!
 
-* Using Apache Beam with various runners, including:
-    * Apache Spark
-    * Apache Flink
-* Examples of Apache Beam pipelines and use cases
-* Bootstrapping and getting started with the Apache Beam software development kits
-
-If you are interested in contributing new content, please send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org). The Beam community collaboratively reviews new content and adds it to this shared space for everyone to use.
+If you are interested in contributing new content, we recommend you first search the [Apache Beam JIRA](https://issues.apache.org/jira/browse/BEAM) to see if your idea currently has an open JIRA item. If it does not, send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list or open a new issue in the [Apache Beam JIRA](https://issues.apache.org/jira/browse/BEAM) using the [website](https://issues.apache.org/jira/browse/BEAM/component/12328906/?selectedTab=com.atlassian.jira.jira-projects-plugin:component-summary-panel) component. Based on community submissions or contributions, the Beam community collaboratively reviews or creates new content and then adds it to this shared space for everyone to use.
 
 ## Corrections and updates
 If you encounter missing, incorrect, or out of date material, please make a comment in the presentation or send an email to the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
