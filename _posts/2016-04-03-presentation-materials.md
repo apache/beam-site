@@ -16,9 +16,9 @@ Are you interested in giving a presentation about Apache Beam? Perhaps you want 
 As a community, we want to build a shared collection of high quality presentation materials. This initial set includes the following slide decks:
 
 * The Apache Beam model
-    * Long version
-    * Short version
+    * [Long version](https://goo.gl/r0nvWh)
+    * [Short version](https://goo.gl/h5D1yR)
 * Using Apache Beam with runners
-    * Google Cloud Dataflow
+    * [Google Cloud Dataflow](https://goo.gl/2ay8mi)
 
 As Apache Beam grows, so will this repository of presentation materials. We are excited to add new materials as the Apache Beam ecosystem grows with new runners, SDKs, and so on. If you are interested in contributing content or have a request, please see the [Apache Beam presentation materials]({{ site.baseurl }}/presentation-materials/) page or email the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list with your ideas or questions.

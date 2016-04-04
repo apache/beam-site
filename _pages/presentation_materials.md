@@ -13,7 +13,7 @@ Are you interested in learning more about Apache Beam or giving a talk about Apa
 </div>
 
 ## Using these materials
-These materials can be used by anyone. If you do use these materials, please remember to give credit to the authors cited in each presentation. These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. Some presentations are have `[Long]` or `[Short]` in their name, such as the *Apache Beam Model*, which means there are two different presentations (a long and short version) depending on your needs and time constraints.
+These materials can be used by anyone. If you do use these materials, please remember to give credit to the authors cited in each presentation. These materials include speaker notes and you can view them by clicking **`View`** and selecting **`Show speaker notes`**. Some presentations have `[Long]` or `[Short]` in their name, such as the *Apache Beam Model*, which means there are two different presentations (a long and short version) depending on your needs and time constraints.
 
 If you have any questions about the these materials, please ask on the [`user@beam.incubator.apache.org`](mailto:user@beam.incubator.apache.org) mailing list.
 
