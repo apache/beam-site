@@ -18,11 +18,13 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
 * [Overview](#overview)
 * [Creating the Pipeline](#pipeline)
 * [Working with PCollections](#pcollection)
-  * [Element Type](#pcelementtype)
-  * [Immutability](#pcimmutability)
-  * [Random Access](#pcrandomaccess)
-  * [Size and Boundedness](#pcsizebound)
-  * [Element Timestamps](#pctimestamps)
+  * [Creating a PCollection](#pccreate)
+  * [PCollection Characteristics](#pccharacteristics)
+    * [Element Type](#pcelementtype)
+    * [Immutability](#pcimmutability)
+    * [Random Access](#pcrandomaccess)
+    * [Size and Boundedness](#pcsizebound)
+    * [Element Timestamps](#pctimestamps)
 * [Applying Transforms](#transform)
   * [ParDo](#pardo)
   * [GroupByKey](#gbk)
@@ -80,23 +82,77 @@ The Beam SDKs contain various subclasses of `PipelineOptions` that correspond to
 
 ## <a name="#pcollection"></a>Working with PCollections
 
-The [PCollection](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/values/PCollection.java) abstraction represents a potentially distributed, multi-element data set. You can think of a `PCollection` as "pipeline" data; Beam transforms use `PCollection` objects as inputs and outputs. As such, if you want to work with data in your pipeline, it must be in the form of a `PCollection`. A `PCollection` is owned by the specific `Pipeline` object in which it is created; multiple pipelines cannot share a `PCollection`.
+The [PCollection](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/values/PCollection.java) abstraction represents a potentially distributed, multi-element data set. You can think of a `PCollection` as "pipeline" data; Beam transforms use `PCollection` objects as inputs and outputs. As such, if you want to work with data in your pipeline, it must be in the form of a `PCollection`.
 
-In some respects, a `PCollection` functions like a collection class. However, a `PCollection` can differ in a few key ways:
+After you've created your `Pipeline`, you'll need to begin by creating at least one `PCollection` in some form. The `PCollection` you create serves as the input for the first operation in your pipeline.
 
-### <a name="#pcelementtype"></a>Element Type
+### <a name="#pccreate"></a>Creating a PCollection
+
+You create a `PCollection` by either reading data from an external source using Beam's [Source API](#io), or you can create a `PCollection` of data stored in an in-memory collection class in your driver program. The former is typically how a production pipeline would ingest data; Beam's Source APIs contain adapters to help you read from external sources like large cloud-based files, databases, or subscription services. The latter is primarily useful for testing and debugging purposes.
+
+#### Reading from an External Source
+
+To read from an external source, you use one of the [Beam-provided I/O adapters](#io). The adapters vary in their exact usage, but all of them from some external data source and return a `PCollection` whose elements represent the data records in that source. 
+
+Each data source adapter has a `Read` transform; to read, you must apply that transform to the `Pipeline` object itself. `TextIO.Read`, for example, reads from an external text file and returns a `PCollection` whose elements are of type `String`; each `String` represents one line from the text file. Here's how you would apply `TextIO.Read` to your `Pipeline` to create a `PCollection`:
+
+```java
+public static void main(String[] args) {
+    // Create the pipeline.
+    PipelineOptions options = 
+        PipelineOptionsFactory.fromArgs(args).create();
+    Pipeline p = Pipeline.create(options);
+
+    PCollection<String> lines = p.apply(
+      TextIO.Read.named("ReadMyFile").from("gs://some/inputData.txt"));
+}
+```
+
+See the [section on I/O](#io) to learn more about how to read from the various data sources supported by the Beam SDK.
+
+#### Creating a PCollection from In-Memory Data
+
+To create a `PCollection` from an in-memory Java `Collection`, you use the Beam-provided `Create` transform. Much like a data adapter's `Read`, you apply `Create` sirectly to your `Pipeline` object itself. 
+
+As parameters, `Create` accepts the Java `Collection` and a `Coder` object. The `Coder` specifies how the elements in the `Collection` should be [encoded](#pcelementtype).
+
+The following example code shows how to create a `PCollection` from an in-memory Java `List`:
+
+```java
+public static void main(String[] args) {
+    // Create a Java Collection, in this case a List of Strings.
+    static final List<String> LINES = Arrays.asList(
+      "To be, or not to be: that is the question: ",
+      "Whether 'tis nobler in the mind to suffer ",
+      "The slings and arrows of outrageous fortune, ",
+      "Or to take arms against a sea of troubles, ");
+
+    // Create the pipeline.
+    PipelineOptions options = 
+        PipelineOptionsFactory.fromArgs(args).create();
+    Pipeline p = Pipeline.create(options);
+
+    // Apply Create, passing the list and the coder, to create the PCollection.
+    p.apply(Create.of(LINES)).setCoder(StringUtf8Coder.of())
+}
+```
+### <a name="#pccharacteristics">PCollection Characteristics
+
+A `PCollection` is owned by the specific `Pipeline` object for which it is created; multiple pipelines cannot share a `PCollection`. In some respects, a `PCollection` functions like a collection class. However, a `PCollection` can differ in a few key ways:
+
+#### <a name="#pcelementtype"></a>Element Type
 
 The elements of a `PCollection` may be of any type, but must all be of the same type. However, to support distributed processing, Beam needs to be able to encode each individual element as a byte string (so elements can be passed around to distributed workers). The Beam SDKs provide a data encoding mechanism that includes built-in encoding for commonly-used types as well as support for specifying custom encodings as needed.
 
-### <a name="#pcimmutability"></a>Immutability
+#### <a name="#pcimmutability"></a>Immutability
 
 A `PCollection` is immutable. Once created, you cannot add, remove, or change individual elements. A Beam Transform might process each element of a `PCollection` and generate new pipeline data (as a new `PCollection`), *but it does not consume or modify the original input collection*.
 
-### <a name="#pcrandomaccess"></a>Random Access
+#### <a name="#pcrandomaccess"></a>Random Access
 
 A `PCollection` does not support random access to individual elements. Instead, Beam Transforms consider every element in a `PCollection` individually.
 
-### <a name="#pcsizebound"></a>Size and Boundedness
+#### <a name="#pcsizebound"></a>Size and Boundedness
 
 A `PCollection` is a large, immutable "bag" of elements. There is no upper limit on how many elements a `PCollection` can contain; any given `PCollection` might fit in memory on a single machine, or it might represent a very large distributed data set backed by a persistent data store.
 
@@ -106,7 +162,7 @@ The bounded (or unbounded) nature The bounded (or unbounded) nature of your `PCo
 
 When performing an operation that groups elements in an unbounded `PCollection`, Beam requires a concept called **Windowing** to divide a continuously updating data set into logical windows of finite size.  Beam processes each window as a bundle, and processing continues as the data set is generated. These logical windows are determined by some characteristic associated with a data element, such as a **timestamp**.
 
-### <a name="#pctimestamps"></a>Element Timestamps
+#### <a name="#pctimestamps"></a>Element Timestamps
 
 Each element in a `PCollection` has an associated intrinsic **timestamp**. The timestamp for each element is initially assigned by the [Source](#io) that creates the `PCollection`. Sources that create an unbounded `PCollection` often assign each new element a timestamp that corresponds to when the element was read or added.
 
