@@ -26,9 +26,9 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
     * [Size and Boundedness](#pcsizebound)
     * [Element Timestamps](#pctimestamps)
 * [Applying Transforms](#transform)
-  * [ParDo](#pardo)
-  * [GroupByKey](#gbk)
-  * [Combine](#combine)
+  * [Using ParDo](#pardo)
+  * [Using GroupByKey](#gbk)
+  * [Using Combine](#combine)
 * [I/O](#io)
 * [Running the Pipeline](#running)
 * [Data Encoding and Type Safety](#coders)
@@ -171,4 +171,69 @@ Each element in a `PCollection` has an associated intrinsic **timestamp**. The t
 Timestamps are useful for a `PCollection` that contains elements with an inherent notion of time. If your pipeline is reading a stream of events, like Tweets or other social media messages, each element might use the time the event was posted as the element timestamp.
 
 You can manually assign timestamps to the elements of a `PCollection` if the source doesn't do it for you. You'll want to do this if the elements have an inherent timestamp, but the timestamp is somewhere in the structure of the element itself (such as a "time" field in a server log entry). Beam has [Transforms](#transforms) that take a `PCollection` as input and output an identical `PCollection` with timestamps attached; see [Assigning Timestamps](#windowing) for more information on how to do so.
+
+## <a name="#transform"></a>Applying Transforms
+
+In the Beam SDKs, **transforms** are the operations in your pipeline. A transform takes a `PCollection` (or more than one `PCollection`) as input, performs an operation that you specify on each element in that collection, and produces a new output `PCollection`. To invoke a transform, you must **apply** it to the input `PCollection`.
+
+In Beam SDK for Java, each transform has a generic `apply` method. In the Beam SDK for Python, you use the pipe operator (`|`) to apply a transform. Invoking multiple Beam transforms is similar to *method chaining*, but with one slight difference: You apply the transform to the input `PCollection`, passing the transform itself as an argument, and the operation returns the output `PCollection`. This takes the general form:
+
+```java
+[Output PCollection] = [Input PCollection].apply([Transform])
+```
+
+How you apply your pipeline's transforms determines the structure of your pipeline. The best way to think of your pipeline is as a directed acyclic graph, where the nodes are `PCollection`s and the edges are transforms. For example, you can chain transforms to create a sequential pipeline, like this one:
+
+```java
+[Final Output PCollection] = [Initial Input PCollection].apply([First Transform])
+														.apply([Second Transform])
+														.apply([Third Transform])
+```
+
+The resulting workflow graph of the above pipeline looks like this:
+
+[Sequential Graph Graphic]
+
+However, note that a transform *does not consume or otherwise alter* the input collection--remember that a `PCollection` is immutable by definition. This means that you can apply multiple transforms to the same input `PCollection` to create a branching pipeline, like so:
+
+```java
+[Output PCollection 1] = [Input PCollection].apply([Transform 1])
+[Output PCollection 2] = [Input PCollection].apply([Transform 2])
+```
+
+The resulting workflow graph from the branching pipeline abouve looks like this:
+
+[Branching Graph Graphic]
+
+You can also build your own [composite transforms](#transform-composite) that nest multiple sub-steps inside a single, larger transform. Composite transforms are particularly useful for building a reusable sequence of simple steps that get used in a lot of different places.
+
+### Transforms in the Beam SDK
+
+The transforms in the Beam SDKs provide a generic **processing framework**, where you provide processing logic in the form of a function object (colloquially referred to as "user code"). Th user code gets applied to the elements of the input `PCollection`. Instances of your user code might then be executed in parallel by many different workers across a cluster, depending on the pipeline runner and back-end that you choose to execute your Beam pipeline. The user code running on each worker generates the output elements that are ultimately added to the final output `PCollection` that the transform produces.
+
+Beam provides the following transforms, each of which represents a different processing paradigm:
+
+* `ParDo`
+* `GroupByKey`
+* `Combine`
+* `Flatten`
+
+#### ParDo
+
+`ParDo` is a Beam transform for generic parallel processing. The `ParDo` processing paradigm is similar to the "Map" phase of a Map/Shuffle/Reduce-style algorithm: a `ParDo` transform considers each element in the input `PCollection`, performs some processing function (your user code) on that element, and emits zero, one, or multiple elements to an output `PCollection`.
+
+`ParDo` is useful for a variety of common data processing operations, including:
+
+* **Filtering a data set.** You can use `ParDo` to consider each element in a `PCollection` and either output that element to a new collection, or discard it.
+* **Formatting or type-converting each element in a data set.** If your input `PCollection` contains elements that are of a different type or format than you want, you can use `ParDo` to perform a conversion on each element and output the result to a new `PCollection`.
+* **Extracting parts of each element in a data set.** If you have a `PCollection` of records with multiple fields, for example, you can use a `ParDo` to parse out just the fields you want to consider into a new `PCollection`.
+* **Performing computations on each element in a data set.** You can use `ParDo` to perform simple or complex computations on every element, or certain elements, of a `PCollection` and output the results as a new `PCollection`.
+
+
+
+When you apply a `ParDo` transform, you'll need to provide user code in the form of a `DoFn` object. `DoFn` is a Beam SDK class that defines a distribured processing function.
+
+### Building User Code for Transforms
+
+Because your user code might be distributed across a number of machines to be executed in parallel, you should consider a few factors when designing the function object that you provide to a Beam transform:
 
