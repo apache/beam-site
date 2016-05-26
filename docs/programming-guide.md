@@ -26,9 +26,11 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
     * [Size and Boundedness](#pcsizebound)
     * [Element Timestamps](#pctimestamps)
 * [Applying Transforms](#transform)
-  * [Using ParDo](#pardo)
-  * [Using GroupByKey](#gbk)
-  * [Using Combine](#combine)
+  * [Using ParDo](#transforms-pardo)
+  * [Using GroupByKey](#transforms-gbk)
+  * [Using Combine](#transforms-combine)
+  * [General Requirements for Writing User Code for Beam Transforms](#transforms-usercodereqs)
+  * [Side Inputs and Side Outputs](#transforms-sideio)
 * [I/O](#io)
 * [Running the Pipeline](#running)
 * [Data Encoding and Type Safety](#coders)
@@ -56,6 +58,8 @@ A typical Beam driver program works as follows:
 * Apply **Transforms** to each `PCollection`. Transforms can change, filter, group, analyze, or otherwise process the elements in a `PCollection`. A transform creates a new output `PCollection` *without consuming the input collection*. A typical pipeline applies subsequent transforms to the each new output `PCollection` in turn until processing is complete.
 * Output the final, transformed `PCollection`(s), typically using the `Sink` API to write data to an external source.
 * **Run** the pipeline using the designated Pipeline Runner.
+
+When you run your Beam driver program, the Pipeline Runner that you designate constructs a **workflow graph** of your pipeline based on the `PCollection` objects you've created and transforms that you've applied. That graph is then executed using the appropriate distributed processing back-end, becoming an asynchronous "job" (or equivalent) on that back-end.
 
 ## <a name="#pipeline"></a>Creating the Pipeline
 
@@ -182,12 +186,14 @@ In Beam SDK for Java, each transform has a generic `apply` method. In the Beam S
 [Output PCollection] = [Input PCollection].apply([Transform])
 ```
 
+Because Beam uses a generic `apply` method for `PCollection`, you can both chain transforms sequentially and also apply transforms that contain other transforms nested within (called **composite transforms** in the Beam SDKs).
+
 How you apply your pipeline's transforms determines the structure of your pipeline. The best way to think of your pipeline is as a directed acyclic graph, where the nodes are `PCollection`s and the edges are transforms. For example, you can chain transforms to create a sequential pipeline, like this one:
 
 ```java
 [Final Output PCollection] = [Initial Input PCollection].apply([First Transform])
-														.apply([Second Transform])
-														.apply([Third Transform])
+							.apply([Second Transform])
+							.apply([Third Transform])
 ```
 
 The resulting workflow graph of the above pipeline looks like this:
@@ -209,7 +215,9 @@ You can also build your own [composite transforms](#transform-composite) that ne
 
 ### Transforms in the Beam SDK
 
-The transforms in the Beam SDKs provide a generic **processing framework**, where you provide processing logic in the form of a function object (colloquially referred to as "user code"). Th user code gets applied to the elements of the input `PCollection`. Instances of your user code might then be executed in parallel by many different workers across a cluster, depending on the pipeline runner and back-end that you choose to execute your Beam pipeline. The user code running on each worker generates the output elements that are ultimately added to the final output `PCollection` that the transform produces.
+The transforms in the Beam SDKs provide a generic **processing framework**, where you provide processing logic in the form of a function object (colloquially referred to as "user code"). The user code gets applied to the elements of the input `PCollection`. Instances of your user code might then be executed in parallel by many different workers across a cluster, depending on the pipeline runner and back-end that you choose to execute your Beam pipeline. The user code running on each worker generates the output elements that are ultimately added to the final output `PCollection` that the transform produces.
+
+### Core Beam Transforms
 
 Beam provides the following transforms, each of which represents a different processing paradigm:
 
@@ -218,7 +226,7 @@ Beam provides the following transforms, each of which represents a different pro
 * `Combine`
 * `Flatten`
 
-#### ParDo
+#### <a name="#transforms-pardo"></a>ParDo
 
 `ParDo` is a Beam transform for generic parallel processing. The `ParDo` processing paradigm is similar to the "Map" phase of a Map/Shuffle/Reduce-style algorithm: a `ParDo` transform considers each element in the input `PCollection`, performs some processing function (your user code) on that element, and emits zero, one, or multiple elements to an output `PCollection`.
 
@@ -229,11 +237,178 @@ Beam provides the following transforms, each of which represents a different pro
 * **Extracting parts of each element in a data set.** If you have a `PCollection` of records with multiple fields, for example, you can use a `ParDo` to parse out just the fields you want to consider into a new `PCollection`.
 * **Performing computations on each element in a data set.** You can use `ParDo` to perform simple or complex computations on every element, or certain elements, of a `PCollection` and output the results as a new `PCollection`.
 
-
+In such roles, `ParDo` is a common intermediate step in a pipeline. You might use it to extract certain fields from a set of raw input records, or convert raw input into a different format; you might also use `ParDo` to convert processed data into a format suitable for output, like database table rows or printable strings.
 
 When you apply a `ParDo` transform, you'll need to provide user code in the form of a `DoFn` object. `DoFn` is a Beam SDK class that defines a distribured processing function.
 
-### Building User Code for Transforms
+> When you create a subclass of `DoFn`, note that your subclass should adhere to the [General Requirements for Writing User Code for Beam Transforms](#transforms-usercodereqs).
 
-Because your user code might be distributed across a number of machines to be executed in parallel, you should consider a few factors when designing the function object that you provide to a Beam transform:
+##### Applying ParDo
 
+Like all Beam transforms, you apply `ParDo` by calling the `apply` method on the input `PCollection` and passing `ParDo` as an argument, as shown in the following example code:
+
+```java
+// The input PCollection of Strings.
+PCollection<String> words = ...;
+
+// The DoFn to perform on each element in the input PCollection.
+static class ComputeWordLengthFn extends DoFn<String, Integer> { ... }
+
+// Apply a ParDo to the PCollection "words" to compute lengths for each word.
+PCollection<Integer> wordLengths = words.apply(
+    ParDo
+    .of(new ComputeWordLengthFn()));        // The DoFn to perform on each element, which
+                                            // we define above.
+```
+
+In the example, our input `PCollection` contains `String` values. We apply a `ParDo` transform that specifies a function (`ComputeWordLengthFn`) to compute the length of each string, and outputs the result to a new `PCollection` of `Integer` values that stores the length of each word.
+
+##### Creating a DoFn
+
+The `DoFn` object that you pass to `ParDo` contains the processing logic that gets applied to the elements in the input collection. When you use Beam, often the most important pieces of code you'll write are these `DoFn`s--they're what define your pipeline's exact data processing tasks.
+
+> **Note:** When you create your `DoFn`, be mindful of the [General Requirements for Writing User Code for Beam Transforms](#transforms-usercodereqs) and ensure that your code follows them.
+
+A `DoFn` processes one element at a time from the input `PCollection`. When you create a subclass of `DoFn`, you'll need to provide type paraemters that match the types of the input and output elements. If your `DoFn` processes incoming `String` elements and produces `Integer` elements for the output collection (like our previous example, `ComputeWordLengthFn`), your class declaration would look like this:
+
+```java
+static class ComputeWordLengthFn extends DoFn<String, Integer> { ... }
+```
+
+Inside your `DoFn` subclass, you'll need to override the method `processElement`, where you provide the actual processing logic. You don't need to manually extract the elements from the input collection; the Beam SDKs handle that for you. Your override of `processElement` should accept an object of type `ProcessContext`. The `ProcessContext` object gives you access to an input element and a method for emitting an output element:
+
+```java
+static class ComputeWordLengthFn extends DoFn<String, Integer> {
+  @Override
+  public void processElement(ProcessContext c) {
+    // Get the input element from ProcessContext.
+    String word = c.element();
+    // Use ProcessContext.output to emit the output element.
+    c.output(word.length());
+  }
+}
+```
+
+> **Note:** If the elements in your input `PCollection` are key/value pairs, you can access the key or value by using `ProcessContext.element().getKey()` or `ProcessContext.element().getValue()`, respectively.
+
+A given `DoFn` instance generally gets invoked one or more times to process some arbitrary bundle of elements. However, Beam doesn't guarantee an exact number of invocations; it may be invoked multiple times on a given worker node to account for failures and retries. As such, you can cache information across multiple calls to `processElement`, but if you do so, make sure the implementation **does not depend on the number of invocations**.
+
+When you override `processElement`, you'll need to meet some immutability requirements to ensure that Beam and the processing back-end can safely serialize and cache the values in your pipeline. Your method should meet the following requirements:
+
+* You should not in any way modify an element returned by `ProcessContext.element()` or `ProcessContext.sideInput()` (the incoming elements from the input collection).
+* Once you output a value using `ProcessContext.output()` or `ProcessContext.sideOutput()`, you should not modify that value in any way.
+
+##### Lightweight DoFns and Other Abstractions
+
+If your function is relatively straightforward, you can simply your use of `ParDo` by providing a lightweight `DoFn` in-line. In Java, you can specify your `DoFn` as an anonymous inner class instance, and in Python you can use a `Callable`.
+
+Here's the previous example, `ParDo` with `ComputeLengthWordsFn`, with the `DoFn` specified as an anonymous inner class instance:
+
+```java
+// The input PCollection.
+PCollection<String> words = ...;
+
+// Apply a ParDo with an anonymous DoFn to the PCollection words.
+// Save the result as the PCollection wordLengths.
+PCollection<Integer> wordLengths = words.apply(
+  ParDo
+    .named("ComputeWordLengths")            // the transform name
+    .of(new DoFn<String, Integer>() {       // a DoFn as an anonymous inner class instance
+      @Override
+      public void processElement(ProcessContext c) {
+        c.output(c.element().length());
+      }
+    }));
+```
+
+If your `ParDo` performs a one-to-one mapping of input elements to output elements--that is, for each input element, it applies a function that produces *exactly one* output element, you can use the higher-level `MapElements` transform. `MapElements` can accept an anonymous Java 8 lambda function for additional brevity.
+
+Here's the previous example using `MapElements`:
+
+```java
+// The input PCollection.
+PCollection&lt;String&gt; words = ...;
+
+// Apply a MapElements with an anonymous lambda function to the PCollection words.
+// Save the result as the PCollection wordLengths.
+PCollection&lt;Integer&gt; wordLengths = words.apply(
+  MapElements.via((String word) -&gt; word.length())
+      .withOutputType(new TypeDescriptor&lt;Integer&gt;() {});
+```
+
+> **Note:** You can use Java 8 lambda functions with several other Beam transforms, including `Filter`, `FlatMapElements`, and `Partition`.
+
+#### <a name="#transforms-gbk"></a>Using GroupByKey
+
+`GroupByKey` is a Beam transform for processing collections of key/value pairs. It's a parallel reduction operation, analagous to the Shuffle phase of a Map/Shuffle/Reduce-style algorithm. The input to `GroupByKey` is a collection of key/value pairs that represents a *multimap*, where the collection contains multiple pairs that have the same key, but different values. Given such a collection, you use `GroupByKey` to collect all of the values associated with each unique key.
+
+`GroupByKey` is a good way to aggregate data that has something in common. For example, if you have a collection that stores records of customer orders, you might want to group together all the orders from the same postal code (wherein the "key" of the key/value pair is the postal code field, and the "value" is the remainder of the record).
+
+Let's examine the mechanics of `GroupByKey` with a simple xample case, where our data set consists of words from a text file and the line number on which they appear. We want to group together all the line numbers (values) that share the same word (key), letting us see all the places in the text where a particular word appears.
+
+Our input is a `PCollection` of key/value pairs where each word is a key, and the value is a line number in the file where the word appears. Here's a list of the key/value pairs in the input collection:
+
+```
+cat, 1
+dog, 5
+and, 1
+jump, 3
+tree, 2
+cat, 5
+dog, 2
+and, 2
+cat, 9
+and, 6
+...
+```
+
+`GroupByKey` gathers up all the values with the same key and outputs a new pair consisting of the unique key and a collection of all of the values that were associated with that key in the input collection. If we apply `GroupByKey` to our input collection above, the output collection would look like this:
+
+```
+cat, [1,5,9]
+dog, [5,2]
+and, [1,2,6]
+jump, [3]
+tree, [2]
+...
+```
+
+Thus, `GroupByKey` represents a transform from a multimap (multiple keys to individual values) to a uni-map (unique keys to collections of values).
+
+> **A Note on Key/Value Pairs:** Beam represents key/value pairs slightly differently depending on the language and SDK you're using. In the Beam SDK for Java, you represent a key/value pair with an object of type `KV<K, V>`. In Python, you represent key/value pairs with 2-tuples.
+     
+
+#### <a name="#transforms-combine"></a>Using Combine
+
+#### <a name="#transforms-usercodereqs"></a>General Requirements for Writing User Code for Beam Transforms
+
+When you build user code for a Beam transform, you should keep in mind the distributed nature of execution. For example, there might be many copies of your function running on a lot of different machines in parallel, and those copies function independently, without communicating or sharing state with any of the other copies. Depending on the Pipeline Runner and processing back-end you choose for your pipeline, each copy of your user code function may be retried or run multiple times. As such, you should be cautious about including things like state dependency in your user code.
+
+In general, your user code must fulfill at least these requirements:
+
+* Your function object must be **serializable**.
+* Your function object must be **thread-compatible**, and be aware that *the Beam SDKs are not thread-safe*.
+
+In addition, it's recommended that you make your function object **idempotent**.
+
+> **Note:** These requirements apply to subclasses of `DoFn` (a function object used with the [ParDo](#transforms-pardo) transform), `CombineFn` (a function object used with the [Combine](#transforms-combine) transform), and `WindowFn` (a function object used with the [Window](#windowing) transform).
+
+##### Serializability
+
+Any function object you provide to a transform must be **fully serializable**. This is because a copy of the function needs to be serialized and transmitted to a remote worker in your processing cluster. The base classes for user code, such as `DoFn`, `CombineFn`, and `WindowFn`, already implement `Serializable`; however, your subclass must not add any non-serializable members.
+
+Some other serializability factors you should keep in mind are:
+
+* Transient fields in your function object are *not* transmitted to worker instances, because they are not automatically serialized.
+* Avoid loading a field with a large amount of data before serialization.
+* Individual instances of your function object cannot share data.
+* Mutating a function object after it gets applied will have no effect.
+* Take care when declaring your function object inline by using an anonymous inner class instance. In a non-static context, your inner class instance will implicitly contain a pointer to the enclosing class and that class' state. That enclosing class will also be serialized, and thus the same considerations that apply to the function object itself also apply to this outer class.
+
+##### Thread-Compatibility
+
+Your function object should be thread-compatible. Each instance of your function object is accessed by a single thread on a worker instance, unless you explicitly create your own threads. Note, however, that **the Beam SDKs are not thread-safe**. If you create your own threads in your user code, you must provide your own synchronization. Note that static members in your function object are not passed to worker instances and that multiple instances of your function may be accessed from different threads.
+
+##### Idempotence
+
+It's recommended that you make your function object idempotent--that is, that it can be repeated or retried as often as necessary without causing unintended side effects. The Beam model provides no guarantees as to the number of times your user code might be invoked or retried; as such, keeping your function object idempotent keeps your pipeline's output deterministic, and your transforms' behavior more predictable and easier to debug.
