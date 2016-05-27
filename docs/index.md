@@ -17,7 +17,7 @@ Welcome to the Apache Beam project documentation! The following resources can he
 
 These resources help you build and run Beam pipelines for your data processing tasks.
 
-* [Beam Programming Guide](/coming-soon.html) - Learn how to use the Beam SDKs to define your data processing workflows.
+* [Beam Programming Guide](/docs/programming-guide) - Learn how to use the Beam SDKs to define your data processing workflows.
 * [Beam Example Walkthroughs](/coming-soon.html) - Check out detailed walkthroughs of runnable Beam pipelines that use the Beam SDKs to tackle a variety of use cases.
 
 ## Integrating your Distribured Processing Back-end with Beam
