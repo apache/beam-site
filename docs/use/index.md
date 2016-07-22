@@ -21,8 +21,8 @@ Learn how to set up a Beam project and run a simple example Beam pipeline on you
 #### Example Walkthroughs
 See detailed walkthroughs of complete Beam pipelines.
 
-* [WordCount]({{ site.baseurl }}/docs/walkthroughs/wordcount/): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
-* [Mobile Gaming]({{ site.baseurl }}/docs/walkthroughs/mobile-gaming/): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
+* [WordCount](https://cloud.google.com/dataflow/examples/wordcount-example): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
+* [Mobile Gaming](https://cloud.google.com/dataflow/examples/gaming-example): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
 
 #### [Release Information]({{ site.baseurl}})
 Find information on the latest Beam releases, including versioning and release notes.
@@ -32,5 +32,5 @@ Find resources to help you use Beam.
 
 * [Mailing Lists]({{ site.baseurl }}/mailing_lists/)
 * [Issue Tracking]({{ site.baseurl }}/issue_tracking/)
-* [Beam on Stack Overflow](http://stackoverflow.com)
+* [Beam on Stack Overflow](http://stackoverflow.com/questions/tagged/apache-beam)
 * [Slack Channel](http://apachebeam.slack.com)
