@@ -12,10 +12,10 @@ layout: default
 # Using Beam
 Learn to use Beam to create data processing pipelines that run on supported processing back-ends:
 
-####[Beam Overview](beam-user-overview.html)
+#### [Beam Overview](beam-user-overview.html)
 Learn about the Beam model, the currently available Beam SDKs and Runners, and Beam's native I/O connectors.
 
-####[Quickstart](quickstart.html)
+#### [Quickstart](quickstart.html)
 Learn how to set up a Beam project and run a simple example Beam pipeline on your local machine.
 
 #### Example Walkthroughs
