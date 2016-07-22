@@ -11,7 +11,7 @@ layout: default
 
 # Beam Programming Guide
 
-The **Beam Programming Guide** is intended for Beam users who want to use the Beam SDKs to create data processing pipelines. It contains guidance for using the Beam SDK classes to build and test your pipeline. It is not intended as an exhaustive reference, but as a higher-level guide to programmatically building your Beam pipeline.
+The **Beam Programming Guide** is intended for Beam users who want to use the Beam SDKs to create data processing pipelines. It provides guidance for using the Beam SDK classes to build and test your pipeline. It is not intended as an exhaustive reference, but as a language-agnostic, high-level guide to programmatically building your Beam pipeline. As the programming guide is filled out, the text will include code samples in multiple languages to help illustrate how to implement Beam concepts in your programs.
 
 ## Contents
 
@@ -39,7 +39,7 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
 
 ## <a name="#overview"></a>Overview
 
-To use Beam, you need to first create a driver program using the classes in one of the Beam SDKs. Your driver program *defines* your pipeline, including all of the inputs, transforms, and outputs; it also sets execution options for your pipeline, such as the Pipeline Runner (which, in turn, determines what back-end your pipeline will run on).
+To use Beam, you need to first create a driver program using the classes in one of the Beam SDKs. Your driver program *defines* your pipeline, including all of the inputs, transforms, and outputs; it also sets execution options for your pipeline (typically passed in using command-line options). These include the Pipeline Runner, which, in turn, determines what back-end your pipeline will run on.
 
 The Beam SDKs provide a number of abstractions that simplify the mechanics of large-scale distributed data processing. The same Beam abstractions work with both batch and streaming data sources. When you create your Beam pipeline, you can think about your data processing task in terms of these abstractions. They include:
 
