@@ -13,7 +13,7 @@ layout: default
 
 Get in-depth conceptual information and reference material for the Beam SDKs and Runners:
 
-#### [Beam Programming Guide](programming-guide.html) 
+#### [Beam Programming Guide]({{ site.baseurl }}/docs/learn/programming-guide/) 
 Learn about the Beam Programming Model and the concepts common to all Beam SDKs and Runners.
 
 #### Beam SDKs
@@ -31,7 +31,7 @@ Find status and reference information on all of the available Beam SDKs.
 #### Pipeline Runners
 Find status and reference information on all of the available Beam Pipeline Runners.
 
-* Capability Matrix
+* [Capability Matrix]({{ site.baseurl }}/capability-matrix/)
 * Spark Runner
   * Status
   * Pipeline Options for Spark
@@ -45,6 +45,7 @@ Find status and reference information on all of the available Beam Pipeline Runn
 #### Additional Resources
 More information to help you learn about Beam.
 
+* [Additional Technical Documentation](https://goo.gl/ps8twC)
 * Tech Talks
 * Dataflow Paper
 * Streaming 101/102

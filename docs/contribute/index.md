@@ -13,28 +13,29 @@ layout: default
 
 Learn how you can contribute to Beam:
 
-#### [Contribution Guide](contribution.html)
+#### [Contribution Guide]({{ site.baseurl }}/contribution-guide/)
 Learn how to contribute to the Beam source.
 
-#### [Technical Vision](technical-vision.html)
+#### [Technical Vision](https://goo.gl/nk5OM0)
 Learn about the technical vision for Beam, including the designs for SDKs and runners, and the development process.
 
 * Model Design
 * SDK Development
 * Runner Development
 
-#### [Resources](resources.html)
+#### Resources
 Resources for contributing to Beam, including mailing lists, the main GitHub repo, and the issues tracker.
 
-* Mailing Lists
-* [Github](https://github.com/apache/incubator-beam)
-* [Jira](https://issues.apache.org/jira/browse/BEAM/?selectedTab=com.atlassian.jira.jira-projects-plugin:summary-panel)
+* [Mailing Lists]({{ site.baseurl }}/mailing_lists/)
+* [Source Repository]({{ site.baseurl }}/source_repository)
+* [Issue Tracking]({{ site.baseurl }}/issue_tracking/)
 
-#### [Project Materials](proj-materials.html)
+#### Project Materials
 Beam project materials and media resources.
 
 * Logos
-* Presentation Materials
+* [Presentation Materials]({{ site.baseurl }}/presentation-materials/)
+* [Public Meetings]({{ site.baseurl }}/public-meetings/)
 
-#### [Team](team.html)
-Meet the Beam community and the Beam committers.
+#### [Team]({{ site.baseurl }}/team/)
+Meet the Apache Beam community and the Beam committers.

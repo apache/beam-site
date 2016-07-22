@@ -12,25 +12,25 @@ layout: default
 # Using Beam
 Learn to use Beam to create data processing pipelines that run on supported processing back-ends:
 
-#### [Beam Overview](beam-user-overview.html)
+#### [Beam Overview]({{ site.baseurl }})
 Learn about the Beam model, the currently available Beam SDKs and Runners, and Beam's native I/O connectors.
 
-#### [Quickstart](quickstart.html)
+#### [Quickstart]({{ site.baseurl }}/getting_started/)
 Learn how to set up a Beam project and run a simple example Beam pipeline on your local machine.
 
 #### Example Walkthroughs
 See detailed walkthroughs of complete Beam pipelines.
 
-* [WordCount](wordcount-example.html): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
-* [Mobile Gaming](gaming-examples.html): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
+* [WordCount]({{ site.baseurl }}/docs/walkthroughs/wordcount/): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
+* [Mobile Gaming]({{ site.baseurl }}/docs/walkthroughs/mobile-gaming/): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
 
-#### [Release Information](releases.html)
+#### [Release Information]({{ site.baseurl}})
 Find information on the latest Beam releases, including versioning and release notes.
 
 #### Support Resources
 Find resources to help you use Beam.
 
-* [Beam Mailing List](mailing-list.html)
-* [Beam Issue Tracker](beam-jira.html)
-* [Beam on Stack Overflow](beam-so-link.html)
-* [Slack Channel](slack-link.html)
+* [Mailing Lists]({{ site.baseurl }}/mailing_lists/)
+* [Issue Tracking]({{ site.baseurl }}/issue_tracking/)
+* [Beam on Stack Overflow](http://stackoverflow.com)
+* [Slack Channel](http://apachebeam.slack.com)
