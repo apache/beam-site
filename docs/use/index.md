@@ -12,7 +12,7 @@ layout: default
 # Using Beam
 Learn to use Beam to create data processing pipelines that run on supported processing back-ends:
 
-#### [Beam Overview]({{ site.baseurl }})
+#### [Beam Overview]({{ site.baseurl}}/docs/use/beam-overview)
 Learn about the Beam model, the currently available Beam SDKs and Runners, and Beam's native I/O connectors.
 
 #### [Quickstart]({{ site.baseurl }}/getting_started/)
@@ -21,8 +21,8 @@ Learn how to set up a Beam project and run a simple example Beam pipeline on you
 #### Example Walkthroughs
 See detailed walkthroughs of complete Beam pipelines.
 
-* [WordCount](https://cloud.google.com/dataflow/examples/wordcount-example): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
-* [Mobile Gaming](https://cloud.google.com/dataflow/examples/gaming-example): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
+* [WordCount]({{ site.baseurl }}/docs/use/walkthroughs): Simple example pipelines that demonstrate basic Beam programming, including debugging and testing
+* [Mobile Gaming]({{ site.baseurl }}/docs/use/walkthroughs): A series of more advanced pipelines that demonstrate use cases in the mobile gaming domain
 
 #### [Release Information]({{ site.baseurl}})
 Find information on the latest Beam releases, including versioning and release notes.
