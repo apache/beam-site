@@ -10,7 +10,7 @@ The Apache Beam project is in the process of bootstrapping. This includes the cr
 * [The world beyond batch: Streaming 101](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101)
 * [The world beyong batch: Streaming 102](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102)
 * [Dataflow/Beam & Spark: A Programming Model Comparison](https://cloud.google.com/dataflow/blog/dataflow-beam-and-spark-comparison)
-* [Introducing Apache Beam](http://blog.nanthrax.net/2016/01/introducing-apache-dataflow/)
+* <a href="http://blog.nanthrax.net/2016/01/introducing-apache-dataflow/" data-proofer-ignore>Introducing Apache Beam</a>
 * [Dataflow and open source - proposal to join the Apache Incubator](http://googlecloudplatform.blogspot.com/2016/01/Dataflow-and-open-source-proposal-to-join-the-Apache-Incubator.html)
 
 ## Current code
