@@ -1,7 +1,8 @@
 ---
 layout: page
 title: "Apache Beam Material"
-permalink: /material/
+permalink: /project/logos/
+redirect_from: /material/
 ---
 
 This page contains project material for the Apache Beam project.

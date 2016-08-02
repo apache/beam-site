@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Apache Beam Releases"
-permalink: /releases/
+permalink: /use/releases/
+redirect_from: /releases/
 ---
 
 # Apache Beam releases

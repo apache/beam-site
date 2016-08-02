@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Apache Beam Contribution Guide"
-permalink: /contribution-guide/
+permalink: /contribute/contribution-guide/
+redirect_from: /contribution-guide/
 ---
 
 # How to Contribute

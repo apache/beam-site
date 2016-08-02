@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: "Project Mailing Lists"
-permalink: /mailing_lists/
+permalink: /use/mailing-lists/
+redirect_from: /mailing_lists/
 ---
 
 These are the mailing lists that have been established for this project. For each list, there is a subscribe, unsubscribe, and an archive link.

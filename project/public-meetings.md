@@ -1,7 +1,8 @@
 ---
 layout: page
 title: "Apache Beam Public Meetings"
-permalink: /public-meetings/
+permalink: /project/public-meetings/
+redirect_from: /public-meetings/
 ---
 Apache Beam is a shared effort within the open source community. To grow and develop that effort, it helps to schedule and hold public meetings, including:
 

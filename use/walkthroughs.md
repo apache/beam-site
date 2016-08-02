@@ -1,5 +1,8 @@
 ---
 layout: default
+title: "Beam Code Walkthroughs"
+permalink: /use/walkthroughs/
+redirect_from: /docs/use/walkthroughs/
 ---
 
 # Beam Code Walkthroughs

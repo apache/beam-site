@@ -1,5 +1,7 @@
 ---
 layout: default
+title: "Beam Overview"
+permalink: /use/beam-overview/
 ---
 # Apache Beam Overview
 

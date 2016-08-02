@@ -1,7 +1,8 @@
 ---
 layout: page
 title: "Apache Beam Source Repository"
-permalink: /source_repository/
+permalink: /contribute/source-repository/
+redirect_from: /source_repository/
 ---
 
 This project uses [Git](http://git-scm.com) to manage its source code.

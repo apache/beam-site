@@ -1,7 +1,8 @@
 ---
 layout: page
 title: "Apache Beam Team"
-permalink: /team/
+permalink: /project/team/
+redirect_from: /team/
 ---
 
 A successful project requires many people to play many roles. Some members write code or documentation, while others are valuable as testers, submitting patches and suggestions.

@@ -1,7 +1,8 @@
 ---
-layout: page
+layout: default
 title: "Issue Tracking"
-permalink: /issue_tracking/
+permalink: /use/issue-tracking/
+redirect_from: /issue_tracking/
 ---
 
 This project uses [JIRA](http://www.atlassian.com/software/jira) for issue tracking.
