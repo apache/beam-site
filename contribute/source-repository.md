@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "Beam Source Repository"
 permalink: /contribute/source-repository/
 redirect_from: /source_repository/

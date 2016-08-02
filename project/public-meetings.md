@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "Beam Public Meetings"
 permalink: /project/public-meetings/
 redirect_from: /public-meetings/

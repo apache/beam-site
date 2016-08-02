@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "Beam Logos"
 permalink: /project/logos/
 redirect_from: /material/

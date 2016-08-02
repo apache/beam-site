@@ -1,6 +1,6 @@
 ---
-layout: page
-title: "Apache Beam Blog"
+layout: default
+title: "Beam Blog"
 permalink: /blog/
 ---
 

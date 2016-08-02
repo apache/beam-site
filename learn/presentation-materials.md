@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "Beam Presentation Materials"
 permalink: /learn/presentation-materials/
 redirect_from: /presentation-materials/

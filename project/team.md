@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: default
 title: "Beam Team"
 permalink: /project/team/
 redirect_from: /team/
