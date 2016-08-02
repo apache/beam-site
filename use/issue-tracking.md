@@ -1,9 +1,11 @@
 ---
 layout: default
-title: "Issue Tracking"
+title: "Beam Issue Tracking"
 permalink: /use/issue-tracking/
 redirect_from: /issue_tracking/
 ---
+
+# Apache Beam Issue Tracking
 
 This project uses [JIRA](http://www.atlassian.com/software/jira) for issue tracking.
 

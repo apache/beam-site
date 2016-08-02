@@ -1,9 +1,11 @@
 ---
 layout: page
-title: "Apache Beam Material"
+title: "Beam Logos"
 permalink: /project/logos/
 redirect_from: /material/
 ---
+
+# Apache Beam Logos
 
 This page contains project material for the Apache Beam project.
 

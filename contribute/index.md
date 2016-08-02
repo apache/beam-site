@@ -4,7 +4,7 @@ title: 'Contribute to Beam'
 redirect_from: '/docs/contribute'
 ---
 
-# Contribute to the Beam Project
+# Contribute to the Apache Beam Project
 
 Learn how you can contribute to Beam:
 

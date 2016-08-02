@@ -2,6 +2,7 @@
 layout: default
 title: "Beam Overview"
 permalink: /use/beam-overview/
+redirect_from: /docs/use/beam-overview/
 ---
 # Apache Beam Overview
 

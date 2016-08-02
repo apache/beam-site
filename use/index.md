@@ -5,7 +5,7 @@ permalink: /use/
 redirect_from: /docs/use/
 ---
 
-# Using Beam
+# Using Apache Beam
 Learn to use Beam to create data processing pipelines that run on supported processing back-ends:
 
 #### [Beam Overview]({{ site.baseurl}}/use/beam-overview)

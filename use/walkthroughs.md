@@ -5,7 +5,7 @@ permalink: /use/walkthroughs/
 redirect_from: /docs/use/walkthroughs/
 ---
 
-# Beam Code Walkthroughs
+# Apache Beam Code Walkthroughs
 
 The Beam code walkthroughs are currently in development (per [BEAM-194](https://issues.apache.org/jira/browse/BEAM-194)).
 

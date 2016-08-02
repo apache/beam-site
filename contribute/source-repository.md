@@ -1,9 +1,11 @@
 ---
 layout: page
-title: "Apache Beam Source Repository"
+title: "Beam Source Repository"
 permalink: /contribute/source-repository/
 redirect_from: /source_repository/
 ---
+
+# Apache Beam Source Repository
 
 This project uses [Git](http://git-scm.com) to manage its source code.
 

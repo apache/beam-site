@@ -1,13 +1,13 @@
 ---
 layout: default
-title: "Additional Resources"
+title: "Beam Learning Resources"
 permalink: /learn/resources/
 ---
-# Additional Resources for Learning about Beam
+# Additional Resources for Learning about Apache Beam
 
 This page is under construction ([BEAM-509](https://issues.apache.org/jira/browse/BEAM-509)).
 
-Here's some links to get you started.
+Here's some links to some of our favorite articles and videos get you started.
 
 * [The world beyond batch: Streaming 101](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101)
 * [The world beyong batch: Streaming 102](https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102)

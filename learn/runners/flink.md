@@ -1,8 +1,8 @@
 ---
 layout: default
-title: "Flink Runner"
+title: "Apache Flink Runner"
 permalink: /learn/runners/flink/
 ---
-# Beam Flink Runner
+# Using the Apache Flink Runner
 
 This page is under construction ([BEAM-506](https://issues.apache.org/jira/browse/BEAM-506)).

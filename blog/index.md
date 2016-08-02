@@ -4,6 +4,8 @@ title: "Apache Beam Blog"
 permalink: /blog/
 ---
 
+# Apache Beam Blog
+
 This is the blog for the Apache Beam project. This blog contains news and updates
 for the project.
 

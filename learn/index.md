@@ -5,9 +5,9 @@ permalink: /learn/
 redirect_from: /docs/learn/
 ---
 
-# Learn about the Beam Model
+# Learn about the Apache Beam Model
 
-Get in-depth conceptual information and reference material for the Beam SDKs and Runners:
+Get in-depth conceptual information and reference material for the Beam Model, SDKs and Runners:
 
 #### [Beam Programming Guide]({{ site.baseurl }}/learn/programming-guide/) 
 Learn about the Beam Programming Model and the concepts common to all Beam SDKs and Runners.

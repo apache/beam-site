@@ -1,9 +1,11 @@
 ---
 layout: page
-title: "Apache Beam Presentation Materials"
+title: "Beam Presentation Materials"
 permalink: /learn/presentation-materials/
 redirect_from: /presentation-materials/
 ---
+
+# Apache Beam Presentation Materials
 
 Are you interested in learning more about Apache Beam or giving a talk about Apache Beam? Excellent! The Apache Beam community has created this collection of materials to help you get started. The community periodically reviews these materials to ensure they are accurate and up-to-date.
 
