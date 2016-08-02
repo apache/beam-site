@@ -13,7 +13,7 @@ layout: default
 
 Get in-depth conceptual information and reference material for the Beam SDKs and Runners:
 
-#### [Beam Programming Guide]({{ site.baseurl }}/docs/learn/programming-guide/) 
+#### [Beam Programming Guide]({{ site.baseurl }}/docs/learn/programming-guide) 
 Learn about the Beam Programming Model and the concepts common to all Beam SDKs and Runners.
 
 #### Beam SDKs
