@@ -21,7 +21,7 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
     * [Random Access](#pcrandomaccess)
     * [Size and Boundedness](#pcsizebound)
     * [Element Timestamps](#pctimestamps)
-* [Applying Transforms](#transform)
+* [Applying Transforms](#transforms)
   * [Using ParDo](#transforms-pardo)
   * [Using GroupByKey](#transforms-gbk)
   * [Using Combine](#transforms-combine)
@@ -172,7 +172,7 @@ Timestamps are useful for a `PCollection` that contains elements with an inheren
 
 You can manually assign timestamps to the elements of a `PCollection` if the source doesn't do it for you. You'll want to do this if the elements have an inherent timestamp, but the timestamp is somewhere in the structure of the element itself (such as a "time" field in a server log entry). Beam has [Transforms](#transform) that take a `PCollection` as input and output an identical `PCollection` with timestamps attached; see [Assigning Timestamps](#windowing) for more information on how to do so.
 
-## <a name="transform"></a>Applying Transforms
+## <a name="transforms"></a>Applying Transforms
 
 In the Beam SDKs, **transforms** are the operations in your pipeline. A transform takes a `PCollection` (or more than one `PCollection`) as input, performs an operation that you specify on each element in that collection, and produces a new output `PCollection`. To invoke a transform, you must **apply** it to the input `PCollection`.
 
