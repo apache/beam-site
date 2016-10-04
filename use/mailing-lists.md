@@ -26,25 +26,25 @@ beam-user	Subscribe	Unsubscribe	Post	mail-archives.apache.org
   </thead>
   <tbody>
     <tr>
-      <th scope="row">beam-dev</th>
+      <th scope="row">dev@</th>
       <td><a href="mailto:dev-subscribe@beam.incubator.apache.org">Subscribe</a></td>
       <td><a href="mailto:dev-unsubscribe@beam.incubator.apache.org">Unsubscribe</a></td>
       <td><a href="mailto:dev@beam.incubator.apache.org">Post</a></td>
-      <td><a href="http://mail-archives.apache.org/mod_mbox/incubator-beam-dev/">mail-archives.apache.org</a></td>
+      <td><a href="https://lists.apache.org/list.html?dev@beam.apache.org">Archives</a></td>
     </tr>
     <tr>
-      <th scope="row">beam-commits</th>
+      <th scope="row">commits@</th>
       <td><a href="mailto:commits-subscribe@beam.incubator.apache.org">Subscribe</a></td>
       <td><a href="mailto:commits-unsubscribe@beam.incubator.apache.org">Unsubscribe</a></td>
       <td><a href="mailto:commits@beam.incubator.apache.org">Post</a></td>
-      <td><a href="http://mail-archives.apache.org/mod_mbox/incubator-beam-commits/">mail-archives.apache.org</a></td>
+      <td><a href="https://lists.apache.org/list.html?commits@beam.apache.org">Archives</a></td>
     </tr>
     <tr>
-      <th scope="row">beam-user</th>
+      <th scope="row">user@</th>
       <td><a href="mailto:user-subscribe@beam.incubator.apache.org">Subscribe</a></td>
       <td><a href="mailto:user-unsubscribe@beam.incubator.apache.org">Unsubscribe</a></td>
       <td><a href="mailto:user@beam.incubator.apache.org">Post</a></td>
-      <td><a href="http://mail-archives.apache.org/mod_mbox/incubator-beam-user/">mail-archives.apache.org</a></td>
+      <td><a href="https://lists.apache.org/list.html?user@beam.apache.org">Archives</a></td>
     </tr>
 </tbody>
 </table>
