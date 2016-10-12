@@ -12,7 +12,7 @@ Tyler Akidau and I gave a [three-hour tutorial](http://conferences.oreilly.com/s
 
 <img src="{{ "/images/blog/IMG_20160927_170956.jpg" | prepend: site.baseurl }}" alt="Exercise time">
 
-If you want to take a look at the tutorial materials, we’ve put them up [on GitHub](https://github.com/eljefe6a/beamexample). This includes the [actual slides](https://github.com/eljefe6a/beamexample/blob/master/BeamTutorial/slides.pdf) as well as the [exercises](https://github.com/eljefe6a/beamexample/tree/master/BeamTutorial/src/main/java/org/apache/beam/examples/tutorial/game) that we covered. If you’re looking to learn a little about Beam, this is a good way to start. The exercises are based on an imaginary mobile game and the data needs processing and are based on code in the [Beam examples directory](https://github.com/apache/incubator-beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game). The code has TODOs for where you need to fill in code or there are full sample solutions to look over our code. You can run these examples on your own machine.
+If you want to take a look at the tutorial materials, we’ve put them up [on GitHub](https://github.com/eljefe6a/beamexample). This includes the [actual slides](https://github.com/eljefe6a/beamexample/blob/master/BeamTutorial/slides.pdf) as well as the [exercises](https://github.com/eljefe6a/beamexample/tree/master/BeamTutorial/src/main/java/org/apache/beam/examples/tutorial/game) that we covered. If you’re looking to learn a little about Beam, this is a good way to start. The exercises are based on an imaginary mobile game where data needs processing and are based on code in the [Beam examples directory](https://github.com/apache/incubator-beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game). The code has TODOs for where you need to fill in code or there are full sample solutions to look over our code. You can run these examples on your own machine or on a cluster using a runner that Beam supports.
 
 I want to share some of takeaways I had about Beam during the conference.
 
@@ -28,5 +28,5 @@ On management and thought leader side, Beam went from “what’s Beam?” at pr
 
 We rounded out the tutorial with live demonstrations of Beam running on Apache Spark, Apache Flink, the local runner, and DataFlow runner. Then, we brought in the big brainpower and had a Q and A session.
 
-If you’re attending a conference, we encourage you to look for a Beam session. If you want to use these materials to give your own Beam talk, we’re happy to help you. You can reach out to us on the [user mailing list](http://beam.incubator.apache.org/use/mailing-lists/).
+If you’re attending a conference, we encourage you to look for a Beam session. If you want to use these materials to give your own Beam talk or tutorial, we’re happy to help you. You can reach out to us on the [user mailing list](http://beam.incubator.apache.org/use/mailing-lists/).
 
