@@ -70,7 +70,7 @@ The Minimal WordCount pipeline contains several transforms to read data into the
 
 Each transform takes some kind of input (data or otherwise), and produces some output data. The input and output data is represented by the SDK class `PCollection`. `PCollection` is a special class, provided by the Beam SDK, that you can use to represent a data set of virtually any size, including infinite data sets.
 
-![alt tag](https://cloud.google.com/dataflow/images/pipeline-dataflow2.png)
+<img src="{{ "/images/wordcount-pipeline.png" | prepend: site.baseurl }}">
 Figure 1: The pipeline data flow.
 
 The Minimal WordCount pipeline contains five transforms:
