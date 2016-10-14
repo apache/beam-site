@@ -27,6 +27,7 @@ Before working with the Jekyll code, you will need to install Jekyll:
     $ gem install jekyll
     $ gem install jekyll-redirect-from
     $ gem install html-proofer
+    $ gem install activesupport -v 4.2.7
 
 *If you are on a Mac, you may need to install
 [Ruby Gems](https://rubygems.org/pages/download).*
