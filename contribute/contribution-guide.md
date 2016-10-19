@@ -51,42 +51,9 @@ For moderate or large contributions, you should not start coding or writing a de
 
 To avoid potential frustration during the code review cycle, we encourage you to clearly scope and design non-trivial contributions with the Beam community before you start coding.
 
-### Initiate a Proposal
+Generally, the JIRA issue is the best place to gather relevant design docs, comments, or references. It’s great to explicitly include relevant stakeholders early in the conversation. For designs that may be generally interesting, we also encourage conversations on the developer’s mailing list.
 
-Large contributions should be tracked using the `proposal` type in JIRA. This allows the Beam community to quickly identify, track, and engage on fundamental changes to the Beam project.
-
-Proposals should be created for: 
-
-1. Changes to the Beam programming model, such as new primitive transformations or semantic changes to existing transformations.
-1. Significant changes to how Beam concepts are represented in a given SDK.
-1. Changes that may require coordinated effort across multiple components, such as shared API surfaces or testing infrastructure.
-
-
-### Propose a Design
-
-We suggest using [Google Docs](https://docs.google.com/) for sharing designs that may benefit from diagrams or comments. Please remember to make the document world-commentable and add a link to it from the relevant JIRA issue. You may want to start from this [template](https://docs.google.com/document/d/1qYQPGtabN5-E4MjHsecqqC7PXvJtXvZukPfLXQ8rHJs/edit?usp=sharing).  
-
-All major community discussions and decisions should happen on the dev@ list. Once your design document is ready for a broader discussion, begin the conversation:
-
-1. Use the `Propose Design` button to move the issue into the `Under Discussion` state.
-1. Email dev@ with `[PROPOSAL] Discuss idea...`, including a link to the JIRA issue.
-1. Update the JIRA issue with a link back to the new [mail thread](https://lists.apache.org/list.html?dev@beam.apache.org).
-1. If there are significant changes or discussions that occur within the design document or JIRA issue, make sure to update the thread on dev@ with an update.
-
-### Conclude the Proposal
-
-If agreement is reached and comments have quiesced:
-
-1. Use the `Approved By Community` button to move the issue the `In Implementation` state.
-1. Make sure the dev@ thread is clear about the result.
-1. Update details in the design document and JIRA issue as needed.   
-1. Depending on the contents of the proposal, file related sub-tasks in relevant JIRA components to allow for fine grained tracking during implementation.
-
-If agreement cannot be reached or enthusiasm wanes:
-
-1. Use the `Abandon` or `Pause` button as appropriate.
-1. Update the dev@ thread to notify the community this proposal is not currently proceeding.
-
+We suggest using [Google Docs](https://docs.google.com/) for sharing designs that may benefit from diagrams or comments. Please remember to make the document world-commentable and add a link to it from the relevant JIRA issue. You may want to start from this [template](https://docs.google.com/document/d/1qYQPGtabN5-E4MjHsecqqC7PXvJtXvZukPfLXQ8rHJs/edit?usp=sharing).
 
 ## Code
 To contribute code to Apache Beam, you’ll have to do a few administrative steps once, and then follow a few guidelines for each contribution.
