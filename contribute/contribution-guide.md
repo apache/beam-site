@@ -18,7 +18,7 @@ We use a review-then-commit workflow in Beam for all contributions.
 
 **For larger contributions or those that affect multiple components:**
 
-1. **Engage**: We encourage you to work with the Beam community on the [Apache JIRA issue tracker](https://issues.apache.org/jira/browse/BEAM) and [developer’s mailing list](http://beam.incubator.apache.org/use/mailing-lists/) to identify good areas for contribution. 
+1. **Engage**: We encourage you to work with the Beam community on the [Apache JIRA issue tracker](https://issues.apache.org/jira/browse/BEAM) and [developer’s mailing list](http://beam.incubator.apache.org/use/mailing-lists/) to identify good areas for contribution.
 1. **Design:** More complicated contributions will likely benefit from some early discussion in order to scope and design them well.
 
 **For all contributions:**
@@ -45,7 +45,7 @@ If a quick [search](https://issues.apache.org/jira/issues/?jql=project%3DBEAM%20
 
 If there’s an existing JIRA issue for your intended contribution, please comment about your intended work. Once the work is understood, a committer will assign the issue to you. (If you don’t have a JIRA role yet, you’ll be added to the “contributor” role.) If an issue is currently assigned, please check with the current assignee before reassigning.
 
-For moderate or large contributions, you should not start coding or writing a design doc unless there is a corresponding JIRA issue assigned to you for that work. Simple changes, like fixing typos, do not require an associated issue.
+For moderate or large contributions, you should not start coding or writing a design document unless there is a corresponding JIRA issue assigned to you for that work. Simple changes, like fixing typos, do not require an associated issue.
 
 ## Design
 
@@ -66,9 +66,9 @@ Proposals should be created for:
 
 We suggest using [Google Docs](https://docs.google.com/) for sharing designs that may benefit from diagrams or comments. Please remember to make the document world-commentable and add a link to it from the relevant JIRA issue. You may want to start from this [template](https://docs.google.com/document/d/1qYQPGtabN5-E4MjHsecqqC7PXvJtXvZukPfLXQ8rHJs/edit?usp=sharing).  
 
-All major community discussions and decisions should happen on the dev@ list. So once your design document is ready for broader discussion, begin the conversation:
+All major community discussions and decisions should happen on the dev@ list. Once your design document is ready for a broader discussion, begin the conversation:
 
-1. Use the `propose design` button to move the issue into the `under discussion` state.
+1. Use the `Propose Design` button to move the issue into the `Under Discussion` state.
 1. Email dev@ with `[PROPOSAL] Discuss idea...`, including a link to the JIRA issue.
 1. Update the JIRA issue with a link back to the new [mail thread](https://lists.apache.org/list.html?dev@beam.apache.org).
 1. If there are significant changes or discussions that occur within the design document or JIRA issue, make sure to update the thread on dev@ with an update.
@@ -77,14 +77,14 @@ All major community discussions and decisions should happen on the dev@ list. So
 
 If agreement is reached and comments have quiesced:
 
-1. Use the `approved by community` button to move the issue the `in implementation` state.
+1. Use the `Approved By Community` button to move the issue the `In Implementation` state.
 1. Make sure the dev@ thread is clear about the result.
-1. Update details in the Design Document and JIRA issue as needed.   
+1. Update details in the design document and JIRA issue as needed.   
 1. Depending on the contents of the proposal, file related sub-tasks in relevant JIRA components to allow for fine grained tracking during implementation.
 
 If agreement cannot be reached or enthusiasm wanes:
 
-1. Use the `abandon` or `pause` button as appropriate.
+1. Use the `Abandon` or `Pause` button as appropriate.
 1. Update the dev@ thread to notify the community this proposal is not currently proceeding.
 
 
@@ -222,7 +222,7 @@ You can confirm your configuration by running the following command.
 	github	https://github.com/apache/incubator-beam.git (fetch)
 	github	https://github.com/apache/incubator-beam.git (push)
 	<username>	git@github.com:<username>/beam.git (fetch)
-	<username>>	git@github.com:<username>/beam.git (push)
+	<username>	git@github.com:<username>/beam.git (push)
 
 ### Contributor License Agreement
 If you are merging a larger contribution, please make sure that the contributor has an ICLA on file with the Apache Secretary. You can view the list of committers [here](http://home.apache.org/phonebook.html?unix=committers), as well as [ICLA-signers who aren’t yet committers](http://home.apache.org/unlistedclas.html).
@@ -275,11 +275,11 @@ The directions above assume you are submitting code to the `incubator-beam` repo
 
 ### Feature Branches
 
-Some larger features are developed on a feature branch before being merged into master. In particular, this is often used for initial development of new components like SDKs or runners. 
+Some larger features are developed on a feature branch before being merged into `master`. In particular, this is often used for initial development of new components like SDKs or runners. 
 
 #### Developing
 
-To contribute to code on a feature branch, use the same process as above, but replace `master` with the [name of the branch](/contribute/work-in-progress/#feature-branches).
+To contribute code on a feature branch, use the same process as above, but replace `master` with the [name of the branch](/contribute/work-in-progress/#feature-branches).
 
 In additional, you'll want to frequently merge in changes from `master` in order to prevent life on the branch from deviating too far from reality. 
 
