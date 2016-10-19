@@ -3,7 +3,7 @@ layout: post
 title:  "Testing Unbounded Pipeliens in Apache Beam"
 date:   2016-10-17 10:21:48 -0800
 excerpt_separator: <!--more-->
-categories: blog beam testing java
+categories: blog
 authors:
 - tgroh
 ---
@@ -26,20 +26,21 @@ disconnected users, data can arrive out of order or be delayed. Beam’s
 primitives provide a way for users to perform useful, powerful, and correct
 computations in spite of these challenges.
 
-We need comprehensive tests that cover crucial failure scenarios and corner
-cases to gain real confidence that a pipeline is ready for production. The
-existing testing infrastructure within the Beam SDKs permits tests to be written
-which examine the contents of a Pipeline at execution time. However, writing
-unit tests for pipelines that may receive late data or trigger multiple times
-has historically ranged from complex to not possible, as pipelines that read
-from unbounded sources do not shut down without external intervention, while
-Pipelines that read from bounded sources exclusively cannot test behavior with
-late data nor most speculative triggers. Without additional tools, pipelines
-that use custom triggers and handle out-of-order data could not be easily tested.
+As users of Beam, we need comprehensive tests that cover crucial failure
+scenarios and corner cases to gain real confidence that a pipeline is ready for
+production. The existing testing infrastructure within the Beam SDKs permits
+tests to be written which examine the contents of a Pipeline at execution time.
+However, writing unit tests for pipelines that may receive late data or trigger
+multiple times has historically ranged from complex to not possible, as
+pipelines that read from unbounded sources do not shut down without external
+intervention, while pipelines that read from bounded sources exclusively cannot
+test behavior with late data nor most speculative triggers. Without additional
+tools, pipelines that use custom triggers and handle out-of-order data could not
+be easily tested.
 
 This blog post introduces our new framework for writing tests for pipelines that
-handle delayed and out-of-order data in the context of the LeaderBoard/Mobile
-Gaming example.
+handle delayed and out-of-order data in the context of the LeaderBoard pipeline
+from the Mobile Gaming example series.
 
 ## LeaderBoard and the Mobile Gaming Example
 
