@@ -1,7 +1,7 @@
 ---
 layout: post
-title:  "Testing Unbounded Pipeliens in Apache Beam"
-date:   2016-10-17 10:21:48 -0800
+title:  "Testing Unbounded Pipelines in Apache Beam"
+date:   2016-10-20 10:00:00 -0800
 excerpt_separator: <!--more-->
 categories: blog
 authors:
@@ -102,7 +102,7 @@ receives them progresses as the graph goes upwards. The watermark is represented
 by the squiggly red line, and each starburst is the firing of a trigger and the
 associated pane.
 
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-all-on-time.jpg" | prepend: site.baseurl }}" alt="Elements on the Event and Processing time axes, with the Watermark and produced panes" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-all-on-time.png" | prepend: site.baseurl }}" alt="Elements on the Event and Processing time axes, with the Watermark and produced panes" width="442">
 
 ### Everything arrives on-time
 
@@ -124,7 +124,7 @@ PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
 ```
 we can then assert that the result PCollection contains elements that arrived:
 
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-all-on-time.jpg" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-all-on-time.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
 
 ```
 // Only one value is emitted for the blue team
@@ -154,7 +154,7 @@ TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo
 PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-unobservably-late.jpg" | prepend: site.baseurl }}" alt="An element arrives late, but before the watermark passes the end of the window, and is produced in the on-time pane" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-unobservably-late.png" | prepend: site.baseurl }}" alt="An element arrives late, but before the watermark passes the end of the window, and is produced in the on-time pane" width="442">
 ```
 // Only one value is emitted for the blue team
 PAssert.that(teamScores)
@@ -183,7 +183,7 @@ PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
 
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-observably-late.jpg" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-observably-late.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
 
 ```
 // An on-time pane is emitted with the events that arrived before the window closed
@@ -221,7 +221,7 @@ TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo
 PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-droppably-late.jpg" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-droppably-late.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
 ```
 // An on-time pane is emitted with the events that arrived before the window closed
 PAssert.that(teamScores)
@@ -250,7 +250,7 @@ PCollection<KV<String, Integer>> userScores =
     p.apply(infos).apply(new CalculateUserScores(ALLOWED_LATENESS));
 ```
 
-<img class="center-block" src="{{ "/images/blog/test-stream/elements-processing-speculative.jpg" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
+<img class="center-block" src="{{ "/images/blog/test-stream/elements-processing-speculative.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
 
 ```
 PAssert.that(userScores)
