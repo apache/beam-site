@@ -110,6 +110,7 @@ associated pane.
 For example, if we create a TestStream where all the data arrives before the
 watermark and provide the result PCollection as input to the CalculateTeamScores
 PTransform:
+
 ```
 TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo.class))
     .addElements(new GameActionInfo("sky", "blue", 12, new Instant(0L)),
@@ -123,6 +124,7 @@ TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo
 PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
+
 we can then assert that the result PCollection contains elements that arrived:
 
 <img class="center-block" src="{{ "/images/blog/test-stream/elements-all-on-time.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
@@ -142,6 +144,7 @@ of the window (shown below to the left of the red watermark), which demonstrates
 "unobservably late" data - that is, data that arrives late, but is promoted by
 the system to be on time, as it arrives before the watermark passes the end of
 the window
+
 ```
 TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo.class))
     .addElements(new GameActionInfo("sky", "blue", 3, new Instant(0L)),
@@ -155,7 +158,9 @@ TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo
 PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
+
 <img class="center-block" src="{{ "/images/blog/test-stream/elements-unobservably-late.png" | prepend: site.baseurl }}" alt="An element arrives late, but before the watermark passes the end of the window, and is produced in the on-time pane" width="442">
+
 ```
 // Only one value is emitted for the blue team
 PAssert.that(teamScores)
@@ -222,7 +227,9 @@ TestStream<GameActionInfo> infos = TestStream.create(AvroCoder.of(GameActionInfo
 PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
     .apply(new CalculateTeamScores(TEAM_WINDOW_DURATION, ALLOWED_LATENESS));
 ```
+
 <img class="center-block" src="{{ "/images/blog/test-stream/elements-droppably-late.png" | prepend: site.baseurl }}" alt="Elements all arrive before the watermark, and are produced in the on-time pane" width="442">
+
 ```
 // An on-time pane is emitted with the events that arrived before the window closed
 PAssert.that(teamScores)
@@ -237,6 +244,7 @@ Using additional methods, we can demonstrate the behavior of speculative
 triggers by advancing the processing time of the TestStream. If we add elements
 to an input PCollection, occasionally advancing the processing time clock, and
 apply `CalculateUserScores`
+
 ```
 TestStream.create(AvroCoder.of(GameActionInfo.class))
     .addElements(new GameActionInfo("scarlet", "red", 3, new Instant(0L)),
