@@ -130,8 +130,8 @@ we can then assert that the result PCollection contains elements that arrived:
 ```
 // Only one value is emitted for the blue team
 PAssert.that(teamScores)
-    .inWindow(window)
-    .containsInAnyOrder(KV.of("blue", 18));
+       .inWindow(window)
+       .containsInAnyOrder(KV.of("blue", 18));
 p.run();
 ```
 
@@ -159,8 +159,8 @@ PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
 ```
 // Only one value is emitted for the blue team
 PAssert.that(teamScores)
-    .inWindow(window)
-    .containsInAnyOrder(KV.of("blue", 18));
+       .inWindow(window)
+       .containsInAnyOrder(KV.of("blue", 18));
 p.run();
 ```
 
@@ -189,12 +189,12 @@ PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
 ```
 // An on-time pane is emitted with the events that arrived before the window closed
 PAssert.that(teamScores)
-    .inOnTimePane(window)
-    .containsInAnyOrder(KV.of("blue", 6));
+       .inOnTimePane(window)
+       .containsInAnyOrder(KV.of("blue", 6));
 // The final pane contains the late refinement
 PAssert.that(teamScores)
-    .inFinalPane(window)
-    .containsInAnyOrder(KV.of("blue", 18));
+       .inFinalPane(window)
+       .containsInAnyOrder(KV.of("blue", 18));
 p.run();
 ```
 
@@ -226,8 +226,8 @@ PCollection<KV<String, Integer>> teamScores = p.apply(createEvents)
 ```
 // An on-time pane is emitted with the events that arrived before the window closed
 PAssert.that(teamScores)
-    .inWindow(window)
-    .containsInAnyOrder(KV.of("blue", 6));
+       .inWindow(window)
+       .containsInAnyOrder(KV.of("blue", 6));
 
 p.run();
 ```
@@ -255,10 +255,10 @@ PCollection<KV<String, Integer>> userScores =
 
 ```
 PAssert.that(userScores)
-    .inEarlyGlobalWindowPanes()
-    .containsInAnyOrder(KV.of("scarlet", 5),
-                        KV.of("scarlet", 9),
-                        KV.of("oxblood", 2));
+       .inEarlyGlobalWindowPanes()
+       .containsInAnyOrder(KV.of("scarlet", 5),
+                           KV.of("scarlet", 9),
+                           KV.of("oxblood", 2));
 
 p.run();
 ```
