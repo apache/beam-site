@@ -107,8 +107,9 @@ To configure annotation processing in InteliJ Idea,
 3. Select,
    * Enable annotation processing
    * Obtain processors from project classpath
+   * Store generated sources relative to : _Module content root_
 4. Provide,
-   * Store generated sources relative to : _target/generated-sources/annotations_
+   * Production sources directory : _target/generated-sources/annotations_
    * Test sources directory : _target/generated-test-sources/test-annotations_
 5. Finally click on apply and you are good to go.
 
