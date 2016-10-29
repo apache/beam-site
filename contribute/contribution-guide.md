@@ -97,7 +97,20 @@ Depending on your preferred development environment, you may need to prepare it 
 
 ##### Intellij
 
-_If you are an Intellij user, please contribute instructions! See [BEAM-835](https://issues.apache.org/jira/browse/BEAM-835)._
+Start InteliJ Idea and open the project you checked out.
+
+To configure annotation processing in InteliJ Idea,
+
+1. Go to File -> Settings
+    Settings dialog window will be appeared.
+2. Select Execution,Deployment,Deployment -> Compiler -> Annotation processors
+3. Select,
+   * Enable annotation processing
+   * Obtain processors from project classpath
+4. Provide,
+   * Store generated sources relative to : _target/generated-sources/annotations_
+   * Test sources directory : _target/generated-test-sources/test-annotations_
+5. Finally click on apply and you are good to go.
 
 ##### Eclipse
  
