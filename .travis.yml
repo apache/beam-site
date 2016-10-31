@@ -1,8 +1,17 @@
 language: ruby
 rvm:
   - 2.1
-script:
-  - bundle exec rake test
 env:
   global:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true # speeds up installation of html-proofer
+sudo: required
+
+script:
+  - bundle exec rake test
+
+after_success:
+  # Generate a site that is ready to be staged. We need to specify an
+  # additional baseurl parameter, since each pull request has its own sub-site.
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then rm -fr content; jekyll build --baseurl=/${TRAVIS_PULL_REQUEST}; fi
+  # Invoke a separate script that will stage the site.
+  - if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then ./stage_pull_request.sh "${TRAVIS_PULL_REQUEST_SHA}" "${TRAVIS_PULL_REQUEST}" "${GSUTIL_KEY_ID}" "${GSUTIL_PRIVATE_KEY}" "${GITHUB_API_KEY}"; fi
