@@ -30,13 +30,13 @@ For pipelines that read unbounded game data from a streaming source, the data so
 
 The Mobile Game example pipelines vary in complexity, from simple batch analysis to more complex pipelines that can perform real-time analysis and abuse detection. This section walks you through each example and demonstrates how to use Beam features like windowing and triggers to expand your pipeline's capabilites.
 
-## `UserScore`: Basic Score Processing in Batch
+## UserScore: Basic Score Processing in Batch
 
 The `UserScore` pipeline is the simplest example for processing mobile game data. `UserScore` determines the total score per user over a finite data set (for example, one day's worth of scores stored on the game server). Pipelines like `UserScore` are best run periodically after all relevant data has been gathered. For example, `UserScore` could run as a nightly job over data gathered during that day.
 
 > **Note:** See [UserScore on GitHub](https://github.com/apache/incubator-beam/blob/ee6ad2fe416cd499aa1b6e2a51aa64da0805cc5c/examples/java8/src/main/java/org/apache/beam/examples/complete/game/UserScore.java) for the complete example pipeline program.
 
-### What Does `UserScore` Do?
+### What Does UserScore Do?
 
 In a day's worth of scoring data, each user ID may have multiple records (if the user plays more than one instance of the game during the analysis window), each with their own score value and timestamp. If we want to determine the total score over all the instances a user plays during the day, our pipeline will need to group all the records together per individual user.
 
