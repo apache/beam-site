@@ -9,7 +9,7 @@ permalink: /use/mobile-gaming-example/
 * TOC
 {:toc}
 
-This section provides a walkthrough of a series of example Apache Beam pipelines that demonstrate more complex functionality than the basic WordCount examples. The pipelines in this section process data from a hypothetical game that users play on their mobile phones. The pipelines demonstrate processing at increasing levels of complexity; the first pipeline, for example, shows how to run a batch analysis job to obtain relatively simple score data, while the later pipelines use Beam's windowing and triggers features to provide low-latency data analysis and more complex intelligence about user's play patterns.
+This section provides a walkthrough of a series of example Apache Beam pipelines that demonstrate more complex functionality than the basic [WordCount](/use/wordcount-example) examples. The pipelines in this section process data from a hypothetical game that users play on their mobile phones. The pipelines demonstrate processing at increasing levels of complexity; the first pipeline, for example, shows how to run a batch analysis job to obtain relatively simple score data, while the later pipelines use Beam's windowing and triggers features to provide low-latency data analysis and more complex intelligence about user's play patterns.
 
 > **Note**: These examples assume some familiarity with the Beam programming model. If you haven't already, we recommend familiarizing yourself with the programming model documentation and running a basic example pipeline before continuing. Note also that these examples use the Java 8 lambda syntax, and thus require Java 8. However, you can create pipelines with equivalent functionality using Java 7.
 
@@ -26,7 +26,7 @@ This means that some data events might be received by the game server significan
 
 Because some of our example pipelines use data files (like logs from the game server) as input, the event timestamp for each game might be embedded in the data--that is, it's a field in each data record. Those pipelines need to parse the event timestamp from each data record after reading it from the input file.
 
-For pipelines that read unbounded game data from a streaming source, the data source sets the intrinsic [timestamp](/learn/programming-guide/#pctimestamps) for each PCollection element to the appropriate event time.
+For pipelines that read unbounded game data from an unbounded source, the data source sets the intrinsic [timestamp](/learn/programming-guide/#pctimestamps) for each PCollection element to the appropriate event time.
 
 The Mobile Game example pipelines vary in complexity, from simple batch analysis to more complex pipelines that can perform real-time analysis and abuse detection. This section walks you through each example and demonstrates how to use Beam features like windowing and triggers to expand your pipeline's capabilites.
 
@@ -34,7 +34,7 @@ The Mobile Game example pipelines vary in complexity, from simple batch analysis
 
 The `UserScore` pipeline is the simplest example for processing mobile game data. `UserScore` determines the total score per user over a finite data set (for example, one day's worth of scores stored on the game server). Pipelines like `UserScore` are best run periodically after all relevant data has been gathered. For example, `UserScore` could run as a nightly job over data gathered during that day.
 
-> **Note:** See [UserScore on GitHub](https://github.com/apache/incubator-beam/blob/ee6ad2fe416cd499aa1b6e2a51aa64da0805cc5c/examples/java8/src/main/java/org/apache/beam/examples/complete/game/UserScore.java) for the complete example pipeline program.
+> **Note:** See [UserScore on GitHub](https://github.com/apache/incubator-beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/UserScore.java) for the complete example pipeline program.
 
 ### What Does UserScore Do?
 
@@ -48,7 +48,7 @@ As the pipeline processes each event, the event score gets added to the sum tota
 
 `UserScore`'s basic pipeline flow does the following:
 
-1. Read the day's score data from a file stored in Google Cloud Storage.
+1. Read the day's score data from a file stored in a text file.
 2. Sum the score values for each unique user by grouping each game event by user ID and combining the score values to get the total score for that particular user.
 3. Write the result data to a [Google Cloud BigQuery](https://cloud.google.com/bigquery/) table.
 
@@ -56,7 +56,8 @@ The following diagram shows score data for a several users over the pipeline ana
 
 <figure id="fig1">
     <img src="/images/gaming-example.gif"
-         width="900" height="263">
+         width="900" height="263"
+         alt="Score data for three users.">
 </figure>
 Figure 1: Score data for three users.
 
@@ -142,7 +143,7 @@ The `HourlyTeamScore` pipeline expands on the basic batch analysis principles us
 
 Like `UserScore`, `HourlyTeamScore` is best thought of as a job to be run periodically after all the relevant data has been gathered (such as once per day). The pipeline reads a fixed data set from a file, and writes the results to a Google Cloud BigQuery table, just like `UserScore`.
 
-> **Note:** See [HourlyTeamScore on GitHub](https://github.com/apache/incubator-beam/blob/ee6ad2fe416cd499aa1b6e2a51aa64da0805cc5c/examples/java8/src/main/java/org/apache/beam/examples/complete/game/HourlyTeamScore.java) for the complete example pipeline program.
+> **Note:** See [HourlyTeamScore on GitHub](https://github.com/apache/incubator-beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/HourlyTeamScore.java) for the complete example pipeline program.
 
 ### What Does HourlyTeamScore Do?
 
@@ -162,7 +163,8 @@ The following diagram shows how the pipeline processes a day's worth of a single
 
 <figure id="fig2">
     <img src="/images/gaming-example-team-scores-narrow.gif"
-         width="900" height="390">
+         width="900" height="390"
+         alt="Score data for two teams.">
 </figure>
 Figure 2: Score data for two teams. Each team's scores are divided into logical windows based on when those scores occurred in event time.
 
@@ -172,7 +174,7 @@ Notice that as processing time advances, the sums are now _per window_; each win
 
 Beam's windowing feature uses the [intrinsic timestamp information](/learn/programming-guide/#pctimestamps) attached to each element of a `PCollection`. Because we want our pipeline to window based on _event time_, we **must first extract the timestamp** that's embedded in each data record apply it to the corresponding element in the `PCollection` of score data. Then, the pipeline can **apply the windowing function** to divide the `PCollection` into logical windows.
 
-Here's the code, which shows how `HourlyTeamScore` uses the [`WithTimestamps`](https://github.com/apache/incubator-beam/blob/f62d04e22679ee2ac19e3ae37dec487d953d51c1/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/WithTimestamps.java) and [`Window`](https://github.com/apache/incubator-beam/blob/f62d04e22679ee2ac19e3ae37dec487d953d51c1/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/windowing/Window.java) transforms to perform these operations:
+Here's the code, which shows how `HourlyTeamScore` uses the [WithTimestamps](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/WithTimestamps.java) and [Window](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/windowing/Window.java) transforms to perform these operations:
 
 ```java
 // Add an element timestamp based on the event log, and apply fixed windowing.
@@ -263,19 +265,17 @@ As written, `HourlyTeamScore` still has a limitation:
 
 ## LeaderBoard: Streaming Processing with Real-Time Game Data
 
-One way we can help address the latency issue present in the `UserScore` and `HourlyTeamScore` pipelines is by reading the score data from a streaming source. The `LeaderBoard` pipeline introduces streaming processing by reading the game score data from [Google Cloud Pub/Sub](https://cloud.google.com/pubsub/), rather than from a file on the game server.
-
-> **Note:** For the `LeaderBoard` pipeline to use Pub/Sub as an input source, the game server would need to actively publish the score data to Pub/Sub as it arrives, rather than simply logging it and writing it to a file.
+One way we can help address the latency issue present in the `UserScore` and `HourlyTeamScore` pipelines is by reading the score data from an unbounded source. The `LeaderBoard` pipeline introduces streaming processing by reading the game score data from an unbounded source that produces an infinite amount of data, rather than from a file on the game server.
 
 The `LeaderBoard` pipeline also demonstrates how to process game score data with respect to both _processing time_ and _event time_. `LeaderBoard` outputs data about both individual user scores and about team scores, each with respect to a different time frame.
 
-Because the `LeaderBoard` pipeline reads the game data from a streaming source as that data is generated, you can think of the pipeline as an ongoing job running concurrently with the game process. `LeaderBoard` can thus provide low-latency insights into how users are playing the game at any given moment—useful if, for example, we want to provide a live web-based scoreboard so that users can track their progress against other users as they play.
+Because the `LeaderBoard` pipeline reads the game data from an unbounded source as that data is generated, you can think of the pipeline as an ongoing job running concurrently with the game process. `LeaderBoard` can thus provide low-latency insights into how users are playing the game at any given moment—useful if, for example, we want to provide a live web-based scoreboard so that users can track their progress against other users as they play.
 
-> **Note:** See [LeaderBoard on GitHub](https://github.com/apache/incubator-beam/blob/ee6ad2fe416cd499aa1b6e2a51aa64da0805cc5c/examples/java8/src/main/java/org/apache/beam/examples/complete/game/LeaderBoard.java) for the complete example pipeline program.
+> **Note:** See [LeaderBoard on GitHub](https://github.com/apache/incubator-beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/LeaderBoard.java) for the complete example pipeline program.
 
 ### What Does LeaderBoard Do?
 
-The `LeaderBoard` pipeline reads game data published to Pub/Sub in near real-time, and uses that data to perform two separate processing tasks:
+The `LeaderBoard` pipeline reads game data published to an unbounded source that produces an infinite amount of data in near real-time, and uses that data to perform two separate processing tasks:
 
 * `LeaderBoard` calculates the total score for every unique user and publishes speculative results for every ten minutes of _processing time_. That is, every ten minutes, the pipeline outputs the total score per user that the pipeline has processed to date. This calculation provides a running "leader board" in close to real time, regardless of when the actual game events were generated.
 
@@ -295,7 +295,8 @@ When we specify a ten-minute processing time trigger for the single global windo
 
 <figure id="fig3">
     <img src="/images/gaming-example-proc-time-narrow.gif"
-         width="900" height="263">
+         width="900" height="263"
+         alt="Score data for for three users.">
 </figure>
 Figure 3: Score data for for three users. Each user's scores are grouped together in a single global window, with a trigger that generates a snapshot for output every ten minutes.
 
@@ -340,8 +341,6 @@ We want our pipeline to also output the total score for each team during each ho
 
 Because we consider each hour individually, we can apply fixed-time windowing to our input data, just like in `HourlyTeamScore`. To provide the speculative updates and updates on late data, we'll specify additional trigger parameters. The trigger will cause each window to calculate and emit results at an interval we specify (in this case, every five minutes), and also to keep triggering after the window is considered "complete" to account for late data. Just like the user score calculation, we'll set the trigger to accumulating mode to ensure that we get a running sum for each hour-long window.
 
-> **Note:** `LeaderBoard` reads its input data from Pub/Sub. We don't have to manually extract the timestamp from the data itself; the timestamp is derived from a Pub/Sub data element attribute.
-
 The triggers for speculative updates and late data help with the problem of [time skew](/learn/programming-guide/#windowing). Events in the pipeline aren't necessarily processed in the order in which they actually occurred according to their timestamps; they may arrive in the pipeline out of order, or late (in our case, because they were generated while the user's phone was out of contact with a network). Beam needs a way to determine when it can reasonably assume that it has "all" of the data in a given window: this is called the _watermark_.
 
 In an ideal world, all data would be processed immediately when it occurs, so the processing time would be equal to (or at least have a linear relationship to) the event time. However, because distributed systems contain some inherent inaccuracy (like our late-reporting phones), Beam often uses a heuristic watermark.
@@ -350,11 +349,12 @@ The following diagram shows the relationship between ongoing processing time and
 
 <figure id="fig4">
     <img src="/images/gaming-example-event-time-narrow.gif"
-         width="900" height="390">
+         width="900" height="390"
+         alt="Score data by team, windowed by event time.">
 </figure>
 Figure 4: Score data by team, windowed by event time. A trigger based on processing time causes the window to emit speculative early results and include late results.
 
-The dotted line in the diagram is the "ideal" **watermark**: Beam's notion of when all data in a given window can reasonably considered to have arrived. The irregular solid line represents the actual watermark, as determined by the data source (in our case, Pub/Sub).
+The dotted line in the diagram is the "ideal" **watermark**: Beam's notion of when all data in a given window can reasonably considered to have arrived. The irregular solid line represents the actual watermark, as determined by the data source.
 
 Data arriving above the solid watermark line is _late data_—this is a score event that was delayed (perhaps generated offline) and arrived after the window to which it belongs had closed. Our pipeline's late-firing trigger ensures that this late data is still included in the sum.
 
@@ -362,7 +362,6 @@ The following code example shows how `LeaderBoard` applies fixed-time windowing 
 
 ```java
 // Extract team/score pairs from the event stream, using hour-long windows by default.
-@VisibleForTesting
 static class CalculateTeamScores
     extends PTransform<PCollection<GameActionInfo>, PCollection<KV<String, Integer>>> {
   private final Duration teamWindowDuration;
@@ -398,9 +397,9 @@ Taken together, these processing strategies let us address the latency and compl
 
 While `LeaderBoard` demonstrates how to use basic windowing and triggers to perform low-latency and flexible data analysis, we can use more advanced windowing techniques to perform more comprehensive analysis. This might include some calculations designed to detect system abuse (like spam) or to gain insight into user behavior. The `GameStats` pipeline builds on the low-latency functionality in `LeaderBoard` to demonstrate how you can use Beam to perform this kind of advanced analysis.
 
-Like `LeaderBoard`, `GameStats` reads data from a streaming source, in this case Pub/Sub. It is best thought of as an ongoing job that provides insight into the game as users play.
+Like `LeaderBoard`, `GameStats` reads data from an unbounded source. It is best thought of as an ongoing job that provides insight into the game as users play.
 
-> **Note:** See [GameStats on GitHub](https://github.com/apache/incubator-beam/blob/ee6ad2fe416cd499aa1b6e2a51aa64da0805cc5c/examples/java8/src/main/java/org/apache/beam/examples/complete/game/GameStats.java) for the complete example pipeline program.
+> **Note:** See [GameStats on GitHub](https://github.com/apache/incubator-beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/GameStats.java) for the complete example pipeline program.
 
 ### What Does GameStats Do?
 
@@ -491,7 +490,7 @@ rawEvents
 
 #### Analyzing Usage Patterns
 
-We can gain some insight on when users are playing our game, and for how long, by examining the event times for each game score and grouping scores with similar event times into _sessions_. `GameStats` uses Beam's built-in [session windowing](https://github.com/apache/incubator-beam/blob/f62d04e22679ee2ac19e3ae37dec487d953d51c1/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/windowing/Sessions.java) function to group user scores into sessions based on the time they occurred.
+We can gain some insight on when users are playing our game, and for how long, by examining the event times for each game score and grouping scores with similar event times into _sessions_. `GameStats` uses Beam's built-in [session windowing](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/windowing/Sessions.java) function to group user scores into sessions based on the time they occurred.
 
 When you set session windowing, you specify a _minimum gap duration_ between events. All events whose arrival times are closer together than the minimum gap duration are grouped into the same window. Events where the difference in arrival time is greater than the gap are grouped into separate windows. Depending on how we set our minimum gap duration, we can safely assume that scores in the same session window are part of the same (relatively) uninterrupted stretch of play. Scores in a different window indicate that the user stopped playing the game for at least the minimum gap time before returning to it later.
 
@@ -500,7 +499,8 @@ The following diagram shows how data might look when grouped into session window
 <figure id="fig5">
     <img src="/images/gaming-example-session-windows.png"
          width="662" height="521"
-         alt="A diagram representing session windowing.">
+         alt="A diagram representing session windowing."
+         alt="User sessions, with a minimum gap duration.">
 </figure>
 Figure 5: User sessions, with a minimum gap duration. Note how each user has different sessions, according to how many instances they play and how long their breaks between instances are.
 
