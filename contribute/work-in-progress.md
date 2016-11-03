@@ -16,6 +16,12 @@ As mentioned in the [Contribution Guide](/contribute/contribution-guide/), all w
 
 The community regular tags good getting started tasks with the label `starter`. Use a quick [JIRA search](https://issues.apache.org/jira/issues?jql=project%20%3D%20BEAM%20AND%20status%20%3D%20Open%20AND%20labels%20%3D%20starter) to identify ways you can get started [contributing](/contribute/contribution-guide/) to Beam.
 
+## Beam Proposals
+
+Larger contributions use the JIRA issue type `proposal` to make the easier to identify and track, particularly during the [design](/contribute/contribution-guide#design) phase.
+
+You can use JIRA searches on this issue type to identify proposals that are initial [ideas](TODO), [under discussion](TODO), [in implementation](TODO), and [completed](TODO).
+
 ## Feature Branches
 
 Larger features with multiple active developers may be developed on a [feature branch](/contribute/contribution-guide/#feature-branches) before being merged in the master branch. In particular, this is often used for initial development of new components like SDKs or runners.
