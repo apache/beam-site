@@ -3,6 +3,8 @@ $(document).ready(function(){
     var elAttr = "div[class^=\"language-\"]";
     // Default language.
     var defLang = "language-java";
+    // Wrapper class for css stylings.
+    var wrapper="language-switcher"
 
     /**
       * @desc Generate bootstrapped like nav template, showing supported languages in nav.
@@ -16,7 +18,7 @@ $(document).ready(function(){
             langList+="<li data-lang=\""+languages[i]+"\"> \
                 <a>"+languages[i].replace("language-","")+"</a></li>";
         }
-        return "<div class=\"language-switcher "+languages.join(" ")+"\"> \
+        return "<div class=\""+wrapper+" "+languages.join(" ")+"\"> \
                 <ul class=\"nav nav-tabs\">"+langList+"</ul> </div>";
     }
 
@@ -27,7 +29,7 @@ $(document).ready(function(){
     */
     function getLang(text) {
         var lang = /language-\w+/i.exec(text)
-        return (lang)? lang[0]:'';
+        return (lang)? lang[0]:"";
     }
 
     /**
@@ -43,7 +45,7 @@ $(document).ready(function(){
             return lang;
         }
 
-        lang.push(getLang(el.attr('class')))
+        lang.push(getLang(el.attr("class")))
         return nextFetch(el.next(), lang)
     }
 
@@ -51,17 +53,12 @@ $(document).ready(function(){
       * @desc Perform language switch on page, and persist it's state.
     */
     var switchLanguage = function() {
-        var langPref = localStorage.getItem('langPref') || defLang;
-
-        // If selected language has no code, then revert back to default.
-        if($("div."+langPref).length === 0){
-            langPref = defLang;
-        }
+        var langPref = localStorage.getItem("codePreference") || defLang;
 
         // Adjusting active elements in navigation header.
-        $(".language-switcher li").removeClass('active').each(function(){
+        $("."+wrapper+" li").removeClass("active").each(function(){
             if($(this).data("lang") === langPref) {
-                $(this).addClass('active');
+                $(this).addClass("active");
             }
         });
 
@@ -79,9 +76,9 @@ $(document).ready(function(){
     });
 
     // Attaching on click listener, to li elements.
-    $(".language-switcher ul li").click(function(el) {
+    $("."+wrapper+" ul li").click(function(el) {
         // Making language preferences presistance, for user.
-        localStorage.setItem('langPref', $(this).data("lang"));
+        localStorage.setItem("codePreference", $(this).data("lang"));
         switchLanguage();
     })
 
