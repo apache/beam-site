@@ -53,6 +53,11 @@ $(document).ready(function(){
     var switchLanguage = function() {
         var langPref = localStorage.getItem('langPref') || defLang;
 
+        // If selected language has no code, then revert back to default.
+        if($("div."+langPref).length === 0){
+            langPref = defLang;
+        }
+
         // Adjusting active elements in navigation header.
         $(".language-switcher li").removeClass('active').each(function(){
             if($(this).data("lang") === langPref) {
