@@ -276,7 +276,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: pending Spark engine support
@@ -295,7 +295,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: pending Spark engine support
@@ -314,7 +314,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: pending Spark engine support
@@ -333,7 +333,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: pending Spark engine support
@@ -362,7 +362,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
@@ -381,7 +381,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
@@ -400,7 +400,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'Yes'
               l2: "This is Spark streaming's native model"
@@ -419,7 +419,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
@@ -458,7 +458,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
@@ -477,7 +477,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
@@ -525,7 +525,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'Yes'
               l2: fully supported
@@ -544,7 +544,7 @@ capability-matrix-snapshot:
             - class: flink
               l1: 'Yes'
               l2: fully supported
-              l3: "The Runner uses Beam's Windowing and Triggering logic and code."
+              l3: ''
             - class: spark
               l1: 'No'
               l2: ''
