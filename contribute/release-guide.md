@@ -207,6 +207,12 @@ Set up a few environment variables to simplify Maven commands that follow. This 
     RC_NUM="1"
     TAG="v${VERSION}-RC${RC_NUM}"
 
+Before running the command to prepare the release you might have to start `gpg-agent` so that your key can be unlocked by your passphrase for signing the release. You can do this with something like this:
+
+    eval $(gpg-agent --daemon --no-grab --write-env-file $HOME/.gpg-agent-info)
+    export GPG_TTY=$(tty)
+    export GPG_AGENT_INFO
+
 Use Maven release plugin to build the release artifacts, as follows:
 
     mvn release:prepare \
@@ -263,7 +269,7 @@ Use Maven Javadoc plugin to generate the new Java reference manual, as follows:
         -Ddoctitle="Apache Beam SDK for Java, version ${VERSION}" \
         -Dwindowtitle="Apache Beam SDK for Java, version ${VERSION}" \
         -Dmaven.javadoc.failOnError=false \
-        -DexcludePackageNames="org.apache.beam.examples,org.apache.beam.runners.dataflow.internal,org.apache.beam.runners.flink.examples,org.apache.beam.runners.flink.translation,org.apache.beam.runners.spark.examples,org.apache.beam.runners.spark.translation"
+        -DexcludePackageNames="org.apache.beam.examples,org.apache.beam.runners.dataflow.internal,org.apache.beam.runners.flink.examples,org.apache.beam.runners.flink.translation,org.apache.beam.runners.spark.examples,org.apache.beam.runners.spark.translation,org.apache.beam.sdk.microbenchmarks.coders.generated,org.apache.beam.sdk.microbenchmarks.transforms.generated,org.openjdk.jmh.infra.generated"
 
 By default, the Javadoc will be generated in `target/site/apidocs/`. Let `${JAVADOC_ROOT}` be the absolute path to `apidocs`. ([Pull request #1015](https://github.com/apache/incubator-beam/pull/1015) will hopefully simplify this process.)
 
