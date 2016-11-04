@@ -50,8 +50,8 @@ categories:
             l3: "Uses Flink's keyBy for key grouping. When grouping by window in streaming (creating the panes) the Flink runner uses the Beam code. This guarantees support for all windowing and triggering mechanisms."
           - class: spark
             l1: 'Partially'
-            l2: support for grouping by panes (streaming) is a work in progress.
-            l3: Using groupByKey for grouping, but only if the pipeline explicitly calls for GroupByKey or the model forces it. For efficient group-compute see Combine.
+            l2: fully supported in batch mode
+            l3: "Using Spark's <tt>groupByKey</tt>. GroupByKey with multiple trigger firings in streaming mode is a work in progress." 
       - name: Flatten
         values:
           - class: model
@@ -88,7 +88,7 @@ categories:
           - class: spark
             l1: 'Yes'
             l2: fully supported
-            l3: Using combineByKey and aggregate functions.
+            l3: "Using Spark's <tt>combineByKey</tt> and <tt>aggregate</tt> functions."
 
       - name: Composite Transforms
         values:
@@ -126,7 +126,7 @@ categories:
           - class: spark
             l1: 'Yes'
             l2: fully supported
-            l3: A side input is actually a broadcast variable in Spark. In streaming mode, a side input could be updated between micro-batches. The distribution of side inputs to workers is not partitioned, but only a worker assigned with a relevant task will get a copy of the side input.
+            l3: "Using Spark's broadcast variables. In streaming mode, side inputs may update but only between micro-batches."
 
       - name: Source API
         values:
