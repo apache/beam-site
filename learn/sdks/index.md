@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Beam SDKs"
-permalink: /learn/runners/
+permalink: /learn/sdks/
 ---
 # Apache Beam SDKs
 
