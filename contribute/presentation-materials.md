@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Beam Presentation Materials"
-permalink: /contribute/give-talks/
+permalink: /contribute/presentation-materials/
 redirect_from: /learn/presentation-materials/
 ---
 
