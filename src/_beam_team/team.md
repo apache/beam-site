@@ -57,8 +57,8 @@ members:
     roles: champion, committer, PPMC
     time_zone: "+1"
   - name: Jesse Anderson
-    apache_id:
-    email: jesse [at] smokinghand [dot] com
+    apache_id: jesseanderson
+    email: jesseanderson [at] apache [dot] org
     organization: Smoking Hand
     roles: committer
     time_zone: "-8"
@@ -99,8 +99,8 @@ members:
     roles: committer, PPMC
     time_zone: "+1"
   - name: Thomas Groh
-    apache_id:
-    email:
+    apache_id: tgroh
+    email: tgroh [at] apache [dot] org
     organization: Google
     roles: committer
     time_zone: "-8"
