@@ -45,7 +45,7 @@ The pipeline illustrated in Figure 2 below reads its input, first names (Strings
 
 <figure id="fig2">
     <img src="/images/design-your-pipeline-multiple-pcollections.png"
-         alt="A pipeline with multiple transforms. Note that the PCollection of BigQuery table rows is processed by two transforms.">
+         alt="A pipeline with multiple transforms. Note that the PCollection of table rows is processed by two transforms.">
 </figure>
 Figure 2: A pipeline with multiple transforms. Note that the PCollection of the database table rows is processed by two transforms.
 
