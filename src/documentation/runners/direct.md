@@ -17,7 +17,7 @@ Using the Direct Runner for testing and development helps ensure that pipelines 
 
 Here are some resources with information about how to test your pipelines.
 * [Testing Unbounded Pipelines in Apache Beam]({{ site.baseurl }}/blog/2016/10/20/test-stream.html) talks about the use of Java classes [`PAssert`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html) and [`TestStream`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/TestStream.html) to test your pipelines.
-* The [Apache Beam WordCount Example]({{ site.baseurl }}/get-started/wordcount-example/) contains an example of logging and testing a pipeline with Java [`PAssert`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html).
+* The [Apache Beam WordCount Example]({{ site.baseurl }}/get-started/wordcount-example/) contains an example of logging and testing a pipeline with [`PAssert`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html).
 
 
 ## Direct Runner prerequisites and setup
@@ -25,8 +25,6 @@ Here are some resources with information about how to test your pipelines.
 You must specify your dependency on the Direct Runner.
 
 ```java
-// If you use Maven and the SDK for Java, add the following dependency to your pom.xml file:
-
 <dependency>
    <groupId>org.apache.beam</groupId>
    <artifactId>beam-runners-direct-java</artifactId>
