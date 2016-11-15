@@ -46,7 +46,7 @@ You must specify your dependency on the Cloud Dataflow Runner.
 <dependency>
   <groupId>org.apache.beam</groupId>
   <artifactId>beam-runners-google-cloud-dataflow-java</artifactId>
-  <version>0.3.0-incubating</version>
+  <version>{{ site.release_latest }}</version>
   <scope>runtime</scope>
 </dependency>
 ```
@@ -87,7 +87,7 @@ When executing your pipeline with the Cloud Dataflow Runner, set these pipeline 
 <tr>
   <td><code>tempLocation</code></td>
   <td>Optional. Path for temporary files. If set to a valid Google Cloud Storage URL that begins with <code>gs://</code>, <code>tempLocation</code> is used as the default value for <code>gcpTempLocation</code>.</td>
-  <td>No default value</td>
+  <td>No default value.</td>
 </tr>
 <tr>
   <td><code>gcpTempLocation</code></td>
@@ -116,4 +116,4 @@ To connect to your job and block until it is completed, call `waitToFinish` on t
 ### Streaming Execution
 
 If your pipeline uses an unbounded data source or sink, you must set the `streaming` option to `true`.
-
+{{ site.release_latest }}
