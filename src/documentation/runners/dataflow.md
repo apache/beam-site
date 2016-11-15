@@ -116,4 +116,3 @@ To connect to your job and block until it is completed, call `waitToFinish` on t
 ### Streaming Execution
 
 If your pipeline uses an unbounded data source or sink, you must set the `streaming` option to `true`.
-{{ site.release_latest }}
