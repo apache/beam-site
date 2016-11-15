@@ -6,29 +6,29 @@ redirect_from: /learn/runners/dataflow/
 ---
 # Using the Google Cloud Dataflow Runner
 
-The Google Cloud Dataflow runner uses the [Cloud Dataflow managed service](https://cloud.google.com/dataflow/service/dataflow-service-desc). When you run your pipeline with the Cloud Dataflow service, the runner uploads your executable code and dependencies to a Google Cloud Storage bucket and creates a Cloud Dataflow job, which executes your pipeline on managed resources in Google Cloud Platform.
+The Google Cloud Dataflow Runner uses the [Cloud Dataflow managed service](https://cloud.google.com/dataflow/service/dataflow-service-desc). When you run your pipeline with the Cloud Dataflow service, the runner uploads your executable code and dependencies to a Google Cloud Storage bucket and creates a Cloud Dataflow job, which executes your pipeline on managed resources in Google Cloud Platform.
 
-The Cloud Dataflow runner and service is suitable for large scale continuous jobs, and provides:
+The Cloud Dataflow Runner and service are suitable for large scale, continuous jobs, and provide:
 
 * a fully managed service
-* [autoscaling](https://cloud.google.com/dataflow/service/dataflow-service-desc#autoscaling) of the number of VMs throughout the lifetime of the job
+* [autoscaling](https://cloud.google.com/dataflow/service/dataflow-service-desc#autoscaling) of the number of workers throughout the lifetime of the job
 * [dynamic work rebalancing](https://cloud.google.com/blog/big-data/2016/05/no-shard-left-behind-dynamic-work-rebalancing-in-google-cloud-dataflow)
 
-The [Beam Capability Matrix]({{ site.baseurl }}/documentation/runners/capability-matrix/) documents the supported capabilities of the Cloud Dataflow runner.
+The [Beam Capability Matrix]({{ site.baseurl }}/documentation/runners/capability-matrix/) documents the supported capabilities of the Cloud Dataflow Runner.
 
-## Cloud Dataflow runner prerequisites and setup
-To use the Cloud Dataflow runner, you must complete the following setup:
+## Cloud Dataflow Runner prerequisites and setup
+To use the Cloud Dataflow Runner, you must complete the following setup:
 
 1. Select or create a Google Cloud Platform Console project.
 
 2. Enable billing for your project.
 
-3. Enable APIs: Cloud Dataflow, Compute Engine, Cloud Logging, Cloud Storage, Cloud Storage JSON, BigQuery, Cloud Pub/Sub, and Cloud Datastore.
+3. Enable required Google Cloud APIs: Cloud Dataflow, Compute Engine, Stackdriver Logging, Cloud Storage, and Cloud Storage JSON. You may need to enable additional APIs (such as BigQuery, Cloud Pub/Sub, or Cloud Datastore) if you use them in your pipeline code.
 
-4. Install the Cloud SDK.
+4. Install the Google Cloud SDK.
 
 5. Create a Cloud Storage bucket.
-    * In the Cloud Platform Console, go to the Cloud Storage browser.
+    * In the Google Cloud Platform Console, go to the Cloud Storage browser.
     * Click **Create bucket**.
     * In the **Create bucket** dialog, specify the following attributes:
       * _Name_: A unique bucket name. Do not include sensitive information in the bucket name, as the bucket namespace is global and publicly visible.
@@ -40,11 +40,9 @@ For more information, see the *Before you begin* section of the [Cloud Dataflow 
 
 ### Specify your dependency
 
-You must specify your dependency on the Cloud Dataflow runner.
+You must specify your dependency on the Cloud Dataflow Runner.
 
-For example, if you are using Maven for development and want to use the SDK for Java with [DataflowRunner]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/dataflow/DataflowRunner.html), add the following dependency to your `pom.xml` file:
-
-```
+```java
 <dependency>
   <groupId>org.apache.beam</groupId>
   <artifactId>beam-runners-google-cloud-dataflow-java</artifactId>
@@ -61,9 +59,9 @@ Before running your pipeline, you must authenticate with the Google Cloud Platfo
 gcloud auth application-default login
 ```
 
-## Pipeline options for the Cloud Dataflow runner
+## Pipeline options for the Cloud Dataflow Runner
 
-When executing your pipeline from the command-line, set these pipeline options.
+When executing your pipeline with the Cloud Dataflow Runner, set these pipeline options.
 
 <table class="table table-bordered">
 <tr>
@@ -79,11 +77,11 @@ When executing your pipeline from the command-line, set these pipeline options.
 <tr>
   <td><code>project</code></td>
   <td>The project ID for your Google Cloud Project.</td>
-  <td>If not set, defaults to the default project of the current user.</td>
+  <td>If not set, defaults to the default project in the current environment. The default project is set via <code>gcloud</code>.</td>
 </tr>
 <tr>
   <td><code>streaming</code></td>
-  <td>Whether streaming mode is enabled or disabled; <code>true</code> if enabled.</td>
+  <td>Whether streaming mode is enabled or disabled; <code>true</code> if enabled. Set to <code>true</code> if running pipelines with unbounded <code>PCollection</code>s.</td>
   <td><code>false</code></td>
 </tr>
 <tr>
@@ -98,7 +96,7 @@ When executing your pipeline from the command-line, set these pipeline options.
 </tr>
 <tr>
   <td><code>stagingLocation</code></td>
-  <td>Cloud Storage bucket path for staging your binary and any temporary files. Must be a valid Cloud Storage URL that begins with <code>gs://</code>.</td>
+  <td>Optional. Cloud Storage bucket path for staging your binary and any temporary files. Must be a valid Cloud Storage URL that begins with <code>gs://</code>.</td>
   <td>If not set, defaults to a staging directory within <code>gcpTempLocation</code>.</td>
 </tr>
 </table>
@@ -113,7 +111,7 @@ While your pipeline executes, you can monitor the job's progress, view details o
 
 ### Blocking Execution
 
-To connect to your job and block until it is completed, call `waitToFinish` on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that typing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
+To connect to your job and block until it is completed, call `waitToFinish` on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow Runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that pressing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
 
 ### Streaming Execution
 
