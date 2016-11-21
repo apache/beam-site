@@ -6,9 +6,10 @@ redirect_from:
   - /use/beam-overview/
   - /docs/use/beam-overview/
 ---
-# Apache Beam Overview
 
-Apache Beam is an open source, unified programming model that you can use to create a data processing **pipeline**. You start by building a program that defines the pipeline using one of the open source Beam SDKs. The pipeline is then executed by one of Beam's supported **distributed processing back-ends**, which include [Apache Flink](http://flink.apache.org), [Apache Spark](http://spark.apache.org), and [Google Cloud Dataflow](https://cloud.google.com/dataflow).
+# Apache Beam (incubating)
+
+Apache Beam is an open source, unified programming model that you can use to create a data processing **pipeline**. You start by building a program that defines the pipeline using one of the open source Beam SDKs. The pipeline is then executed by one of Beam's supported **distributed processing back-ends**, which include [Apache Apex](http://apex.apache.org), [Apache Flink](http://flink.apache.org), [Apache Spark](http://spark.apache.org), and [Google Cloud Dataflow](https://cloud.google.com/dataflow).
 
 Beam is particularly useful for [Embarrassingly Parallel](http://en.wikipedia.org/wiki/Embarassingly_parallel) data processing tasks, in which the problem can be decomposed into many smaller bundles of data that can be processed independently and in parallel. You can also use Beam for Extract, Transform, and Load (ETL) tasks and pure data integration. These tasks are useful for moving data between different storage media and data sources, transforming data into a more desirable format, or loading data onto a new system.
 
@@ -60,6 +61,23 @@ Beam currently supports Runners that work with the following distributed process
   <td>Apache Spark</td>
   <td>In Development</td>
 </tr>
+<tr>
+  <td>Apache Apex</td>
+  <td>In Development</td>
+</tr>
 </table>
 
 **Note:** You can always execute your pipeline locally for testing and debugging purposes.
+
+## Getting Started with Apache Beam
+
+Interested in working with Apache Beam? Great! Here's how to get started:
+
+* If you are interested in using Beam for your data processing tasks, use the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section to get up to speed on the details.
+* If you're interested in contributing to the Beam SDKs or Runners, start with the [Contribute]({{ site.baseurl }}/contribute/) section.
+
+
+Apache Beam is an effort undergoing incubation at [The Apache Software Foundation (ASF)](http://www.apache.org) sponsored by the Apache Incubator PMC. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
+
+
+Apache Beam (incubating) is available under [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
