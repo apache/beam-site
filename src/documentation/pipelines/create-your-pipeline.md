@@ -34,37 +34,31 @@ Pipeline p = Pipeline.create(options);
 
 ### Configuring Pipeline Options
 
-Use the pipeline options to configure different aspects of your pipeline, such as the pipeline runner that will execute your pipeline and any runner-specific configuration required by the chosen runner.
-
-For example, if you're using the Google Cloud Dataflow service to run your pipeline, your pipeline options will include information about your Cloud Platform project required by the Cloud Dataflow service, such as your project ID and Cloud Storage staging locations. The pipeline options also let you control how many workers the Dataflow service should assign to your pipeline job, and where to direct your pipeline job's status messages.
-
-A key property in the pipeline options that determines where your pipeline executes is the pipeline runner. The pipeline runner property also specifies whether your pipeline's execution is to be asynchronous or blocking.
+Use the pipeline options to configure different aspects of your pipeline, such as the pipeline runner that will execute your pipeline and any runner-specific configuration required by the chosen runner. Your pipeline options will potentially include information such as your project ID or a location for storing files. 
 
 When you run the pipeline on a runner of your choice, a copy of the PipelineOptions will be available to your code. For example, you can read PipelineOptions from a DoFn's Context.
-
-> **Note:** Access `PipelineOptions` inside any [ParDo](/documentation/programming-guide/#transforms-pardo)'s `DoFn` instance by using the method `ProcessContext.getPipelineOptions`.
 
 #### Setting PipelineOptions from Command-Line Arguments
 
 While you can configure your pipeline by creating a `PipelineOptions` object and setting the fields directly, the Beam SDKs include a command-line parser that you can use to set fields in `PipelineOptions` using command-line arguments.
 
-To read options from the command-line, construct your `PipelineOptions` object using the method `PipelineOptionsFactory.fromArgs`, as in the following example code:
+To read options from the command-line, construct your `PipelineOptions` object as demonstrated in the following example code:
 
 ```java
 MyOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().create();
 ```
 
-> **Note:** Appending the method `.withValidation` will check for required command-line arguments and validate argument values.
-
-Using `PipelineOptionsFactory.fromArgs` interprets command-line arguments that follow the format:
+This interprets command-line arguments that follow the format:
 
 ```java
 --<option>=<value>
 ```
 
+> **Note:** Appending the method `.withValidation` will check for required command-line arguments and validate argument values.
+
 Building your `PipelineOptions` this way lets you specify any of the options as a command-line argument.
 
-> **Note:** The [WordCount example pipeline](/get-started/wordcount-example) demonstrates how to set pipeline options at runtime by using command-line options.
+> **Note:** The [WordCount example pipeline]({{ site.baseurl }}/get-started/wordcount-example) demonstrates how to set pipeline options at runtime by using command-line options.
 
 #### Creating Custom Options
 
@@ -113,7 +107,7 @@ The following example code shows how to `apply` a `TextIO.Read` root transform t
 
 ```java
 PCollection<String> lines = p.apply(
-  TextIO.Read.named("ReadMyFile").from("gs://some/inputData.txt"));
+  apply("ReadLines", TextIO.Read.from("gs://some/inputData.txt"));
 ```
 
 ## Applying Transforms to Process Pipeline Data
@@ -122,7 +116,7 @@ To use transforms in your pipeline, you **apply** them to the `PCollection` that
 
 To apply a transform, you call the `apply` method on each `PCollection` that you want to process, passing the desired transform object as an argument.
 
-The Beam SDKs contain a number of different transforms that you can apply to your pipeline's `PCollection`s. These include general-purpose core transforms, such as [ParDo](/documentation/programming-guide/#transforms-pardo) or [Combine](/documentation/programming-guide/#transforms-combine). There are also pre-written [composite transforms](/documentation/programming-guide/#transforms-composite) included in the SDKs, which combine one or more of the core transforms in a useful processing pattern, such as counting or combining elements in a collection. You can also define your own more complex composite transforms to fit your pipeline's exact use case.
+The Beam SDKs contain a number of different transforms that you can apply to your pipeline's `PCollection`s. These include general-purpose core transforms, such as [ParDo]({{ site.baseurl }}/documentation/programming-guide/#transforms-pardo) or [Combine]({{ site.baseurl }}/documentation/programming-guide/#transforms-combine). There are also pre-written [composite transforms]({{ site.baseurl }}/documentation/programming-guide/#transforms-composite) included in the SDKs, which combine one or more of the core transforms in a useful processing pattern, such as counting or combining elements in a collection. You can also define your own more complex composite transforms to fit your pipeline's exact use case.
 
 In the Beam Java SDK, each transform is a subclass of the base class `PTransform`. When you call `apply` on a `PCollection`, you pass the `PTransform` you want to use as an argument.
 
@@ -145,13 +139,23 @@ The following example code shows how to `apply` a `TextIO.Write` transform to wr
 ```java
 PCollection<String> filteredWords = ...;
 
-filteredWords.apply(TextIO.Write.named("WriteMyFile").to("gs://some/outputData.txt"));
+filteredWords.apply("WriteMyFile", TextIO.Write.to("gs://some/outputData.txt"));
 ```
 
 ## Running Your Pipeline
 
-Once you have constructed your pipeline, you use the `run` method to execute the pipeline. Pipelines are executed asynchronously: the program you create sends a specification for your pipeline to a **pipeline runner**, which then constructs and runs the actual series of pipeline operations. 
+Once you have constructed your pipeline, use the `run` method to execute the pipeline. Pipelines are executed asynchronously: the program you create sends a specification for your pipeline to a **pipeline runner**, which then constructs and runs the actual series of pipeline operations. 
 
 ```java
 p.run();
 ```
+
+The `run` method is asynchronous. If you'd like a blocking execution instead, run your pipeline appending the `waitUntilFinish` method:
+
+```java
+p.run().waitUntilFinish();
+```
+
+## What's next
+
+*   [Test your pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline).

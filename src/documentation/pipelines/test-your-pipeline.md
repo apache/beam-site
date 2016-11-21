@@ -10,14 +10,21 @@ permalink: /documentation/pipelines/test-your-pipeline/
 
 Testing your pipeline is a particularly important step in developing an effective data processing solution. The indirect nature of the Beam model, in which your user code constructs a pipeline graph to be executed remotely, can make debugging-failed runs a non-trivial task. Often it is faster and simpler to perform local unit testing on your pipeline code than to debug a pipeline's remote execution.
 
-Before running your pipeline on the service of your choice, unit testing your pipeline code locally is often the best way to identify and fix bugs in your pipeline code. Unit testing your pipeline locally also allows you to use your familiar/favorite local debugging tools.
+Before running your pipeline on the runner of your choice, unit testing your pipeline code locally is often the best way to identify and fix bugs in your pipeline code. Unit testing your pipeline locally also allows you to use your familiar/favorite local debugging tools.
 
-**Note:** When testing your code using the Google Cloud Dataflow service, consider limiting the number of worker instances for your pipeline to 1, or the minimum number appropriate for your test. Limiting the number of worker instances used during repeated test runs can provide significant time and cost savings. You can limit the number of workers your pipeline uses during test runs by setting the `--maxNumWorkers` execution option when you run your test pipeline.
+You can use [DirectRunner]({{ site.baseurl }}/documentation/runners/direct), a local runner helpful for testing and local development.
+
+After you test your pipeline using the `DirectRunner`, you can use the runner of your choice to test on a small scale. For example, use the Flink runner with a local or remote Flink cluster. 
+
+
+
+
+
 
 The Beam SDKs provide a number of ways to unit test your pipeline code, from the lowest to the highest levels. From the lowest to the highest level, these are:
 
-*   You can test the individual function objects, such as [DoFn](/documentation/programming-guide/#transforms-pardo)s, inside your pipeline's core transforms.
-*   You can test an entire [Composite Transform](/documentation/programming-guide/#transforms-composite) as a unit.
+*   You can test the individual function objects, such as [DoFn]({{ site.baseurl }}/documentation/programming-guide/#transforms-pardo)s, inside your pipeline's core transforms.
+*   You can test an entire [Composite Transform]({{ site.baseurl }}/documentation/programming-guide/#transforms-composite) as a unit.
 *   You can perform an end-to-end test for an entire pipeline.
 
 To support unit testing, the Beam SDK for Java provides a number of test classes in the [testing package](https://github.com/apache/incubator-beam/tree/master/sdks/java/core/src/test/java/org/apache/beam/sdk). You can use these tests as references and guides.
@@ -32,7 +39,7 @@ The Beam SDK for Java provides a convenient way to test an individual `DoFn` cal
 
 1.  Create a `DoFnTester`. You'll need to pass an instance of the `DoFn` you want to test to the static factory method for `DoFnTester`.
 2.  Create one or more main test inputs of the appropriate type for your `DoFn`. If your `DoFn` takes side inputs and/or produces side outputs, you should also create the side inputs and the side output tags.
-3.  Call `DoFnTester.processBatch` to process the main inputs.
+3.  Call `DoFnTester.processBundle` to process the main inputs.
 4.  Use JUnit's `Assert.assertThat` method to ensure the test outputs returned from `processBatch` match your expected values.
 
 ### Creating a DoFnTester
@@ -88,7 +95,7 @@ TupleTagList tags = TupleTagList.of(tag1).and(tag2);
 fnTester.setSideOutputTags(tags);
 ```
 
-See the `ParDo` documentation on [side inputs](/documentation/programming-guide/#transforms-sideio) for more information.
+See the `ParDo` documentation on [side inputs]({{ site.baseurl }}/documentation/programming-guide/#transforms-sideio) for more information.
 
 ### Processing Test Inputs and Checking Results
 
@@ -127,13 +134,9 @@ To test a composite transform you've created, you can use the following pattern:
 *   `Apply` your composite transform to the input `PCollection` and save the resulting output `PCollection`.
 *   Use `PAssert` and its subclasses to verify that the output `PCollection` contains the elements that you expect.
 
-### Using the SDK Test Classes
+### TestPipeline
 
-[TestPipeline](/https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/testing/TestPipeline.java) and [PAssert](http://beam.incubator.apache.org/documentation/sdks/javadoc/0.3.0-incubating/org/apache/beam/sdk/testing/PAssert.html) are classes included in the Beam Java SDK specifically for testing transforms.
-
-#### TestPipeline
-
-For tests, use `TestPipeline` in place of `Pipeline` when you create the pipeline object. Unlike `Pipeline.create`, `TestPipeline.create` handles setting `PipelineOptions` interally.
+[TestPipeline](https://github.com/apache/incubator-beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/testing/TestPipeline.java) is a class included in the Beam Java SDK specifically for testing transforms. For tests, use `TestPipeline` in place of `Pipeline` when you create the pipeline object. Unlike `Pipeline.create`, `TestPipeline.create` handles setting `PipelineOptions` interally.
 
 You create a `TestPipeline` as follows:
 
@@ -141,9 +144,15 @@ You create a `TestPipeline` as follows:
 Pipeline p = TestPipeline.create();
 ```
 
-#### PAssert
+> **Note:** Read about testing unbounded pipelines in Beam in [this blog post]({{ site.baseurl }}/blog/2016/10/20/test-stream.html).
 
-`PAssert` is an assertion on the contents of a `PCollection`. You can use `PAssert` to verify that a `PCollection` contains a specific set of expected elements.
+### Using the Create Transform
+
+You can use the `Create` transform to create a `PCollection` out of a standard in-memory collection class, such as Java `List`. See [Creating a PCollection]({{ site.baseurl }}/documentation/programming-guide/#pcollection) for more information.
+
+### PAssert
+ 
+[PAssert]({{ site.baseurl }}/documentation/sdks/javadoc/0.3.0-incubating/org/apache/beam/sdk/testing/PAssert.html) is a class included in the Beam Java SDK  that is an assertion on the contents of a `PCollection`. You can use `PAssert`to verify that a `PCollection` contains a specific set of expected elements.
 
 For a given `PCollection`, you can use `PAssert` to verify the contents as follows:
 
@@ -170,10 +179,6 @@ Any code that uses `PAssert` must link in `JUnit` and `Hamcrest`. If you're usin
 ```
 
 For more information on how these classes work, see the [org.apache.beam.sdk.testing](http://beam.incubator.apache.org/documentation/sdks/javadoc/0.3.0-incubating/org/apache/beam/sdk/testing/package-summary.html) package documentation.
-
-### Using the Create Transform
-
-You can use the `Create` transform to create a `PCollection` out of a standard in-memory collection class, such as Java `List`. See [Creating a PCollection](/documentation/programming-guide/#pcollection) for more information.
 
 ### An Example Test for a Composite Transform
 
@@ -228,7 +233,7 @@ You can use the test classes in the Beam SDKs (such as `TestPipeline` and `PAsse
 
 ### Testing the WordCount Pipeline
 
-The following example code shows how one might test the [WordCount example pipeline](/get-started/wordcount-example/). `WordCount` usually reads lines from a text file for input data; instead, the test creates a Java `List<String>` containing some text lines and uses a `Create` transform to create an initial `PCollection`.
+The following example code shows how one might test the [WordCount example pipeline]({{ site.baseurl }}/get-started/wordcount-example/). `WordCount` usually reads lines from a text file for input data; instead, the test creates a Java `List<String>` containing some text lines and uses a `Create` transform to create an initial `PCollection`.
 
 `WordCount`'s final transform (from the composite transform `CountWords`) produces a `PCollection<String>` of formatted word counts suitable for printing. Rather than write that `PCollection` to an output text file, our test pipeline uses `PAssert` to verify that the elements of the `PCollection` match those of a static `String` array containing our expected output data.
 
