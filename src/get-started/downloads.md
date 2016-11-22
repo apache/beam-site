@@ -44,18 +44,21 @@ Apache Beam uses [semantic versioning](http://semver.org/). Version numbers use 
 Please note that APIs marked [`@Experimental`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/org/apache/beam/sdk/annotations/Experimental.html)
 may change at any point and are not guaranteed to remain compatible across versions.
 
-Additionally, any API may change before the first stable release, i.e., between versions denoted `0.x.x`.
+Additionally, any API may change before the first stable release, i.e., between versions denoted `0.x.y`.
 
 ## Releases
 
 ### 0.3.0-incubating
 Official [source code download](https://www.apache.org/dyn/closer.cgi?filename=incubator/beam/0.3.0-incubating/apache-beam-0.3.0-incubating-source-release.zip&action=download).
+
 [Release notes](https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12319527&version=12338051).
 
 ### 0.2.0-incubating
 Official [source code download](https://www.apache.org/dyn/closer.cgi?filename=incubator/beam/0.2.0-incubating/apache-beam-0.2.0-incubating-source-release.zip&action=download).
+
 [Release notes](https://issues.apache.org/jira/secure/ReleaseNote.jspa?projectId=12319527&version=12335766).
 
 ### 0.1.0-incubating
 Official [source code download](https://www.apache.org/dyn/closer.cgi?filename=incubator/beam/0.1.0-incubating/apache-beam-0.1.0-incubating-source-release.zip&action=download).
+
 The first incubating release of Apache Beam.
