@@ -10,7 +10,7 @@ permalink: /documentation/pipelines/design-your-pipeline/
 
 This page helps you design your Apache Beam pipeline. It includes information about how to determine your pipeline's structure, how to choose which transforms to apply to your data, and how to determine your input and output methods.
 
-Before reading this section, it is recommended that you become familiar with the information in the [Beam programming model]({{ site.baseurl }}/documentation/programming-guide).
+Before reading this section, it is recommended that you become familiar with the information in the [Beam programming guide]({{ site.baseurl }}/documentation/programming-guide).
 
 ## What to consider when designing your pipeline
 
