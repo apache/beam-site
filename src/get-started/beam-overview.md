@@ -7,7 +7,7 @@ redirect_from:
   - /docs/use/beam-overview/
 ---
 
-# Apache Beam (incubating)
+# Apache Beam Overview
 
 Apache Beam is an open source, unified programming model that you can use to create a data processing **pipeline**. You start by building a program that defines the pipeline using one of the open source Beam SDKs. The pipeline is then executed by one of Beam's supported **distributed processing back-ends**, which include [Apache Apex](http://apex.apache.org), [Apache Flink](http://flink.apache.org), [Apache Spark](http://spark.apache.org), and [Google Cloud Dataflow](https://cloud.google.com/dataflow).
 
@@ -59,10 +59,6 @@ Beam currently supports Runners that work with the following distributed process
 </tr>
 <tr>
   <td>Apache Spark</td>
-  <td>In Development</td>
-</tr>
-<tr>
-  <td>Apache Apex</td>
   <td>In Development</td>
 </tr>
 </table>

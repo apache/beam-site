@@ -2,12 +2,24 @@
 layout: default
 ---
 
-TODO - Add info from v2 main page! 
+# Apache Beam (incubating)
+
+Apache Beam is a unified programming model that allows you to implement batch and streaming data processing jobs that  can run on any execution engine. 
+
+You start by building a program that defines a pipeline using one of the open source Beam SDKs. The pipeline is then executed by one of Beam’s supported distributed processing back-ends, which include Apache Flink, Apache Spark, and Google Cloud Dataflow.
+
+## Contribute 
+
+Beam is an [Apache Software Foundation](http://www.apache.org) project, available under the Apache v2 license. Beam is an open source community and contributions are greatly appreciated! If you'd like to contribute, please see the [Contribute]({{ site.baseurl }}/contribute/) section.
+
+## Get Started
+
+If you'd like to use Beam for your data processing tasks, use the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam Model, SDKs, and Runners.                                    
 
 <hr>
 <div class="row">
   <div class="col-md-6">
-    <h3>Blog</h3>
+    <h2>Blog</h2>
     <div class="list-group">
     {% for post in site.posts %}
     <a class="list-group-item" href="{{ post.url | prepend: site.baseurl }}">{{ post.date | date: "%b %-d, %Y" }} - {{ post.title }}</a>
@@ -15,7 +27,7 @@ TODO - Add info from v2 main page!
     </div>
   </div>
   <div class="col-md-6">
-    <h3>Twitter</h3>
+    <h2>Twitter</h2>
     <a class="twitter-timeline" href="https://twitter.com/ApacheBeam" data-widget-id="697809684422533120">Tweets by @ApacheBeam</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   </div>
