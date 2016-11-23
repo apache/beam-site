@@ -72,7 +72,3 @@ Beam currently supports Runners that work with the following distributed process
 ## Getting Started with Apache Beam
 
 Get started using Beam for your data processing tasks by following the [Quickstart]({{ site.baseurl }}/get-started/quickstart) and the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example).
-
-
-<br><br>
-Apache Beam (incubating) is available under [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
