@@ -13,7 +13,7 @@ Apache Beam is:
 
 ## Get Started
 
-To use Beam for your data processing tasks, start with the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam model, SDKs, and runners.                                    
+To use Beam for your data processing tasks, start by reading the [Beam Overview]({{ site.baseurl }}/get-started/beam-overview) and performing the steps in the [Quickstart]({{ site.baseurl }}/get-started/quickstart). Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam model, SDKs, and runners.                                    
 
 ## Contribute 
 
