@@ -11,13 +11,13 @@ Apache Beam is:
 * **PORTABLE** - Execute pipelines on multiple execution environments, including Apache Apex, Apache Flink, Apache Spark, and Google Cloud Dataflow.
 * **EXTENSIBLE** - Write and share new SDKs, IO connectors, and transformation libraries. 
 
+## Get Started
+
+To use Beam for your data processing tasks, start with the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam model, SDKs, and runners.                                    
+
 ## Contribute 
 
 Beam is an [Apache Software Foundation](http://www.apache.org) project, available under the Apache v2 license. Beam is an open source community and contributions are greatly appreciated! If you'd like to contribute, please see the [Contribute]({{ site.baseurl }}/contribute/) section.
-
-## Get Started
-
-If you'd like to use Beam for your data processing tasks, use the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam Model, SDKs, and Runners.                                    
 
 <hr>
 <div class="row">

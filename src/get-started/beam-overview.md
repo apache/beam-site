@@ -71,13 +71,10 @@ Beam currently supports Runners that work with the following distributed process
 
 ## Getting Started with Apache Beam
 
-Interested in working with Apache Beam? Great! Here's how to get started:
-
-* If you are interested in using Beam for your data processing tasks, get started by following the [Quickstart]({{ site.baseurl }}/get-started/quickstart) and the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example). Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section to get up to speed on the details.
-* If you're interested in contributing to the Beam SDKs or Runners, start with the [Contribute]({{ site.baseurl }}/contribute/) section.
+Get started using Beam for your data processing tasks by following the [Quickstart]({{ site.baseurl }}/get-started/quickstart) and the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example).
 
 
+<br><br>
 Apache Beam is an effort undergoing incubation at [The Apache Software Foundation (ASF)](http://www.apache.org) sponsored by the Apache Incubator PMC. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
-
 
 Apache Beam (incubating) is available under [Apache License, version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
