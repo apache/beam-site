@@ -108,7 +108,3 @@ Figure 5: A pipeline with multiple input sources.
 
 *   [Create your own pipeline]({{ site.baseurl }}/documentation/pipelines/create-your-pipeline).
 *   [Test your pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline).
-
-
-
-

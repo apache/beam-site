@@ -78,7 +78,7 @@ You set the description and default value using annotations, as follows:
 ```java
 public interface MyOptions extends PipelineOptions {
     @Description("My custom command line argument.")
-    @Default.String("D-FAULT")
+    @Default.String("DEFAULT")
     String getMyCustomOption();
     void setMyCustomOption(String myCustomOption);
   }
