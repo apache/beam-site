@@ -50,7 +50,7 @@ Beam currently supports Runners that work with the following distributed process
   <th>Status</th>
 </tr>
 <tr>
-  <td>Google Cloud Dataflow</td>
+  <td>Apache Apex</td>
   <td>In Development</td>
 </tr>
 <tr>
@@ -61,6 +61,10 @@ Beam currently supports Runners that work with the following distributed process
   <td>Apache Spark</td>
   <td>In Development</td>
 </tr>
+<tr>
+  <td>Google Cloud Dataflow</td>
+  <td>In Development</td>
+</tr>
 </table>
 
 **Note:** You can always execute your pipeline locally for testing and debugging purposes.
@@ -69,7 +73,7 @@ Beam currently supports Runners that work with the following distributed process
 
 Interested in working with Apache Beam? Great! Here's how to get started:
 
-* If you are interested in using Beam for your data processing tasks, use the [Get Started]({{ site.baseurl }}/get-started/) section for an overview, quickstart, and examples. Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section to get up to speed on the details.
+* If you are interested in using Beam for your data processing tasks, get started by following the [Quickstart]({{ site.baseurl }}/get-started/quickstart) and the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example). Then dive into the [Documentation]({{ site.baseurl }}/documentation/) section to get up to speed on the details.
 * If you're interested in contributing to the Beam SDKs or Runners, start with the [Contribute]({{ site.baseurl }}/contribute/) section.
 
 

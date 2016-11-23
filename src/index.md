@@ -4,9 +4,12 @@ layout: default
 
 # Apache Beam (incubating)
 
-Apache Beam is a unified programming model that allows you to implement batch and streaming data processing jobs that  can run on any execution engine. 
+#### Apache Beam provides an advanced unified programming model, allowing you to implement batch and streaming data processing jobs that can run on any execution engine.
 
-You start by building a program that defines a pipeline using one of the open source Beam SDKs. The pipeline is then executed by one of Beam’s supported distributed processing back-ends, which include Apache Flink, Apache Spark, and Google Cloud Dataflow.
+Apache Beam is:
+* **UNIFIED** - Use a single programming model for both batch and streaming use cases.
+* **PORTABLE** - Execute pipelines on multiple execution environments, including Apache Apex, Apache Flink, Apache Spark, and Google Cloud Dataflow.
+* **EXTENSIBLE** - Write and share new SDKs, IO connectors, and transformation libraries. 
 
 ## Contribute 
 
