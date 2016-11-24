@@ -11,6 +11,16 @@ redirect_from:
 
 This Quickstart will walk you through executing your first Beam pipeline to run [WordCount]({{ site.baseurl }}/get-started/wordcount-example), written using Beam's [Java SDK]({{ site.baseurl }}/documentation/sdks/java), on a [runner]({{ site.baseurl }}/documentation#runners) of your choice.
 
+<nav class="runner-switcher">
+    <strong>Adapt for Runner:</strong>
+    <ul>
+        <li data-type="runner-direct" class="active">Direct</li>
+        <li data-type="runner-flink">Flink</li>
+        <li data-type="runner-spark">Spark</li>
+        <li data-type="runner-dataflow">Dataflow</li>
+    </ul>
+</nav>
+
 * TOC
 {:toc}
 

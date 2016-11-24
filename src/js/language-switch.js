@@ -22,7 +22,8 @@ $(document).ready(function() {
 
                 types.forEach(function(type) {
                     var name = type.replace(prefix, "");
-                    name = name.charAt(0).toUpperCase() + name.slice(1);                    
+                    name = (name === "py")? "python": name;
+                    name = name.charAt(0).toUpperCase() + name.slice(1);
                     selectors += " " + type;
                     lists += "<li data-type=\"" + type + "\"><a>";
                     lists += name + "</a></li>";
@@ -89,6 +90,7 @@ $(document).ready(function() {
 
                 // Swapping visibility of code blocks.
                 $("[class^=" + prefix).hide();
+                $("nav[class^=" + prefix).show();
                 $("." + pref).show();
             },
             "render": function(wrapper) {
