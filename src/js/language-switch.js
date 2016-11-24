@@ -5,7 +5,7 @@ $(document).ready(function() {
         var prefix = id + "-";
         return {
             "id": id,
-            "selector": "div[class^=" + prefix + "]",
+            "selector": "[class^=" + prefix + "]",
             "wrapper": prefix + "switcher", // Parent wrapper-class.
             "default": prefix + def, // Default type to display.
             "dbKey": id, // Local Storage Key
@@ -47,7 +47,7 @@ $(document).ready(function() {
             "addTabs": function() {
                 var _self = this;
 
-                $(_self.selector).each(function() {
+                $("div"+_self.selector).each(function() {
                     if ($(this).prev().is(_self.selector)) {
                         return;
                     }
@@ -63,7 +63,7 @@ $(document).ready(function() {
              * @return array - list of types found.
             */
             "lookup": function(el, lang) {
-                if (!el.is(this.selector)) {
+                if (!el.is("div"+this.selector)) {
                     return lang;
                 }
 
@@ -80,7 +80,6 @@ $(document).ready(function() {
             },
             "toggle": function() {
                 var pref=localStorage.getItem(this.dbKey) || this.default;
-
                 // Adjusting active elements in navigation header.
                 $("." + this.wrapper + " li").removeClass("active").each(function() {
                     if ($(this).data("type") === pref) {
@@ -89,8 +88,8 @@ $(document).ready(function() {
                 });
 
                 // Swapping visibility of code blocks.
-                $("[class^=" + prefix).hide();
-                $("nav[class^=" + prefix).show();
+                $(this.selector).hide();
+                $("nav"+this.selector).show();
                 $("." + pref).show();
             },
             "render": function(wrapper) {

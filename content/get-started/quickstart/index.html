@@ -60,7 +60,6 @@
               <li role="separator" class="divider"></li>
               <li class="dropdown-header">Resources</li>
               <li><a href="/get-started/downloads">Downloads</a></li>
-              <li><a href="/get-started/releases">Release Notes</a></li>
               <li><a href="/get-started/support">Support</a></li>
 		  </ul>
 	    </li>
@@ -80,7 +79,11 @@
               <li role="separator" class="divider"></li>
 			  <li class="dropdown-header">SDKs</li>
 			  <li><a href="/documentation/sdks/java/">Java SDK</a></li>
-			  <li><a href="/documentation/sdks/javadoc/">Java SDK API Reference</a></li>
+			  <li><a href="/documentation/sdks/javadoc/0.3.0-incubating/" target="_blank">Java SDK API Reference <img src="/images/external-link-icon.png"
+                 width="14" height="14"
+                 alt="External link."></a>
+        </li>
+        <li><a href="/documentation/sdks/python/">Python SDK</a></li>
 			  <li role="separator" class="divider"></li>
 			  <li class="dropdown-header">Runners</li>
 			  <li><a href="/documentation/runners/capability-matrix/">Capability Matrix</a></li>
@@ -110,6 +113,7 @@
         <li><a href="/contribute/presentation-materials/">Presentation Materials</a></li>
         <li><a href="/contribute/logos/">Logos and Design</a></li>
         <li role="separator" class="divider"></li>
+        <li><a href="/contribute/maturity-model/">Maturity Model</a></li>
         <li><a href="/contribute/team/">Team</a></li>
 		  </ul>
 	    </li>
@@ -168,14 +172,15 @@
 <p>The easiest way to get a copy of the WordCount pipeline is to use the following command to generate a simple Maven project that contains Beam’s WordCount examples and builds against the most recent Beam release:</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ mvn archetype:generate \
+      -DarchetypeRepository=https://repository.apache.org/content/groups/snapshots \
+      -DarchetypeGroupId=org.apache.beam \
       -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
       -DarchetypeVersion=LATEST \
-      -DarchetypeGroupId=org.apache.beam \
       -DgroupId=org.example \
       -DartifactId=word-count-beam \
       -Dversion="0.1" \
-      -DinteractiveMode=false \
-      -Dpackage=org.apache.beam.examples
+      -Dpackage=org.apache.beam.examples \
+      -DinteractiveMode=false
 </code></pre>
 </div>
 
@@ -196,7 +201,7 @@ MinimalWordCount.java	WordCount.java
 
 <h2 id="run-wordcount">Run WordCount</h2>
 
-<p>A single Beam pipeline can run on multiple Beam <a href="/documentation#runners">runners</a>, including the <a href="/documentation/runners/spark">SparkRunner</a>, <a href="/documentation/runners/flink">FlinkRunner</a>, or <a href="/documentation/runners/dataflow">DataflowRunner</a>. The <a href="/documentation/runners/direct">DirectRunner</a> is a common runner for getting started, as it runs locally on your machine and requires no specific setup.</p>
+<p>A single Beam pipeline can run on multiple Beam <a href="/documentation#runners">runners</a>, including the <a href="/documentation/runners/apex">ApexRunner</a>, <a href="/documentation/runners/flink">FlinkRunner</a>, <a href="/documentation/runners/spark">SparkRunner</a> or <a href="/documentation/runners/dataflow">DataflowRunner</a>. The <a href="/documentation/runners/direct">DirectRunner</a> is a common runner for getting started, as it runs locally on your machine and requires no specific setup.</p>
 
 <p>After you’ve chosen which runner you’d like to use:</p>
 
@@ -217,7 +222,24 @@ MinimalWordCount.java	WordCount.java
 </code></pre>
 </div>
 
-<div class="runner-flink highlighter-rouge"><pre class="highlight"><code>TODO BEAM-899
+<div class="runner-apex highlighter-rouge"><pre class="highlight"><code>$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--inputFile=pom.xml --output=counts --runner=ApexRunner" -Papex-runner
+</code></pre>
+</div>
+
+<div class="runner-flink-local highlighter-rouge"><pre class="highlight"><code>$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--runner=FlinkRunner --inputFile=pom.xml --output=counts" -Pflink-runner
+</code></pre>
+</div>
+
+<div class="runner-flink-cluster highlighter-rouge"><pre class="highlight"><code>$ mvn package -Pflink-runner
+$ cp target/word-count-beam-bundled-0.1.jar /path/to/flink/lib/
+$ bin/flink run -c org.apache.beam.examples.WordCount lib/word-count-beam-0.1.jar  \
+    --inputFile=/path/to/quickstart/pom.xml  \
+    --output=/tmp/counts \
+    --runner=org.apache.beam.runners.flink.FlinkRunner
+
+You can monitor the running job by visiting the Flink dashboard at http://&lt;flink master&gt;:8081
 </code></pre>
 </div>
 
@@ -239,7 +261,15 @@ MinimalWordCount.java	WordCount.java
 </code></pre>
 </div>
 
-<div class="runner-flink highlighter-rouge"><pre class="highlight"><code>TODO BEAM-899
+<div class="runner-apex highlighter-rouge"><pre class="highlight"><code>$ ls counts*
+</code></pre>
+</div>
+
+<div class="runner-flink-local highlighter-rouge"><pre class="highlight"><code>$ ls counts*
+</code></pre>
+</div>
+
+<div class="runner-flink-cluster highlighter-rouge"><pre class="highlight"><code>$ ls /tmp/counts*
 </code></pre>
 </div>
 
@@ -265,7 +295,37 @@ Foundation: 1
 </code></pre>
 </div>
 
-<div class="runner-flink highlighter-rouge"><pre class="highlight"><code>TODO BEAM-899
+<div class="runner-apex highlighter-rouge"><pre class="highlight"><code>$ cat counts*
+BEAM: 1
+have: 1
+simple: 1
+skip: 4
+PAssert: 1
+...
+</code></pre>
+</div>
+
+<div class="runner-flink-local highlighter-rouge"><pre class="highlight"><code>$ more counts*
+The: 1
+api: 9
+old: 4
+Apache: 2
+limitations: 1
+bundled: 1
+Foundation: 1
+...
+</code></pre>
+</div>
+
+<div class="runner-flink-cluster highlighter-rouge"><pre class="highlight"><code>$ more /tmp/counts*
+The: 1
+api: 9
+old: 4
+Apache: 2
+limitations: 1
+bundled: 1
+Foundation: 1
+...
 </code></pre>
 </div>
 
