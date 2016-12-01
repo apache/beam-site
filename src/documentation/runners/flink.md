@@ -25,6 +25,15 @@ If you want to use the local execution mode with the Flink runner to don't have 
 
 To use the Flink Runner for executing on a cluster, you have to setup a Flink cluster by following the Flink [setup quickstart](https://ci.apache.org/projects/flink/flink-docs-release-1.1/quickstart/setup_quickstart.html).
 
+To find out which version of Flink you need you can run this command to check the version of the Flink dependency that your project is using:
+```
+$ mvn dependency:tree -Pflink-runner |grep flink
+...
+[INFO] |  +- org.apache.flink:flink-streaming-java_2.10:jar:1.1.2:runtime
+...
+```
+Here, we would need Flink 1.1.2.
+
 For more information, the [Flink Documentation](https://ci.apache.org/projects/flink/flink-docs-release-1.1/) can be helpful.
 
 ### Specify your dependency
@@ -42,21 +51,25 @@ You must specify your dependency on the Flink Runner.
 
 ## Executing a pipeline on a Flink cluster
 
-For executing a pipeline on a Flink cluster you need to package your program along will all dependencies in a so-called fat jar and then put that jar into the lib folder of your Flink installation. How you do this depends on your build system but if you follow along the [Beam Quickstart]({{ site.baseurl }}/get-started/quickstart/) these are the steps you have to take:
+For executing a pipeline on a Flink cluster you need to package your program along will all dependencies in a so-called fat jar. How you do this depends on your build system but if you follow along the [Beam Quickstart]({{ site.baseurl }}/get-started/quickstart/) this is the command that you have to run:
 
 ```
 $ mvn package -Pflink-runner
-$ cp target/word-count-beam-bundled-0.1.jar /path/to/flink/lib/
 ```
 The Beam Quickstart Maven project is setup to use the Maven Shade plugin to create a fat jar and the `-Pflink-runner` argument makes sure to include the dependency on the Flink Runner.
 
-For actually running the pipeline you would use the Flink run script like this:
+For actually running the pipeline you would use this command
 ```
-$ bin/flink run -c org.apache.beam.examples.WordCount lib/word-count-beam-0.1.jar  \
-    --inputFile=/path/to/quickstart/pom.xml  \
-    --output=/tmp/counts \
-    --runner=org.apache.beam.runners.flink.FlinkRunner
+$ mvn exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+    -Pflink-runner \
+    -Dexec.args="--runner=FlinkRunner \
+      --inputFile=/path/to/pom.xml \
+      --output=/path/to/counts \
+      --flinkMaster=<flink master url> \
+      --filesToStage=target/word-count-beam--bundled-0.1.jar"
 ```
+If you have a Flink `JobManager` running on your local machine you can give `localhost:6123` for
+`flinkMaster`.
 
 ## Pipeline options for the Flink Runner
 
@@ -71,7 +84,7 @@ When executing your pipeline with the Flink Runner, you can set these pipeline o
 <tr>
   <td><code>runner</code></td>
   <td>The pipeline runner to use. This option allows you to determine the pipeline runner at runtime.</td>
-  <td>Set to <code>org.apache.beam.runners.flink.FlinkRunner</code> to run using Flink.</td>
+  <td>Set to <code>FlinkRunner</code> to run using Flink.</td>
 </tr>
 <tr>
   <td><code>streaming</code></td>
@@ -83,6 +96,12 @@ When executing your pipeline with the Flink Runner, you can set these pipeline o
   <td>The url of the Flink JobManager on which to execute pipelines. This can either be the address of a cluster JobManager, in the form <code>"host:port"</code> or one of the special Strings <code>"[local]"</code> or <code>"[auto]"</code>. <code>"[local]"</code> will start a local Flink Cluster in the JVM while <code>"[auto]"</code> will let the system decide where to execute the pipeline based on the environment.</td>
   <td><code>[auto]</code></td>
 </tr>
+<tr>
+  <td><code>filesToStage</code></td>
+  <td>Jar Files to send to all workers and put on the classpath. Here you have to put the fat jar that contains your program along with all dependencies.</td>
+  <td>empty</td>
+</tr>
+
 <tr>
   <td><code>parallelism</code></td>
   <td>The degree of parallelism to be used when distributing operations onto workers.</td>
@@ -116,7 +135,7 @@ See the reference documentation for the  <span class="language-java">[FlinkPipel
 
 ### Monitoring your job
 
-You can monitor a running Flink job using the Flink JobManager Dashboard. By default, this is available at port `8081` of the JobManager node. If you have a Flink installation on your local machine that would be [http://localhost:8081](http://localhost:8081).
+You can monitor a running Flink job using the Flink JobManager Dashboard. By default, this is available at port `8081` of the JobManager node. If you have a Flink installation on your local machine that would be `http://localhost:8081`.
 
 ### Streaming Execution
 
