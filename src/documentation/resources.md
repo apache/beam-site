@@ -13,6 +13,9 @@ This page provides links to some of our favorite videos, podcasts, and articles 
 
 ## General
 
+The following resources provide general overviews and fundamentals of Apache Beam.
+
+
 ### Fundamentals of Stream Processing with Apache Beam
 
 Data Science Summit, 2016
@@ -69,6 +72,8 @@ By Frances Perry
 
 ## Beam & Friends
 
+The following resources present Apache Beam partnerships. 
+
 ### Flink and Beam: Current State & Roadmap
 
 Flink Forward 2016 
@@ -88,6 +93,8 @@ By Amit Sela
 <br>
 
 ## Technical Details
+
+The following resources provide detailed explanations about technical concepts in Apache Beam.
 
 ### Watermarks: Time and Progress in Apache Beam and Beyond
 
