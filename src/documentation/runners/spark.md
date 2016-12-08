@@ -36,7 +36,7 @@ You can add a dependency on the latest version of the Spark runner by adding to 
 
 ### Deploying Spark with your application
 
-In some cases, such as running in local mode, your (self-contained) application would be required to pack Spark by explicitly adding the following dependencies in your pom.xml:
+In some cases, such as running in local mode/Standalone, your (self-contained) application would be required to pack Spark by explicitly adding the following dependencies in your pom.xml:
 ```java
 <dependency>
   <groupId>org.apache.spark</groupId>
@@ -48,13 +48,55 @@ In some cases, such as running in local mode, your (self-contained) application 
   <groupId>org.apache.spark</groupId>
   <artifactId>spark-streaming_2.10</artifactId>
   <version>${spark.version}</version>
-  <scope>provided</scope>
 </dependency>
+```
+
+And shading the application jar using the maven shade plugin:
+```java
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-shade-plugin</artifactId>
+  <configuration>
+    <createDependencyReducedPom>false</createDependencyReducedPom>
+    <filters>
+      <filter>
+        <artifact>*:*</artifact>
+        <excludes>
+          <exclude>META-INF/*.SF</exclude>
+          <exclude>META-INF/*.DSA</exclude>
+          <exclude>META-INF/*.RSA</exclude>
+        </excludes>
+      </filter>
+    </filters>
+  </configuration>
+  <executions>
+    <execution>
+      <phase>package</phase>
+      <goals>
+        <goal>shade</goal>
+      </goals>
+      <configuration>
+        <shadedArtifactAttached>true</shadedArtifactAttached>
+        <shadedClassifierName>shaded</shadedClassifierName>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+After running <code>mvn package</code>, run <code>ls target</code> and you should see (assuming your artifactId is `beam-examples` and the version is `1.0.0`):
+```
+beam-examples-1.0.0-shaded.jar
+```
+
+To run against a Standalone cluster simply run:
+```
+spark-submit --class com.beam.examples.BeamPipeline --master spark://HOST:PORT target/beam-examples-1.0.0-shaded.jar --runner=SparkRunner
 ```
 
 ### Running on a pre-deployed Spark cluster
 
-Deploying your Beam pipeline on a cluster that already has a Spark deployment does not require any additional dependencies.
+Deploying your Beam pipeline on a cluster that already has a Spark deployment (Spark classes are available in container classpath) does not require any additional dependencies.
 For more details on the different deployment modes see: [Standalone](http://spark.apache.org/docs/latest/spark-standalone.html), [YARN](http://spark.apache.org/docs/latest/running-on-yarn.html), or [Mesos](http://spark.apache.org/docs/latest/running-on-mesos.html).
 
 ## Pipeline options for the Spark Runner
