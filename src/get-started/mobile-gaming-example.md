@@ -21,9 +21,9 @@ Every time a user plays an instance of our hypothetical mobile game, they genera
 - A score value for that particular instance of play.
 - A timestamp that records when the particular instance of play happened--this is the event time for each game data event.
 
-When the user completes an instance of the game, their phone sends the data event to a game server, where the data is logged and stored in a file. Generally the data is sent to the game server immediately upon completion. However, users can play the game "offline", when their phones are out of contact with the server (such as on an airplane, or outside network coverage area). When the user's phone comes back into contact with the game server, the phone will send all accumulated game data.
+When the user completes an instance of the game, their phone sends the data event to a game server, where the data is logged and stored in a file. Generally the data is sent to the game server immediately upon completion. However, sometimes delays happen in the network at various points, or users play the game "offline", when their phones are out of contact with the server (such as on an airplane, or outside network coverage area). When the user's phone comes back into contact with the game server, the phone will send all accumulated game data.
 
-This means that some data events might be received by the game server significantly later than users generate them. This time difference can have processing implications for pipelines that make calculations that consider when each score was generated. Such pipelines might track scores generated during each hour of a day, for example, or they calculate the length of time that users are continuously playing the game—both of which depend on each data record's event time.
+This means that some data events may arrive delayed and out of order; The data events might be received by the game server significantly later than users generate them. This time difference can have processing implications for pipelines that make calculations that consider when each score was generated. Such pipelines might track scores generated during each hour of a day, for example, or they calculate the length of time that users are continuously playing the game—both of which depend on each data record's event time.
 
 Because some of our example pipelines use data files (like logs from the game server) as input, the event timestamp for each game might be embedded in the data--that is, it's a field in each data record. Those pipelines need to parse the event timestamp from each data record after reading it from the input file.
 
@@ -53,7 +53,7 @@ As the pipeline processes each event, the event score gets added to the sum tota
 2. Sum the score values for each unique user by grouping each game event by user ID and combining the score values to get the total score for that particular user.
 3. Write the result data to a [Google Cloud BigQuery](https://cloud.google.com/bigquery/) table.
 
-The following diagram shows score data for a several users over the pipeline analysis period. In the diagram, each data point is an event that results in one user/score pair:
+The following diagram shows score data for several users over the pipeline analysis period. In the diagram, each data point is an event that results in one user/score pair:
 
 <figure id="fig1">
     <img src="{{ site.baseurl }}/images/gaming-example.gif"
@@ -355,7 +355,7 @@ The following diagram shows the relationship between ongoing processing time and
 </figure>
 Figure 4: Score data by team, windowed by event time. A trigger based on processing time causes the window to emit speculative early results and include late results.
 
-The dotted line in the diagram is the "ideal" **watermark**: Beam's notion of when all data in a given window can reasonably considered to have arrived. The irregular solid line represents the actual watermark, as determined by the data source.
+The dotted line in the diagram is the "ideal" **watermark**: Beam's notion of when all data in a given window can reasonably be considered to have arrived. The irregular solid line represents the actual watermark, as determined by the data source.
 
 Data arriving above the solid watermark line is _late data_—this is a score event that was delayed (perhaps generated offline) and arrived after the window to which it belongs had closed. Our pipeline's late-firing trigger ensures that this late data is still included in the sum.
 

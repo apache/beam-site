@@ -9,7 +9,7 @@ redirect_from:
 
 # Apache Beam Documentation
 
-Get in-depth conceptual information and reference material for the Beam Model, SDKs and Runners:
+This secton provides in-depth conceptual information and reference material for the Beam Model, SDKs, and Runners:
 
 ## Concepts 
 
@@ -17,6 +17,12 @@ Learn about the Beam Programming Model and the concepts common to all Beam SDKs 
 
 * The [Programming Guide]({{ site.baseurl }}/documentation/programming-guide/) introduces all the key Beam concepts.
 * Visit [Additional Resources]({{ site.baseurl }}/documentation/resources/) for some of our favorite articles and talks about Beam. 
+
+## Pipeline Fundamentals
+
+* [Design Your Pipeline]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline) - Plan your pipeline’s structure, choose transforms to apply to your data, and determine your input and output methods.
+* [Create Your Pipeline]({{ site.baseurl }}/documentation/pipelines/create-your-pipeline) - Learn the mechanics of using the Beam SDKs to build a pipeline. Construct a pipeline by using the classes in the Beam SDKs while following a series of steps.
+* [Test Your Pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline) - Perform local unit testing on your pipeline code to minimize debugging a pipeline’s remote execution.
 
 ## SDKs
 
