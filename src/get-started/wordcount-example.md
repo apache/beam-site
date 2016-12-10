@@ -10,8 +10,6 @@ redirect_from: /use/wordcount-example/
 * TOC
 {:toc}
 
-> **Note:** This walkthrough is still in progress. Detailed instructions for running the example pipelines across multiple runners are yet to be added. There is an open issue to finish the walkthrough ([BEAM-664](https://issues.apache.org/jira/browse/BEAM-664)).
-
 The WordCount examples demonstrate how to set up a processing pipeline that can read text, tokenize the text lines into individual words, and perform a frequency count on each of those words. The Beam SDKs contain a series of these four successively more detailed WordCount examples that build on each other. The input text for all the examples is a set of Shakespeare's texts.
 
 Each WordCount example introduces different concepts in the Beam programming model. Begin by understanding Minimal WordCount, the simplest of the examples. Once you feel comfortable with the basic principles in building a pipeline, continue on to learn more concepts in the other examples.
