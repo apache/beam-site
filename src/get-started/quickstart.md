@@ -42,7 +42,7 @@ $ mvn archetype:generate \
 This will create a directory `word-count-beam` that contains a simple `pom.xml` and a series of example pipelines that count words in text files.
 
 ```
-$ cd beam-word-count/
+$ cd word-count-beam/
 
 $ ls
 pom.xml	src
