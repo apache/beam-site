@@ -97,7 +97,8 @@ You can monitor the running job by visiting the Flink dashboard at http://<flink
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--runner=SparkRunner --inputFile=pom.xml --output=counts" -Pspark-runner
 ```
 
 {:.runner-dataflow}
@@ -134,7 +135,7 @@ $ ls /tmp/counts*
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ ls counts*
 ```
 
 
@@ -197,7 +198,16 @@ Foundation: 1
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ more counts*
+beam: 27
+SF: 1
+fat: 1
+job: 1
+limitations: 1
+require: 1
+of: 11
+profile: 10
+...
 ```
 
 {:.runner-dataflow}
