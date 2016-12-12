@@ -23,14 +23,19 @@ The Java SDK supports all features currently supported by the Beam model.
 
 ## Supported IO Connectors
 
-* Apache Hadoop HDFS
-* JDBC
-* JMS
+* Amazon Kinesis
+* Apache Hadoop's `FileInputFormat` in Hadoop Distributed File System (HDFS)
 * Apache Kafka
-* Kinesis
-* MongoDB
-* Google Cloud BigQuery
+* Avro Files
+* Google BigQuery
 * Google Cloud BigTable
-+ Google Cloud Datastore
+* Google Cloud Datastore
+* Google Cloud Pub/Sub
+* Google Cloud Storage
+* Java Database Connectivity (JDBC)
+* Java Message Service (JMS)
+* MongoDB
+* Text Files
+* XML Files
 
 
