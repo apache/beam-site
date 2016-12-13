@@ -106,7 +106,7 @@ $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 	 -Dexec.args="--runner=DataflowRunner --gcpTempLocation=gs://<your-gcs-bucket>/tmp \
 	              --inputFile=gs://apache-beam-samples/shakespeare/* --output=gs://<your-gcs-bucket>/counts" \
-                  -Pdataflow-runner
+     -Pdataflow-runner
 ```
 
 
