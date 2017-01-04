@@ -9,7 +9,7 @@ redirect_from:
 
 # Apache Beam Programming Guide
 
-The **Beam Programming Guide** is intended for Beam users who want to use the Beam SDKs to create data processing pipelines. It provides guidance for using the Beam SDK classes to build and test your pipeline. It is not intended as an exhaustive reference, but as a language-agnostic, high-level guide to programmatically building your Beam pipeline. As the programming guide is filled out, the text will include code samples in multiple languages to help illustrate how to implement Beam concepts in your programs.
+The **Beam Programming Guide** is intended for Beam users who want to use the Beam SDKs to create data processing pipelines. It provides guidance for using the Beam SDK classes to build and test your pipeline. It is not intended as an exhaustive reference, but as a language-agnostic, high-level guide to programmatically building your Beam pipeline. As the programming guide is filled out, the text will include code samples in multiple languages to help illustrate how to implement Beam concepts in your pipelines.
 
 ## Contents
 
@@ -903,30 +903,29 @@ tens = results[None]  # the undeclared main output
 
 ## <a name="io"></a>Pipeline I/O
 
-When you create a pipeline, you often need to read data from some external source, such as a file in cloud storage or a database. Likewise, you may want your pipeline to output its result data to a similar external data sink. Beam provides read and write transforms for a number of common data storage types. If you want your pipeline to read from or write to a data storage format that isn't supported by the built-in transforms, you can implement your own read and write transforms.
+When you create a pipeline, you often need to read data from some external source, such as a file in external data sink or a database. Likewise, you may want your pipeline to output its result data to a similar external data sink. Beam provides read and write transforms for a number of common data storage types. If you want your pipeline to read from or write to a data storage format that isn't supported by the built-in transforms, you can implement your own read and write transforms.
 
 > A guide that covers how to implement your own Beam IO transforms is in progress ([BEAM-1025](https://issues.apache.org/jira/browse/BEAM-1025)).
 
 ### Reading Input Data
 
-Read transforms read data from an external source and return a `PCollection` representation of the data for use by your pipeline. You can use a read transform at any point while constructing your pipeline to create a new `PCollection`, though it will be most common at the start of your program. Here are examples of two common ways to read data.
+Read transforms read data from an external source and return a `PCollection` representation of the data for use by your pipeline. You can use a read transform at any point while constructing your pipeline to create a new `PCollection`, though it will be most common at the start of your pipeline. Here are examples of two common ways to read data.
 
 #### Reading from a `Source`:
 
 ```java
-// This example uses XmlSource.
-XmlSource<String> source =   XmlSource.<String>from(file.toPath().toString())
-     .withRootElement("root")
-     .withRecordElement("record")
-     .withRecordClass(Record.class);
-PCollection<String> output = pipeline.apply(Read.from(source));
+// A fully-specified Read from a GCS file:
+PCollection<Integer> numbers =
+  p.apply("ReadNumbers", TextIO.Read
+   .from("gs://my_bucket/path/to/numbers-*.txt")
+   .withCoder(TextualIntegerCoder.of()));
 ```
 
 ```python
-pipeline | beam.io.Read(beam.io.TextFileSource("protocol://path/to/some/inputData.txt"))
+pipeline | beam.io.ReadFromText('protocol://path/to/some/inputData.txt')
 ```
 
-Note that many sources use the builder pattern for setting options. For additional examples, see the language specific documentation (such as Javadoc) for each of the sources.
+Note that many sources use the builder pattern for setting options. For additional examples, see the language-specific documentation (such as Javadoc) for each of the sources.
 
 #### Using a read transform:
 
@@ -935,17 +934,16 @@ Note that many sources use the builder pattern for setting options. For addition
 PCollection<JmsRecord> output =
     pipeline.apply(JmsIO.read()
         .withConnectionFactory(myConnectionFactory)
-        .withQueue("my-queue")
+        .withQueue("my-queue"))
 ```
 
 ```python
 pipeline | beam.io.textio.ReadFromText('my_file_name')
-
 ```
 
 ### Writing Output Data
 
-Write transforms write the data in a `PCollection` to an external data source. You will most often use write transforms at the end of your program to output your pipeline's final results. However, you can use a write transform to output a `PCollection`'s data at any point in your pipeline. Here are examples of two common ways to write data.
+Write transforms write the data in a `PCollection` to an external data source. You will most often use write transforms at the end of your pipeline to output your pipeline's final results. However, you can use a write transform to output a `PCollection`'s data at any point in your pipeline. Here are examples of two common ways to write data.
 
 #### Writing to a `Sink`:
 
@@ -958,7 +956,7 @@ pipeline.apply(Write.to(
 ```
 
 ```python
-output | beam.io.Write(beam.io.TextFileSink('my_file_name'))
+output | beam.io.WriteToText('my_file_name')
 ```
 
 #### Using a write transform:
@@ -1007,10 +1005,8 @@ records.apply(TextIO.Write.named("WriteToText")
 ```
 
 ```python
-filtered_words | beam.io.Write(
-    'WriteToText',
-    beam.io.TextFileSink('protocol://my_bucket/path/to/numbers',
-                                        file_name_suffix='.csv'))
+filtered_words | beam.io.WriteToText(
+'protocol://my_bucket/path/to/numbers', file_name_suffix='.csv')
 ```
 
 ### Beam provided I/O APIs
@@ -1027,36 +1023,36 @@ See the language specific source code directories for the Beam supported I/O API
 <tr>
   <td>Java</td>
   <td>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">Avro</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/hdfs">HDFS</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">TextIO</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">XML</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/AvroIO.java">AvroIO</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hdfs">HDFS</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java">TextIO</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/">XML</a></p>
   </td>
   <td>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/jms">JMS</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/kafka">Kafka</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/kinesis">Kinesis</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">Google Cloud PubSub</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jms">JMS</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kafka">Kafka</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kinesis">Kinesis</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">Google Cloud PubSub</a></p>
   </td>
   <td>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigtable">Google Cloud Bigtable</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/datastore">Google Cloud Datastore</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigtable">Google Cloud Bigtable</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/datastore">Google Cloud Datastore</a></p>
   </td>
 </tr>
 <tr>
   <td>Python</td>
   <td>
-    <p><a href="https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python/apache_beam/io">Avro</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python/apache_beam/io">TextIO</a></p>
+    <p><a href="https://github.com/apache/beam/blob/python-sdk/sdks/python/apache_beam/io/avroio.py">avroio</a></p>
+    <p><a href="https://github.com/apache/beam/blob/python-sdk/sdks/python/apache_beam/io/textio.py">textio</a></p>
   </td>
   <td>
   </td>
   <td>
-    <p><a href="https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python/apache_beam/io">Google BigQuery</a></p>
-    <p><a href="https://github.com/apache/incubator-beam/tree/python-sdk/sdks/python/apache_beam/io/datastore">Google Cloud Datastore</a></p>
+    <p><a href="https://github.com/apache/beam/blob/python-sdk/sdks/python/apache_beam/io/bigquery.py">Google BigQuery</a></p>
+    <p><a href="https://github.com/apache/beam/tree/python-sdk/sdks/python/apache_beam/io/datastore">Google Cloud Datastore</a></p>
   </td>
 
 </tr>
