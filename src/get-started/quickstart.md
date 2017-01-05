@@ -42,7 +42,7 @@ $ mvn archetype:generate \
 This will create a directory `word-count-beam` that contains a simple `pom.xml` and a series of example pipelines that count words in text files.
 
 ```
-$ cd beam-word-count/
+$ cd word-count-beam/
 
 $ ls
 pom.xml	src
@@ -71,7 +71,7 @@ After you've chosen which runner you'd like to use:
 {:.runner-direct}
 ```
 $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
-     -Dexec.args="--inputFile=pom.xml --output=counts"
+     -Dexec.args="--inputFile=pom.xml --output=counts" -Pdirect-runner
 ```
 
 {:.runner-apex}
@@ -88,26 +88,25 @@ $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 
 {:.runner-flink-cluster}
 ```
-$ mvn package -Pflink-runner
-$ cp target/word-count-beam-bundled-0.1.jar /path/to/flink/lib/
-$ bin/flink run -c org.apache.beam.examples.WordCount lib/word-count-beam-0.1.jar  \
-    --inputFile=/path/to/quickstart/pom.xml  \
-    --output=/tmp/counts \
-    --runner=org.apache.beam.runners.flink.FlinkRunner
+$ mvn package exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--runner=FlinkRunner --flinkMaster=<flink master> --filesToStage=target/word-count-beam-bundled-0.1.jar \
+                  --inputFile=/path/to/quickstart/pom.xml --output=/tmp/counts" -Pflink-runner
 
 You can monitor the running job by visiting the Flink dashboard at http://<flink master>:8081
 ```
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--runner=SparkRunner --inputFile=pom.xml --output=counts" -Pspark-runner
 ```
 
 {:.runner-dataflow}
 ```
 $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 	 -Dexec.args="--runner=DataflowRunner --gcpTempLocation=gs://<your-gcs-bucket>/tmp \
-	              --inputFile=gs://apache-beam-samples/shakespeare/* --output=gs://<your-gcs-bucket>/counts"
+	              --inputFile=gs://apache-beam-samples/shakespeare/* --output=gs://<your-gcs-bucket>/counts" \
+     -Pdataflow-runner
 ```
 
 
@@ -137,7 +136,7 @@ $ ls /tmp/counts*
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ ls counts*
 ```
 
 
@@ -200,7 +199,16 @@ Foundation: 1
 
 {:.runner-spark}
 ```
-TODO BEAM-900
+$ more counts*
+beam: 27
+SF: 1
+fat: 1
+job: 1
+limitations: 1
+require: 1
+of: 11
+profile: 10
+...
 ```
 
 {:.runner-dataflow}

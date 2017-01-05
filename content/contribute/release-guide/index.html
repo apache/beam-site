@@ -15,8 +15,8 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/js/language-switch.js"></script>
-  <link rel="canonical" href="http://beam.incubator.apache.org/contribute/release-guide/" data-proofer-ignore>
-  <link rel="alternate" type="application/rss+xml" title="Apache Beam (incubating)" href="http://beam.incubator.apache.org/feed.xml">
+  <link rel="canonical" href="http://beam.apache.org/contribute/release-guide/" data-proofer-ignore>
+  <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="http://beam.apache.org/feed.xml">
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -196,7 +196,7 @@
   </li>
   <li><a href="#promote-the-release" id="markdown-toc-promote-the-release">Promote the release</a>    <ul>
       <li><a href="#apache-mailing-lists" id="markdown-toc-apache-mailing-lists">Apache mailing lists</a></li>
-      <li><a href="#asf-press-release" id="markdown-toc-asf-press-release">ASF press release</a></li>
+      <li><a href="#recordkeeping" id="markdown-toc-recordkeeping">Recordkeeping</a></li>
       <li><a href="#beam-blog" id="markdown-toc-beam-blog">Beam blog</a></li>
       <li><a href="#social-media" id="markdown-toc-social-media">Social media</a></li>
       <li><a href="#checklist-to-declare-the-process-completed" id="markdown-toc-checklist-to-declare-the-process-completed">Checklist to declare the process completed</a></li>
@@ -279,7 +279,7 @@ sub   2048R/BA4D50BE 2016-02-23
 
 <p>Here, the key ID is the 8-digit hex string in the <code class="highlighter-rouge">pub</code> line: <code class="highlighter-rouge">845E6689</code>.</p>
 
-<p>Now, add your Apache GPG key to the Beam’s <code class="highlighter-rouge">KEYS</code> file both in <a href="https://dist.apache.org/repos/dist/dev/incubator/beam/KEYS"><code class="highlighter-rouge">dev</code></a> and <a href="https://dist.apache.org/repos/dist/release/incubator/beam/KEYS"><code class="highlighter-rouge">release</code></a> repositories at <code class="highlighter-rouge">dist.apache.org</code>. Follow the instructions listed at the top of these files.</p>
+<p>Now, add your Apache GPG key to the Beam’s <code class="highlighter-rouge">KEYS</code> file both in <a href="https://dist.apache.org/repos/dist/dev/beam/KEYS"><code class="highlighter-rouge">dev</code></a> and <a href="https://dist.apache.org/repos/dist/release/beam/KEYS"><code class="highlighter-rouge">release</code></a> repositories at <code class="highlighter-rouge">dist.apache.org</code>. Follow the instructions listed at the top of these files.</p>
 
 <p>Configure <code class="highlighter-rouge">git</code> to use this key when signing code by giving it your key ID, as follows:</p>
 
@@ -382,8 +382,8 @@ export GPG_AGENT_INFO
 
 <p>Set up a few environment variables to simplify Maven commands that follow. (We use <code class="highlighter-rouge">bash</code> Unix syntax in this guide.)</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>VERSION="1.2.3-incubating"
-NEXT_VERSION="1.2.4-incubating"
+<div class="highlighter-rouge"><pre class="highlight"><code>VERSION="1.2.3"
+NEXT_VERSION="1.2.4"
 BRANCH_NAME="release-${VERSION}"
 DEVELOPMENT_VERSION="${NEXT_VERSION}-SNAPSHOT"
 </code></pre>
@@ -474,7 +474,7 @@ TAG="v${VERSION}-RC${RC_NUM}"
   <li>
     <p>If you have not already, check out the Beam section of the <code class="highlighter-rouge">dev</code> repository on <code class="highlighter-rouge">dist.apache.org</code> via Subversion. In a fresh directory:</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code> svn co https://dist.apache.org/repos/dist/dev/incubator/beam
+    <div class="highlighter-rouge"><pre class="highlight"><code> svn co https://dist.apache.org/repos/dist/dev/beam
 </code></pre>
     </div>
   </li>
@@ -504,7 +504,7 @@ TAG="v${VERSION}-RC${RC_NUM}"
     </div>
   </li>
   <li>
-    <p>Verify that files are <a href="https://dist.apache.org/repos/dist/dev/incubator/beam">present</a>.</p>
+    <p>Verify that files are <a href="https://dist.apache.org/repos/dist/dev/beam">present</a>.</p>
   </li>
 </ol>
 
@@ -524,11 +524,11 @@ TAG="v${VERSION}-RC${RC_NUM}"
     -Ddoctitle="Apache Beam SDK for Java, version ${VERSION}" \
     -Dwindowtitle="Apache Beam SDK for Java, version ${VERSION}" \
     -Dmaven.javadoc.failOnError=false \
-    -DexcludePackageNames="org.apache.beam.examples,org.apache.beam.runners.dataflow.internal,org.apache.beam.runners.flink.examples,org.apache.beam.runners.flink.translation,org.apache.beam.runners.spark.examples,org.apache.beam.runners.spark.translation,org.apache.beam.sdk.microbenchmarks.coders.generated,org.apache.beam.sdk.microbenchmarks.transforms.generated,org.openjdk.jmh.infra.generated"
+    -DexcludePackageNames="org.apache.beam.examples,org.apache.beam.runners.dataflow.internal,org.apache.beam.runners.flink.examples,org.apache.beam.runners.flink.translation,org.apache.beam.runners.spark.examples,org.apache.beam.runners.spark.translation,org.apache.beam.runners.apex.translation,org.apache.beam.sdk.microbenchmarks.coders.generated,org.apache.beam.sdk.microbenchmarks.transforms.generated,org.openjdk.jmh.infra.generated"
 </code></pre>
 </div>
 
-<p>By default, the Javadoc will be generated in <code class="highlighter-rouge">target/site/apidocs/</code>. Let <code class="highlighter-rouge">${JAVADOC_ROOT}</code> be the absolute path to <code class="highlighter-rouge">apidocs</code>. (<a href="https://github.com/apache/incubator-beam/pull/1015">Pull request #1015</a> will hopefully simplify this process.)</p>
+<p>By default, the Javadoc will be generated in <code class="highlighter-rouge">target/site/apidocs/</code>. Let <code class="highlighter-rouge">${JAVADOC_ROOT}</code> be the absolute path to <code class="highlighter-rouge">apidocs</code>. (<a href="https://github.com/apache/beam/pull/1015">Pull request #1015</a> will hopefully simplify this process.)</p>
 
 <p>Please carefully review the generated Javadoc. Check for completeness and presence of all relevant packages and <code class="highlighter-rouge">package-info.java</code>; consider adding less relevant packages to the <code class="highlighter-rouge">excludePackageNames</code> configuration. The index page is generated at <code class="highlighter-rouge">${JAVADOC_ROOT}/index.html</code>.</p>
 
@@ -536,18 +536,13 @@ TAG="v${VERSION}-RC${RC_NUM}"
 
 <p>The final step of building the candidate is to propose a website pull request.</p>
 
-<p>Add the new release to the <a href="/use/releases/">Apache Beam Releases</a> page, as follows:</p>
+<p>Start by updating <code class="highlighter-rouge">release_latest</code> version flag in the top-level <code class="highlighter-rouge">_config.yml</code>, and list the new release in the <a href="/get-started/downloads/">Apache Beam Downloads</a>, linking to the source code download and the Release Notes in JIRA.</p>
+
+<p>Add the new Javadoc to <a href="/documentation/sdks/javadoc/">SDK API Reference page</a> page, as follows:</p>
 
 <ul>
-  <li>Update the <code class="highlighter-rouge">&lt;version&gt;</code> tags in the sample <code class="highlighter-rouge">pom.xml</code> snippet to the new release.</li>
-  <li>Add the new version to the <code class="highlighter-rouge">Release Notes</code> section below, along with links to the source code download and the Release Notes in JIRA.</li>
-</ul>
-
-<p>Add the new Javadoc to <a href="/learn/sdks/javadoc/">SDK API Reference page</a> page, as follows:</p>
-
-<ul>
-  <li>Copy the generated Javadoc into the website repository: <code class="highlighter-rouge">cp -r ${JAVADOC_ROOT} learn/sdks/javadoc/${VERSION}</code>.</li>
-  <li>Update the Javadoc link on this page to point to the new version.</li>
+  <li>Copy the generated Javadoc into the website repository: <code class="highlighter-rouge">cp -r ${JAVADOC_ROOT} documentation/sdks/javadoc/${VERSION}</code>.</li>
+  <li>Update the Javadoc link on this page to point to the new version (in <code class="highlighter-rouge">src/documentation/sdks/javadoc/current.md</code>).</li>
 </ul>
 
 <p>Finally, propose a pull request with these changes. (Don’t merge before finalizing the release.)</p>
@@ -556,7 +551,7 @@ TAG="v${VERSION}-RC${RC_NUM}"
 
 <ol>
   <li>Maven artifacts deployed to the staging repository of <a href="https://repository.apache.org/content/repositories/">repository.apache.org</a></li>
-  <li>Source distribution deployed to the dev repository of <a href="https://dist.apache.org/repos/dist/dev/incubator/beam/">dist.apache.org</a></li>
+  <li>Source distribution deployed to the dev repository of <a href="https://dist.apache.org/repos/dist/dev/beam/">dist.apache.org</a></li>
   <li>Website pull request proposed to list the <a href="/use/releases/">release</a> and publish the <a href="/learn/sdks/javadoc/">API reference manual</a></li>
 </ol>
 
@@ -569,7 +564,7 @@ TAG="v${VERSION}-RC${RC_NUM}"
 <p>Start the review-and-vote thread on the dev@ mailing list. Here’s an email template; please adjust as you see fit.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>From: Release Manager
-To: dev@beam.incubator.apache.org
+To: dev@beam.apache.org
 Subject: [VOTE] Release 1.2.3, release candidate #3
 
 Hi everyone,
@@ -580,10 +575,10 @@ Please review and vote on the release candidate #3 for the version 1.2.3, as fol
 
 The complete staging area is available for your review, which includes:
 * JIRA release notes [1],
-* the official Apache source release to be deployed to dist.apache.org [2],
-* all artifacts to be deployed to the Maven Central Repository [3],
-* source code tag "v1.2.3-RC3" [4],
-* website pull request listing the release and publishing the API reference manual [5].
+* the official Apache source release to be deployed to dist.apache.org [2], which is signed with the key with fingerprint FFFFFFFF [3],
+* all artifacts to be deployed to the Maven Central Repository [4],
+* source code tag "v1.2.3-RC3" [5],
+* website pull request listing the release and publishing the API reference manual [6].
 
 The vote will be open for at least 72 hours. It is adopted by majority approval, with at least 3 PPMC affirmative votes.
 
@@ -592,9 +587,10 @@ Release Manager
 
 [1] link
 [2] link
-[3] link
+[3] https://dist.apache.org/repos/dist/release/beam/KEYS
 [4] link
 [5] link
+[6] link
 </code></pre>
 </div>
 
@@ -603,7 +599,7 @@ Release Manager
 <p>If there are no issues, reply on the vote thread to close the voting. Then, tally the votes in a separate email. Here’s an email template; please adjust as you see fit.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>From: Release Manager
-To: dev@beam.incubator.apache.org
+To: dev@beam.apache.org
 Subject: [RESULT] [VOTE] Release 1.2.3, release candidate #3
 
 I'm happy to announce that we have unanimously approved this release.
@@ -620,69 +616,10 @@ Thanks everyone!
 </code></pre>
 </div>
 
-<p>While in incubation, the Apache Incubator PMC must also vote on each release, using the same process as above. Start the review and vote thread on the <code class="highlighter-rouge">general@incubator.apache.org</code> list.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>From: Release Manager
-To: general@incubator.apache.org
-Cc: dev@beam.incubator.apache.org
-Subject: [VOTE] Apache Beam release 1.2.3-incubating
-
-Hi everyone,
-Please review and vote on the release candidate #3 for the Apache Beam version 1.2.30-incubating, as follows:
-[ ] +1, Approve the release
-[ ] -1, Do not approve the release (please provide specific comments)
-
-
-The complete staging area is available for your review, which includes:
-* JIRA release notes [1],
-* the official Apache source release to be deployed to dist.apache.org [2],
-* all artifacts to be deployed to the Maven Central Repository [3],
-* source code tag "v1.2.3-RC3" [4],
-* website pull request listing the release and publishing the API reference manual [5].
-
-The Apache Beam community has unanimously approved this release [6].
-
-As customary, the vote will be open for at least 72 hours. It is adopted by
-a majority approval with at least three PMC affirmative votes. If approved,
-we will proceed with the release.
-
-Thanks!
-
-[1] link
-[2] link
-[3] link
-[4] link
-[5] link
-[6] lists.apache.org permalink to the vote result thread, e.g.,  https://lists.apache.org/thread.html/32c991987e0abf2a09cd8afad472cf02e482af02ac35418ee8731940@%3Cdev.beam.apache.org%3E
-</code></pre>
-</div>
-
-<p>If passed, close the voting and summarize the results.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>From: Release Manager
-To: general@incubator.apache.org
-Cc: dev@beam.incubator.apache.org
-Subject: [RESULT] [VOTE] Apache Beam release 1.2.3-incubating
-
-There are XXX approving votes, all of which are binding:
-* approver 1
-* approver 2
-* approver 3
-* approver 4
-
-There are no disapproving votes.
-
-We'll proceed with this release as staged.
-
-Thanks everyone!
-</code></pre>
-</div>
-
 <h3 id="checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</h3>
 
 <ol>
-  <li>Community votes to release the proposed candidate</li>
-  <li>While in incubation, Apache Incubator PMC votes to release the proposed candidate</li>
+  <li>Community votes to release the proposed candidate, with at least three approving PMC votes</li>
 </ol>
 
 <hr />
@@ -735,7 +672,7 @@ Thanks everyone!
 
 <ul>
   <li>Maven artifacts released and indexed in the <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.beam%22">Maven Central Repository</a></li>
-  <li>Source distribution available in the release repository of <a href="https://dist.apache.org/repos/dist/release/incubator/beam/">dist.apache.org</a></li>
+  <li>Source distribution available in the release repository of <a href="https://dist.apache.org/repos/dist/release/beam/">dist.apache.org</a></li>
   <li>Website pull request to <a href="/use/releases/">list the release</a> and publish the <a href="/learn/sdks/javadoc/">API reference manual</a> merged</li>
   <li>Release tagged in the source code repository</li>
   <li>Release version finalized in JIRA</li>
@@ -753,11 +690,11 @@ Thanks everyone!
 
 <p>Announce on the release on the user@ mailing list, listing major improvements and contributions.</p>
 
-<p>While in incubation, announce the release on the Incubator’s general@ mailing list.</p>
+<p>Announce the release on the announce@apache.org mailing list.</p>
 
-<h3 id="asf-press-release">ASF press release</h3>
+<h3 id="recordkeeping">Recordkeeping</h3>
 
-<p>After incubation, use reporter.apache.org to promote the release.</p>
+<p>Use reporter.apache.org to seed the information about the release into future project reports.</p>
 
 <h3 id="beam-blog">Beam blog</h3>
 
@@ -771,9 +708,8 @@ Thanks everyone!
 
 <ol>
   <li>Release announced on the user@ mailing list.</li>
-  <li>While in incubation, release announced on the Incubator’s general@ mailing list.</li>
   <li>Blog post published, if applicable.</li>
-  <li>After incubation, Apache Software Foundation press release published.</li>
+  <li>Release recorded in reporter.apache.org.</li>
   <li>Release announced on social media.</li>
   <li>Completion declared on the dev@ mailing list.</li>
 </ol>
