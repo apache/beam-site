@@ -9,10 +9,10 @@ authors:
 ---
 
 Today, the Apache Software Foundation [announced](https://blogs.apache.org/foundation/entry/the-apache-software-foundation-announces)
-that Apache Beam has successfully graduated from incubation, becoming a new Top
-Level Project at the foundation and signifying that its "community and products
-have been well-governed under the foundation’s meritocratic process and
-principles".
+that Apache Beam has successfully graduated from incubation, becoming a new
+Top-Level Project at the foundation and signifying that its "community and
+products have been well-governed under the foundation’s meritocratic process
+and principles".
 
 <!--more-->
 
@@ -42,7 +42,7 @@ state of the art in distributed data processing.
 
 This is also an opportunity to thank those who helped and supported us reaching
 this milestone. None of this would be possible without the Apache Software
-Foundation and it’s amazing volunteers who have wholeheartedly welcomed us into
+Foundation and its amazing volunteers who have wholeheartedly welcomed us into
 the family. In particular, we’d like to thank the Apache Incubator community
 for their guidance producing releases and following processes. We are especially
 thankful to the Apache Infra team for their assistance establishing Beam’s
