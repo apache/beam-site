@@ -7,8 +7,8 @@ permalink: /contribute/maturity-model/
 # Apache Maturity Model Assessment for Apache Beam
 
 *Apache Beam has graduated from incubation as a top-level project at the
-Apache Software Foundation. This page was last updated on November 22, 2016
-and it is no longer being maintained.*
+Apache Software Foundation. This page was last updated as a part of the
+graduation process and is no longer being maintained.*
 
 * TOC
 {:toc}
