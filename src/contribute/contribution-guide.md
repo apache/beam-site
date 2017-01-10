@@ -162,7 +162,7 @@ Start eclipse with a fresh workspace in a separate directory from your checkout.
 	File
 	-> Import...
 	-> Existing Maven Projects
-	-> Browse to the directory you cloned into and select beam
+	-> Browse to the directory you cloned into and select "beam"
 	-> make sure all beam projects are selected
 	-> Finalize
 
@@ -418,6 +418,6 @@ During review, committers will patch in your PR, generate the static `content/`,
 
 #### Committing website changes
 
-Follow the same committer process as above, but using `beam-site` and `asf-site`.
+Follow the same committer process as above, but using repository `apache/beam-site` and branch `asf-site`.
 
-In addition, the committer is responsible for doing the final `jekyll build` to generate the static content, so follow the instructions above to install jekyll.
+In addition, the committer is responsible for doing the final `jekyll build` to generate the static content, so follow the instructions above to install `jekyll`.
