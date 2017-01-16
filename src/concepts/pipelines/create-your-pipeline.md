@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Create Your Pipeline"
-permalink: /documentation/pipelines/create-your-pipeline/
+permalink: /concepts/pipelines/create-your-pipeline/
+redirect_from: /documentation/pipelines/create-your-pipeline/
 ---
 # Create Your Pipeline
 

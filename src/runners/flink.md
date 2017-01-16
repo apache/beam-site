@@ -1,8 +1,10 @@
 ---
 layout: default
 title: "Apache Flink Runner"
-permalink: /documentation/runners/flink/
-redirect_from: /learn/runners/flink/
+permalink: /runners/flink/
+redirect_from: 
+  - /documentation/runners/flink/ 
+  - /learn/runners/flink/
 ---
 # Using the Apache Flink Runner
 

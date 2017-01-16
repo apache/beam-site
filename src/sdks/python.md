@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Beam Python SDK"
-permalink: /documentation/sdks/python/
+permalink: /sdks/python/
+redirect_from: /documentation/sdks/python/
 ---
 # Apache Beam Python SDK _[Under Development]_
 

@@ -1,8 +1,10 @@
 ---
 layout: default
 title: "Beam Java SDK"
-permalink: /documentation/sdks/java/
-redirect_from: /learn/sdks/java/
+permalink: /sdks/java/
+redirect_from: 
+  - /documentation/sdks/java/
+  - /learn/sdks/java/
 ---
 # Apache Beam Java SDK
 
