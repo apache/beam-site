@@ -1,8 +1,10 @@
 ---
 layout: default
 title: "Apache Spark Runner"
-permalink: /documentation/runners/spark/
-redirect_from: /learn/runners/spark/
+permalink: /runners/spark/
+redirect_from: 
+  - /documentation/runners/spark/
+  - /learn/runners/spark/
 ---
 # Using the Apache Spark Runner
 

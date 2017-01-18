@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Test Your Pipeline"
-permalink: /documentation/pipelines/test-your-pipeline/
+permalink: /concepts/pipelines/test-your-pipeline/
+redirect_from: /documentation/pipelines/test-your-pipeline/
 ---
 # Test Your Pipeline
 

@@ -1,8 +1,10 @@
 ---
 layout: default
 title: "Direct Runner"
-permalink: /documentation/runners/direct/
-redirect_from: /learn/runners/direct/
+permalink: /runners/direct/
+redirect_from: 
+  - /documentation/runners/direct/
+  - /learn/runners/direct/
 ---
 # Using the Direct Runner
 

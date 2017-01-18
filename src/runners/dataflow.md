@@ -1,8 +1,10 @@
 ---
 layout: default
 title: "Cloud Dataflow Runner"
-permalink: /documentation/runners/dataflow/
-redirect_from: /learn/runners/dataflow/
+permalink: /runners/dataflow/
+redirect_from: 
+  - /documentation/runners/dataflow/
+  - /learn/runners/dataflow/
 ---
 # Using the Google Cloud Dataflow Runner
 

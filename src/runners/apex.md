@@ -1,7 +1,8 @@
 ---
 layout: default
 title: "Apache Apex Runner"
-permalink: /documentation/runners/apex/
+permalink: /runners/apex/
+redirect_from: /documentation/runners/apex/
 ---
 # Using the Apache Apex Runner
 
