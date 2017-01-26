@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Beam Python Quickstart"
+title: "Beam Quickstart for Python"
 permalink: /get-started/quickstart-py/
 ---
 
