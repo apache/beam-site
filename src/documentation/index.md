@@ -23,6 +23,7 @@ Learn about the Beam Programming Model and the concepts common to all Beam SDKs 
 * [Design Your Pipeline]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline/) by planning your pipeline’s structure, choosing transforms to apply to your data, and determining your input and output methods.
 * [Create Your Pipeline]({{ site.baseurl }}/documentation/pipelines/create-your-pipeline/) using the classes in the Beam SDKs.
 * [Test Your Pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline/) to minimize debugging a pipeline’s remote execution.
+* Consult [PTransform Style Guide]({{ site.baseurl }}/documentation/ptransform-style-guide/) if you are contributing new `PTransform`s to Beam.
 
 ## SDKs
 

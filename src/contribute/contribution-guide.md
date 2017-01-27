@@ -23,7 +23,7 @@ We use a review-then-commit workflow in Beam for all contributions.
 
 **For all contributions:**
 
-1. **Code:** The best part ;-)
+1. **Code:** The best part ;-) When developing a new `PTransform`, consult the [PTransform Style Guide]({{ site.baseurl }}/documentation/ptransform-style-guide).
 1. **Review:** Submit a pull request with your contribution to our [GitHub mirror](https://github.com/apache/beam/). Work with a committer to review and iterate on the code, if needed.
 1. **Commit:** A Beam committer merges the pull request into our [Apache repository](https://git-wip-us.apache.org/repos/asf/beam.git).
 
