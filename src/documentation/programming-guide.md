@@ -123,8 +123,8 @@ public static void main(String[] args) {
         PipelineOptionsFactory.fromArgs(args).create();
     Pipeline p = Pipeline.create(options);
 
-    PCollection<String> lines = p.apply(
-      TextIO.Read.named("ReadMyFile").from("protocol://path/to/some/inputData.txt"));
+    PCollection<String> lines = p
+      .apply("ReadMyFile", TextIO.Read.from("protocol://path/to/some/inputData.txt"));
 }
 ```
 
