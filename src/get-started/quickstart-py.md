@@ -42,13 +42,17 @@ virtualenv /path/to/directory
 
 A virtual environment needs to be activated for each shell that is to use it.
 Activating it sets some environment variables that point to the virtual
-environment's directories. To activate a virtual environment in Bash, run:
+environment's directories. 
+
+To activate a virtual environment in Bash, run:
 
 ```
 . /path/to/directory/bin/activate
 ```
 
 That is, source the script `bin/activate` under the virtual environment directory you created.
+
+For instructions using other shells, see the [virtualenv documentation](https://virtualenv.pypa.io/en/stable/userguide/#activate-script).
 
 ### Download and install
 
