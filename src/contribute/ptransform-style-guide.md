@@ -1,26 +1,27 @@
 ---
 layout: default
 title: "PTransform Style Guide"
-permalink: /documentation/ptransform-style-guide/
+permalink: /contribute/ptransform-style-guide/
 ---
 
-# PTransform style guide
+# PTransform Style Guide
 
-## A style guide for writers of new reusable PTransform's
+_A style guide for writers of new reusable PTransforms._
 
+* TOC
 {:toc}
 
-# Language-neutral considerations
+## Language-neutral considerations
 
-## Consistency
+### Consistency
 Be consistent with prior art:
 
-* Adhere to [Beam design principles](https://beam.apache.org/contribute/design-principles/).
+* Adhere to [Beam design principles]({{ site.baseurl }}/contribute/design-principles/).
 * If there is already a similar transform in some SDK, make the API of your transform similar, so that users' experience with one of them will transfer to the other. This applies to transforms in the same-language SDK and different-language SDKs.
 *Exception:* pre-existing transforms that clearly violate the current style guide for the sole reason that they were developed before this guide was ratified. In this case, the style guide takes priority over consistency with the existing transform.
 * When there is no existing similar transform, stay within what is idiomatic within your language of choice (e.g. Java or Python).
 
-## Exposing a PTransform vs. something else
+### Exposing a PTransform vs. something else
 
 So you want to develop a library that people will use in their Beam pipelines - a connector to a third-party system, a machine learning algorithm, etc. How should you expose it?
 
@@ -36,7 +37,7 @@ Do not:
 
 * Do not expose the exact way the transform is internally structured. E.g.: the public API surface of your library *usually* (with exception of the last bullet above) should not expose `DoFn`, concrete `Source` or `Sink` classes, etc., in order to avoid presenting users with a confusing choice between applying the `PTransform` or using the `DoFn`/`Source`/`Sink`.
 
-## Naming
+### Naming
 
 Do:
 
@@ -49,9 +50,9 @@ Do not:
 
 * Do not use words `transform`, `source`, `sink`, `reader`, `writer`, `bound`, `unbound` in `PTransform` class names (note: `bounded` and `unbounded` are fine when referring to whether a `PCollection` is bounded or unbounded): these words are redundant, confusing, obsolete, or name an existing different concept in the SDK.
 
-## Configuration
+### Configuration
 
-### What goes into configuration vs. input collection
+#### What goes into configuration vs. input collection
 
 * **Into input `PCollection`:** anything of which there may be a very large number of instances (if there can be >1000 of it, it should be in a `PCollection`), or which is potentially not known at pipeline construction time.
 E.g.: records to be processed or written to a third-party system; filenames to be read.
@@ -60,7 +61,7 @@ Exception: sometimes Beam APIs require things to be known at pipeline constructi
 E.g.: a database query or connection string; credentials; a user-specified callback; a tuning parameter.
 One advantage of putting a parameter into transform configuration is, it can be validated at pipeline construction time.
 
-### What parameters to expose
+#### What parameters to expose
 
 Do:
 
@@ -73,9 +74,9 @@ Do not:
 *Exception 1:* if some parameters of the underlying library interact with Beam semantics non-trivially, then expose them. E.g. when developing a connector to a pub/sub system that has a "delivery guarantee" parameter for publishers, expose the parameter but prohibit values incompatible with the Beam model (at-most-once and exactly-once).
 *Exception 2:* if the underlying library's configuration class is cumbersome to use - e.g. does not declare a stable API, exposes problematic transitive dependencies, or does not obey [semantic versioning](http://semver.org/) - in this case, it is better to wrap it and expose a cleaner and more stable API to users of the transform.
 
-## Error handling
+### Error handling
 
-### Transform configuration errors
+#### Transform configuration errors
 
 Detect errors early. Errors can be detected at the following stages:
 
@@ -92,7 +93,7 @@ For example:
 * Detect invalid values of individual parameters in setter methods.
 * Detect invalid combinations of parameters in the transform's validate method.
 
-### Runtime errors and data consistency
+#### Runtime errors and data consistency
 
 Favor data consistency above everything else. Do not mask data loss or corruption. If data loss can't be prevented, fail.
 
@@ -115,14 +116,14 @@ Do not:
 **Rule of thumb: if a bundle didn't fail, its output must be correct and complete.**
 For a user, a transform that logged an error but succeeded is silent data loss.
 
-## Performance
+### Performance
 
 Many runners optimize chains of `ParDo`s in ways that improve performance if the `ParDo`s emit a small to moderate number of elements per input element, or have relatively cheap per-element processing (e.g. Dataflow's "fusion", Apex "compute locality"), but limit parallelization if these assumptions are violated. In that case you may need a "fusion break" (`Reshuffle.of()`) to improve the parallelizability of processing the output `PCollection` of the `ParDo`.
 
 * If the transform includes a `ParDo` that outputs a potentially large number of elements per input element, apply a fusion break after this `ParDo` to make sure downstream transforms can process its output in parallel.
 * If the transform includes a `ParDo` that takes a very long time to process an element, insert a fusion break before this `ParDo` to make sure all or most elements can be processed in parallel regardless of how its input `PCollection` was produced.
 
-## Documentation
+### Documentation
 
 Document how to configure the transform (give code examples), and what guarantees it expects about its input or provides about its output, accounting for the Beam model. E.g.:
 
@@ -132,7 +133,7 @@ Document how to configure the transform (give code examples), and what guarantee
 * If the transform is querying an external system during processing (e.g. joining a `PCollection` with information from an external key-value store), what are the guarantees on freshness of queried data: e.g. is it all loaded at the beginning of the transform, or queried per-element (in that case, what if data for a single element changes while the transform runs)?
 * If there's a non-trivial relationship between arrival of items in the input `PCollection` and emitting output into the output `PCollection`, what is this relationship? (e.g. if the transform internally does windowing, triggering, grouping, or uses the state or timers API)
 
-## Logging
+### Logging
 
 Anticipate abnormal situations that a user of the transform may run into. Log information that they would have found sufficient for debugging, but limit the volume of logging. Here is some advice that applies to all programs, but is especially important when data volume is massive and execution is distributed.
 
@@ -148,7 +149,7 @@ Do not:
 * Do not log at `INFO` per element or per bundle. `DEBUG`/`TRACE` may be okay because these levels are disabled by default.
 * Avoid logging data payloads that may contain sensitive information, or sanitize them before logging (e.g. user data, credentials, etc).
 
-## Testing
+### Testing
 
 Data processing is tricky, full of corner cases, and difficult to debug, because pipelines take a long time to run, it's hard to check if the output is correct, you can't attach a debugger, and you often can't log as much as you wish to, due to high volume of data. Because of that, testing is particularly important.
 
@@ -164,9 +165,9 @@ Data processing is tricky, full of corner cases, and difficult to debug, because
 * To unit test `DoFn`s, `CombineFn`s, and `BoundedSource`s, consider using `DoFnTester`, `CombineFnTester`, and `SourceTestUtils` respectively which can exercise the code in non-trivial ways to flesh out potential bugs. 
 * For transforms that work over unbounded collections, test their behavior in the presence of late or out-of-order data using `TestStream`.
 * Tests must pass 100% of the time, including in hostile, CPU- or network-constrained environments (continuous integration servers). Never put timing-dependent code (e.g. sleeps) into tests. Experience shows that no reasonable amount of sleeping is enough - code can be suspended for more than several seconds.
-* For detailed instructions on test code organization, see the [Beam Testing Guide](https://beam.apache.org/contribute/testing/).
+* For detailed instructions on test code organization, see the [Beam Testing Guide]({{ site.baseurl }}/contribute/testing/).
 
-## Compatibility
+### Compatibility
 
 Do:
 
@@ -180,13 +181,13 @@ Do not:
 Strive to make such incompatible behavior changes cause a compile error (e.g. it's better to introduce a new transform for a new behavior and deprecate and then delete the old one (in a new major version), than to silently change the behavior of an existing transform), or at least a runtime error.
 * If the behavior of the transform stays the same and you're merely changing implementation or API - do not change API of the transform in a way that will make a user's code stop compiling.
 
-# Java specific considerations
+## Java specific considerations
 
 Good examples for most of the practices below are `JdbcIO` and `MongoDbIO`.
 
-## API
+### API
 
-### Choosing types of input and output PCollection's
+#### Choosing types of input and output PCollection's
 
 Whenever possible, use types specific to the nature of the transform. People can wrap it with conversion `DoFn`s from their own types if necessary. E.g. a Datastore connector should use the Datastore `Entity` type, a MongoDb connector should use Mongo `Document` type, not a String representation of the JSON.
 
@@ -194,7 +195,7 @@ Sometimes that's not possible (e.g. JDBC does not provide a Beam-compatible (enc
 
 When the transform should logically return a composite type for which no Java class exists yet, create a new POJO class with well-named fields. Do not use generic tuple classes or `KV` (unless the fields are legitimately a key and a value).
 
-### Transforms with multiple output collections
+#### Transforms with multiple output collections
 
 If the transform needs to return multiple collections, it should be a `PTransform<..., PCollectionTuple>` and expose methods `getBlahTag()` for each collection.
 
@@ -226,7 +227,7 @@ public class MyTransform extends PTransform<..., PCollectionTuple> {
 }
 ```
 
-### Fluent builders for configuration
+#### Fluent builders for configuration
 
 Make the transform class immutable, with methods to produce modified immutable objects. Use [AutoValue](https://github.com/google/auto/tree/master/value). Autovalue can provide a Builder helper class. Use `@Nullable` to mark parameters of class type that don't have a default value or whose default value is null, except for primitive types (e.g. int).
 
@@ -249,7 +250,7 @@ public abstract static class MyTransform extends PTransform<...> {
 }
 ```
 
-#### Factory methods
+##### Factory methods
 
 Provide a single argumentless static factory method, either in the enclosing class (see "Packaging a family of transforms") or in the transform class itself.
 
@@ -274,7 +275,7 @@ public abstract static class TwiddleThumbs extends PTransform<...> {
 
 Exception: when transform has a single overwhelmingly most important parameter, then call the factory method `of` and put the parameter into an argument of the factory method: `ParDo.of(DoFn).withAllowedLateness()`.
 
-#### Fluent builder methods for setting parameters
+##### Fluent builder methods for setting parameters
 
 Call them `withBlah()`. All builder methods must return exactly the same type; if it's a parameterized (generic) type, with the same values of type parameters.
 
@@ -301,7 +302,7 @@ public Twiddle withMoo(int moo) {
 }
 ```
 
-#### Default values for parameters
+##### Default values for parameters
 
 Specify them in the factory method (factory method returns an object with default values).
 
@@ -314,11 +315,11 @@ public class Thumbs {
 }
 ```
 
-#### Packaging multiple parameters into a reusable object
+##### Packaging multiple parameters into a reusable object
 
 If several parameters of the transform are very tightly logically coupled, sometimes it makes sense to encapsulate them into a container object. Use the same guidelines for this container object (make it immutable, use AutoValue with builders, document `withBlah()` methods, etc.). For an example, see [JdbcIO.DataSourceConfiguration](https://github.com/apache/beam/blob/master/sdks/java/io/jdbc/src/main/java/org/apache/beam/sdk/io/jdbc/JdbcIO.java).
 
-### Transforms with type parameters
+#### Transforms with type parameters
 
 All type parameters should be specified explicitly on factory method. Builder methods (`withBlah()`) should not change the types.
 
@@ -357,7 +358,7 @@ Exception: when the transform has a single most important parameter and this par
 
 When the transform has more than one type parameter, or if the meaning of the parameter is non-obvious, name the type parameters like `SomethingT`, e.g.: a PTransform implementing a classifier algorithm and assigning each input element with a label might be typed as `Classify<InputT, LabelT>`.
 
-### Injecting user-specified behavior
+#### Injecting user-specified behavior
 
 If the transform has an aspect of behavior to be customized by a user's code, make a decision as follows:
 
@@ -370,7 +371,7 @@ Do not:
 
 * Do not use inheritance for extensibility: users should not subclass the `PTransform` class.
 
-### Packaging a family of transforms
+#### Packaging a family of transforms
 
 When developing a family of highly related transforms (e.g. interacting with the same system in different ways, or providing different implementations of the same high-level task), use a top-level class as a namespace, with multiple factory methods returning transforms corresponding to each individual use case.
 
@@ -437,18 +438,18 @@ public static class FooV2 {
 }
 ```
 
-## Behavior
+### Behavior
 
-### Immutability
+#### Immutability
 
 * Transform classes must be immutable: all variables must be private final and themselves immutable (e.g. if it's a list, it must be an `ImmutableList`).
 * Elements of all `PCollection`s must be immutable.
 
-### Serialization
+#### Serialization
 
 `DoFn`, `PTransform`, `CombineFn` and other instances will be serialized. Keep the amount of serialized data to a minimum: Mark fields that you don't want serialized as `transient`. Make classes `static` whenever possible (so that the instance doesn't capture and serialize the enclosing class instance). Note: In some cases this means that you cannot use anonymous classes.
 
-### Validation
+#### Validation
 
 * Validate individual parameters in `.withBlah()` methods. Error messages should mention the method being called, the actual value and the range of valid values.
 * Validate inter-parameter invariants in the `PTransform`'s `.validate()` method.
@@ -480,7 +481,7 @@ public abstract class TwiddleThumbs
 }
 ```
 
-### Coders
+#### Coders
 
 * Use `Coder`s only for setting the coder on a `PCollection` or a mutable state cell.
 * When available, use a specific most efficient coder for the datatype (e.g. `StringUtf8Coder.of()` for strings, `ByteArrayCoder.of()` for byte arrays, etc.), rather than using a generic coder like `SerializableCoder`. Develop efficient coders for types that can be elements of `PCollection`s.

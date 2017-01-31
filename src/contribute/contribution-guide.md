@@ -23,7 +23,7 @@ We use a review-then-commit workflow in Beam for all contributions.
 
 **For all contributions:**
 
-1. **Code:** The best part ;-) When developing a new `PTransform`, consult the [PTransform Style Guide]({{ site.baseurl }}/documentation/ptransform-style-guide).
+1. **Code:** The best part ;-)
 1. **Review:** Submit a pull request with your contribution to our [GitHub mirror](https://github.com/apache/beam/). Work with a committer to review and iterate on the code, if needed.
 1. **Commit:** A Beam committer merges the pull request into our [Apache repository](https://git-wip-us.apache.org/repos/asf/beam.git).
 
@@ -57,6 +57,8 @@ We suggest using [Google Docs](https://docs.google.com/) for sharing designs tha
 
 ## Code
 To contribute code to Apache Beam, you’ll have to do a few administrative steps once, and then follow a few guidelines for each contribution.
+
+When developing a new `PTransform`, consult the [PTransform Style Guide]({{ site.baseurl }}/contribute/ptransform-style-guide).
 
 ### One-time Setup
 
