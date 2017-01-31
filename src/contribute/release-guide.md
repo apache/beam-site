@@ -150,6 +150,19 @@ You should verify that the issues listed automatically by JIRA are appropriate t
 
 Adjust any of the above properties to the improve clarity and presentation of the Release Notes.
 
+### Check the state of the aggregate javadoc
+
+When you build with -Prelease, the Maven build process creates a single archive of javadoc for all of
+the Java API. This takes place in `sdks/java/javadoc`. The actual build of the javadoc is run from
+Apache Ant, via the `maven-antrun-plugin`. 
+
+The javadoc requires some maintenance; if you look at the `ant.xml` file, you will see that it 
+has a list of 'offline' URLs and a list of excluded packages. The offline links connect the Beam
+javadoc to the javadoc of other projects such as Jackson and Guava. Check that the URLs for the offline
+project point to the current versions.
+
+Also check that the excluded package list is up to date. 
+
 ### Create a release branch
 
 Release candidates are built from a release branch. As a final step in preparation for the release, you should create the release branch, push it to the code repository, and update version information on the original branch.
@@ -255,31 +268,17 @@ Copy the source release to the dev repository of `dist.apache.org`.
 
 1. Verify that files are [present](https://dist.apache.org/repos/dist/dev/beam).
 
-### Build the API reference
-
-Beam publishes API reference manual for each release on the website. For Java SDK, that’s Javadoc.
-
-Check out release candidate, as follows:
-
-    git checkout ${TAG}
-
-Use Maven Javadoc plugin to generate the new Java reference manual, as follows:
-
-    mvn -DskipTests clean package javadoc:aggregate \
-        -Ddoctitle="Apache Beam SDK for Java, version ${VERSION}" \
-        -Dwindowtitle="Apache Beam SDK for Java, version ${VERSION}" \
-        -Dmaven.javadoc.failOnError=false \
-        -DexcludePackageNames="org.apache.beam.examples,org.apache.beam.runners.dataflow.internal,org.apache.beam.runners.flink.examples,org.apache.beam.runners.flink.translation,org.apache.beam.runners.spark.examples,org.apache.beam.runners.spark.translation,org.apache.beam.runners.apex.translation,org.apache.beam.sdk.microbenchmarks.coders.generated,org.apache.beam.sdk.microbenchmarks.transforms.generated,org.openjdk.jmh.infra.generated"
-
-By default, the Javadoc will be generated in `target/site/apidocs/`. Let `${JAVADOC_ROOT}` be the absolute path to `apidocs`. ([Pull request #1015](https://github.com/apache/beam/pull/1015) will hopefully simplify this process.)
-
-Please carefully review the generated Javadoc. Check for completeness and presence of all relevant packages and `package-info.java`; consider adding less relevant packages to the `excludePackageNames` configuration. The index page is generated at `${JAVADOC_ROOT}/index.html`.
-
 ### Propose a pull request for website updates
 
 The final step of building the candidate is to propose a website pull request.
 
 Start by updating `release_latest` version flag in the top-level `_config.yml`, and list the new release in the [Apache Beam Downloads]({{ site.baseurl }}/get-started/downloads/), linking to the source code download and the Release Notes in JIRA.
+
+Beam publishes API reference manual for each release on the website. For Java SDK, that’s Javadoc.
+
+One of the artifacts created in the release contains the Javadoc for the website: 
+`org.apache.beam:beam-sdks-java-javadoc`. To update the website, you must unpack
+this jar file from the release candidate into the source tree of the website.
 
 Add the new Javadoc to [SDK API Reference page]({{ site.baseurl }}/documentation/sdks/javadoc/) page, as follows:
 
