@@ -6,6 +6,8 @@ permalink: /get-started/quickstart-py/
 
 # Apache Beam Python SDK Quickstart
 
+This guide shows you how to set up your Python development environment, get the Apache Beam SDK for Python, and run an example pipeline.
+
 * TOC
 {:toc}
 
@@ -13,22 +15,26 @@ permalink: /get-started/quickstart-py/
 
 ### Install pip
 
-[Install pip](https://pip.pypa.io/en/stable/installing/), Python's package manager. Check if you already have `pip` installed by running `pip --version`. After installation, verify that you have `pip` version 7.0.0 or newer. To update `pip`, run the following command:
+Install [pip](https://pip.pypa.io/en/stable/installing/), Python's package manager. Check that you have version 7.0.0 or newer, by running: 
 
 ```
-pip install -U pip
+pip --version
 ```
 
-### Install virtualenv
+### Install Python virtual environment 
 
 It is recommended that you install a [Python virtual environment](http://docs.python-guide.org/en/latest/dev/virtualenvs/)
-for initial experiments.  Check if you have it installed by running `virtualenv --version`. If you do not have `virtualenv` version 13.1.0 or later, install (or upgrade) your `virtualenv`:
+for initial experiments. If you do not have `virtualenv` version 13.1.0 or newer, install it by running:
 
-`pip install --upgrade virtualenv`
+```
+pip install --upgrade virtualenv
+```
 
-If you do not want to use a Python virtual environment (not recommended!), ensure `setuptools` version 17.1 or newer is installed on your machine. Check if you have it installed by running `easy_install --version`.  If not, install `setuptools`:
+If you do not want to use a Python virtual environment (not recommended), ensure `setuptools` is installed on your machine. If you do not have `setuptools` version 17.1 or newer, install it by running:
 
-`pip install --upgrade setuptools`
+```
+pip install --upgrade setuptools
+```
 
 ## Get Apache Beam
 
