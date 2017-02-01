@@ -91,11 +91,11 @@ public static void main(String[] args) {
 ```
 
 ```py
-from apache_beam.utils.pipeline_options import PipelineOptions
-
-# Will parse the arguments passed into the application and construct a PipelineOptions
+# Will parse the arguments passed into the application and construct a PipelineOptions object.
 # Note that --help will print registered options.
-p = beam.Pipeline(options=PipelineOptions())
+
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_constructing_creating
+%}
 ```
 
 The Beam SDKs contain various subclasses of `PipelineOptions` that correspond to different Runners. For example, `DirectPipelineOptions` contains options for the Direct (local) pipeline runner, while `DataflowPipelineOptions` contains options for using the runner for Google Cloud Dataflow. You can also define your own custom `PipelineOptions` by creating an interface that extends the Beam SDKs' `PipelineOptions` class.
@@ -129,15 +129,9 @@ public static void main(String[] args) {
 ```
 
 ```py
-import apache_beam as beam
-
-# Create the pipeline.
-p = beam.Pipeline()
-
-# Read the text file into a PCollection.
-lines = p | 'ReadMyFile' >> beam.io.Read(beam.io.TextFileSource("protocol://path/to/some/inputData.txt"))
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_constructing_reading
+%}
 ```
-
 
 See the [section on I/O](#io) to learn more about how to read from the various data sources supported by the Beam SDK.
 
@@ -174,20 +168,8 @@ public static void main(String[] args) {
 ```
 
 ```py
-import apache_beam as beam
-
-# python list
-lines = [
-  "To be, or not to be: that is the question: ",
-  "Whether 'tis nobler in the mind to suffer ",
-  "The slings and arrows of outrageous fortune, ",
-  "Or to take arms against a sea of troubles, "
-]
-
-# Create the pipeline.
-p = beam.Pipeline()
-
-collection = p | 'ReadMyLines' >> beam.Create(lines)
+% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_pcollection
+%}
 ```
 
 ### <a name="pccharacteristics"></a>PCollection characteristics
@@ -246,8 +228,8 @@ How you apply your pipeline's transforms determines the structure of your pipeli
 
 ```java
 [Final Output PCollection] = [Initial Input PCollection].apply([First Transform])
-							.apply([Second Transform])
-							.apply([Third Transform])
+.apply([Second Transform])
+.apply([Third Transform])
 ```
 
 ```py
@@ -262,9 +244,14 @@ The resulting workflow graph of the above pipeline looks like this:
 
 However, note that a transform *does not consume or otherwise alter* the input collection--remember that a `PCollection` is immutable by definition. This means that you can apply multiple transforms to the same input `PCollection` to create a branching pipeline, like so:
 
-```
+```java
 [Output PCollection 1] = [Input PCollection].apply([Transform 1])
 [Output PCollection 2] = [Input PCollection].apply([Transform 2])
+```
+
+```py
+[Output PCollection 1] = [Input PCollection] | [Transform 1]
+[Output PCollection 2] = [Input PCollection] | [Transform 2]
 ```
 
 The resulting workflow graph from the branching pipeline above looks like this:
@@ -326,13 +313,8 @@ PCollection<Integer> wordLengths = words.apply(
 words = ...
 
 # The DoFn to perform on each element in the input PCollection.
-class ComputeWordLengthFn(beam.DoFn):
-  def process(self, context):
-    # Get the input element from ProcessContext.
-    word = context.element
-    # Use return to emit the output element.
-    return [len(word)]
-
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:model_pardo_pardo
+%}    
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:model_pardo_apply
 %}```
 
@@ -370,12 +352,8 @@ static class ComputeWordLengthFn extends DoFn<String, Integer> {
 ```
 
 ```py
-class ComputeWordLengthFn(beam.DoFn):
-  def process(self, context):
-    # Get the input element from ProcessContext.
-    word = context.element
-    # Use return to emit the output element.
-    return [len(word)]
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:model_pardo_pardo
+%}
 ```
 
 {:.language-java}
@@ -591,8 +569,8 @@ PCollection<Integer> sum = pc.apply(
 # sum combines the elements in the input PCollection.
 # The resulting PCollection, called result, contains one value: the sum of all the elements in the input PCollection.
 pc = ...
-result = pc | beam.CombineGlobally(sum)
-```
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:combine_custom_average
+%}```
 
 ##### Global windowing:
 
@@ -609,7 +587,6 @@ PCollection<Integer> sum = pc.apply(
 ```py
 pc = ...
 sum = pc | beam.CombineGlobally(sum).without_defaults()
-
 ```
 
 ##### Non-global windowing:
@@ -654,9 +631,8 @@ PCollection<KV<String, Double>> avgAccuracyPerPlayer =
 ```py
 # PCollection is grouped by key and the numeric values associated with each key are averaged into a float.
 player_accuracies = ...
-avg_accuracy_per_player = (player_accuracies
-                           | beam.CombinePerKey(
-                               beam.combiners.MeanCombineFn()))
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:combine_per_key
+%}
 ```
 
 #### <a name="transforms-flatten-partition"></a>Using Flatten and Partition
@@ -680,11 +656,10 @@ PCollection<String> merged = collections.apply(Flatten.<String>pCollections());
 
 ```py
 # Flatten takes a tuple of PCollection objects.
-# Returns a single PCollection that contains all of the elements in the PCollection objects in that tuple.
-merged = (
-    (pcoll1, pcoll2, pcoll3)
-    # A list of tuples can be "piped" directly into a Flatten transform.
-    | beam.Flatten())
+# Returns a single PCollection that contains all of the elements in the 
+{%
+github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_multiple_pcollections_flatten
+%}
 ```
 
 ##### Data encoding in merged collections:
@@ -723,13 +698,12 @@ PCollection<Student> fortiethPercentile = studentsByPercentile.get(4);
 ```py
 # Provide an int value with the desired number of result partitions, and a partitioning function (partition_fn in this example).
 # Returns a tuple of PCollection objects containing each of the resulting partitions as individual PCollection objects.
-def partition_fn(student, num_partitions):
-  return int(get_percentile(student) * num_partitions / 100)
-
-by_decile = students | beam.Partition(partition_fn, 10)
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_multiple_pcollections_partition
+%}
 
 # You can extract each partition from the tuple of PCollection objects as follows:
-fortieth_percentile = by_decile[4]
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_multiple_pcollections_partition_40th
+%}
 ```
 
 #### <a name="transforms-usercodereqs"></a>General Requirements for writing user code for Beam transforms
@@ -957,7 +931,7 @@ Read transforms read data from an external source and return a `PCollection` rep
 PCollection<String> lines = p.apply(TextIO.Read.from("gs://some/inputData.txt"));   
 ```
 
-```python
+```py
 lines = pipeline | beam.io.ReadFromText('gs://some/inputData.txt')
 ```
 
@@ -971,7 +945,7 @@ Write transforms write the data in a `PCollection` to an external data source. Y
 output.apply(TextIO.Write.to("gs://some/outputData"));
 ```
 
-```python
+```py
 output | beam.io.WriteToText('gs://some/outputData')
 ```
 
@@ -986,10 +960,9 @@ p.apply(“ReadFromText”,
     TextIO.Read.from("protocol://my_bucket/path/to/input-*.csv");
 ```
 
-```python
-lines = p | beam.io.Read(
-    'ReadFromText',
-    beam.io.TextFileSource('protocol://my_bucket/path/to/input-*.csv'))
+```py
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_pipelineio_read
+%}
 ```
 
 To read data from disparate sources into a single `PCollection`, read each one independently and then use the [Flatten](#transforms-flatten-partition) transform to create a single `PCollection`.
@@ -1006,9 +979,9 @@ records.apply("WriteToText",
                 .withSuffix(".csv"));
 ```
 
-```python
-filtered_words | beam.io.WriteToText(
-'protocol://my_bucket/path/to/numbers', file_name_suffix='.csv')
+```py
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_pipelineio_write
+%}
 ```
 
 ### Beam-provided I/O APIs
@@ -1069,7 +1042,7 @@ To run your pipeline, use the `run` method. The program you create sends a speci
 pipeline.run();
 ```
 
-```python
+```py
 pipeline.run()
 ```
 
@@ -1079,13 +1052,11 @@ For blocking execution, append the `waitUntilFinish` method:
 pipeline.run().waitUntilFinish();
 ```
 
-```python
+```py
 pipeline.run().wait_until_finish()
 ```
 
-<a name="transforms-composite"></a>
 <a name="coders"></a>
+
 <a name="windowing"></a>
 <a name="triggers"></a>
-
-> **Note:** This guide is still in progress. There is an open issue to finish the guide ([BEAM-193](https://issues.apache.org/jira/browse/BEAM-193))
