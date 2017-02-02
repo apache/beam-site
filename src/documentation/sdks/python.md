@@ -5,7 +5,7 @@ permalink: /documentation/sdks/python/
 ---
 # Apache Beam Python SDK
 
-The Python SDK for Apache Beam provides a simple, powerful API for building both batch and streaming parallel data processing pipelines in Python.
+The Python SDK for Apache Beam provides a simple, powerful API for building batch data processing pipelines in Python.
 
 ## Get Started with the Python SDK
 
@@ -15,5 +15,5 @@ Then, follow the [Beam Python SDK Quickstart]({{ site.baseurl }}/get-started/qui
 
 ## Python Type Safety
 
-Python is a dynamically-typed language with no static type checking. The Beam SDK for Python uses type hints during pipeline construction and runtime to try to emulate the correctness guarantees achieved by true static typing. [Ensuring Python Type Safety]({{ site.baseurl }}/documentation/sdks/python-type-safety) walks through how to use type hints, which help you to catch potential bugs up front in the local runner, rather than after minutes of execution into a deep, complex pipeline.
+Python is a dynamically-typed language with no static type checking. The Beam SDK for Python uses type hints during pipeline construction and runtime to try to emulate the correctness guarantees achieved by true static typing. [Ensuring Python Type Safety]({{ site.baseurl }}/documentation/sdks/python-type-safety) walks through how to use type hints, which help you to catch potential bugs up front with the [Direct Runner]({{ site.baseurl }}/documentation/runners/direct/).
 

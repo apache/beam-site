@@ -9,22 +9,22 @@ Python is a dynamically-typed language with no static type checking. Because of 
 
 The Apache Beam SDK for Python uses **type hints** during pipeline construction and runtime to try to emulate the correctness guarantees achieved by true static typing. Additionally, using type hints lays some groundwork that allows the backend service to perform efficient type deduction and registration of `Coder` objects.
 
-Python version 3.5 introduces a module called **typing** to provide hints for type validators in the language. The Beam SDK for Python, based on Python version 2.7, implements a subset of ([PEP 484](https://www.python.org/dev/peps/pep-0484/)) and aims to follow it as closely as possible in its own typehints module.
+Python version 3.5 introduces a module called **typing** to provide hints for type validators in the language. The Beam SDK for Python, based on Python version 2.7, implements a subset of [PEP 484](https://www.python.org/dev/peps/pep-0484/) and aims to follow it as closely as possible in its own typehints module.
 
 ## Benefits of Type Hints
 
 The Beam SDK for Python includes some automatic type checking: for example, some `PTransform`s, such as `Create` and simple `ParDo` transforms, attempt to deduce their output type given their input. However, the Beam cannot infer types in all cases. Therefore, the recommendation is that you declare type hints to aid you in performing your own type checks if necessary.
 
-When you use type hints, the runner raises exceptions during pipeline construction time, rather than runtime. For example, the runner generates an exception if it detects that your pipeline applies mismatched `PTransforms` (where the expected outputs of one transform do not match the expected inputs of the following transform). These exceptions are raised whether your pipeline is executing locally or remotely. Introducing type hints for the `PTransform`s you define allows you to catch potential bugs up front in the local runner, rather than after minutes of execution into a deep, complex pipeline.
+When you use type hints, the runner raises exceptions during pipeline construction time, rather than runtime. For example, the runner generates an exception if it detects that your pipeline applies mismatched `PTransforms` (where the expected outputs of one transform do not match the expected inputs of the following transform). These exceptions are raised at pipeline construction time, regardless of where your pipeline will execute. Introducing type hints for the `PTransform`s you define allows you to catch potential bugs up front in the local runner, rather than after minutes of execution into a deep, complex pipeline.
 
 Consider the following example, in which `numbers` is a `PCollection` of `str` values:
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_missing_define_numbers %}```
 
 The code then applies a `Filter` transform to the `numbers` collection with a callable that retrieves the even numbers.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_missing_apply %}```
 
 When you call `p.run()`, this code generates an error because `Filter` expects a `PCollection` of integers, but is given a `PCollection` of strings instead.
@@ -39,7 +39,7 @@ You can always declare type hints inline, but if you need them for code that is 
 
 To specify type hints inline, use the methods `with_input_types` and `with_output_types`. The following example code declares an input type hint inline:
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_takes %}```
 
 When you apply the Filter transform to the numbers collection in the example above, you'll be able to catch the error during pipeline construction.
@@ -50,7 +50,7 @@ To specify type hints as properties of a `DoFn` or `PTransform`, use the decorat
 
 The following code declares an `int` type hint on `FilterEvensDoFn`, using the decorator `@with_input_types()`.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_do_fn %}```
 
 Decorators receive an arbitrary number of positional and/or keyword arguments, typically interpreted in the context of the function they're wrapping. Generally the first argument is a type hint for the main input, and additional arguments are type hints for side inputs.
@@ -59,7 +59,7 @@ Decorators receive an arbitrary number of positional and/or keyword arguments, t
 
 You can use type hint annotations to define generic types. The following code specifies an input type hint that asserts the generic type `T`, and an output type hint that asserts the type `Tuple[int, T]`.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_transform %}```
 
 ## Kinds of Type Hints
@@ -94,7 +94,7 @@ The following parameterized type hints are permitted:
 
 ### Special Type Hints
 
-The following are special type hints that don't correspond to a class, but rather to special types introduced in ([PEP 484](https://www.python.org/dev/peps/pep-0484/)).
+The following are special type hints that don't correspond to a class, but rather to special types introduced in [PEP 484](https://www.python.org/dev/peps/pep-0484/).
 
 * `Any`
 * `Union[T, U, V]`
@@ -107,19 +107,19 @@ In addition to using type hints for type checking at pipeline construction, you 
 
 For example, the following code would pass at both pipeline construction and runtime.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_runtime_off %}```
 
 However, if you enable runtime type checking, the code passes at pipeline construction and fails at runtime. To enable runtime type checking, set the pipeline option `runtime_type_check` to `True`.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_runtime_on %}```
 
 ## Use of Type Hints in Coders
 
 When your pipeline reads, writes, or otherwise materializes its data, the elements in your `PCollection` need to be encoded and decoded to and from byte strings. Byte strings are used for intermediate storage, for comparing keys in `GroupByKey` operations, and for reading from sources and writing to sinks.
 
-The Beam SDK for Python uses Python's native support for serializing objects, a process called **Pickling**, to serialize user functions. However, using the `PickleCoder` comes with several drawbacks: it is less efficient in time and space, and the encoding used is not deterministic, which hinders distributed partitioning, grouping, and state lookup.
+The Beam SDK for Python uses Python's native support for serializing objects, a process called **pickling**, to serialize user functions. However, using the `PickleCoder` comes with several drawbacks: it is less efficient in time and space, and the encoding used is not deterministic, which hinders distributed partitioning, grouping, and state lookup.
 
 To avoid these drawbacks, you can define `Coder` classes for encoding and decoding types in a more efficient way. You can specify a `Coder` to describe how the elements of a given `PCollection` should be encoded and decoded.
 
@@ -133,6 +133,6 @@ For example, suppose you have a `PCollection` of key-value pairs whose keys are 
 
 The following code shows the example `Player` class and how to define a `Coder` for it. When you use type hints, Beam infers which `Coder`s to use, using `beam.coders.registry`. The following code registers `PlayerCoder` as a coder for the `Player` class. In the example, the input type declared for `CombinePerKey` is `Tuple[Player, int]`. In this case, Beam infers that the `Coder` objects to use are `TupleCoder`, `PlayerCoder`, and `IntCoder`.
 
-```py
+```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_deterministic_key %}```
 
