@@ -1056,7 +1056,181 @@ pipeline.run().waitUntilFinish();
 pipeline.run().wait_until_finish()
 ```
 
-<a name="coders"></a>
+## <a name="coders"></a>Data encoding and type safety
+
+When you create or output pipeline data, you'll need to specify how the elements in your `PCollection`s are encoded and decoded to and from byte strings. Byte strings are used for intermediate storage as well reading from sources and writing to sinks. The Beam SDKs use objects called coders to describe how the elements of a given `PCollection` should be encoded and decoded.
+
+### Using coders
+
+You typically need to specify a coder when reading data into your pipeline from an external source (or creating pipeline data from local data), and also when you output pipeline data to an external sink.
+
+{:.language-java}
+In the Beam SDK for Java, the type `Coder` provides the methods required for encoding and decoding data. The SDK for Java provides a number of Coder subclasses that work with a variety of standard Java types, such as Integer, Long, Double, StringUtf8 and more. You can find all of the available Coder subclasses in the [Coder package](https://github.com/apache/beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/coders).
+
+{:.language-py}
+In the Beam SDK for Python, the type `Coder` provides the methods required for encoding and decoding data. The SDK for Python provides a number of Coder subclasses that work with a variety of standard Python types, such as primitive types, Tuple, Iterable, StringUtf8 and more. You can find all of the available Coder subclasses in the [apache_beam.coders](https://github.com/apache/beam/tree/master/sdks/python/apache_beam/coders) package.
+
+When you read data into a pipeline, the coder indicates how to interpret the input data into a language-specific type, such as integer or string. Likewise, the coder indicates how the language-specific types in your pipeline should be written into byte strings for an output data sink, or to materialize intermediate data in your pipeline.
+
+The Beam SDKs set a coder for every `PCollection` in a pipeline, including those generated as output from a transform. Most of the time, the Beam SDKs can automatically infer the correct coder for an output `PCollection`.
+
+> Note that coders do not necessarily have a 1:1 relationship with types. For example, the Integer type can have multiple valid coders, and input and output data can use different Integer coders. A transform might have Integer-typed input data that uses BigEndianIntegerCoder, and Integer-typed output data that uses VarIntCoder.
+
+{:.language-java}
+You can explicitly set a `Coder` when inputting or outputting a `PCollection`. You set the `Coder` by calling the method `.withCoder` when you apply your pipeline's read or write transform.
+
+{:.language-py}
+You can explicitly set a `Coder` when inputting or outputting a `PCollection`. You set the `Coder` by setting the `coder` argument when you apply your pipeline's read or write transform.
+
+{:.language-java}
+Typically, you set the `Coder` when the coder for a `PCollection` cannot be automatically inferred, or when you want to use a different coder than your pipeline's default. The following example code reads a set of numbers from a text file, and sets a `Coder` of type `TextualIntegerCoder` for the resulting `PCollection`:
+
+{:.language-py}
+Typically, you set the `Coder` when the coder for a `PCollection` cannot be automatically inferred, or when you want to use a different coder than your pipeline's default. 
+The following example code reads a set of numbers from a text file, and sets a `Coder` of type `VarIntCoder` for the resulting `PCollection`:
+
+```java
+PCollection<Integer> numbers =
+  p.begin()
+  .apply(TextIO.Read.named("ReadNumbers")
+    .from("gs://my_bucket/path/to/numbers-*.txt")
+    .withCoder(TextualIntegerCoder.of()));```
+```
+
+```py
+p = beam.Pipeline()
+numbers = ReadFromText("gs://my_bucket/path/to/numbers-*.txt", coder=VarIntCoder())
+```
+
+{:.language-java}
+You can set the coder for an existing `PCollection` by using the method `PCollection.setCoder`. Note that you cannot call `setCoder` on a `PCollection` that has been finalized (e.g. by calling `.apply` on it).
+
+{:.language-java}
+You can get the coder for an existing `PCollection` by using the method `getCoder`. This method will fail with `anIllegalStateException` if a coder has not been set and cannot be inferred for the given `PCollection`.
+
+### Coder inference and default coders
+
+The Beam SDKs require a coder for every `PCollection` in your pipeline. Most of the time, however, you do not need to explicitly specify a coder, such as for an intermediate `PCollection` produced by a transform in the middle of your pipeline. In such cases, the Beam SDKs can infer an appropriate coder from the inputs and outputs of the transform used to produce the PCollection.
+
+{:.language-java}
+Each Pipeline object has a `CoderRegistry`. The `CoderRegistry` represents a mapping of Java types to the default coders that the pipeline should use for `PCollection`s of each type.
+
+{:.language-java}
+By default, the Beam SDK for Java automatically infers the `Coder` for the elements of an output `PCollection` using the type parameter from the transform's function object, such as `DoFn`. In the case of `ParDo`, for example, a `DoFn<Integer, String>function` object accepts an input element of type `Integer` and produces an output element of type `String`. In such a case, the SDK for Java will automatically infer the default `Coder` for the output `PCollection<String>` (in the default pipeline `CoderRegistry`, this is `StringUtf8Coder`).
+
+{:.language-py}
+The Beam SDK for Python has a `CoderRegistry` that represents a mapping of Python types to the default coder that should be used for `PCollection`s of each type.
+
+{:.language-py}
+By default, the Beam SDK for Python automatically infers the `Coder` for the elements of an output `PCollection` using the [typehints](TODO) from the transform's function object, such as `DoFn`. In the case of `ParDo`, for example a `DoFn` with the typehints `@beam.typehints.with_input_types(int)` and `@beam.typehints.with_output_types(str)` accepts an input element of type int and produces an output element of type str. In such a case, the Beam SDK for Python will automatically infer the default `Coder` for the output `PCollection` (in the default pipeline `CoderRegistry`, this is `BytesCoder`).
+
+> NOTE: If you create your `PCollection` from in-memory data by using the `Create` transform, you cannot rely on coder inference and default coders. `Create` does not have access to any typing information for its arguments, and may not be able to infer a coder if the argument list contains a value whose exact run-time class doesn't have a default coder registered. 
+
+{:.language-java}
+When using `Create`, the simplest way to ensure that you have the correct coder is by invoking `withCoder` when you apply the `Create` transform.
+
+#### Default coders and the CoderRegistry
+
+Each Pipeline object has a `CoderRegistry` object, which maps language types to the default coder the pipeline should use for those types. You can use the `CoderRegistry` yourself to look up the default coder for a given type, or to register a new default coder for a given type.
+
+{:.language-java}
+`CoderRegistry` contains a default mapping of coders to standard Java types for any Pipeline you create using the Beam SDK for Java. The following table shows the standard mapping:
+
+{:.language-java}
+| Java Type        | Default Coder         |
+|------------------|-----------------------|
+| Double           | DoubleCoder           |
+| Instant          | InstantCoder          |
+| Integer          | VarIntCoder           |
+| Iterable         | IterableCoder         |
+| KV               | KvCoder               |
+| List             | ListCoder             |
+| Map              | MapCoder              |
+| Long             | VarLongCoder          |
+| String           | StringUtf8Coder       |
+| TableRow         | TableRowJsonCoder     |
+| Void             | VoidCoder             |
+| byte[ ]          | ByteArrayCoder        |
+| TimestampedValue | TimestampedValueCoder |
+
+
+{:.language-py}
+`CoderRegistry` contains a default mapping of Coders to standard Python types for any Pipeline you create using the Beam SDK for Python. The following table shows the standard mapping:
+
+{:.language-py}
+| Python Type | Default Coder |
+|-------------|---------------|
+| int         | VarIntCoder   |
+| float       | FloatCoder    |
+| str         | BytesCoder    |
+| bytes       | StrUtf8Coder  |
+| Tuple       | TupleCoder    |
+
+
+
+##### Looking up a default coder
+
+{:.language-java}
+You can use the method CoderRegistry.getDefaultCoder to determine the default Coder for a Java type. You can access the CoderRegistry for a given Pipeline by using the method Pipeline.getCoderRegistry. This allows you to determine (or set) the default Coder for a Java type on a per-pipeline basis: i.e. "for this pipeline, verify that Integer values are encoded using BigEndianIntegerCoder."
+
+{:.language-py}
+You can use the method CoderRegistry.get_coder to determine the default Coder for a Python type. You can use `coders.registry` to access the CoderRegistry. This allows you to determine (or set) the default Coder for a Python type on a per-pipeline basis.
+
+##### Setting the default coder for a type
+
+{:.language-java}
+To set the default Coder for a Java type for a particular pipeline, you obtain and modify the pipeline's `CoderRegistry`. You use the method `Pipeline.getCoderRegistry` to get the `CoderRegistry` object, and then use the method `CoderRegistry.registerCoder` to register a new `Coder` for the target Java type.
+
+{:.language-java}
+The following example code demonstrates how to set a default Coder, in this case `BigEndianIntegerCoder`, for Integer values for a pipeline.
+
+{:.language-py}
+To set the default Coder for a Python type, you obtain and modify the `CoderRegistry`. You may use the `coders.registry` to get the `CoderRegistry` object, and then use the method `CoderRegistry.register_coder` to register a new Coder for the target Python type.
+
+{:.language-py}
+The following example code demonstrates how to set a default Coder, in this case `BigEndianIntegerCoder`, for int values for a pipeline.
+
+```java  
+PipelineOptions options = PipelineOptionsFactory.create();
+Pipeline p = Pipeline.create(options);
+
+CoderRegistry cr = p.getCoderRegistry();
+cr.registerCoder(Integer.class, BigEndianIntegerCoder.class);
+```
+
+```py
+apache_beam.coders.registry.register_coder(int, BigEndianIntegerCoder)
+```
+
+##### Annotating a custom data type with a default coder
+
+{:.language-java}
+If your pipeline program defines a custom data type, you can use the `@DefaultCoder` annotation to specify the coder to use with that type. For example, let's say you have a custom data type for which you want to use `SerializableCoder`. You can use the `@DefaultCoder` annotation as follows:
+
+```java
+@DefaultCoder(AvroCoder.class)
+public class MyCustomDataType {
+  ...
+}
+```
+
+{:.language-java}
+If you've created a custom coder to match your data type, and you want to use the `@DefaultCoder` annotation, your coder class must implement a static `Coder.of(Class<T>)` factory method.
+
+```java
+public class MyCustomCoder implements Coder {
+  public static Coder<T> of(Class<T> clazz) {...}
+  ...
+}
+
+@DefaultCoder(MyCustomCoder.class)
+public class MyCustomDataType {
+  ...
+}
+```
+
+{:.language-py}
+The Beam SDK for Python does not support annotating data types with a default coder. If you would like to set a default coder, use the method described in the previous section, *Setting the default coder for a type*.
 
 <a name="windowing"></a>
 <a name="triggers"></a>
