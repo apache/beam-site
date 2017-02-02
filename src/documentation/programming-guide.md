@@ -258,7 +258,7 @@ The resulting workflow graph from the branching pipeline above looks like this:
 
 [Branching Graph Graphic]
 
-You can also build your own [composite transforms](#transforms-composite) that nest multiple sub-steps inside a single, larger transform. Composite transforms are particularly useful for building a reusable sequence of simple steps that get used in a lot of different places.
+You can also build your own composite transforms that nest multiple sub-steps inside a single, larger transform. Composite transforms are particularly useful for building a reusable sequence of simple steps that get used in a lot of different places.
 
 ### Transforms in the Beam SDK
 
@@ -1122,7 +1122,7 @@ By default, the Beam SDK for Java automatically infers the `Coder` for the eleme
 The Beam SDK for Python has a `CoderRegistry` that represents a mapping of Python types to the default coder that should be used for `PCollection`s of each type.
 
 {:.language-py}
-By default, the Beam SDK for Python automatically infers the `Coder` for the elements of an output `PCollection` using the [typehints](TODO) from the transform's function object, such as `DoFn`. In the case of `ParDo`, for example a `DoFn` with the typehints `@beam.typehints.with_input_types(int)` and `@beam.typehints.with_output_types(str)` accepts an input element of type int and produces an output element of type str. In such a case, the Beam SDK for Python will automatically infer the default `Coder` for the output `PCollection` (in the default pipeline `CoderRegistry`, this is `BytesCoder`).
+By default, the Beam SDK for Python automatically infers the `Coder` for the elements of an output `PCollection` using the typehints from the transform's function object, such as `DoFn`. In the case of `ParDo`, for example a `DoFn` with the typehints `@beam.typehints.with_input_types(int)` and `@beam.typehints.with_output_types(str)` accepts an input element of type int and produces an output element of type str. In such a case, the Beam SDK for Python will automatically infer the default `Coder` for the output `PCollection` (in the default pipeline `CoderRegistry`, this is `BytesCoder`).
 
 > NOTE: If you create your `PCollection` from in-memory data by using the `Create` transform, you cannot rely on coder inference and default coders. `Create` does not have access to any typing information for its arguments, and may not be able to infer a coder if the argument list contains a value whose exact run-time class doesn't have a default coder registered. 
 
