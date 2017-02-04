@@ -327,7 +327,24 @@
 </code></pre>
 </div>
 
-<div class="language-py highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">apache_beam</span> <span class="kn">as</span> <span class="nn">beam</span>
+<div class="language-py highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;&lt;&lt;&lt;&lt;&lt;&lt;</span> <span class="n">HEAD</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">pipeline_options</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">p</span>
+ <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">([</span>
+     <span class="s">'To be, or not to be: that is the question: '</span><span class="p">,</span>
+     <span class="s">'Whether </span><span class="se">\'</span><span class="s">tis nobler in the mind to suffer '</span><span class="p">,</span>
+     <span class="s">'The slings and arrows of outrageous fortune, '</span><span class="p">,</span>
+     <span class="s">'Or to take arms against a sea of troubles, '</span><span class="p">])</span>
+ <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToText</span><span class="p">(</span><span class="n">my_options</span><span class="o">.</span><span class="n">output</span><span class="p">))</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="o">|||||||</span> <span class="n">c05c530</span><span class="o">...</span> <span class="n">Added</span> <span class="n">Python</span> <span class="n">snippets</span><span class="o">.</span> <span class="n">Merged</span> <span class="n">changes</span><span class="o">.</span>
+<span class="o">%</span> <span class="n">github_sample</span> <span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">beam</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">sdks</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">apache_beam</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">snippets</span><span class="o">/</span><span class="n">snippets</span><span class="o">.</span><span class="n">py</span> <span class="n">tag</span><span class="p">:</span><span class="n">model_pcollection</span>
+<span class="o">%</span><span class="p">}</span>
+<span class="o">=======</span>
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="kn">as</span> <span class="nn">beam</span>
 
 <span class="c"># python list</span>
 <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
@@ -341,6 +358,7 @@
 <span class="n">p</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">()</span>
 
 <span class="n">collection</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s">'ReadMyLines'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;&gt;&gt;&gt;&gt;</span> <span class="n">parent</span> <span class="n">of</span> <span class="n">c05c530</span><span class="o">...</span> <span class="n">Added</span> <span class="n">Python</span> <span class="n">snippets</span><span class="o">.</span> <span class="n">Merged</span> <span class="n">changes</span><span class="o">.</span>
 </code></pre>
 </div>
 
@@ -427,7 +445,7 @@
 
 <p>[Branching Graph Graphic]</p>
 
-<p>You can also build your own <a href="#transforms-composite">composite transforms</a> that nest multiple sub-steps inside a single, larger transform. Composite transforms are particularly useful for building a reusable sequence of simple steps that get used in a lot of different places.</p>
+<p>You can also build your own composite transforms that nest multiple sub-steps inside a single, larger transform. Composite transforms are particularly useful for building a reusable sequence of simple steps that get used in a lot of different places.</p>
 
 <h3 id="transforms-in-the-beam-sdk">Transforms in the Beam SDK</h3>
 
@@ -1328,7 +1346,7 @@ tree, [2]
 </code></pre>
 </div>
 
-<p>For blocking execution, append the <code class="highlighter-rouge">waitUntilFinish</code> method:</p>
+<p>For blocking execution, append the <span class="language-java"><code class="highlighter-rouge">waitUntilFinish</code></span> <span class="language-py"><code class="highlighter-rouge">wait_until_finish</code></span> method:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">pipeline</span><span class="o">.</span><span class="na">run</span><span class="o">().</span><span class="na">waitUntilFinish</span><span class="o">();</span>
 </code></pre>
@@ -1338,10 +1356,240 @@ tree, [2]
 </code></pre>
 </div>
 
-<p><a name="transforms-composite"></a>
-<a name="coders"></a>
+<p>«««&lt; HEAD</p>
+<h2 id="a-namecodersadata-encoding-and-type-safety"><a name="coders"></a>Data encoding and type safety</h2>
+
+<p>When you create or output pipeline data, you’ll need to specify how the elements in your <code class="highlighter-rouge">PCollection</code>s are encoded and decoded to and from byte strings. Byte strings are used for intermediate storage as well reading from sources and writing to sinks. The Beam SDKs use objects called coders to describe how the elements of a given <code class="highlighter-rouge">PCollection</code> should be encoded and decoded.</p>
+
+<h3 id="using-coders">Using coders</h3>
+
+<p>You typically need to specify a coder when reading data into your pipeline from an external source (or creating pipeline data from local data), and also when you output pipeline data to an external sink.</p>
+
+<p class="language-java">In the Beam SDK for Java, the type <code class="highlighter-rouge">Coder</code> provides the methods required for encoding and decoding data. The SDK for Java provides a number of Coder subclasses that work with a variety of standard Java types, such as Integer, Long, Double, StringUtf8 and more. You can find all of the available Coder subclasses in the <a href="https://github.com/apache/beam/tree/master/sdks/java/core/src/main/java/org/apache/beam/sdk/coders">Coder package</a>.</p>
+
+<p class="language-py">In the Beam SDK for Python, the type <code class="highlighter-rouge">Coder</code> provides the methods required for encoding and decoding data. The SDK for Python provides a number of Coder subclasses that work with a variety of standard Python types, such as primitive types, Tuple, Iterable, StringUtf8 and more. You can find all of the available Coder subclasses in the <a href="https://github.com/apache/beam/tree/master/sdks/python/apache_beam/coders">apache_beam.coders</a> package.</p>
+
+<p>When you read data into a pipeline, the coder indicates how to interpret the input data into a language-specific type, such as integer or string. Likewise, the coder indicates how the language-specific types in your pipeline should be written into byte strings for an output data sink, or to materialize intermediate data in your pipeline.</p>
+
+<p>The Beam SDKs set a coder for every <code class="highlighter-rouge">PCollection</code> in a pipeline, including those generated as output from a transform. Most of the time, the Beam SDKs can automatically infer the correct coder for an output <code class="highlighter-rouge">PCollection</code>.</p>
+
+<blockquote>
+  <p>Note that coders do not necessarily have a 1:1 relationship with types. For example, the Integer type can have multiple valid coders, and input and output data can use different Integer coders. A transform might have Integer-typed input data that uses BigEndianIntegerCoder, and Integer-typed output data that uses VarIntCoder.</p>
+</blockquote>
+
+<p>You can explicitly set a <code class="highlighter-rouge">Coder</code> when inputting or outputting a <code class="highlighter-rouge">PCollection</code>. You set the <code class="highlighter-rouge">Coder</code> by <span class="language-java">calling the method <code class="highlighter-rouge">.withCoder</code></span> <span class="language-py">setting the <code class="highlighter-rouge">coder</code> argument</span> when you apply your pipeline’s read or write transform.</p>
+
+<p>Typically, you set the <code class="highlighter-rouge">Coder</code> when the coder for a <code class="highlighter-rouge">PCollection</code> cannot be automatically inferred, or when you want to use a different coder than your pipeline’s default. The following example code reads a set of numbers from a text file, and sets a <code class="highlighter-rouge">Coder</code> of type <span class="language-java"><code class="highlighter-rouge">TextualIntegerCoder</code></span> <span class="language-py"><code class="highlighter-rouge">VarIntCoder</code></span> for the resulting <code class="highlighter-rouge">PCollection</code>:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">numbers</span> <span class="o">=</span>
+  <span class="n">p</span><span class="o">.</span><span class="na">begin</span><span class="o">()</span>
+  <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">TextIO</span><span class="o">.</span><span class="na">Read</span><span class="o">.</span><span class="na">named</span><span class="o">(</span><span class="s">"ReadNumbers"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">from</span><span class="o">(</span><span class="s">"gs://my_bucket/path/to/numbers-*.txt"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">withCoder</span><span class="o">(</span><span class="n">TextualIntegerCoder</span><span class="o">.</span><span class="na">of</span><span class="o">()));</span><span class="err">```</span>
+</code></pre>
+</div>
+
+<div class="language-py highlighter-rouge"><pre class="highlight"><code><span class="n">p</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">()</span>
+<span class="n">numbers</span> <span class="o">=</span> <span class="n">ReadFromText</span><span class="p">(</span><span class="s">"gs://my_bucket/path/to/numbers-*.txt"</span><span class="p">,</span> <span class="n">coder</span><span class="o">=</span><span class="n">VarIntCoder</span><span class="p">())</span>
+</code></pre>
+</div>
+
+<p class="language-java">You can set the coder for an existing <code class="highlighter-rouge">PCollection</code> by using the method <code class="highlighter-rouge">PCollection.setCoder</code>. Note that you cannot call <code class="highlighter-rouge">setCoder</code> on a <code class="highlighter-rouge">PCollection</code> that has been finalized (e.g. by calling <code class="highlighter-rouge">.apply</code> on it).</p>
+
+<p class="language-java">You can get the coder for an existing <code class="highlighter-rouge">PCollection</code> by using the method <code class="highlighter-rouge">getCoder</code>. This method will fail with <code class="highlighter-rouge">anIllegalStateException</code> if a coder has not been set and cannot be inferred for the given <code class="highlighter-rouge">PCollection</code>.</p>
+
+<h3 id="coder-inference-and-default-coders">Coder inference and default coders</h3>
+
+<p>The Beam SDKs require a coder for every <code class="highlighter-rouge">PCollection</code> in your pipeline. Most of the time, however, you do not need to explicitly specify a coder, such as for an intermediate <code class="highlighter-rouge">PCollection</code> produced by a transform in the middle of your pipeline. In such cases, the Beam SDKs can infer an appropriate coder from the inputs and outputs of the transform used to produce the PCollection.</p>
+
+<p class="language-java">Each pipeline object has a <code class="highlighter-rouge">CoderRegistry</code>. The <code class="highlighter-rouge">CoderRegistry</code> represents a mapping of Java types to the default coders that the pipeline should use for <code class="highlighter-rouge">PCollection</code>s of each type.</p>
+
+<p class="language-py">The Beam SDK for Python has a <code class="highlighter-rouge">CoderRegistry</code> that represents a mapping of Python types to the default coder that should be used for <code class="highlighter-rouge">PCollection</code>s of each type.</p>
+
+<p class="language-java">By default, the Beam SDK for Java automatically infers the <code class="highlighter-rouge">Coder</code> for the elements of an output <code class="highlighter-rouge">PCollection</code> using the type parameter from the transform’s function object, such as <code class="highlighter-rouge">DoFn</code>. In the case of <code class="highlighter-rouge">ParDo</code>, for example, a <code class="highlighter-rouge">DoFn&lt;Integer, String&gt;function</code> object accepts an input element of type <code class="highlighter-rouge">Integer</code> and produces an output element of type <code class="highlighter-rouge">String</code>. In such a case, the SDK for Java will automatically infer the default <code class="highlighter-rouge">Coder</code> for the output <code class="highlighter-rouge">PCollection&lt;String&gt;</code> (in the default pipeline <code class="highlighter-rouge">CoderRegistry</code>, this is <code class="highlighter-rouge">StringUtf8Coder</code>).</p>
+
+<p class="language-py">By default, the Beam SDK for Python automatically infers the <code class="highlighter-rouge">Coder</code> for the elements of an output <code class="highlighter-rouge">PCollection</code> using the typehints from the transform’s function object, such as <code class="highlighter-rouge">DoFn</code>. In the case of <code class="highlighter-rouge">ParDo</code>, for example a <code class="highlighter-rouge">DoFn</code> with the typehints <code class="highlighter-rouge">@beam.typehints.with_input_types(int)</code> and <code class="highlighter-rouge">@beam.typehints.with_output_types(str)</code> accepts an input element of type int and produces an output element of type str. In such a case, the Beam SDK for Python will automatically infer the default <code class="highlighter-rouge">Coder</code> for the output <code class="highlighter-rouge">PCollection</code> (in the default pipeline <code class="highlighter-rouge">CoderRegistry</code>, this is <code class="highlighter-rouge">BytesCoder</code>).</p>
+
+<blockquote>
+  <p>NOTE: If you create your <code class="highlighter-rouge">PCollection</code> from in-memory data by using the <code class="highlighter-rouge">Create</code> transform, you cannot rely on coder inference and default coders. <code class="highlighter-rouge">Create</code> does not have access to any typing information for its arguments, and may not be able to infer a coder if the argument list contains a value whose exact run-time class doesn’t have a default coder registered.</p>
+</blockquote>
+
+<p class="language-java">When using <code class="highlighter-rouge">Create</code>, the simplest way to ensure that you have the correct coder is by invoking <code class="highlighter-rouge">withCoder</code> when you apply the <code class="highlighter-rouge">Create</code> transform.</p>
+
+<h4 id="default-coders-and-the-coderregistry">Default coders and the CoderRegistry</h4>
+
+<p>Each Pipeline object has a <code class="highlighter-rouge">CoderRegistry</code> object, which maps language types to the default coder the pipeline should use for those types. You can use the <code class="highlighter-rouge">CoderRegistry</code> yourself to look up the default coder for a given type, or to register a new default coder for a given type.</p>
+
+<p><code class="highlighter-rouge">CoderRegistry</code> contains a default mapping of coders to standard <span class="language-java">Java</span> <span class="language-py">Python</span> types for any pipeline you create using the Beam SDK for <span class="language-java">Java</span> <span class="language-py">Python</span>. The following table shows the standard mapping:</p>
+
+<table class="language-java">
+  <thead>
+    <tr class="header">
+      <th>Java Type</th>
+      <th>Default Coder</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="odd">
+      <td>Double</td>
+      <td>DoubleCoder</td>
+    </tr>
+    <tr class="even">
+      <td>Instant</td>
+      <td>InstantCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>Integer</td>
+      <td>VarIntCoder</td>
+    </tr>
+    <tr class="even">
+      <td>Iterable</td>
+      <td>IterableCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>KV</td>
+      <td>KvCoder</td>
+    </tr>
+    <tr class="even">
+      <td>List</td>
+      <td>ListCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>Map</td>
+      <td>MapCoder</td>
+    </tr>
+    <tr class="even">
+      <td>Long</td>
+      <td>VarLongCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>String</td>
+      <td>StringUtf8Coder</td>
+    </tr>
+    <tr class="even">
+      <td>TableRow</td>
+      <td>TableRowJsonCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>Void</td>
+      <td>VoidCoder</td>
+    </tr>
+    <tr class="even">
+      <td>byte[ ]</td>
+      <td>ByteArrayCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>TimestampedValue</td>
+      <td>TimestampedValueCoder</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="language-py">
+  <thead>
+    <tr class="header">
+      <th>Python Type</th>
+      <th>Default Coder</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="odd">
+      <td>int</td>
+      <td>VarIntCoder</td>
+    </tr>
+    <tr class="even">
+      <td>float</td>
+      <td>FloatCoder</td>
+    </tr>
+    <tr class="odd">
+      <td>str</td>
+      <td>BytesCoder</td>
+    </tr>
+    <tr class="even">
+      <td>bytes</td>
+      <td>StrUtf8Coder</td>
+    </tr>
+    <tr class="odd">
+      <td>Tuple</td>
+      <td>TupleCoder</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5 id="looking-up-a-default-coder">Looking up a default coder</h5>
+
+<p class="language-java">You can use the method <code class="highlighter-rouge">CoderRegistry.getDefaultCoder</code> to determine the default Coder for a Java type. You can access the <code class="highlighter-rouge">CoderRegistry</code> for a given pipeline by using the method <code class="highlighter-rouge">Pipeline.getCoderRegistry</code>. This allows you to determine (or set) the default Coder for a Java type on a per-pipeline basis: i.e. “for this pipeline, verify that Integer values are encoded using <code class="highlighter-rouge">BigEndianIntegerCoder</code>.”</p>
+
+<p class="language-py">You can use the method <code class="highlighter-rouge">CoderRegistry.get_coder</code> to determine the default Coder for a Python type. You can use <code class="highlighter-rouge">coders.registry</code> to access the <code class="highlighter-rouge">CoderRegistry</code>. This allows you to determine (or set) the default Coder for a Python type.</p>
+
+<h5 id="setting-the-default-coder-for-a-type">Setting the default coder for a type</h5>
+
+<p>To set the default Coder for a <span class="language-java">Java</span> <span class="language-py">Python</span> type for a particular pipeline, you obtain and modify the pipeline’s <code class="highlighter-rouge">CoderRegistry</code>. You use the method <span class="language-java"><code class="highlighter-rouge">Pipeline.getCoderRegistry</code></span> <span class="language-py"><code class="highlighter-rouge">coders.registry</code></span> to get the <code class="highlighter-rouge">CoderRegistry</code> object, and then use the method <span class="language-java"><code class="highlighter-rouge">CoderRegistry.registerCoder</code></span> <span class="language-py"><code class="highlighter-rouge">CoderRegistry.register_coder</code></span> to register a new <code class="highlighter-rouge">Coder</code> for the target type.</p>
+
+<p>The following example code demonstrates how to set a default Coder, in this case <code class="highlighter-rouge">BigEndianIntegerCoder</code>, for <span class="language-java">Integer</span> <span class="language-py">int</span> values for a pipeline.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">PipelineOptions</span> <span class="n">options</span> <span class="o">=</span> <span class="n">PipelineOptionsFactory</span><span class="o">.</span><span class="na">create</span><span class="o">();</span>
+<span class="n">Pipeline</span> <span class="n">p</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">options</span><span class="o">);</span>
+
+<span class="n">CoderRegistry</span> <span class="n">cr</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="na">getCoderRegistry</span><span class="o">();</span>
+<span class="n">cr</span><span class="o">.</span><span class="na">registerCoder</span><span class="o">(</span><span class="n">Integer</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">BigEndianIntegerCoder</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<div class="language-py highlighter-rouge"><pre class="highlight"><code><span class="n">apache_beam</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">register_coder</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">BigEndianIntegerCoder</span><span class="p">)</span>
+</code></pre>
+</div>
+
+<h5 id="annotating-a-custom-data-type-with-a-default-coder">Annotating a custom data type with a default coder</h5>
+
+<p class="language-java">If your pipeline program defines a custom data type, you can use the <code class="highlighter-rouge">@DefaultCoder</code> annotation to specify the coder to use with that type. For example, let’s say you have a custom data type for which you want to use <code class="highlighter-rouge">SerializableCoder</code>. You can use the <code class="highlighter-rouge">@DefaultCoder</code> annotation as follows:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@DefaultCoder</span><span class="o">(</span><span class="n">AvroCoder</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomDataType</span> <span class="o">{</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p class="language-java">If you’ve created a custom coder to match your data type, and you want to use the <code class="highlighter-rouge">@DefaultCoder</code> annotation, your coder class must implement a static <code class="highlighter-rouge">Coder.of(Class&lt;T&gt;)</code> factory method.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomCoder</span> <span class="kd">implements</span> <span class="n">Coder</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="n">Coder</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="n">Class</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">clazz</span><span class="o">)</span> <span class="o">{...}</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+
+<span class="nd">@DefaultCoder</span><span class="o">(</span><span class="n">MyCustomCoder</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyCustomDataType</span> <span class="o">{</span>
+  <span class="o">...</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p class="language-py">The Beam SDK for Python does not support annotating data types with a default coder. If you would like to set a default coder, use the method described in the previous section, <em>Setting the default coder for a type</em>.</p>
+
+<p>||||||| c05c530… Added Python snippets. Merged changes.
+<a name="coders"></a></p>
+
+<p>=======
+<a name="transforms-composite"></a>
+<a name="coders"></a></p>
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <blockquote>
+        <blockquote>
+          <blockquote>
+            <blockquote>
+              <p>parent of c05c530… Added Python snippets. Merged changes.
 <a name="windowing"></a>
 <a name="triggers"></a></p>
+            </blockquote>
+          </blockquote>
+        </blockquote>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
 
 <blockquote>
   <p><strong>Note:</strong> This guide is still in progress. There is an open issue to finish the guide (<a href="https://issues.apache.org/jira/browse/BEAM-193">BEAM-193</a>)</p>
