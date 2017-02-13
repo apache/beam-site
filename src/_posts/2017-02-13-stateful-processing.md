@@ -274,6 +274,11 @@ new DoFn<KV<MyKey, MyValue>, KV<Integer, KV<MyKey, MyValue>>>() {
 }
 ```
 
+```py
+# State and timers are not yet supported in Beam's Python SDK.
+# Watch this space!
+```
+
 Let's dissect this:
 
  - The first thing to look at is the presence of a couple of `@StateId("index")`
@@ -347,6 +352,11 @@ class ModelFromEventsFn extends CombineFn<Event, Model, Model> {
 }
 ```
 
+```py
+# State and timers are not yet supported in Beam's Python SDK.
+# Watch this space!
+```
+
 Now you have a way to compute the model of a particular user for a window as
 `Combine.perKey(new ModelFromEventsFn())`. How would you apply this model to
 the same stream of events from which it is calculated? A standard way to do
@@ -378,6 +388,11 @@ PCollection<KV<UserId, Prediction>> predictions = events
     }));
 ```
 
+```py
+# State and timers are not yet supported in Beam's Python SDK.
+# Watch this space!
+```
+
 In this pipeline, there is just one model emitted by the `Combine.perKey(...)`
 per user, per window, which is then prepared for side input by the `View.asMap()`
 transform. The processing of the `ParDo` over events will block until that side
@@ -405,6 +420,11 @@ PCollectionView<Map<UserId, Model>> userModels = events
 
     .apply(Combine.perKey(new ModelFromEventsFn()))
     .apply(View.asMap());
+```
+
+```py
+# State and timers are not yet supported in Beam's Python SDK.
+# Watch this space!
 ```
 
 This is often a pretty nice tradeoff between latency and cost: If a huge flood
@@ -458,6 +478,11 @@ new DoFn<KV<UserId, Event>, KV<UserId, Prediction>>() {
     }
   }
 };
+```
+
+```py
+# State and timers are not yet supported in Beam's Python SDK.
+# Watch this space!
 ```
 
 Let's walk through it,
