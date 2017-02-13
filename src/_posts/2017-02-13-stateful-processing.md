@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Stateful processing with Apache Beam"
-date:   2017-02-09 00:00:01 -0800
+date:   2017-02-13 00:00:01 -0800
 excerpt_separator: <!--more-->
 categories: blog
 authors:
@@ -20,17 +20,17 @@ what you might use it for, and what it looks like in code.
 > **Warning: new features ahead!**: This is a very new aspect of the Beam
 > model. Runners are still adding support. You can try it out today on multiple
 > runners, but do check the [runner capability
-> matrix](https://beam.apache.org/documentation/runners/capability-matrix/) for
+> matrix]({{ site.baseurl }}/documentation/runners/capability-matrix/) for
 > the current status in each runner.
 
 First, a quick recap: In Beam, a big data processing _pipeline_ is a directed,
 acyclic graph of parallel operations called _`PTransforms`_ processing data
 from _`PCollections`_ I'll expand on that by walking through this illustration:
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/pipeline.png" | prepend: site.baseurl }}"
-alt="A Beam Pipeline - PTransforms are boxes - PCollections are arrows"
-width="300">
+<img class="center-block" 
+    src="{{ site.baseurl }}/images/blog/stateful-processing/pipeline.png" 
+    alt="A Beam Pipeline - PTransforms are boxes - PCollections are arrows" 
+    width="300">
 
 The boxes are `PTransforms` and the edges represent the data in `PCollections`
 flowing from one `PTransform` to the next. A `PCollection` may be _bounded_ (which
@@ -49,28 +49,28 @@ picture below (featured in many of our presentations) the color indicates the
 key of the element. Thus the `GroupByKey`/`CombinePerKey` transform gathers all the
 green squares to produce a single output element.
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/pardo-and-gbk.png" | prepend: site.baseurl }}"
-alt="ParDo and GroupByKey/CombinePerKey: Elementwise versus aggregating computations"
-width="400">
+<img class="center-block" 
+    src="{{ site.baseurl }}/images/blog/stateful-processing/pardo-and-gbk.png"
+    alt="ParDo and GroupByKey/CombinePerKey: 
+        Elementwise versus aggregating computations"
+    width="400">
 
 But not all use cases are easily expressed as pipelines of simple `ParDo`/`Map` and
 `GroupByKey`/`CombinePerKey` transforms. The topic of this blog post is a new
 extension to the Beam programming model: **per-element operation augmented with
 mutable state**.
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/stateful-pardo.png" | prepend: site.baseurl }}"
-alt="Stateful ParDo - sequential per-key processing with persistent state"
-width="300">
+<img class="center-block" 
+    src="{{ site.baseurl}}/images/blog/stateful-processing/stateful-pardo.png"
+    alt="Stateful ParDo - sequential per-key processing with persistent state"
+    width="300">
 
 In the illustration above, ParDo now has a bit of durable, consistent state on
 the side, which can be read and written during the processing of each element.
 The state is partitioned by key, so it is drawn as having disjoint sections for
 each color. It is also partitioned per window, but I thought plaid 
-<img src="{{ 
-"/images/blog/stateful-processing/plaid.png" | prepend: site.baseurl }}"
-alt="A plaid storage cylinder" width="20"> 
+<img src="{{ site.baseurl }}/images/blog/stateful-processing/plaid.png"
+    alt="A plaid storage cylinder" width="20"> 
 would be a bit much  :-). I'll talk about
 why state is partitioned this way a bit later, via my first example.
 
@@ -89,10 +89,11 @@ Mapper in a MapReduce.  With state, a `DoFn` has the ability to access
 persistent mutable state while processing each input element. Consider this
 illustration:
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/stateful-dofn.png" | prepend: site.baseurl }}"
-alt="Stateful DoFn - the runner controls input but the DoFn controls storage and output"
-width="300">
+<img class="center-block" 
+    src="{{ site.baseurl}}/images/blog/stateful-processing/stateful-dofn.png"
+    alt="Stateful DoFn - 
+        the runner controls input but the DoFn controls storage and output"
+    width="300">
 
 The first thing to note is that all the data - the little squares, circles, and
 triangles - are red. This is to illustrate that stateful processing occurs in
@@ -126,10 +127,10 @@ Here is a diagram illustrating the basics of a `CombineFn`, the simplest way
 that a runner might invoke it on a per-key basis to build an accumulator and
 extract an output from the final accumulator:
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/combinefn.png" | prepend: site.baseurl }}"
-alt="CombineFn - the runner controls input, storage, and output"
-width="300">
+<img class="center-block"
+    src="{{ site.baseurl }}/images/blog/stateful-processing/combinefn.png"
+    alt="CombineFn - the runner controls input, storage, and output"
+    width="300">
 
 As with the illustration of stateful `DoFn`, all the data is colored red, since
 this is the processing of Combine for a single key. The illustrated method
@@ -160,10 +161,10 @@ This unlocks some huge optimizations: the runner can invoke multiple instances
 of a `CombineFn` on a number of inputs and later combine them in a classic
 divide-and-conquer architecture, as in this picture:
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/combiner-lifting.png" | prepend: site.baseurl }}"
-alt="Divide-and-conquer aggregation with a CombineFn"
-width="600">
+<img class="center-block" 
+    src="{{ site.baseurl }}/images/blog/stateful-processing/combiner-lifting.png"
+    alt="Divide-and-conquer aggregation with a CombineFn"
+    width="600">
 
 The contract of a `CombineFn` is that the result should be exactly the same,
 whether or not the runner decides to actually do such a thing, or even more
@@ -192,10 +193,10 @@ unique and consistent. Before diving into the code for how to do this in a Beam
 SDK, I'll go over this example from the level of the model. In pictures, you
 want to write a transform that maps input to output like this:
 
-<img class="center-block" src="{{
-"/images/blog/stateful-processing/assign-indices.png" | prepend: site.baseurl }}"
-alt="Assigning arbitrary but unique indices to each element"
-width="100">
+<img class="center-block" 
+    src="{{ site.baseurl }}/images/blog/stateful-processing/assign-indices.png"
+    alt="Assigning arbitrary but unique indices to each element"
+    width="100">
 
 The order of the elements A, B, C, D, E is arbitrary, hence their assigned
 indices are arbitrary, but downstream transforms just need to be OK with this.
@@ -515,10 +516,10 @@ If you are new to Beam, I hope you are now interested in seeing if Beam with
 stateful processing addresses your use case.  If you are already using Beam, I
 hope this new addition to the model unlocks new use cases for you.  Do check
 the [capability
-matrix](https://beam.apache.org/documentation/runners/capability-matrix/) to
+matrix]({{ site.baseurl }}/documentation/runners/capability-matrix/) to
 see the level of support for this new model feature on your favorite
 backend(s). 
 
 And please do join the community at
-[user@beam.apache.org](mailto:user-subscribe@beam.apache.org). We'd love to
+[user@beam.apache.org]({{ site.baseurl }}/get-started/support). We'd love to
 hear from you.
