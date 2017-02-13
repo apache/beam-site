@@ -789,12 +789,11 @@ Side inputs are useful if your `ParDo` needs to inject additional data when proc
 %}
 
 # We can also pass side inputs to a ParDo transform, which will get passed to its process method.
-# The only change is that the first arguments are self and the PCollection element itself.
+# The first two arguments for the process method would be self and element.
 
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:model_pardo_side_input_dofn
 %}
 ...
-
 ```
 
 ##### Side inputs and windowing:
