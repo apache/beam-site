@@ -58,8 +58,8 @@ To create a custom data source for your pipeline, you'll need to provide the for
 
 You supply the logic for your custom source by creating the following classes:
 
-* A subclass of `iobase.BoundedSource`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `iobase.BoundedSource` is a source that reads a finite amount of input records. The class describes the data you want to read, including the data's location and parameters (such as how much data to read).
-* A subclass of `iobase.RangeTracker`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `iobase.RangeTracker` is a thread-safe object used to manage a range for a given position type.
+* A subclass of `BoundedSource`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `BoundedSource` is a source that reads a finite amount of input records. The class describes the data you want to read, including the data's location and parameters (such as how much data to read).
+* A subclass of `RangeTracker`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `RangeTracker` is a thread-safe object used to manage a range for a given position type.
 
 ### Implementing the BoundedSource Subclass
 
@@ -128,7 +128,7 @@ To implement a `RangeTracker`, your subclass must override the following methods
 
 * `stop_position`: Returns the ending position of the current range, exclusive.
 
-* `try_claim`: This method is used to determine if a record at a split point is within the range. This method should modify the internal state of the `RangeTracker` by updating the last-consumed position to the given starting `position` of the record being read by the source.
+* `try_claim`: This method is used to determine if a record at a split point is within the range. This method should modify the internal state of the `RangeTracker` by updating the last-consumed position to the given starting `position` of the record being read by the source. The method returns true if the given position falls within the current range.
 
 * `set_current_position`: This method updates the last-consumed position to the given starting position of a record being read by a source. You can invoke this method for records that do not start at split points, and this should modify the internal state of the `RangeTracker`. If the record starts at a split point, you must invoke `try_claim` instead of this method.
 
@@ -142,7 +142,7 @@ If `split_position` has already been consumed, the method returns `None`.  Other
 
 * `fraction_consumed`: Returns the approximate fraction of consumed positions in the source.
 
-**Note:** The methods of this class may be invoked by multiple threads, hence must be made thread-safe (e.g. by using a single lock object). The method returns true if the given position falls within the current range.
+**Note:** Methods of class `iobase.RangeTracker` may be invoked by multiple threads, hence this class must be made thread-safe, for example, by using a single lock object.
 
 ### Convenience Source Base Classes
 
@@ -188,9 +188,9 @@ To create a custom data sink for your pipeline, you'll need to provide the forma
 
 You supply the writing logic by creating the following classes:
 
-* A subclass of `iobase.Sink`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module.  `iobase.Sink` describes the location or resource to write to. Depending on the type of sink, your `iobase.Sink` subclass may contain fields such as the path to an output directory on a filesystem or a database table name. `iobase.Sink` provides three methods for performing a write operation to the sink it describes. Your subclass of `iobase.Sink` must implement these three methods: `initialize_write()`, `open_writer()`, and `finalize_write()`.
+* A subclass of `Sink`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module.  `Sink` describes the location or resource to write to. Depending on the type of sink, your `Sink` subclass may contain fields such as the path to an output directory on a filesystem or a database table name. `Sink` provides three methods for performing a write operation to the sink it describes. Your subclass of `Sink` must implement these three methods: `initialize_write()`, `open_writer()`, and `finalize_write()`.
 
-* A subclass of `iobase.Writer`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `iobase.Writer` writes a bundle of elements from an input `PCollection` to your designated data sink. `iobase.Writer` defines two methods: `write()`, which writes a single record from the bundle, and `close()`, which is called once at the end of writing a bundle.
+* A subclass of `Writer`, which you can find in the [iobase.py](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py) module. `Writer` writes a bundle of elements from an input `PCollection` to your designated data sink. `Writer` defines two methods: `write()`, which writes a single record from the bundle, and `close()`, which is called once at the end of writing a bundle.
 
 ### Implementing the Sink Subclass
 
