@@ -1,11 +1,11 @@
 ---
 layout: default
-title: "Beam Custom Sources and Sinks for Python"
+title: "Custom Sources and Sinks for Python"
 permalink: /documentation/sdks/python-custom-io/
 ---
-# Beam Custom Sources and Sinks for Python
+# Custom Sources and Sinks for Python
 
-The Beam SDK for Python provides an extensible API that you can use to create custom data sources and sinks. This tutorial shows how to create custom sources and sinks using [Beam's Source and Sink API](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py).
+The Apache Beam SDK for Python provides an extensible API that you can use to create custom data sources and sinks. This tutorial shows how to create custom sources and sinks using [Beam's Source and Sink API](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py).
 
 * Create a custom source by extending the `BoundedSource` and `RangeTracker` interfaces.
 * Create a custom sink by implementing the `Sink` and `Writer` classes.
