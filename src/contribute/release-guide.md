@@ -150,18 +150,30 @@ You should verify that the issues listed automatically by JIRA are appropriate t
 
 Adjust any of the above properties to the improve clarity and presentation of the Release Notes.
 
-### Check the state of the aggregate javadoc
+### Verify that a Release Build Works
 
-When you build with -Prelease, the Maven build process creates a single archive of javadoc for all of
-the Java API. This takes place in `sdks/java/javadoc`. The actual build of the javadoc is run from
-Apache Ant, via the `maven-antrun-plugin`. 
+Run `mvn -Prelease` to ensure that the build processes that are specific to that
+profile are in good shape.
 
-The javadoc requires some maintenance; if you look at the `ant.xml` file, you will see that it 
-has a list of 'offline' URLs and a list of excluded packages. The offline links connect the Beam
-javadoc to the javadoc of other projects such as Jackson and Guava. Check that the URLs for the offline
-project point to the current versions.
+### Update and Verify Javadoc
 
-Also check that the excluded package list is up to date. 
+The build with `-Prelease` creates the combined javadoc for the release in `sdks/java/javadoc`.
+
+In that directory, the file `sdks/java/javadoc/ant.xml` file contains a list of
+modules to include in and exclude, plus a list of offline URLs that populate
+links to Javadoc for other modules that Beam depends on.
+
+You should both examine the generated javadoc and look over the contents of that
+file to ensure that the javadoc is correct.
+
+Confirm that new modules added since the last release have been added to the
+inclusion list as appropriate.
+
+Confirm that the excluded package list is up to date.
+
+Verify the version numbers for offline links match the versions used by Beam. If
+the version number has changed, download a new version of the corresponding
+XX-docs/package-list file.
 
 ### Create a release branch
 
@@ -210,6 +222,7 @@ The rest of this guide assumes that commands are run in the root of a repository
 1. JIRA release item for the subsequent release has been created
 1. There are no release blocking JIRA issues
 1. Release Notes in JIRA have been audited and adjusted
+1. Combined javadoc has the appropriate contents.
 1. Release branch has been created
 1. Originating branch has the version information updated to the new version
 
@@ -277,12 +290,14 @@ Start by updating `release_latest` version flag in the top-level `_config.yml`, 
 Beam publishes API reference manual for each release on the website. For Java SDK, that’s Javadoc.
 
 One of the artifacts created in the release contains the Javadoc for the website: 
-`org.apache.beam:beam-sdks-java-javadoc`. To update the website, you must unpack
+. To update the website, you must unpack
 this jar file from the release candidate into the source tree of the website.
 
 Add the new Javadoc to [SDK API Reference page]({{ site.baseurl }}/documentation/sdks/javadoc/) page, as follows:
 
-* Copy the generated Javadoc into the website repository: `cp -r ${JAVADOC_ROOT} documentation/sdks/javadoc/${VERSION}`.
+* Unpack the Maven artifact `org.apache.beam:beam-sdks-java-javadoc` into some temporary location. Call this `${JAVADOC_TMP}`.
+* Copy the generated Javadoc into the website repository: `cp -r ${JAVADOC_TMP} documentation/sdks/javadoc/${VERSION}`.
+* Set up the necessary git commands to account for the new and deleted files from the javadoc.
 * Update the Javadoc link on this page to point to the new version (in `src/documentation/sdks/javadoc/current.md`).
 
 Finally, propose a pull request with these changes. (Don’t merge before finalizing the release.)
