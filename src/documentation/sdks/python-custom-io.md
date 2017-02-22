@@ -43,7 +43,7 @@ It is critical to exhaustively unit-test all of your `Source` and `Sink` subclas
 You can use test harnesses and utility methods available in the [source_test_utils module](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/source_test_utils.py) to develop tests for your source.
 
 
-## <a name="creating-sources"></a>Creating a Custom Source
+## <a name="creating-sources"></a>Creating a New Source
 
 You should create a new source if you'd like to use the advanced features that the Source API provides:
 
@@ -157,7 +157,7 @@ To create a source for a new file type, you need to create a sub-class of `FileB
 See [AvroSource](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/avroio.py) for an example implementation of `FileBasedSource`.
 
 
-## <a name="reading-sources"></a>Reading from a Custom Source
+## <a name="reading-sources"></a>Reading from a New Source
 
 The following example, `CountingSource`, demonstrates an implementation of `BoundedSource` and uses the SDK-provided `RangeTracker` called `OffsetRangeTracker`.
 
@@ -172,7 +172,7 @@ To read data from the source in your pipeline, use the `Read` transform:
 **Note:** When you create a source that end-users are going to use, it's recommended that you do not expose the code for the source itself as demonstrated in the example above, but rather use a wrapping `PTransform` instead. See [PTransform wrappers](#ptransform-wrappers) to see how and why to avoid exposing your sources.
 
 
-## <a name="creating-sinks"></a>Creating a Custom Sink
+## <a name="creating-sinks"></a>Creating a New Sink
 
 You should create a new sink if you'd like to use the advanced features that the Sink API provides, such as global initialization and finalization that allow the write operation to appear "atomic" (i.e. either all data is written or none is).
 
@@ -235,7 +235,7 @@ If your data source uses files, you can derive your `Sink` and `Writer` classes 
 * Setting the output MIME type
 
 
-## <a name="writing-sinks"></a>Writing to a Custom Sink
+## <a name="writing-sinks"></a>Writing to a New Sink
 
 Consider a simple key-value storage that writes a given set of key-value pairs to a set of tables. The following is the key-value storage's API:
 
