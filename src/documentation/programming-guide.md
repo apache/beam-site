@@ -1285,19 +1285,19 @@ The Beam SDK for Python does not support annotating data types with a default co
 
 ## <a name="windowing"></a>Working with windowing
 
-Windowing subdivides a `PCollection` according to the timestamps of its individual elements. Beam transforms that aggregate multiple elements, such as `GroupByKey` and `Combine`, work implicitly on a per-window basis—that is, they process each `PCollection` as a succession of multiple, finite windows, though the entire collection itself may be of unbounded size.
+Windowing subdivides a `PCollection` according to the timestamps of its individual elements. Transforms that aggregate multiple elements, such as `GroupByKey` and `Combine`, work implicitly on a per-window basis—that is, they process each `PCollection` as a succession of multiple, finite windows, though the entire collection itself may be of unbounded size.
 
 A related concept, called **triggers**, determines when to emit the results of aggregation as unbounded data arrives. Using a trigger can help to refine the windowing strategy for your `PCollection` to deal with late-arriving data or to provide early results. See the [triggers](#triggers) section for more information.
 
 ### Windowing basics
 
-Windowing is most useful with an unbounded `PCollection`, which represents a continuously updating data set of unknown, and possibly infinite size (e.g. streaming data). Some Beam transforms, such as `GroupByKey` and `Combine`, group multiple elements by a common key. Ordinarily, that grouping operation groups all of the elements that have the same key within the entire data set. With an unbounded data set, it is impossible to collect all of the elements, since new elements are constantly being added and may be infinitely many.
+Some Beam transforms, such as `GroupByKey` and `Combine`, group multiple elements by a common key. Ordinarily, that grouping operation groups all of the elements that have the same key within the entire data set. With an unbounded data set, it is impossible to collect all of the elements, since new elements are constantly being added and may be infinitely many (e.g. streaming data). If you are working with unbounded `PCollection`s, windowing is especially useful.
 
-In the Beam model, any `PCollection` can be subdivided into logical windows. Each element in a `PCollection` is assigned to one or more windows according to the `PCollection`'s windowing function, and each individual window contains a finite number of elements. Grouping transforms then consider each `PCollection`'s elements on a per-window basis. `GroupByKey`, for example, implicitly groups the elements of a `PCollection` by _key and window_.
+In the Beam model, any `PCollection` (including unbounded `PCollection`s) can be subdivided into logical windows. Each element in a `PCollection` is assigned to one or more windows according to the `PCollection`'s windowing function, and each individual window contains a finite number of elements. Grouping transforms then consider each `PCollection`'s elements on a per-window basis. `GroupByKey`, for example, implicitly groups the elements of a `PCollection` by _key and window_.
 
-**Caution:** Default windowing behavior is to assign all elements of a `PCollection` to a single, global window, _even for unbounded `PCollection`s_. Before you use a grouping transform such as `GroupByKey` on an unbounded `PCollection`, you must set a non-global windowing function. See [Setting your PCollection's windowing function](#setwindowingfunction).
-
-Alternatively, you can set a non-default [trigger](#triggers) for an unbounded `PCollection`. This allows the global window to emit results under other conditions, since the default windowing behavior (waiting for all data to arrive) will never occur.
+**Caution:** The default windowing behavior is to assign all elements of a `PCollection` to a single, global window, _even for unbounded `PCollection`s_. Before you use a grouping transform such as `GroupByKey` on an unbounded `PCollection`, you must do at least one of the following:
+ * Set a non-global windowing function. See [Setting your PCollection's windowing function](#setwindowingfunction).
+ * Set a non-default [trigger](#triggers). This allows the global window to emit results under other conditions, since the default windowing behavior (waiting for all data to arrive) will never occur.
 
 If you don't set a non-global windowing function or a non-default trigger for your unbounded `PCollection` and subsequently use a grouping transform such as `GroupByKey` or `Combine`, your pipeline will generate an error upon construction and your job will fail.
 
@@ -1351,7 +1351,7 @@ Note that each element can logically belong to more than one window, depending o
 
 #### Fixed time windows
 
-The simplest form of windowing is using **fixed time windows**: given a timestamped `PCollection` which might be continuously updating, each window might capture (for example) five minutes worth of elements.
+The simplest form of windowing is using **fixed time windows**: given a timestamped `PCollection` which might be continuously updating, each window might capture (for example) all elements with timestamps that fall into a five minute interval.
 
 A fixed time window represents a consistent duration, non overlapping time interval in the data stream. Consider windows with a five-minute duration: all of the elements in your unbounded `PCollection` with timestamp values from 0:00:00 up to (but not including) 0:05:00 belong to the first window, elements with timestamp values from 0:05:00 up to (but not including) 0:10:00 belong to the second window, and so on.
 
@@ -1361,7 +1361,7 @@ A fixed time window represents a consistent duration, non overlapping time inter
 
 #### Sliding time windows
 
-A **sliding time window** also represents time intervals in the data stream; however, with sliding time windowing, the windows overlap. For example, each window might capture five minutes worth of data, but a new window starts every ten seconds. The frequency with which sliding windows begin is called the _period_. Therefore, our example would have a window _duration_ of five minutes and a _period_ of ten seconds.
+A **sliding time window** also represents time intervals in the data stream; however, sliding time windows can overlap. For example, each window might capture five minutes worth of data, but a new window starts every ten seconds. The frequency with which sliding windows begin is called the _period_. Therefore, our example would have a window _duration_ of five minutes and a _period_ of ten seconds.
 
 Because multiple windows overlap, most elements in a data set will belong to more than one window. This kind of windowing is useful for taking running averages of data; using sliding time windows, you can compute a running average of the past five minutes' worth of data, updated every ten seconds, in our example.
 
@@ -1387,7 +1387,7 @@ You can use a single global window if you are working with an unbounded data set
 
 You can set the windowing function for a `PCollection` by applying the `Window` transform. When you apply the `Window` transform, you must provide a `WindowFn`. The `WindowFn` determines the windowing function your `PCollection` will use for subsequent grouping transforms, such as a fixed or sliding time window.
 
-Beam provides pre-defined `WindownFn`s for the basic windowing functions. You can also define your own `WindowFn` if you have a more complex need.
+Beam provides pre-defined `WindownFn`s for the basic windowing functions described here. You can also define your own `WindowFn` if you have a more complex need.
 
 When setting a windowing function, you may also want to set a trigger for your `PCollection`. The trigger determines when each individual window is aggregated and emitted, and helps refine how the windowing function performs with respect to late data and computing early results. See the [triggers](#triggers) section for more information.
 
@@ -1448,11 +1448,11 @@ If your `PCollection` is bounded (the size is fixed), you can assign all the ele
 
 ### Time skew, data lag, and late data
 
-In any data processing system, there is a certain amount of lag between the time a data event occurs (the "event time", determined by the timestamp on the data element itself) and the time the actual data element gets processed at any stage in your pipeline (the "processing time", determined by the clock on the system processing the element). In addition, there are no guarantees that data events will appear in your pipeline in the same order that they were generated in various places on the web.
+In any data processing system, there is a certain amount of lag between the time a data event occurs (the "event time", determined by the timestamp on the data element itself) and the time the actual data element gets processed at any stage in your pipeline (the "processing time", determined by the clock on the system processing the element). In addition, there are no guarantees that data events will appear in your pipeline in the same order that they were generated.
 
 For example, let's say we have a `PCollection` that's using fixed-time windowing, with windows that are five minutes long. For each window, Beam must collect all the data with an _event time_ timestamp in the given window range (between 0:00 and 4:59 in the first window, for instance). Data with timestamps outside that range (data from 5:00 or later) belong to a different window.
 
-However, data isn't always guaranteed to arrive in a pipeline in correct time order, or to always arrive at predictable intervals. Beam tracks a _watermark_, which is the system's notion of when all data in a certain window can be expected to have arrived in the pipeline. Data that arrives with a timestamp after the watermark is considered **late data**.
+However, data isn't always guaranteed to arrive in a pipeline in time order, or to always arrive at predictable intervals. Beam tracks a _watermark_, which is the system's notion of when all data in a certain window can be expected to have arrived in the pipeline. Data that arrives with a timestamp after the watermark is considered **late data**.
 
 From our example, suppose we have a simple watermark that assumes approximately 30s of lag time between the data timestamps (the event time) and the time the data appears in the pipeline (the processing time), then Beam would close the first window at 5:30. If a data record arrives at 5:34, but with a timestamp that would put it in the 0:00-4:59 window (say, 3:38), then that record is late data.
 
