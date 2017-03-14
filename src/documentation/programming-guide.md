@@ -921,7 +921,7 @@ While `ParDo` always produces a main output `PCollection` (as the return value f
 
 ## <a name="io"></a>Pipeline I/O
 
-When you create a pipeline, you often need to read data from some external source, such as a file in external data sink or a database. Likewise, you may want your pipeline to output its result data to a similar external data sink. Beam provides read and write transforms for a [number of common data storage types]({{site.baseurl }}/documentation/io/built-in/). If you want your pipeline to read from or write to a data storage format that isn't supported by the built-in transforms, you can [implement your own read and write transforms]({{site.baseurl }}/documentation/io/authoring-overview/).
+When you create a pipeline, you often need to read data from some external source, such as a file in external data sink or a database. Likewise, you may want your pipeline to output its result data to a similar external data sink. Beam provides read and write transforms for a [number of common data storage types]({{site.baseurl }}/documentation/io/built-in/). If you want your pipeline to read from or write to a data storage format that isn't supported by the built-in transforms, you can [implement your own read and write transforms]({{site.baseurl }}/documentation/io/io-toc/).
 
 
 ### Reading input data
@@ -988,7 +988,7 @@ records.apply("WriteToText",
 ```
 
 ### Beam-provided I/O Transforms
-There is a page devoted to [Beam-provided I/O Transforms]({{site.baseurl }}/documentation/io/built-in/).
+See the  [Beam-provided I/O Transforms]({{site.baseurl }}/documentation/io/built-in/) page for a list of the currently available I/O transforms.
 
 
 ## <a name="running"></a>Running the pipeline

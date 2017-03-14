@@ -6,9 +6,11 @@ permalink: /documentation/io/built-in/
 
 [Pipeline I/O Table of Contents]({{site.baseurl}}/documentation/io/io-toc/)
 
-This is the set of I/O transforms currently available in Beam.
+# Built-in I/O Transforms
 
-Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/programming-guide#io) for general usage instructions and the javadoc/pydoc for the particular I/O transforms.
+This table contains the currently available I/O transforms.
+
+Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/programming-guide#io) for general usage instructions, and see the javadoc/pydoc for the particular I/O transforms.
 
 
 <table class="table table-bordered">

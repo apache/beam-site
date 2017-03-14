@@ -1,16 +1,14 @@
 ---
 layout: default
-title: "Authoring I/O - Overview"
+title: "Authoring I/O Transforms - Overview"
 permalink: /documentation/io/authoring-overview/
 ---
 
-
-
 [Pipeline I/O Table of Contents]({{site.baseurl}}/documentation/io/io-toc/)
 
-# Authoring I/O - Overview
+# Authoring I/O Transforms - Overview
 
-_A guide for those who need to connect to a data store not covered by a [Built-in I/O Transforms]({{site.baseurl }}/documentation/io/built-in/)_
+_A guide for users who need to connect to a data store that isn't supported by the [Built-in I/O Transforms]({{site.baseurl }}/documentation/io/built-in/)_
 
 > Note: This guide is still in progress. There is an open issue to finish the guide: [BEAM-1025](https://issues.apache.org/jira/browse/BEAM-1025).
 

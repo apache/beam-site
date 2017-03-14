@@ -13,7 +13,7 @@ permalink: /documentation/io/testing/
 
 # Next steps
 
-If you've got a well tested I/O transform, why not contribute it to Beam? Read all about it: 
+If you have a well tested I/O transform, why not contribute it to Apache Beam? Read all about it:
 
-[Contributing I/O Transforms to Beam]({{site.baseurl }}/documentation/io/contributing/)
+[Contributing I/O Transforms]({{site.baseurl }}/documentation/io/contributing/)
 
