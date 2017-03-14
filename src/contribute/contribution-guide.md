@@ -186,6 +186,8 @@ Start Eclipse with a fresh workspace in a separate directory from your checkout.
 	-> make sure all beam projects are selected
 	-> Finalize
 
+You now should have all the beam projects imported into eclipse and should see no compile errors.
+
 ###### Checkstyle
 Eclipse supports checkstyle within the IDE using the Checkstyle plugin.
 
@@ -206,9 +208,6 @@ matches the project's checkstyle enforcements.
     1. Click "Import..." and select "sdks/java/build-tools/src/main/resources/beam/beam-codestyle.xml".
     1. Click "Apply" and "OK".
 1. (Option 2) Install [Google Java Format plugin](https://github.com/google/google-java-format#eclipse).
-
-You now should have all the beam projects imported into eclipse and should see no compile errors.
-
 
 ### Create a branch in your fork
 You’ll work on your contribution in a branch in your own (forked) repository. Create a local branch, initialized with the state of the branch you expect your changes to be merged into. Keep in mind that we use several branches, including `master`, feature-specific, and release-specific branches. If you are unsure, initialize with the state of the `master` branch.
