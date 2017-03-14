@@ -153,7 +153,7 @@ matches the project's checkstyle enforcements.
     1. Select "sdks/java/build-tools/src/main/resources/beam/beam-codestyle.xml"
     1. Click "OK".
     1. Click "Apply" and "OK".
-2. (Option 2) Install [Google Java Format plugin](https://plugins.jetbrains.com/plugin/8527-google-java-format)
+1. (Option 2) Install [Google Java Format plugin](https://plugins.jetbrains.com/plugin/8527-google-java-format)
 
 ##### Eclipse
 
