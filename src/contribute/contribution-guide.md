@@ -143,6 +143,18 @@ clicking the "Check Module" button. The scan should report no errors.
 Note: Selecting "Check Project" may report some errors from the archetype
 modules as they are not configured for Checkstyle validation.
 
+###### Code Style
+Intellij supports code styles within the IDE. Use one of the following to ensure your code style
+matches the project's checkstyle enforcements.
+
+1. (Option 1) Configure IntelliJ to use beam-codestyle.xml
+    1. Go to Settings -> Code Style -> Java.
+    1. Click the cogwheel icon next to 'Scheme' and select Import Scheme -> Eclipse XML Profile
+    1. Select "sdks/java/build-tools/src/main/resources/beam/beam-codestyle.xml"
+    1. Click "OK".
+    1. Click "Apply" and "OK".
+2. (Option 2) Install [Google Java Format plugin](https://plugins.jetbrains.com/plugin/8527-google-java-format)
+
 ##### Eclipse
 
 Use a recent eclipse version that includes m2e. Currently we recommend Eclipse Neon.
