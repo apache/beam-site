@@ -8,17 +8,17 @@ authors:
   - altay
 ---
 
-Apache Beam’s latest release, version [0.6.0](https://beam.apache.org/get-started/downloads/), introduces a new SDK -- this time, for the Python programming language. The Python SDK joins the Java SDK as the second implementation of the Beam programming model.
+Apache Beam’s latest release, version [0.6.0]({{ site.baseurl }}/get-started/downloads/), introduces a new SDK -- this time, for the Python programming language. The Python SDK joins the Java SDK as the second implementation of the Beam programming model.
 
 <!--more-->
 
 The Python SDK incorporates all of the main concepts of the Beam model, including ParDo, GroupByKey, Windowing, and others. It features extensible IO APIs for writing bounded sources and sinks, and provides built-in implementation for reading and writing Text, Avro, and TensorFlow record files, as well as connectors to Google BigQuery and Google Cloud Datastore.
 
-There are two runners capable of executing pipelines written with the Python SDK today: [Direct Runner](https://beam.apache.org/documentation/runners/direct/) and [Dataflow Runner](https://beam.apache.org/documentation/runners/dataflow/), both of which are currently limited to batch execution only. Upcoming features will shortly bring the benefits of the Python SDK to additional runners.
+There are two runners capable of executing pipelines written with the Python SDK today: [Direct Runner]({{ site.baseurl }}/documentation/runners/direct/) and [Dataflow Runner]({{ site.baseurl }}/documentation/runners/dataflow/), both of which are currently limited to batch execution only. Upcoming features will shortly bring the benefits of the Python SDK to additional runners.
 
-## Try the Apache Beam Python SDK
+#### Try the Apache Beam Python SDK
 
-If you would like to try out the Python SDK, a good place to start is the [Quickstart](https://beam.apache.org/get-started/quickstart-py/). After that, you can take a look at additional [examples](https://github.com/apache/beam/tree/v0.6.0/sdks/python/apache_beam/examples), and deep dive into the [API reference](https://beam.apache.org/documentation/sdks/pydoc/).
+If you would like to try out the Python SDK, a good place to start is the [Quickstart]({{ site.baseurl }}/get-started/quickstart-py/). After that, you can take a look at additional [examples](https://github.com/apache/beam/tree/v0.6.0/sdks/python/apache_beam/examples), and deep dive into the [API reference]({{ site.baseurl }}/documentation/sdks/pydoc/).
 
 Let’s take a look at a quick example together. First, install the `apache-beam` package from PyPI and start your Python interpreter.
 
@@ -61,12 +61,12 @@ This example estimates Pi by throwing random darts into the unit square and keep
 $ cat pi_estimate.txt*
 ```
 
-## Roadmap
+#### Roadmap
 
 The first thing on the Python SDK’s roadmap is to address two of its limitations. First, the existing runners are currently limited to bounded PCollections, and we are looking forward to extending the SDK to support unbounded PCollections (“streaming”). Additionally, we are working on extending support to more Apache Beam runners, and the upcoming Fn API will do the heavy lifting.
 
 Both of these improvements will enable the Python SDK to fulfill the mission of Apache Beam: a unified programming model for batch and streaming data processing that can run on any execution engine.
 
-## Join us!
+#### Join us!
 
-Please consider joining us, whether as a user or a contributor, as we work towards our first release with API stability. If you’d like to try out Apache Beam today, check out the latest [0.6.0](https://beam.apache.org/get-started/downloads/) release. We welcome contributions and participation from anyone through our mailing lists, issue tracker, pull requests, and events.
+Please consider joining us, whether as a user or a contributor, as we work towards our first release with API stability. If you’d like to try out Apache Beam today, check out the latest [0.6.0]({{ site.baseurl }}/get-started/downloads/) release. We welcome contributions and participation from anyone through our mailing lists, issue tracker, pull requests, and events.
