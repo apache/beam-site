@@ -14,11 +14,11 @@ Apache Beam’s latest release, version [0.6.0](https://beam.apache.org/get-star
 
 The Python SDK incorporates all of the main concepts of the Beam model, including ParDo, GroupByKey, Windowing, and others. It features extensible IO APIs for writing bounded sources and sinks, and provides built-in implementation for reading and writing Text, Avro, and TensorFlow record files, as well as connectors to Google BigQuery and Google Cloud Datastore.
 
-There are two runners capable of executing pipelines written with the Python SDK today: [Direct Runner](https://beam.apache.org/documentation/runners/direct/) and [Dataflow Runner](https://beam.apache.org/documentation/runners/dataflow/). These runners are currently limited to batch only execution. Upcoming features will shortly bring the benefits of the Python SDK to additional runners.
+There are two runners capable of executing pipelines written with the Python SDK today: [Direct Runner](https://beam.apache.org/documentation/runners/direct/) and [Dataflow Runner](https://beam.apache.org/documentation/runners/dataflow/), both of which are currently limited to batch execution only. Upcoming features will shortly bring the benefits of the Python SDK to additional runners.
 
 ## Try the Apache Beam Python SDK
 
-If you would like to try out the Python SDK, a good place to start is the [Quickstart](https://beam.apache.org/get-started/quickstart-py/). After that, you can take a look at additional [examples](https://github.com/apache/beam/tree/master/sdks/python/apache_beam/examples), and deep dive into the [API reference](https://beam.apache.org/documentation/sdks/pydoc/).
+If you would like to try out the Python SDK, a good place to start is the [Quickstart](https://beam.apache.org/get-started/quickstart-py/). After that, you can take a look at additional [examples](https://github.com/apache/beam/tree/v0.6.0/sdks/python/apache_beam/examples), and deep dive into the [API reference](https://beam.apache.org/documentation/sdks/pydoc/).
 
 Let’s take a look at a quick example together. First, install the `apache-beam` package from PyPI and start your Python interpreter.
 
@@ -55,7 +55,7 @@ p = beam.Pipeline()
 p.run()
 ```
 
-This example estimates Pi by throwing random darts into the unit square and keeping track of the fraction of those darts that fell into the unit circle (see the full [example](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/examples/complete/estimate_pi.py) for details). If you are curious, you can check the result of our estimation by looking at the output file.
+This example estimates Pi by throwing random darts into the unit square and keeping track of the fraction of those darts that fell into the unit circle (see the full [example](https://github.com/apache/beam/blob/v0.6.0/sdks/python/apache_beam/examples/complete/estimate_pi.py) for details). If you are curious, you can check the result of our estimation by looking at the output file.
 
 ```
 $ cat pi_estimate.txt*
