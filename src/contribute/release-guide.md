@@ -222,8 +222,10 @@ In the release branch update the Python SDK version to the release version (e.g.
 
 ### Update release specific configurations
 
-1. Update archetypes: [example](https://git-wip-us.apache.org/repos/asf?p=beam.git;a=commit;h=d375cfa126fd7be9eeeec34f39c2b9b856f324bf)
-1. Update runner specific configurations: [example](https://git-wip-us.apache.org/repos/asf?p=beam.git;a=commit;h=e6dd96ed86837bb0997f25d74322c463a72c8d5d)
+1. Update archetypes:
+   [example](https://github.com/apache/beam/commit/d375cfa126fd7be9eeeec34f39c2b9b856f324bf)
+1. Update runner specific configurations:
+   [example](https://github.com/apache/beam/commit/f572328ce23e70adee8001e3d10f1479bd9a380d)
 
 ### Checklist to proceed to the next step
 
