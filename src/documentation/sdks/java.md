@@ -22,4 +22,4 @@ The Java SDK supports all features currently supported by the Beam model.
 
 
 ## Pipeline I/O
-See the  [Beam-provided I/O Transforms]({{site.baseurl }}/documentation/io/built-in/) page for a list of the currently available I/O transforms.
+See the [Beam-provided I/O Transforms]({{site.baseurl }}/documentation/io/built-in/) page for a list of the currently available I/O transforms.

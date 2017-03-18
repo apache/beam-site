@@ -4,12 +4,14 @@ title: "Pipeline I/O"
 permalink: /documentation/io/io-toc/
 ---
 
-# Using Pipeline I/O
+# Pipeline I/O
+
+## Using Pipeline I/O
 * [Programming Guide: Using I/O Transforms]({{site.baseurl }}/documentation/programming-guide#io)
 * [Built-in I/O Transforms]({{site.baseurl }}/documentation/io/built-in/)
 
 
-# Authoring Read &amp; Write I/O Transforms
+## Authoring Read &amp; Write I/O Transforms
 
 > Note: This guide is still in progress. There is an open issue to finish the guide: [BEAM-1025](https://issues.apache.org/jira/browse/BEAM-1025).
 
