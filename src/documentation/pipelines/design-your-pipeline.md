@@ -31,7 +31,7 @@ The simplest pipelines represent a linear flow of operations, as shown in Figure
 </figure>
 Figure 1: A linear pipeline.
 
-However, your pipeline can be significantly more complex. A pipeline represents a [Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of steps. It can have multiple input sources, multiple output sinks, and its operations (transforms) can read multiple `PCollection`s, then output multiple `PCollection`s. The following examples show some of the different shapes your pipeline can take.
+However, your pipeline can be significantly more complex. A pipeline represents a [Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of steps. It can have multiple input sources, multiple output sinks, its operations (transforms) can read multiple `PCollection`s, and output multiple `PCollection`s. The following examples show some of the different shapes your pipeline can take.
 
 ## Branching PCollections
 
@@ -47,7 +47,7 @@ The pipeline illustrated in Figure 2 below reads its input, first names (Strings
     <img src="{{ site.baseurl }}/images/design-your-pipeline-multiple-pcollections.png"
          alt="A pipeline with multiple transforms. Note that the PCollection of table rows is processed by two transforms.">
 </figure>
-Figure 2: A pipeline with multiple transforms. Note that the PCollection of the database table rows is processed by two transforms. It's shown as following code:
+Figure 2: A pipeline with multiple transforms. Note that the PCollection of the database table rows is processed by two transforms. See the example code below:
 ```java
 PCollection<String> dbRowCollection = ...;
 
@@ -96,7 +96,7 @@ The pipeline in Figure 3 performs the same operation in a different way - with o
 
 <pre>if (starts with 'A') { outputToPCollectionA } else if (starts with 'B') { outputToPCollectionB }</pre>
 
-where each element in the input `PCollection` is processed once. The code is shown as below:
+where each element in the input `PCollection` is processed once. See the example code below:
 ```java
 //define main stream and side output
 final TupleTag<String> mainStreamTag = new TupleTag<String>(){};
@@ -143,7 +143,7 @@ The example depicted in Figure 4 below is a continuation of the example illustra
     <img src="{{ site.baseurl }}/images/design-your-pipeline-flatten.png"
          alt="Part of a pipeline that merges multiple PCollections.">
 </figure>
-Figure 4: Part of a pipeline that merges multiple PCollections. The code is shown as below,
+Figure 4: Part of a pipeline that merges multiple PCollections. See the example code below:
 ```java
 //merge the two PCollections with Flatten
 PCollectionList<String> collectionList = PCollectionList.of(aCollection).and(bCollection);
@@ -162,7 +162,7 @@ Your pipeline can read its input from one or more sources. If your pipeline read
     <img src="{{ site.baseurl }}/images/design-your-pipeline-join.png"
          alt="A pipeline with multiple input sources.">
 </figure>
-Figure 5: A pipeline with multiple input sources, the example is shown as below:
+Figure 5: A pipeline with multiple input sources. See the example code below:
 ```java
 PCollection<KV<String, String>> userAddress = pipeline.apply(JdbcIO.<KV<String, String>>read()...);
 
