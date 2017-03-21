@@ -31,7 +31,7 @@ The simplest pipelines represent a linear flow of operations, as shown in Figure
 </figure>
 Figure 1: A linear pipeline.
 
-However, your pipeline can be significantly more complex. A pipeline represents a [Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of steps. It can have multiple input sources, multiple output sinks, and its operations (`Transform`s) can both read and output multiple `PCollection`s. The following examples show some of the different shapes your pipeline can take.
+However, your pipeline can be significantly more complex. A pipeline represents a [Directed Acyclic Graph](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of steps. It can have multiple input sources, multiple output sinks, and its operations (`PTransform`s) can both read and output multiple `PCollection`s. The following examples show some of the different shapes your pipeline can take.
 
 ## Branching PCollections
 
