@@ -65,6 +65,12 @@ members:
   - name: Pei He
     apache_id: pei
     email: pei [at] apache [dot] org
+    organization: Alibaba
+    roles: committer
+    time_zone: "+8"
+  - name: Chamikara Jayalath
+    apache_id: chamikara
+    email: chamikara [at] apache [dot] org
     organization: Google
     roles: committer
     time_zone: "-8"
@@ -134,4 +140,10 @@ members:
     organization: Slack
     roles: committer, PMC
     time_zone: "-8"
+  - name: Aviem Zur
+    apache_id: aviemzur
+    email: aviemzur [at] apache [dot] org
+    organization: PayPal
+    roles: committer
+    time_zone: "+2"
 ---
