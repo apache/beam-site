@@ -464,9 +464,11 @@ tree, [2]
 
 Thus, `GroupByKey` represents a transform from a multimap (multiple keys to individual values) to a uni-map (unique keys to collections of values).
 
-`CoGroupByKey` is a `PTransform` based on `GroupByKey`, differs from `GroupByKey`, it merges multiple key/value `PCollection`s with the same key type, and emits a collection of `KV<K, CoGbkResult>` pairs. It's usually used as a JOIN operation in Beam pipeline(describe in [design-your-pipeline#multiple-sources]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline/#multiple-sources)). 
+##### **Joins with CoGroupByKey**
 
-Given the input collections as below:
+`CoGroupByKey` joins two or more key/value `PCollection`s that have the same key type, and then emits a collection of `KV<K, CoGbkResult>` pairs. [design-your-pipeline#multiple-sources]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline/#multiple-sources) shows an example pipeline that uses a join. 
+
+Given the input collections below:
 ```
 // collection 1
 user1, address1
@@ -481,7 +483,7 @@ guest, order4
 ...
 ```
 
-`CoGroupByKey` gathers up the values with the same key from all `PCollections`, and outputs a new pair consisting of the unique key and an object `CoGbkResult` containing all values that were associated with that key. If apply `CoGroupByKey` to input collections above, the output collection would look like this:
+`CoGroupByKey` gathers up the values with the same key from all `PCollection`s, and outputs a new pair consisting of the unique key and an object `CoGbkResult` containing all values that were associated with that key. If you apply `CoGroupByKey` to the input collections above, the output collection would look like this:
 ```
 user1, [[address1], [order1, order2]]
 user2, [[address2], [order3]]
