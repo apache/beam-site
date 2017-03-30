@@ -466,7 +466,7 @@ Thus, `GroupByKey` represents a transform from a multimap (multiple keys to indi
 
 ##### **Joins with CoGroupByKey**
 
-`CoGroupByKey` joins two or more key/value `PCollection`s that have the same key type, and then emits a collection of `KV<K, CoGbkResult>` pairs. [design-your-pipeline#multiple-sources]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline/#multiple-sources) shows an example pipeline that uses a join. 
+`CoGroupByKey` joins two or more key/value `PCollection`s that have the same key type, and then emits a collection of `KV<K, CoGbkResult>` pairs. [Design Your Pipeline]({{ site.baseurl }}/documentation/pipelines/design-your-pipeline/#multiple-sources) shows an example pipeline that uses a join. 
 
 Given the input collections below:
 ```
