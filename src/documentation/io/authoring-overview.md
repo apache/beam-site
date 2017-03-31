@@ -15,63 +15,67 @@ _A guide for users who need to connect to a data store that isn't supported by t
 {:toc}
 
 ## Introduction
-This is a guide to implementing read and write transforms in the Beam model. These transforms are the way that Beam pipelines import data so it can be processed and then write data to a store.
+This guide covers how to implement I/O transforms in the Beam model. Beam pipelines use these read and write transforms to import data for processing, and write data to a store.
 
-Reading/writing data in Beam is just a parallel task like everything else. Most of the time you can assemble it from ParDo’s, GBK’s etc.; rarely you will need the more specialized Source and Sink classes for specific features. There are changes coming soon (SplittableDoFn, BEAM-65) that will make Source and Sink unnecessary.
+Reading and writing data in Beam is a parallel task, and using `ParDo`s, `GroupByKey`s, etc... is usually sufficient. Rarely, you will need the more specialized `Source` and `Sink` classes for specific features. There are changes coming soon (`SplittableDoFn`, [BEAM-65](https://issues.apache.org/jira/browse/BEAM-65)) that will make `Source` unnecessary.
 
 As you work on your I/O Transform, be aware that the Beam community is excited to help those building new I/O Transforms and that there are many examples and helper classes.
 
 
 ## Suggested steps for implementers
-1. Check out this guide and come up with your design. If you'd like, you can email the Beam dev mailing list with any questions you might have. It's good to check there to see if anyone else is working on the same I/O Transform.
+1. Check out this guide and come up with your design. If you'd like, you can email the [Beam dev mailing list]({{ site.baseurl }}/get-started/support) with any questions you might have. It's good to check there to see if anyone else is working on the same I/O Transform.
 2. If you are planning to contribute your I/O transform to the Beam community, you'll be going through the normal Beam contribution life cycle - see the [Apache Beam Contribution Guide]({{ site.baseurl }}/contribute/contribution-guide/) for more details.
-3. As you're working on your IO transform, the [PTransform Style Guide]({{ site.baseurl }}/contribute/ptransform-style-guide/) will provide specific information on many implementation details of transform. **Much of the information in the PTransform Style Guide is directly relevant to writing I/O Transforms**.
+3. As you're working on your IO transform, see the [PTransform Style Guide]({{ site.baseurl }}/contribute/ptransform-style-guide/) for specific information about writing I/O Transforms.
 
 
 ## Read transforms
 Read transforms take data from outside of the Beam pipeline and produce PCollections of data.
 
-For data stores or files types where the data can be read in parallel, you can actually think of the process as a mini-pipeline. This will often consist of two steps:
+For data stores or files types where the data can be read in parallel, you can think of the process as a mini-pipeline. This often consists of two steps:
 1. Splitting the data into parts to be read in parallel
-2. Reading from each of those parts.
+2. Reading from each of those parts
 
-Each of those steps will be a ParDo, with a GroupByKey in between. The GroupByKey is an implementation detail but for most runners it allows the runner to use different numbers of workers for determing how to split up the data to be read into chunks (which will likely occur on very few workers) and reading (which will likely benefit from more workers.) For runners which support Dynamic Work Rebalancing, the GBK will also allow that to occur.
+Each of those steps will be a `ParDo`, with a `GroupByKey` in between. The `GroupByKey` is an implementation detail, but for most runners it allows the runner to use different numbers of workers for:
+* Determining how to split up the data to be read into chunks - this will likely occur on very few workers
+* Reading - will likely benefit from more workers
 
-Here are some examples of read transform implementations using the "reading as a mini-pipeline" model to use when data can be read in parallel:
-* **Reading from chunks of a file** - if you have a file format that can be sub-divided, the structure will look like:
-  * Determine Byte Ranges ParDo: As input, takes in a file name. Emit a PCollection of byte ranges inside of the file.
-  * Read Byte Range ParDo: Given the PCollection of byte ranges, and reads each byte range and reads the data in that byte range, emitting a PCollection of records.
+The `GroupByKey` will also allow Dynamic Work Rebalancing to occur (on supported runners.)
+
+Here are some examples of read transform implementations that use the "reading as a mini-pipeline" model when data can be read in parallel:
 * **Reading from a file glob** - For example reading all files in "~/data/**"
-  * Get File Paths ParDo: As input, take in a file glob. Emit a PCollection of strings, each of which is a file path.
-  * Reading ParDo: Given the PCollection of file paths, read each one, emitting a PCollection of records.
+  * Get File Paths `ParDo`: As input, take in a file glob. Emit a PCollection of strings, each of which is a file path.
+  * Reading `ParDo`: Given the PCollection of file paths, read each one, emitting a PCollection of records.
 * **Reading from a NoSQL Database** (eg Apache HBase) - these databases often allow reading from ranges in parallel.
-  * Determine Key Ranges ParDo: As input, receive connection information for the database and the key range to read from. Output a PCollection of key ranges that can be read in parallel efficiently.
-  * Read Key Range ParDo: Given the PCollection of key ranges, read the key range, emitting a PCollection of records.
+  * Determine Key Ranges `ParDo`: As input, receive connection information for the database and the key range to read from. Output a PCollection of key ranges that can be read in parallel efficiently.
+  * Read Key Range `ParDo`: Given the PCollection of key ranges, read the key range, emitting a PCollection of records.
 
-For data stores or files where reading cannot occur in parallel, reading is a simple task that can be accomplished with a single ParDo. For example:
-* **Reading from a database query** - traditional SQL database queries often can only be read in sequence. The ParDo in this case would establish a connection to the database and read batches of records, emitting a PCollection of those records.
-* **Reading from a gzip file** - a gzip file has to be read in order, so it cannot be parallelized. The ParDo in this case would open the file and read in sequence, emitting a PCollection of records from the file.
+For data stores or files where reading cannot occur in parallel, reading is a simple task that can be accomplished with a single `ParDo`+`GroupByKey`. For example:
+* **Reading from a database query** - traditional SQL database queries often can only be read in sequence. The `ParDo` in this case would establish a connection to the database and read batches of records, emitting a PCollection of those records.
+* **Reading from a gzip file** - a gzip file has to be read in order, so it cannot be parallelized. The `ParDo` in this case would open the file and read in sequence, emitting a PCollection of records from the file.
 
 
-### When to implement using the Source API
-The above discussion is in terms of ParDos - this is because Sources have proven to be tricky to implement. At this point in time, **it's not recommended that you implement a Source if you can get away with a ParDo**. If you're trying to decide between the two, feel free to email the Beam dev mailing list and we can discuss the specific pros and cons of your case.
+### When to implement using the `Source` API
+The above discussion is in terms of `ParDo`s - this is because `Source`s have proven to be tricky to implement. At this point in time, **if you're not reading from a file, it is not recommended that you implement a `Source` if you can get away with a `ParDo`**. ` A class derived from `FileBasedSource` is often the best option when reading from files.
 
-In some cases implementing a Source may be necessary or result in better performance.
-* ParDos will not work for reading from unbounded sources - they do not support checkpointing and don't support mechanism like de-duping that have proven useful for streaming data sources.
-* ParDos cannot provide hints to runners about their progress or the size of data they are reading -  without size estimation of the data or progress on your read, the runner doesn't have any way to guess how large your read will be, and thus if it attempts to dynamically allocate workers, it does not have any clues as to how many workers you may need for you pipeline.
-* ParDos do not support Dynamic Work Rebalancing - these are features used by some readers to improve the processing speed of jobs (but may not be possible with your data source.)
-* ParDos do not receive 'desired_bundle_size' as a hint from runners when performing initial splitting.
+ If you're trying to decide on whether or not to use `Source`, feel free to email the [Beam dev mailing list]({{ site.baseurl }}/get-started/support) and we can discuss the specific pros and cons of your case.
+
+In some cases implementing a `Source` may be necessary or result in better performance.
+* `ParDo`s will not work for reading from unbounded sources - they do not support checkpointing and don't support mechanisms like de-duping that have proven useful for streaming data sources.
+* `ParDo`s cannot provide hints to runners about their progress or the size of data they are reading -  without size estimation of the data or progress on your read, the runner doesn't have any way to guess how large your read will be, and thus if it attempts to dynamically allocate workers, it does not have any clues as to how many workers you may need for your pipeline.
+* `ParDo`s do not support Dynamic Work Rebalancing - these are features used by some readers to improve the processing speed of jobs (but may not be possible with your data source.)
+* `ParDo`s do not receive 'desired_bundle_size' as a hint from runners when performing initial splitting.
+`SplittableDoFn` ([BEAM-65](https://issues.apache.org/jira/browse/BEAM-65)) will mitigate many of these concerns.
 
 
 ## Write transforms
-Write transforms are responsible for the work of taking the contents of a PCollection and transferring that data outside of the Beam Pipeline.
+Write transforms are responsible for taking the contents of a PCollection and transferring that data outside of the Beam pipeline.
 
-Write transforms can usually be implemented using a single ParDo, simply having the ParDo write records received to the data store.
+Write transforms can usually be implemented using a single `ParDo` that writes the records received to the data store.
 
 TODO: this section needs further explanation.
 
-### When to implement using the Sink API
-You are strongly discouraged from using the Sink class unless you are creating a FileBasedSink. Most of the time, a simple ParDo is all that's necessary. If you think you have a case that is only possible using a Sink, please email the Beam dev alias.
+### When to implement using the `Sink` API
+You are strongly discouraged from using the `Sink` class unless you are creating a `FileBasedSink`. Most of the time, a simple `ParDo` is all that's necessary. If you think you have a case that is only possible using a `Sink`, please email the [Beam dev mailing list]({{ site.baseurl }}/get-started/support).
 
 # Next steps
 
