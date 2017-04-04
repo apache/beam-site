@@ -39,7 +39,7 @@ Each of those steps will be a `ParDo`, with a `GroupByKey` in between. The `Grou
 * Determining how to split up the data to be read into chunks - this will likely occur on very few workers
 * Reading - will likely benefit from more workers
 
-The `GroupByKey` will also allow Dynamic Work Rebalancing to occur (on supported runners.)
+The `GroupByKey` will also allow Dynamic Work Rebalancing to occur (on supported runners).
 
 Here are some examples of read transform implementations that use the "reading as a mini-pipeline" model when data can be read in parallel:
 * **Reading from a file glob** - For example reading all files in "~/data/**"
@@ -55,20 +55,20 @@ For data stores or files where reading cannot occur in parallel, reading is a si
 
 
 ### When to implement using the `Source` API
-The above discussion is in terms of `ParDo`s - this is because `Source`s have proven to be tricky to implement. At this point in time, **if you're not reading from a file, it is not recommended that you implement a `Source` if you can get away with a `ParDo`**. ` A class derived from `FileBasedSource` is often the best option when reading from files.
+The above discussion is in terms of `ParDo`s - this is because `Source`s have proven to be tricky to implement. At this point in time, **if you're not reading from a file, it is not recommended that you implement a `Source` if you can get away with a `ParDo`**. A class derived from `FileBasedSource` is often the best option when reading from files.
 
  If you're trying to decide on whether or not to use `Source`, feel free to email the [Beam dev mailing list]({{ site.baseurl }}/get-started/support) and we can discuss the specific pros and cons of your case.
 
 In some cases implementing a `Source` may be necessary or result in better performance.
 * `ParDo`s will not work for reading from unbounded sources - they do not support checkpointing and don't support mechanisms like de-duping that have proven useful for streaming data sources.
 * `ParDo`s cannot provide hints to runners about their progress or the size of data they are reading -  without size estimation of the data or progress on your read, the runner doesn't have any way to guess how large your read will be, and thus if it attempts to dynamically allocate workers, it does not have any clues as to how many workers you may need for your pipeline.
-* `ParDo`s do not support Dynamic Work Rebalancing - these are features used by some readers to improve the processing speed of jobs (but may not be possible with your data source.)
+* `ParDo`s do not support Dynamic Work Rebalancing - these are features used by some readers to improve the processing speed of jobs (but may not be possible with your data source).
 * `ParDo`s do not receive 'desired_bundle_size' as a hint from runners when performing initial splitting.
 `SplittableDoFn` ([BEAM-65](https://issues.apache.org/jira/browse/BEAM-65)) will mitigate many of these concerns.
 
 
 ## Write transforms
-Write transforms are responsible for taking the contents of a PCollection and transferring that data outside of the Beam pipeline.
+Write transforms are responsible for taking the contents of a `PCollection` and transferring that data outside of the Beam pipeline.
 
 Write transforms can usually be implemented using a single `ParDo` that writes the records received to the data store.
 
