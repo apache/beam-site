@@ -29,9 +29,9 @@ As you work on your I/O Transform, be aware that the Beam community is excited t
 
 
 ## Read transforms
-Read transforms take data from outside of the Beam pipeline and produce PCollections of data.
+Read transforms take data from outside of the Beam pipeline and produce `PCollection`s of data.
 
-For data stores or files types where the data can be read in parallel, you can think of the process as a mini-pipeline. This often consists of two steps:
+For data stores or file types where the data can be read in parallel, you can think of the process as a mini-pipeline. This often consists of two steps:
 1. Splitting the data into parts to be read in parallel
 2. Reading from each of those parts
 
@@ -43,19 +43,19 @@ The `GroupByKey` will also allow Dynamic Work Rebalancing to occur (on supported
 
 Here are some examples of read transform implementations that use the "reading as a mini-pipeline" model when data can be read in parallel:
 * **Reading from a file glob** - For example reading all files in "~/data/**"
-  * Get File Paths `ParDo`: As input, take in a file glob. Emit a PCollection of strings, each of which is a file path.
-  * Reading `ParDo`: Given the PCollection of file paths, read each one, emitting a PCollection of records.
+  * Get File Paths `ParDo`: As input, take in a file glob. Produce a `PCollection` of strings, each of which is a file path.
+  * Reading `ParDo`: Given the `PCollection` of file paths, read each one, producing a `PCollection` of records.
 * **Reading from a NoSQL Database** (eg Apache HBase) - these databases often allow reading from ranges in parallel.
-  * Determine Key Ranges `ParDo`: As input, receive connection information for the database and the key range to read from. Output a PCollection of key ranges that can be read in parallel efficiently.
-  * Read Key Range `ParDo`: Given the PCollection of key ranges, read the key range, emitting a PCollection of records.
+  * Determine Key Ranges `ParDo`: As input, receive connection information for the database and the key range to read from. Produce a `PCollection` of key ranges that can be read in parallel efficiently.
+  * Read Key Range `ParDo`: Given the `PCollection` of key ranges, read the key range, producing a `PCollection` of records.
 
 For data stores or files where reading cannot occur in parallel, reading is a simple task that can be accomplished with a single `ParDo`+`GroupByKey`. For example:
-* **Reading from a database query** - traditional SQL database queries often can only be read in sequence. The `ParDo` in this case would establish a connection to the database and read batches of records, emitting a PCollection of those records.
-* **Reading from a gzip file** - a gzip file has to be read in order, so it cannot be parallelized. The `ParDo` in this case would open the file and read in sequence, emitting a PCollection of records from the file.
+* **Reading from a database query** - traditional SQL database queries often can only be read in sequence. The `ParDo` in this case would establish a connection to the database and read batches of records, producing a `PCollection` of those records.
+* **Reading from a gzip file** - a gzip file has to be read in order, so it cannot be parallelized. The `ParDo` in this case would open the file and read in sequence, producing a `PCollection` of records from the file.
 
 
 ### When to implement using the `Source` API
-The above discussion is in terms of `ParDo`s - this is because `Source`s have proven to be tricky to implement. At this point in time, **if you're not reading from a file, it is not recommended that you implement a `Source` if you can get away with a `ParDo`**. A class derived from `FileBasedSource` is often the best option when reading from files.
+The above discussion is in terms of `ParDo`s - this is because `Source`s have proven to be tricky to implement. At this point in time, the recommendation is to **use  `Source` only if `ParDo` doesn't meet your needs**. A class derived from `FileBasedSource` is often the best option when reading from files.
 
  If you're trying to decide on whether or not to use `Source`, feel free to email the [Beam dev mailing list]({{ site.baseurl }}/get-started/support) and we can discuss the specific pros and cons of your case.
 
