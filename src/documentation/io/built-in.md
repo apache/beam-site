@@ -66,7 +66,7 @@ This table contains I/O transforms that are currently planned or in-progress. St
 
 <table class="table table-bordered">
   <tr>
-    <td>Name</td><td>Language</td><td>JIRA</td>
+    <th>Name</th><th>Language</th><th>JIRA</th>
   </tr>
   <tr>
     <td>Apache Cassandra</td><td>Java</td>
