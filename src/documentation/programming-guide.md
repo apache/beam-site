@@ -1564,7 +1564,7 @@ If our trigger is set to `.discardingFiredPanes`, the trigger emits the followin
 
 #### Handling Late Data
 
-If a pipeline wants data that arrives after the watermark passes the end of the window, you can apply an *allowed lateness* when you set your windowing configuration. This gives your trigger the opportunity to react to the late data. If allowed lateness is set, the default trigger will emit new results immediately whenever late data arrives.
+If you want your pipeline to process data that arrives after the watermark passes the end of the window, you can apply an *allowed lateness* when you set your windowing configuration. This gives your trigger the opportunity to react to the late data. If allowed lateness is set, the default trigger will emit new results immediately whenever late data arrives.
 
 You set the allowed lateness by using `.withAllowedLateness()` when you set your windowing function:
 
@@ -1617,7 +1617,7 @@ You can express this pattern using `AfterWatermark.pastEndOfWindow`. For example
       .withAllowedLateness(Duration.standardDays(2)));
 ```
 
-#### **Other Composite Triggers**
+#### Other Composite Triggers
 
 You can also build other sorts of composite triggers. The following example code shows a simple composite trigger that fires whenever the pane has at least 100 elements, or after a minute.
 
@@ -1628,7 +1628,7 @@ You can also build other sorts of composite triggers. The following example code
 ```
 
 
-#### **Trigger Grammar**
+#### Trigger Grammar
 
 The following grammar describes the various ways that you can combine triggers into composite triggers:
 
