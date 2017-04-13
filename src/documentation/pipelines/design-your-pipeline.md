@@ -70,14 +70,14 @@ PCollection<String> bCollection = dbRowCollection.apply("bTrans", ParDo.of(new D
 }));
 ```
 
-### A single transform that uses side outputs
+### A single transform that uses additional outputs
 
-Another way to branch a pipeline is to have a **single** transform output to multiple `PCollection`s by using [side outputs]({{ site.baseurl }}/documentation/programming-guide/#transforms-sideio). Transforms that use side outputs, process each element of the input once, and allow you to output to zero or more `PCollection`s.
+Another way to branch a pipeline is to have a **single** transform output to multiple `PCollection`s by using [additional outputs]({{ site.baseurl }}/documentation/programming-guide/#transforms-outputs). Transforms that use additional outputs process each element of the input once, and allow you to output to zero or more `PCollection`s.
 
-Figure 3 below illustrates the same example described above, but with one transform that uses a side output; Names that start with 'A' are added to the output `PCollection`, and names that start with 'B' are added to the side output `PCollection`.
+Figure 3 below illustrates the same example described above, but with one transform that uses an additional output. Names that start with 'A' are added to the main output `PCollection`, and names that start with 'B' are added to the additional output `PCollection`.
 
 <figure id="fig3">
-    <img src="{{ site.baseurl }}/images/design-your-pipeline-side-outputs.png"
+    <img src="{{ site.baseurl }}/images/design-your-pipeline-additional-outputs.png"
          alt="A pipeline with a transform that outputs multiple PCollections.">
 </figure>
 Figure 3: A pipeline with a transform that outputs multiple PCollections.
@@ -98,37 +98,39 @@ The pipeline in Figure 3 performs the same operation in a different way - with o
 
 where each element in the input `PCollection` is processed once. See the example code below:
 ```java
-//define main stream and side output
-final TupleTag<String> mainStreamTag = new TupleTag<String>(){};
-final TupleTag<String> sideoutTag = new TupleTag<String>(){};
+// Define two TupleTags - one for the main output and one for the additional output.
+final TupleTag<String> mainOutTag = new TupleTag<String>(){};
+final TupleTag<String> additionalOutTag = new TupleTag<String>(){};
 
 PCollectionTuple mixedCollection =
     dbRowCollection.apply(
         ParDo
-        // Specify the tag for the main output, wordsBelowCutoffTag.
-        .withOutputTags(mainStreamTag,
-        // Specify the tags for the two side outputs as a TupleTagList.
-                        TupleTagList.of(sideoutTag))
+        // Specify the tag for the main output, mainOutTag.
+        .withOutputTags(mainOutTag,
+        // Specify the tags for additional outputs as a TupleTagList.
+                        TupleTagList.of(additionalOutTag))
         .of(new DoFn<String, String>() {
           @ProcessElement
-        public void processElement(ProcessContext c) {
-          if(c.element().startsWith("A")){//output to main stream
-            c.output(c.element());
-          }else if(c.element().startsWith("B")){//emit as Side outputs
-            c.sideOutput(sideoutTag, c.element());
+          public void processElement(ProcessContext c) {
+            if (c.element().startsWith("A")) {
+              // Emit to main output
+              c.output(c.element());
+            } else if(c.element().startsWith("B")) {
+              // Emit to the output with tag additionalOutTag
+              c.output(additionalOutTag, c.element());
+            }
           }
-        }
         }
         ));
 
-// get subset of main stream 
-mixedCollection.get(mainStreamTag).apply(...);
+// Get subset of main output.
+mixedCollection.get(mainOutTag).apply(...);
 
-// get subset of Side output
-mixedCollection.get(sideoutTag).apply(...);
+// Get subset of the additional output.
+mixedCollection.get(additionalOutTag).apply(...);
 ```
 
-You can use either mechanism to produce multiple output `PCollection`s. However, using side outputs makes more sense if the transform's computation per element is time-consuming.
+You can use either mechanism to produce multiple output `PCollection`s. However, using additional outputs makes more sense if the transform's computation per element is time-consuming.
 
 ## Merging PCollections
 
