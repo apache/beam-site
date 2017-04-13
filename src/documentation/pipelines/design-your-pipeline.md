@@ -182,5 +182,5 @@ coGbkResultCollection.apply(...);
 
 ## What's next
 
-*   [Create your own pipeline]({{ site.baseurl }}/documentation/pipelines/create-your-pipeline).
-*   [Test your pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline).
+*   [Creating your pipeline]({{ site.baseurl }}/documentation/programming-guide#pipeline).
+*   [Testing your pipeline]({{ site.baseurl }}/documentation/pipelines/test-your-pipeline).
