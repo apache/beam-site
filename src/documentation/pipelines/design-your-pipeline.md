@@ -70,11 +70,11 @@ PCollection<String> bCollection = dbRowCollection.apply("bTrans", ParDo.of(new D
 }));
 ```
 
-### A single transform that uses additional outputs
+### A single transform that produces multiple outputs
 
-Another way to branch a pipeline is to have a **single** transform output to multiple `PCollection`s by using [additional outputs]({{ site.baseurl }}/documentation/programming-guide/#transforms-outputs). Transforms that use additional outputs process each element of the input once, and allow you to output to zero or more `PCollection`s.
+Another way to branch a pipeline is to have a **single** transform output to multiple `PCollection`s by using [tagged outputs]({{ site.baseurl }}/documentation/programming-guide/#transforms-outputs). Transforms that produce more than one output process each element of the input once, and output to zero or more `PCollection`s.
 
-Figure 3 below illustrates the same example described above, but with one transform that uses an additional output. Names that start with 'A' are added to the main output `PCollection`, and names that start with 'B' are added to the additional output `PCollection`.
+Figure 3 below illustrates the same example described above, but with one transform that produces multiple outputs. Names that start with 'A' are added to the main output `PCollection`, and names that start with 'B' are added to an additional output `PCollection`.
 
 <figure id="fig3">
     <img src="{{ site.baseurl }}/images/design-your-pipeline-additional-outputs.png"
@@ -82,7 +82,7 @@ Figure 3 below illustrates the same example described above, but with one transf
 </figure>
 Figure 3: A pipeline with a transform that outputs multiple PCollections.
 
-The pipeline in Figure 2 contains two transforms that process the elements in the same input `PCollection`. One transform uses the following logic pattern:
+The pipeline in Figure 2 contains two transforms that process the elements in the same input `PCollection`. One transform uses the following logic:
 
 <pre>if (starts with 'A') { outputToPCollectionA }</pre>
 
@@ -92,42 +92,43 @@ while the other transform uses:
 
 Because each transform reads the entire input `PCollection`, each element in the input `PCollection` is processed twice.
 
-The pipeline in Figure 3 performs the same operation in a different way - with only one transform that uses the logic
+The pipeline in Figure 3 performs the same operation in a different way - with only one transform that uses the following logic:
 
 <pre>if (starts with 'A') { outputToPCollectionA } else if (starts with 'B') { outputToPCollectionB }</pre>
 
 where each element in the input `PCollection` is processed once. See the example code below:
 ```java
-// Define two TupleTags - one for the main output and one for the additional output.
-final TupleTag<String> mainOutTag = new TupleTag<String>(){};
-final TupleTag<String> additionalOutTag = new TupleTag<String>(){};
+// Define two TupleTags, one for each output.
+final TupleTag<String> startsWithATag = new TupleTag<String>(){};
+final TupleTag<String> startsWithBTag = new TupleTag<String>(){};
 
 PCollectionTuple mixedCollection =
     dbRowCollection.apply(
         ParDo
-        // Specify the tag for the main output, mainOutTag.
-        .withOutputTags(mainOutTag,
-        // Specify the tags for additional outputs as a TupleTagList.
-                        TupleTagList.of(additionalOutTag))
+        // Specify main output. In this example, it is the output
+        // with tag startsWithATag.
+        .withOutputTags(startsWithATag,
+        // Specify the output with tag startsWithBTag, as a TupleTagList.
+                        TupleTagList.of(startsWithBTag))
         .of(new DoFn<String, String>() {
           @ProcessElement
           public void processElement(ProcessContext c) {
             if (c.element().startsWith("A")) {
-              // Emit to main output
+              // Emit to main output, which is the output with tag startsWithATag.
               c.output(c.element());
             } else if(c.element().startsWith("B")) {
-              // Emit to the output with tag additionalOutTag
-              c.output(additionalOutTag, c.element());
+              // Emit to output with tag startsWithBTag.
+              c.output(startsWithBTag, c.element());
             }
           }
         }
         ));
 
-// Get subset of main output.
-mixedCollection.get(mainOutTag).apply(...);
+// Get subset of the output with tag startsWithATag.
+mixedCollection.get(startsWithATag).apply(...);
 
-// Get subset of the additional output.
-mixedCollection.get(additionalOutTag).apply(...);
+// Get subset of the output with tag startsWithBTag.
+mixedCollection.get(startsWithBTag).apply(...);
 ```
 
 You can use either mechanism to produce multiple output `PCollection`s. However, using additional outputs makes more sense if the transform's computation per element is time-consuming.

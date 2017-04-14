@@ -812,45 +812,45 @@ If the side input has multiple trigger firings, Beam uses the value from the lat
 
 While `ParDo` always produces a main output `PCollection` (as the return value from `apply`), you can also have your `ParDo` produce any number of additional output `PCollection`s. If you choose to have multiple outputs, your `ParDo` returns all of the output `PCollection`s (including the main output) bundled together.
 
-##### Tags for additional outputs:
+##### Tags for muitiple outputs:
 
 ```java
-// To emit elements to a additional output PCollection, create a TupleTag object to identify each collection that your ParDo produces.
+// To emit elements to multiple output PCollections, create a TupleTag object to identify each collection that your ParDo produces.
 // For example, if your ParDo produces three output PCollections (the main output and two additional outputs), you must create three TupleTags.
-// The following example code shows how to create TupleTags for a ParDo with a main output and two additional outputs:
+// The following example code shows how to create TupleTags for a ParDo with three output PCollections.
 
   // Input PCollection to our ParDo.
   PCollection<String> words = ...;
 
   // The ParDo will filter words whose length is below a cutoff and add them to
   // the main ouput PCollection<String>.
-  // If a word is above the cutoff, the ParDo will add the word length to an additional
+  // If a word is above the cutoff, the ParDo will add the word length to an
   // output PCollection<Integer>.
-  // If a word starts with the string "MARKER", the ParDo will add that word to a different
-  // additional output PCollection<String>.
+  // If a word starts with the string "MARKER", the ParDo will add that word to an
+  // output PCollection<String>.
   final int wordLengthCutOff = 10;
 
   // Create three TupleTags, one for each output PCollection.
-  // Main output.
+  // Output that contains words below the length cutoff.
   final TupleTag<String> wordsBelowCutOffTag =
       new TupleTag<String>(){};
-  // Word lengths additional output.
+  // Output that contains word lengths.
   final TupleTag<Integer> wordLengthsAboveCutOffTag =
       new TupleTag<Integer>(){};
-  // "MARKER" words additional output.
+  // Output that contains "MARKER" words.
   final TupleTag<String> markedWordsTag =
       new TupleTag<String>(){};
 
 // Passing Output Tags to ParDo:
 // After you specify the TupleTags for each of your ParDo outputs, pass the tags to your ParDo by invoking .withOutputTags.
 // You pass the tag for the main output first, and then the tags for any additional outputs in a TupleTagList.
-// Building on our previous example, we pass the three TupleTags (one for the main output and two for the additional outputs)
+// Building on our previous example, we pass the three TupleTags for our three output PCollections
 // to our ParDo. Note that all of the outputs (including the main output PCollection) are bundled into the returned PCollectionTuple.
 
   PCollectionTuple results =
       words.apply(
           ParDo
-          // Specify the tag for the main output, wordsBelowCutoffTag.
+          // Specify the tag for the main output.
           .withOutputTags(wordsBelowCutOffTag,
           // Specify the tags for the two additional outputs as a TupleTagList.
                           TupleTagList.of(wordLengthsAboveCutOffTag)
@@ -874,26 +874,27 @@ While `ParDo` always produces a main output `PCollection` (as the return value f
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:model_pardo_with_side_outputs_iter
 %}```
 
-##### Emitting to additional outputs in your DoFn:
+##### Emitting to multiple outputs in your DoFn:
 
 ```java
 // Inside your ParDo's DoFn, you can emit an element to a specific output PCollection by passing in the
 // appropriate TupleTag when you call ProcessContext.output.
-// After your ParDo, extract the resulting main and additional output PCollections from the returned PCollectionTuple.
+// After your ParDo, extract the resulting output PCollections from the returned PCollectionTuple.
 // Based on the previous example, this shows the DoFn emitting to the main output and two additional outputs.
 
   .of(new DoFn<String, String>() {
      public void processElement(ProcessContext c) {
        String word = c.element();
        if (word.length() <= wordLengthCutOff) {
-         // Emit this short word to the main output.
+         // Emit short word to the main output.
+         // In this example, it is the output with tag wordsBelowCutOffTag.
          c.output(word);
        } else {
-         // Emit this long word's length to an additional output.
+         // Emit long word length to the output with tag wordLengthsAboveCutOffTag.
          c.output(wordLengthsAboveCutOffTag, word.length());
        }
        if (word.startsWith("MARKER")) {
-         // Emit this word to a different additional output.
+         // Emit word to the output with tag markedWordsTag.
          c.output(markedWordsTag, word);
        }
      }}));
