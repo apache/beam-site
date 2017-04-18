@@ -58,7 +58,7 @@ For more information, see the *Before you begin* section of the [Cloud Dataflow 
 </dependency>
 ```
 
-<span class="language-python">When using Python, you do not need to specify your dependency on the Cloud Dataflow Runner.</span>
+<span class="language-python">This section is not applicable to the Beam SDK for Python.</span>
 
 ### Authentication
 
@@ -142,14 +142,17 @@ gcloud auth application-default login
 <!-- Only show for Python -->
 <tr class="language-python">
   <td><code>sdk_location</code></td>
-  <td>Override the default GitHub location from where the Cloud Dataflow SDK is downloaded. This value can be an URL, a Cloud Storage path, or a local path to an SDK tarball. Workflow submissions will download or copy the SDK tarball from this location. If set to the string <code>default</code>, a standard SDK location is used. If empty, no SDK is copied.</td>
+  <td>Override the default location from where the Cloud Dataflow SDK is downloaded. This value can be an URL, a Cloud Storage path, or a local path to an SDK tarball. Workflow submissions will download or copy the SDK tarball from this location. If set to the string <code>default</code>, a standard SDK location is used. If empty, no SDK is copied.</td>
   <td><code>default</code></td>
 </tr>
 
 
 </table>
 
-See the reference documentation for the  <span class="language-java">[DataflowPipelineOptions]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/dataflow/options/DataflowPipelineOptions.html)</span><span class="language-python">[PipelineOptions](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/utils/pipeline_options.py)</span> interface (and its subinterfaces) for the complete list of pipeline configuration options.
+See the reference documentation for the
+<span class="language-java">[DataflowPipelineOptions]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/dataflow/options/DataflowPipelineOptions.html)</span>
+<span class="language-python">[`PipelineOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.PipelineOptions)</span>
+interface (and any subinterfaces) for additional pipeline configuration options.
 
 ## Additional information and caveats
 
@@ -159,8 +162,7 @@ While your pipeline executes, you can monitor the job's progress, view details o
 
 ### Blocking Execution
 
-To connect to your job and block until it is completed, call <span class="language-java"><code>waitToFinish</code></span><span class="language-python"><code>wait_until_finish</code></span> on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow Runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that pressing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
-
+To block until your job completes, call <span class="language-java"><code>waitToFinish</code></span><span class="language-python"><code>wait_until_finish</code></span> on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow Runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that pressing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
 
 ### Streaming Execution
 

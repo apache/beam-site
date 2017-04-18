@@ -47,13 +47,16 @@ Here are some resources with information about how to test your pipelines.
 </dependency>
 ```
 
-<span class="language-python">When using Python, you do not need to specify your dependency on the Direct Runner.</span>
+<span class="language-python">This section is not applicable to the Beam SDK for Python.</span>
 
 ## Pipeline options for the Direct Runner
 
 When executing your pipeline from the command-line, set `runner` to `direct` or `DirectRunner`. The default values for the other pipeline options are generally sufficient.
 
-See the reference documentation for the  <span class="language-java">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/direct/DirectOptions.html)</span><span class="language-python">[`PipelineOptions`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/utils/pipeline_options.py)</span> interface (and its subinterfaces) for defaults and the complete list of pipeline configuration options.
+See the reference documentation for the
+<span class="language-java">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/direct/DirectOptions.html)</span>
+<span class="language-python">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.DirectOptions)</span>
+interface for defaults and additional pipeline configuration options.
 
 ## Additional information and caveats
 
