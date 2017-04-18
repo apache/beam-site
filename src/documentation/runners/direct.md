@@ -10,7 +10,7 @@ redirect_from: /learn/runners/direct/
   <strong>Adapt for:</strong>
   <ul>
     <li data-type="language-java" class="active">Java SDK</li>
-    <li data-type="language-python">Python SDK</li>
+    <li data-type="language-py">Python SDK</li>
   </ul>
 </nav>
 
@@ -30,7 +30,7 @@ Here are some resources with information about how to test your pipelines.
   <li class="language-java">The <a href="{{ site.baseurl }}/get-started/wordcount-example/#testing-your-pipeline-via-passert">Apache Beam WordCount Example</a> contains an example of logging and testing a pipeline with <a href="{{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html"><code>PAssert</code></a>.</li>
 
   <!-- Python specific links -->
-  <li class="language-python">You can use <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/util.py#L206">assert_that</a> to test your pipeline. The Python <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/examples/wordcount_debugging.py">WordCount Debugging Example</a> contains an example of logging and testing with <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/util.py#L206"><code>assert_that</code></a>.</li>
+  <li class="language-py">You can use <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/util.py#L206">assert_that</a> to test your pipeline. The Python <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/examples/wordcount_debugging.py">WordCount Debugging Example</a> contains an example of logging and testing with <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/util.py#L206"><code>assert_that</code></a>.</li>
 </ul>
 
 ## Direct Runner prerequisites and setup
@@ -47,7 +47,7 @@ Here are some resources with information about how to test your pipelines.
 </dependency>
 ```
 
-<span class="language-python">This section is not applicable to the Beam SDK for Python.</span>
+<span class="language-py">This section is not applicable to the Beam SDK for Python.</span>
 
 ## Pipeline options for the Direct Runner
 
@@ -55,10 +55,10 @@ When executing your pipeline from the command-line, set `runner` to `direct` or 
 
 See the reference documentation for the
 <span class="language-java">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/direct/DirectOptions.html)</span>
-<span class="language-python">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.DirectOptions)</span>
+<span class="language-py">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.DirectOptions)</span>
 interface for defaults and additional pipeline configuration options.
 
 ## Additional information and caveats
 
-Local execution is limited by the memory available in your local environment. It is highly recommended that you run your pipeline with data sets small enough to fit in local memory. You can create a small in-memory data set using a <span class="language-java">[`Create`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/transforms/Create.html)</span><span class="language-python">[`Create`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/core.py)</span> transform, or you can use a <span class="language-java">[`Read`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/io/Read.html)</span><span class="language-python">[`Read`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py)</span> transform to work with small local or remote files.
+Local execution is limited by the memory available in your local environment. It is highly recommended that you run your pipeline with data sets small enough to fit in local memory. You can create a small in-memory data set using a <span class="language-java">[`Create`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/transforms/Create.html)</span><span class="language-py">[`Create`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/core.py)</span> transform, or you can use a <span class="language-java">[`Read`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/io/Read.html)</span><span class="language-py">[`Read`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py)</span> transform to work with small local or remote files.
 

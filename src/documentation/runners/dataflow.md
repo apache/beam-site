@@ -10,7 +10,7 @@ redirect_from: /learn/runners/dataflow/
   <strong>Adapt for:</strong>
   <ul>
     <li data-type="language-java" class="active">Java SDK</li>
-    <li data-type="language-python">Python SDK</li>
+    <li data-type="language-py">Python SDK</li>
   </ul>
 </nav>
 
@@ -58,7 +58,7 @@ For more information, see the *Before you begin* section of the [Cloud Dataflow 
 </dependency>
 ```
 
-<span class="language-python">This section is not applicable to the Beam SDK for Python.</span>
+<span class="language-py">This section is not applicable to the Beam SDK for Python.</span>
 
 ### Authentication
 
@@ -71,7 +71,7 @@ gcloud auth application-default login
 ## Pipeline options for the Cloud Dataflow Runner
 
 <span class="language-java">When executing your pipeline with the Cloud Dataflow Runner (Java), consider these common pipeline options.</span>
-<span class="language-python">When executing your pipeline with the Cloud Dataflow Runner (Python), consider these common pipeline options.</span>
+<span class="language-py">When executing your pipeline with the Cloud Dataflow Runner (Python), consider these common pipeline options.</span>
 
 <table class="table table-bordered">
 <tr>
@@ -102,11 +102,11 @@ gcloud auth application-default login
 <tr>
   <td>
     <span class="language-java"><code>tempLocation</code></span>
-    <span class="language-python"><code>temp_location</code></span>
+    <span class="language-py"><code>temp_location</code></span>
   </td>
   <td>
     <span class="language-java">Optional.</span>
-    <span class="language-python">Required.</span>
+    <span class="language-py">Required.</span>
     Path for temporary files. Must be a valid Google Cloud Storage URL that begins with <code>gs://</code>.
     <span class="language-java">If set, <code>tempLocation</code> is used as the default value for <code>gcpTempLocation</code>.</span>
   </td>
@@ -123,24 +123,24 @@ gcloud auth application-default login
 <tr>
   <td>
     <span class="language-java"><code>stagingLocation</code></span>
-    <span class="language-python"><code>staging_location</code></span>
+    <span class="language-py"><code>staging_location</code></span>
   </td>
   <td>Optional. Cloud Storage bucket path for staging your binary and any temporary files. Must be a valid Cloud Storage URL that begins with <code>gs://</code>.</td>
   <td>
     <span class="language-java">If not set, defaults to a staging directory within <code>gcpTempLocation</code>.</span>
-    <span class="language-python">If not set, defaults to a staging directory within <code>temp_location</code>.</span>
+    <span class="language-py">If not set, defaults to a staging directory within <code>temp_location</code>.</span>
   </td>
 </tr>
 
 <!-- Only show for Python -->
-<tr class="language-python">
+<tr class="language-py">
   <td><code>save_main_session</code></td>
   <td>Save the main session state so that pickled functions and classes defined in <code>__main__</code> (e.g. interactive session) can be unpickled. Some workflows do not need the session state if, for instance, all of their functions/classes are defined in proper modules (not <code>__main__</code>) and the modules are importable in the worker.</td>
   <td><code>false</code></td>
 </tr>
 
 <!-- Only show for Python -->
-<tr class="language-python">
+<tr class="language-py">
   <td><code>sdk_location</code></td>
   <td>Override the default location from where the Beam SDK is downloaded. This value can be an URL, a Cloud Storage path, or a local path to an SDK tarball. Workflow submissions will download or copy the SDK tarball from this location. If set to the string <code>default</code>, a standard SDK location is used. If empty, no SDK is copied.</td>
   <td><code>default</code></td>
@@ -151,7 +151,7 @@ gcloud auth application-default login
 
 See the reference documentation for the
 <span class="language-java">[DataflowPipelineOptions]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/dataflow/options/DataflowPipelineOptions.html)</span>
-<span class="language-python">[`PipelineOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.PipelineOptions)</span>
+<span class="language-py">[`PipelineOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.utils.html#apache_beam.utils.pipeline_options.PipelineOptions)</span>
 interface (and any subinterfaces) for additional pipeline configuration options.
 
 ## Additional information and caveats
@@ -162,10 +162,10 @@ While your pipeline executes, you can monitor the job's progress, view details o
 
 ### Blocking Execution
 
-To block until your job completes, call <span class="language-java"><code>waitToFinish</code></span><span class="language-python"><code>wait_until_finish</code></span> on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow Runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that pressing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
+To block until your job completes, call <span class="language-java"><code>waitToFinish</code></span><span class="language-py"><code>wait_until_finish</code></span> on the `PipelineResult` returned from `pipeline.run()`. The Cloud Dataflow Runner prints job status updates and console messages while it waits. While the result is connected to the active job, note that pressing **Ctrl+C** from the command line does not cancel your job. To cancel the job, you can use the [Dataflow Monitoring Interface](https://cloud.google.com/dataflow/pipelines/dataflow-monitoring-intf) or the [Dataflow Command-line Interface](https://cloud.google.com/dataflow/pipelines/dataflow-command-line-intf).
 
 ### Streaming Execution
 
 <span class="language-java">If your pipeline uses an unbounded data source or sink, you must set the `streaming` option to `true`.</span>
-<span class="language-python">The Beam SDK for Python does not currently support streaming pipelines.</span>
+<span class="language-py">The Beam SDK for Python does not currently support streaming pipelines.</span>
 
