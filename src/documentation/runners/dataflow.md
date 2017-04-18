@@ -72,7 +72,7 @@ When executing your pipeline with the Cloud Dataflow Runner, set these pipeline 
 <tr>
   <td><code>runner</code></td>
   <td>The pipeline runner to use. This option allows you to determine the pipeline runner at runtime.</td>
-  <td>Set to <code>dataflow</code> to run on the Cloud Dataflow Service.</td>
+  <td>Set to <code>DataflowRunner</code> to run on the Cloud Dataflow Service.</td>
 </tr>
 <tr>
   <td><code>project</code></td>
