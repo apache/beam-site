@@ -75,7 +75,7 @@ This will list your GPG keys. One of these should reflect your Apache account, f
 
 Here, the key ID is the 8-digit hex string in the `pub` line: `845E6689`.
 
-Now, add your Apache GPG key to the Beam’s `KEYS` file both in [`dev`](https://dist.apache.org/repos/dist/dev/beam/KEYS) and [`release`](https://dist.apache.org/repos/dist/release/beam/KEYS) repositories at `dist.apache.org`. Follow the instructions listed at the top of these files. (Note: Not all committers have write access to the [`release`](https://dist.apache.org/repos/dist/release/beam/KEYS) repository. If you end up getting 403 errors ask a PMC member for assistance.)
+Now, add your Apache GPG key to the Beam’s `KEYS` file both in [`dev`](https://dist.apache.org/repos/dist/dev/beam/KEYS) and [`release`](https://dist.apache.org/repos/dist/release/beam/KEYS) repositories at `dist.apache.org`. Follow the instructions listed at the top of these files. (Note: Only PMC members have write access to the release repository. If you end up getting 403 errors ask on the mailing list for assistance.)
 
 Configure `git` to use this key when signing code by giving it your key ID, as follows:
 
@@ -120,7 +120,7 @@ Get ready for updating the Beam website by following the [website development in
 
 #### Register to PyPI
 
-Release manager needs to have an account with PyPI. If you need one, [register](https://pypi.python.org/pypi?%3Aaction=register_form) at PyPI. You also need to be a maintainer (or an owner) of the [apache-beam](https://pypi.python.org/pypi/apache-beam) package in order to push a new release. Ask a PMC member to add you as a maintainer.
+Release manager needs to have an account with PyPI. If you need one, [register](https://pypi.python.org/pypi?%3Aaction=register_form) at PyPI. You also need to be a maintainer (or an owner) of the [apache-beam](https://pypi.python.org/pypi/apache-beam) package in order to push a new release. Ask on the mailing list for assistance.
 
 ### Create a new version in JIRA
 
@@ -216,9 +216,9 @@ The rest of this guide assumes that commands are run in the root of a repository
 
 ### Update the Python SDK version
 
-In the master branch update Python SDK [version](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/version.py) to the next development version (e.g. `1.2.3.dev` to `1.3.0.dev`).
+In the master branch, update Python SDK [version](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/version.py) identifier to the next development version (e.g. `1.2.3.dev` to `1.3.0.dev`).
 
-In the release branch update the Python SDK version to the release version (e.g. `1.2.3.dev` to `1.2.3`).
+In the release branch, update the Python SDK version to the release version (e.g. `1.2.3.dev` to `1.2.3`).
 
 ### Update release specific configurations
 
@@ -377,7 +377,7 @@ Start the review-and-vote thread on the dev@ mailing list. Here’s an email tem
     * all artifacts to be deployed to the Maven Central Repository [4],
     * source code tag "v1.2.3-RC3" [5],
     * website pull request listing the release and publishing the API reference manual [6].
-    * python artifacts are deployed along with the source release to to dist.apache.org [2]. 
+    * Python artifacts are deployed along with the source release to the dist.apache.org [2]. 
 
     The vote will be open for at least 72 hours. It is adopted by majority approval, with at least 3 PMC affirmative votes.
 
@@ -441,8 +441,8 @@ Use the Apache Nexus repository to release the staged binary artifacts to the Ma
 
 ### Deploy Python artifacts to PyPI
 
-1. Create a new release and upload python zip file for the new release using [PyPI UI] (https://pypi.python.org/pypi/apache-beam)
-1. Alternatively use the command line tool to upload the new release `twine upload apache-beam-${VERSION}.zip`
+1. Create a new release and upload the Python zip file for the new release using the [PyPI UI] (https://pypi.python.org/pypi/apache-beam)
+1. Alternatively, use the command line tool to upload the new release `twine upload apache-beam-${VERSION}.zip`
 
 Note: It is important to rename `apache-beam-${VERSION}-python.zip` to `apache-beam-${VERSION}.zip` before uploading, because PyPI expects a filename in the `<package-name>-<package-version>` format.
 
@@ -471,7 +471,7 @@ In JIRA, inside [version management](https://issues.apache.org/jira/plugins/serv
 * Source distribution removed from the dev repository of [dist.apache.org](https://dist.apache.org/repos/dist/dev/beam/)
 * Website pull request to [list the release]({{ site.baseurl }}/use/releases/) and publish the [API reference manual]({{ site.baseurl }}/documentation/sdks/javadoc/) merged
 * Release tagged in the source code repository
-* Release version finalized in JIRA. (Note: Not all committers have administrator access to JIRA. If you end up getting permissions errors ask a PMC member for assistance.)
+* Release version finalized in JIRA. (Note: Not all committers have administrator access to JIRA. If you end up getting permissions errors ask on the mailing list for assistance.)
 
 **********
 
