@@ -19,8 +19,10 @@ The Beam SDKs provide a unified programming model that can represent and transfo
 
 Beam currently supports the following language-specific SDKs:
 
-* Java
-* Python
+* Java <img src="{{ site.baseurl }}/images/logos/sdks/java.png"
+         alt="Java SDK">
+* Python <img src="{{ site.baseurl }}/images/logos/sdks/python.png"
+         alt="Python SDK ">
 
 ## Apache Beam Pipeline Runners
 
@@ -41,16 +43,14 @@ Beam currently supports Runners that work with the following distributed process
 
 ## Get Started
 
-Get started using Beam for your data processing tasks. 
+Get started using Beam for your data processing tasks.
 
 1. Follow the Quickstart for the [Java SDK]({{ site.baseurl }}/get-started/quickstart-java) or the [Python SDK]({{ site.baseurl }}/get-started/quickstart-py).
 
 2. See the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example) for examples that introduce various features of the SDKs.
 
-3. Dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam model, SDKs, and runners.                    
+3. Dive into the [Documentation]({{ site.baseurl }}/documentation/) section for in-depth concepts and reference materials for the Beam model, SDKs, and runners.
 
-## Contribute 
+## Contribute
 
 Beam is an [Apache Software Foundation](http://www.apache.org) project, available under the Apache v2 license. Beam is an open source community and contributions are greatly appreciated! If you'd like to contribute, please see the [Contribute]({{ site.baseurl }}/contribute/) section.
-
-
