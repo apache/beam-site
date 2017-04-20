@@ -943,9 +943,9 @@ While `ParDo` always produces a main output `PCollection` (as the return value f
 
 ## <a name="transforms-composite"></a>Composite Transforms
 
-Transforms can have a nested structure, where a complex transform performs multiple simpler transforms (such as more than one `ParDo`, `Combine`, or `GroupByKey`). These transforms are called composite transforms. Nesting multiple transforms inside a single composite transform can make your code more modular and easier to understand.
+Transforms can have a nested structure, where a complex transform performs multiple simpler transforms (such as more than one `ParDo`, `Combine`, `GroupByKey`, or even other composite transforms). These transforms are called composite transforms. Nesting multiple transforms inside a single composite transform can make your code more modular and easier to understand.
 
-Many of Beam's pre-written transforms are composite transforms. See the API reference pages for a list of transforms:
+The Beam SDK comes packed with many useful composite transforms. See the API reference pages for a list of transforms:
   * [Pre-written Beam transforms for Java]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/transforms/package-summary.html)
   * [Pre-written Beam transforms for Python]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.transforms.html)
 
@@ -957,6 +957,8 @@ In its `expand` method, the `CountWords` transform applies the following transfo
 
   1. It applies a `ParDo` on the input `PCollection` of text lines, producing an output `PCollection` of individual words.
   2. It applies the Beam SDK library transform `Count` on the `PCollection` of words, producing a `PCollection` of key/value pairs. Each key represents a word in the text, and each value represents the number of times that word appeared in the original data.
+
+Note that this is also an example of nested composite transforms, as `Count` is, by itself, a composite transform.
 
 Your composite transform's parameters and return value must match the initial input type and final return type for the entire transform, even if the transform's intermediate data changes type multiple times.
 
