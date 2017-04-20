@@ -103,7 +103,7 @@ MyOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().creat
 ```
 
 ```py
-{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_options_create
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_constructing_creating
 %}
 ```
 
@@ -131,7 +131,7 @@ public interface MyOptions extends PipelineOptions {
 ```
 
 ```py
-{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_options_define_custom
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipeline_options_define_custom
 %}
 ```
 
@@ -149,7 +149,7 @@ public interface MyOptions extends PipelineOptions {
 ```
 
 ```py
-{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_options_define_custom_with_help_and_default
+{% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipeline_options_define_custom_with_help_and_default
 %}
 ```
 
