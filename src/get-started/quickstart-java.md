@@ -35,7 +35,7 @@ $ mvn archetype:generate \
       -DarchetypeVersion=LATEST \
       -DgroupId=org.example \
       -DartifactId=word-count-beam \
-      -Dversion="0.1" \
+      -Dversion="0.6.0" \
       -Dpackage=org.apache.beam.examples \
       -DinteractiveMode=false
 ```
