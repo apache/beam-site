@@ -1460,9 +1460,16 @@ An example might be if your pipeline reads log records from an input file, and e
 
 > **NOTE:** This content applies only to the Beam SDK for Java. The Beam SDK for Python does not support triggers.
 
-When collecting and grouping data into windows, Beam must determine when to emit the aggregated results of each window. If you use Beam's default windowing configuration and [default trigger](#default-trigger), Beam outputs the aggregated result when it [estimates all data has arrived](#watermarks-late-data), and discards all subsequent data for that window.
+When collecting and grouping data into windows, Beam uses **triggers** to determine when to emit the aggregated results of each window (referred to as a *pane*). If you use Beam's default windowing configuration and [default trigger](#default-trigger), Beam outputs the aggregated result when it [estimates all data has arrived](#watermarks-late-data), and discards all subsequent data for that window.
 
-**Triggers** allow you to change this default behavior and specify when Beam emits the aggregated results for each window (referred to as a *pane*). At a high level, triggers provide two additional capabilities compared to simply outputting at the end of a window:
+You can set triggers for your `PCollection`s to change this default behavior and specify when to emit the aggregated results for each window. Beam provides a number of pre-built triggers that you can set:
+
+*   **Event time triggers**. These triggers operate on the event time, as indicated by the timestamp on each data element. Beam's default trigger is event time-based.
+*   **Processing time triggers**. These triggers operate on the processing time -- the time when the data element is processed at any given stage in the pipeline.
+*   **Data-driven triggers**. These triggers operate by examining the data as it arrives in each window, and firing when that window has received a certain number of data elements.
+*   **Composite triggers**. These triggers combine multiple triggers in some logical way.
+
+At a high level, triggers provide two additional capabilities compared to simply outputting at the end of a window:
 
 *   Triggers allow Beam to emit early results, before all the data in a given window has arrived.
 *   Triggers allow processing of late data.
@@ -1477,28 +1484,36 @@ For example, a system that requires time-sensitive updates might use a strict ti
 
 You can also set a trigger for an unbounded `PCollection` that uses a [single global window for its windowing function](#windowing). This can be useful when you want your pipeline to provide periodic updates on an unbounded data set — for example, a running average of all data provided to the present time, updated every N seconds or every N elements.
 
-### Types of Triggers
-
-Beam provides a number of pre-built triggers that you can set for your `PCollection`s:
-
-*   **Event time-based triggers**. These triggers operate on the event time, as indicated by the timestamp on each data element. Beam's default trigger is event time-based.
-*   **Processing time-based triggers**. These triggers operate on the processing time -- the time when the data element is processed at any given stage in the pipeline.
-*   **Data-driven triggers**. These triggers operate by examining the data as it arrives in each window, and firing when that window has received a certain number of data elements.
-*   **Composite triggers**. These triggers combine multiple triggers in some logical way.
-
-#### Event Time-Based Triggers
+#### Event Time Triggers
 
 The `AfterWatermark` trigger operates on *event time*. The `AfterWatermark` trigger emits the contents of a window after the [watermark](#watermarks-late-data) passes the end of the window, based on the timestamps attached to the data elements. The watermark is a global progress metric, and is Beam's notion of input completeness within your pipeline at any given point. `AfterWatermark.pastEndOfWindow()` *only* fires when the watermark passes the end of the window.
 
 In addition, you can use `.withEarlyFirings(trigger)` and `.withLateFirings(trigger)` to configure triggers that fire if your pipeline receives data before or after the end of the window.
 
+The following example shows a billing scenario, and uses both early and late firings:
+```java
+  // Create a bill at the end of the month.
+  AfterWatermark.pastEndOfWindow()
+      // During the month, get near real-time estimates.
+      .withEarlyFirings(
+          AfterProcessingTime
+              .pastFirstElementInPane()
+              .plusDuration(Duration.standardMinutes(1))
+      // Fire on any late data so the bill can be corrected.
+      .withLateFirings(AfterPane.elementCountAtLeast(1))
+```
+
+```py
+  The Beam SDK for Python does not support triggers.
+```
+
 ##### <a name="default-trigger"></a>**Default Trigger**
 
-The default trigger for a `PCollection` is event time-based, and emits the results of the window when the Beam's watermark passes the end of the window, and then fires each time late data arrives.
+The default trigger for a `PCollection` is based on event time, and emits the results of the window when the Beam's watermark passes the end of the window, and then fires each time late data arrives.
 
 However, if you are using both the default windowing configuration and the default trigger, the default trigger emits exactly once, and late data is discarded. This is because the default windowing configuration has an allowed lateness value of 0. See the Handling Late Data section for information about modifying this behavior.
 
-#### Processing Time-Based Triggers
+#### Processing Time Triggers
 
 The `AfterProcessingTime` trigger operates on *processing time*. For example, the `AfterProcessingTime.pastFirstElementInPane() ` trigger emits a window after a certain amount of processing time has passed since data was received. The processing time is determined by the system clock, rather than the data element's timestamp.
 
@@ -1532,7 +1547,7 @@ When you specify a trigger, you must also set the the window's **accumulation mo
 
 To set a window to accumulate the panes that are produced when the trigger fires, invoke`.accumulatingFiredPanes()` when you set the trigger. To set a window to discard fired panes, invoke `.discardingFiredPanes()`.
 
-Let's look an an example that uses a `PCollection` with fixed-time windowing and a data-based trigger. This is something you might do if, for example, each window represented a ten-minute running average, but you wanted to display the current value of the average in a UI more frequently than every ten minutes. We'll assume the following conditions:
+Let's look an example that uses a `PCollection` with fixed-time windowing and a data-based trigger. This is something you might do if, for example, each window represented a ten-minute running average, but you wanted to display the current value of the average in a UI more frequently than every ten minutes. We'll assume the following conditions:
 
 *   The `PCollection` uses 10-minute fixed-time windows.
 *   The `PCollection` has a repeating trigger that fires every time 3 elements arrive.
@@ -1625,35 +1640,5 @@ You can also build other sorts of composite triggers. The following example code
   Repeatedly.forever(AfterFirst.of(
       AfterPane.elementCountAtLeast(100),
       AfterProcessingTime.pastFirstElementInPane().plusDelayOf(Duration.standardMinutes(1))))
-```
-
-
-#### Trigger Grammar
-
-The following grammar describes the various ways that you can combine triggers into composite triggers:
-
-```
-TRIGGER ::=
-   TIME_TRIGGER
-   WATERMARK_TRIGGER
-   Repeatedly.forever(TRIGGER)
-   TRIGGER.orFinally(TRIGGER)
-   AfterEach.inOrder(TRIGGER, TRIGGER, ...)
-   AfterPane.elementCountAtLeast(Integer)
-   AfterFirst.of(TRIGGER, TRIGGER, ...)
-   AfterAll.of(TRIGGER, TRIGGER, ...)
-
-TIME_TRIGGER ::=
-  AfterProcessingTime.pastFirstElementInPane()
-  TIME_TRIGGER.alignedTo(Duration)
-  TIME_TRIGGER.alignedTo(Duration, Instant)
-  TIME_TRIGGER.plusDelayOf(Duration)
-
-WATERMARK_TRIGGER ::=
-  AfterWatermark.pastEndOfWindow()
-  WATERMARK_TRIGGER.withEarlyFirings(TRIGGER)
-  WATERMARK_TRIGGER.withLateFirings(TRIGGER)
-
-Default = Repeatedly.forever(AfterWatermark.pastEndOfWindow())
 ```
 
