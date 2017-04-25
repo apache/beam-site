@@ -1,8 +1,7 @@
 ---
 layout: default
-title: "Apache Gearpump(incubating) Runner"
+title: "Apache Gearpump (incubating) Runner"
 permalink: /documentation/runners/gearpump/
-redirect_from: /learn/runners/gearpump/
 ---
 # Using the Apache Gearpump Runner
 
@@ -95,7 +94,7 @@ After running <code>mvn package</code>, run <code>ls target</code> and you shoul
 ## Executing the pipeline on a Gearpump cluster
 To run against a Gearpump cluster simply run:
 ```
-gear -app -jar /path/to/{your_application}-{version}-shaded.jar com.beam.examples.BeamPipeline --runner=GearpumpRunner ...
+gear app -jar /path/to/{your_application}-{version}-shaded.jar com.beam.examples.BeamPipeline --runner=GearpumpRunner ...
 ```
 
 ## Monitoring your application
