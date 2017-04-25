@@ -1462,17 +1462,17 @@ An example might be if your pipeline reads log records from an input file, and e
 
 When collecting and grouping data into windows, Beam uses **triggers** to determine when to emit the aggregated results of each window (referred to as a *pane*). If you use Beam's default windowing configuration and [default trigger](#default-trigger), Beam outputs the aggregated result when it [estimates all data has arrived](#watermarks-late-data), and discards all subsequent data for that window.
 
-You can set triggers for your `PCollection`s to change this default behavior and specify when to emit the aggregated results for each window. Beam provides a number of pre-built triggers that you can set:
+You can set triggers for your `PCollection`s to change this default behavior. Beam provides a number of pre-built triggers that you can set:
 
 *   **Event time triggers**. These triggers operate on the event time, as indicated by the timestamp on each data element. Beam's default trigger is event time-based.
 *   **Processing time triggers**. These triggers operate on the processing time -- the time when the data element is processed at any given stage in the pipeline.
-*   **Data-driven triggers**. These triggers operate by examining the data as it arrives in each window, and firing when that window has received a certain number of data elements.
-*   **Composite triggers**. These triggers combine multiple triggers in some logical way.
+*   **Data-driven triggers**. These triggers operate by examining the data as it arrives in each window, and firing when that data meets a certain property. Currently, data-driven triggers only support firing after a certain number of data elements.
+*   **Composite triggers**. These triggers combine multiple triggers in various ways.
 
 At a high level, triggers provide two additional capabilities compared to simply outputting at the end of a window:
 
-*   Triggers allow Beam to emit early results, before all the data in a given window has arrived.
-*   Triggers allow processing of late data.
+*   Triggers allow Beam to emit early results, before all the data in a given window has arrived. For example, emitting after a certain amouint of time elapses, or after a certain number of elements arrives.
+*   Triggers allow processing of late data by triggering after the event time watermark passes the end of the window.
 
 These capabilities allow you to control the flow of your data and balance between different factors depending on your use case:
 
