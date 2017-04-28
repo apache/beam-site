@@ -95,8 +95,6 @@ public static void main(String[] args) {
 ```py
 # Will parse the arguments passed into the application and construct a PipelineOptions object.
 # Note that --help will print registered options.
-import sys
-argv = sys.argv[1:]
 
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:pipelines_constructing_creating
 %}
