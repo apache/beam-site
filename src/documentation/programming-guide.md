@@ -37,7 +37,6 @@ The **Beam Programming Guide** is intended for Beam users who want to use the Be
   * [Additional Outputs](#transforms-outputs)
 * [Composite Transforms](#transforms-composite)
 * [Pipeline I/O](#io)
-* [Running the Pipeline](#running)
 * [Data Encoding and Type Safety](#coders)
 * [Working with Windowing](#windowing)
 * [Working with Triggers](#triggers)
