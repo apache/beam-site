@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apache_beam.runners.worker.logger &#8212; Apache Beam  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for apache_beam.runners.worker.logger</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Python worker logging.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.runners.common</span> <span class="k">import</span> <span class="n">LoggingContext</span>
+
+
+<span class="c1"># Per-thread worker information. This is used only for logging to set</span>
+<span class="c1"># context information that changes while work items get executed:</span>
+<span class="c1"># work_item_id, step_name, stage_name.</span>
+<span class="k">class</span> <span class="nc">_PerThreadWorkerData</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">_PerThreadWorkerData</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="c1"># TODO(robertwb): Consider starting with an initial (ignored) ~20 elements</span>
+    <span class="c1"># in the list, as going up and down all the way to zero incurs several</span>
+    <span class="c1"># reallocations.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">all_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">datum</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">:</span>
+      <span class="n">all_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">datum</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">all_data</span>
+
+
+<span class="n">per_thread_worker_data</span> <span class="o">=</span> <span class="n">_PerThreadWorkerData</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="PerThreadLoggingContext"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.PerThreadLoggingContext">[docs]</a><span class="k">class</span> <span class="nc">PerThreadLoggingContext</span><span class="p">(</span><span class="n">LoggingContext</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A context manager to add per thread attributes.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="n">per_thread_worker_data</span><span class="o">.</span><span class="n">stack</span>
+
+  <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">enter</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PerThreadLoggingContext.enter"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.PerThreadLoggingContext.enter">[docs]</a>  <span class="k">def</span> <span class="nf">enter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exn_type</span><span class="p">,</span> <span class="n">exn_value</span><span class="p">,</span> <span class="n">exn_traceback</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PerThreadLoggingContext.exit"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.PerThreadLoggingContext.exit">[docs]</a>  <span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="JsonLogFormatter"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.JsonLogFormatter">[docs]</a><span class="k">class</span> <span class="nc">JsonLogFormatter</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">Formatter</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A JSON formatter class as expected by the logging standard module.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">worker_id</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">JsonLogFormatter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span> <span class="o">=</span> <span class="n">job_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">worker_id</span> <span class="o">=</span> <span class="n">worker_id</span>
+
+<div class="viewcode-block" id="JsonLogFormatter.format"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.JsonLogFormatter.format">[docs]</a>  <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">record</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a JSON string based on a LogRecord instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      record: A LogRecord instance. See below for details.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A JSON string representing the record.</span>
+
+<span class="sd">    A LogRecord instance has the following attributes and is used for</span>
+<span class="sd">    formatting the final message.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">      created: A double representing the timestamp for record creation</span>
+<span class="sd">        (e.g., 1438365207.624597). Note that the number contains also msecs and</span>
+<span class="sd">        microsecs information. Part of this is also available in the &#39;msecs&#39;</span>
+<span class="sd">        attribute.</span>
+<span class="sd">      msecs: A double representing the msecs part of the record creation</span>
+<span class="sd">        (e.g., 624.5970726013184).</span>
+<span class="sd">      msg: Logging message containing formatting instructions or an arbitrary</span>
+<span class="sd">        object. This is the first argument of a log call.</span>
+<span class="sd">      args: A tuple containing the positional arguments for the logging call.</span>
+<span class="sd">      levelname: A string. Possible values are: INFO, WARNING, ERROR, etc.</span>
+<span class="sd">      exc_info: None or a 3-tuple with exception information as it is</span>
+<span class="sd">        returned by a call to sys.exc_info().</span>
+<span class="sd">      name: Logger&#39;s name. Most logging is done using the default root logger</span>
+<span class="sd">        and therefore the name will be &#39;root&#39;.</span>
+<span class="sd">      filename: Basename of the file where logging occurred.</span>
+<span class="sd">      funcName: Name of the function where logging occurred.</span>
+<span class="sd">      process: The PID of the process running the worker.</span>
+<span class="sd">      thread:  An id for the thread where the record was logged. This is not a</span>
+<span class="sd">        real TID (the one provided by OS) but rather the id (address) of a</span>
+<span class="sd">        Python thread object. Nevertheless having this value can allow to</span>
+<span class="sd">        filter log statement from only one specific thread.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;seconds&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">created</span><span class="p">),</span>
+        <span class="s1">&#39;nanos&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msecs</span> <span class="o">*</span> <span class="mi">1000000</span><span class="p">)}</span>
+    <span class="c1"># ERROR. INFO, DEBUG log levels translate into the same for severity</span>
+    <span class="c1"># property. WARNING becomes WARN.</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;severity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">levelname</span> <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">levelname</span> <span class="o">!=</span> <span class="s1">&#39;WARNING&#39;</span> <span class="k">else</span> <span class="s1">&#39;WARN&#39;</span><span class="p">)</span>
+
+    <span class="c1"># msg could be an arbitrary object, convert it to a string first.</span>
+    <span class="n">record_msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="c1"># Prepare the actual message using the message formatting string and the</span>
+    <span class="c1"># positional arguments as they have been used in the log call.</span>
+    <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">args</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record_msg</span> <span class="o">%</span> <span class="n">record</span><span class="o">.</span><span class="n">args</span>
+      <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="n">output</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> with args (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">record_msg</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">output</span><span class="p">[</span><span class="s1">&#39;message&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">record_msg</span>
+
+    <span class="c1"># The thread ID is logged as a combination of the process ID and thread ID</span>
+    <span class="c1"># since workers can run in multiple processes.</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;thread&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">process</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">thread</span><span class="p">)</span>
+    <span class="c1"># job ID and worker ID. These do not change during the lifetime of a worker.</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;job&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;worker&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker_id</span>
+    <span class="c1"># Stage, step and work item ID come from thread local storage since they</span>
+    <span class="c1"># change with every new work item leased for execution. If there is no</span>
+    <span class="c1"># work item ID then we make sure the step is undefined too.</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">per_thread_worker_data</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s1">&#39;work_item_id&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+      <span class="n">output</span><span class="p">[</span><span class="s1">&#39;work&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;work_item_id&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;stage_name&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+      <span class="n">output</span><span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;stage_name&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">&#39;step_name&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+      <span class="n">output</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;step_name&#39;</span><span class="p">]</span>
+    <span class="c1"># All logging happens using the root logger. We will add the basename of the</span>
+    <span class="c1"># file and the function name where the logging happened to make it easier</span>
+    <span class="c1"># to identify who generated the record.</span>
+    <span class="n">output</span><span class="p">[</span><span class="s1">&#39;logger&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">record</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">record</span><span class="o">.</span><span class="n">funcName</span><span class="p">)</span>
+    <span class="c1"># Add exception information if any is available.</span>
+    <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">:</span>
+      <span class="n">output</span><span class="p">[</span><span class="s1">&#39;exception&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+          <span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="o">*</span><span class="n">record</span><span class="o">.</span><span class="n">exc_info</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">output</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="initialize"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.logger.initialize">[docs]</a><span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">worker_id</span><span class="p">,</span> <span class="n">log_path</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Initialize root logger so that we log JSON to a file and text to stdout.&quot;&quot;&quot;</span>
+
+  <span class="n">file_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">FileHandler</span><span class="p">(</span><span class="n">log_path</span><span class="p">)</span>
+  <span class="n">file_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">JsonLogFormatter</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">worker_id</span><span class="p">))</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">file_handler</span><span class="p">)</span>
+
+  <span class="c1"># Set default level to INFO to avoid logging various DEBUG level log calls</span>
+  <span class="c1"># sprinkled throughout the code.</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>

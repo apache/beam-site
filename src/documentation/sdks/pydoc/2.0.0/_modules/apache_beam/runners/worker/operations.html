@@ -1,0 +1,741 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apache_beam.runners.worker.operations &#8212; Apache Beam  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for apache_beam.runners.worker.operations</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="c1"># cython: profile=True</span>
+
+<span class="sd">&quot;&quot;&quot;Worker operations executor.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">pvalue</span>
+<span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">pickler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="k">import</span> <span class="n">iobase</span>
+<span class="kn">from</span> <span class="nn">apache_beam.metrics.execution</span> <span class="k">import</span> <span class="n">MetricsContainer</span>
+<span class="kn">from</span> <span class="nn">apache_beam.metrics.execution</span> <span class="k">import</span> <span class="n">ScopedMetricsContainer</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners</span> <span class="k">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.common</span> <span class="k">import</span> <span class="n">Receiver</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.internal.names</span> <span class="k">import</span> <span class="n">PropertyNames</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">opcounters</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">operation_specs</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">sideinputs</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">combiners</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">core</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">sideinputs</span> <span class="k">as</span> <span class="n">apache_sideinputs</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.combiners</span> <span class="k">import</span> <span class="n">curry_combine_fn</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.combiners</span> <span class="k">import</span> <span class="n">PhasedCombineFnExecutor</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">GlobalWindows</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.windowed_value</span> <span class="k">import</span> <span class="n">WindowedValue</span>
+
+<span class="c1"># Allow some &quot;pure mode&quot; declarations.</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span> <span class="nn">cython</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+<div class="viewcode-block" id="FakeCython"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.FakeCython">[docs]</a>  <span class="k">class</span> <span class="nc">FakeCython</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="FakeCython.cast"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.FakeCython.cast">[docs]</a>    <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">value</span></div></div>
+  <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;cython&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FakeCython</span><span class="p">()</span>
+
+
+<span class="n">_globally_windowed_value</span> <span class="o">=</span> <span class="n">GlobalWindows</span><span class="o">.</span><span class="n">windowed_value</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">_global_window_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">_globally_windowed_value</span><span class="o">.</span><span class="n">windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="ConsumerSet"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ConsumerSet">[docs]</a><span class="k">class</span> <span class="nc">ConsumerSet</span><span class="p">(</span><span class="n">Receiver</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ConsumerSet represents a graph edge between two Operation nodes.</span>
+
+<span class="sd">  The ConsumerSet object collects information from the output of the</span>
+<span class="sd">  Operation at one end of its edge and the input of the Operation at</span>
+<span class="sd">  the other edge.</span>
+<span class="sd">  ConsumerSet are attached to the outputting Operation.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">output_index</span><span class="p">,</span> <span class="n">consumers</span><span class="p">,</span> <span class="n">coder</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">consumers</span> <span class="o">=</span> <span class="n">consumers</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">opcounter</span> <span class="o">=</span> <span class="n">opcounters</span><span class="o">.</span><span class="n">OperationCounters</span><span class="p">(</span>
+        <span class="n">counter_factory</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">coder</span><span class="p">,</span> <span class="n">output_index</span><span class="p">)</span>
+    <span class="c1"># Used in repr.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">step_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_index</span> <span class="o">=</span> <span class="n">output_index</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">coder</span> <span class="o">=</span> <span class="n">coder</span>
+
+<div class="viewcode-block" id="ConsumerSet.output"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ConsumerSet.output">[docs]</a>  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>  <span class="c1"># For old SDKs.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConsumerSet.receive"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ConsumerSet.receive">[docs]</a>  <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_counters_start</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">consumer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumers</span><span class="p">:</span>
+      <span class="n">cython</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">Operation</span><span class="p">,</span> <span class="n">consumer</span><span class="p">)</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_counters_finish</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ConsumerSet.update_counters_start"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ConsumerSet.update_counters_start">[docs]</a>  <span class="k">def</span> <span class="nf">update_counters_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">opcounter</span><span class="o">.</span><span class="n">update_from</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConsumerSet.update_counters_finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ConsumerSet.update_counters_finish">[docs]</a>  <span class="k">def</span> <span class="nf">update_counters_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">opcounter</span><span class="o">.</span><span class="n">update_collect</span><span class="p">()</span></div>
+
+  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">[</span><span class="si">%s</span><span class="s1">.out</span><span class="si">%s</span><span class="s1">, coder=</span><span class="si">%s</span><span class="s1">, len(consumers)=</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_index</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coder</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">consumers</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Operation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation">[docs]</a><span class="k">class</span> <span class="nc">Operation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;An operation representing the live version of a work item specification.</span>
+
+<span class="sd">  An operation can have one or more outputs and for each output it can have</span>
+<span class="sd">  one or more receiver operations that will take that as input.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initializes a worker operation instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      operation_name: The system name assigned by the runner for this</span>
+<span class="sd">        operation.</span>
+<span class="sd">      spec: A operation_specs.Worker* instance.</span>
+<span class="sd">      counter_factory: The CounterFactory to use for our counters.</span>
+<span class="sd">      state_sampler: The StateSampler for the current operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span> <span class="o">=</span> <span class="n">operation_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">counter_factory</span> <span class="o">=</span> <span class="n">counter_factory</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">consumers</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">state_sampler</span> <span class="o">=</span> <span class="n">state_sampler</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scoped_start_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_sampler</span><span class="o">.</span><span class="n">scoped_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span> <span class="o">+</span> <span class="s1">&#39;-start&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scoped_process_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_sampler</span><span class="o">.</span><span class="n">scoped_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span> <span class="o">+</span> <span class="s1">&#39;-process&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">scoped_finish_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_sampler</span><span class="o">.</span><span class="n">scoped_state</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">operation_name</span> <span class="o">+</span> <span class="s1">&#39;-finish&#39;</span><span class="p">)</span>
+    <span class="c1"># TODO(ccy): the &#39;-abort&#39; state can be added when the abort is supported in</span>
+    <span class="c1"># Operations.</span>
+
+<div class="viewcode-block" id="Operation.start"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.start">[docs]</a>  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Start operation.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging_enabled</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">()</span><span class="o">.</span><span class="n">isEnabledFor</span><span class="p">(</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+    <span class="c1"># Everything except WorkerSideInputSource, which is not a</span>
+    <span class="c1"># top-level operation, should have output_coders</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="s1">&#39;output_coders&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span><span class="n">ConsumerSet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_factory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span>
+                                    <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">consumers</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">coder</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">coder</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_coders</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="Operation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Finish operation.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Operation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Process element in operation.&quot;&quot;&quot;</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Operation.output"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.output">[docs]</a>  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">,</span> <span class="n">output_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="n">cython</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">Receiver</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">receivers</span><span class="p">[</span><span class="n">output_index</span><span class="p">])</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Operation.add_receiver"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.add_receiver">[docs]</a>  <span class="k">def</span> <span class="nf">add_receiver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation</span><span class="p">,</span> <span class="n">output_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a receiver operation for the specified output.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">consumers</span><span class="p">[</span><span class="n">output_index</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generates a useful string for this object.</span>
+
+<span class="sd">    Compactly displays interesting fields.  In particular, pickled</span>
+<span class="sd">    fields are not displayed.  Note that we collapse the fields of the</span>
+<span class="sd">    contained Worker* object into this object, since there is a 1-1</span>
+<span class="sd">    mapping between Operation and operation_specs.Worker*.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Compact string representing this object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">str_internal</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Operation.str_internal"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.Operation.str_internal">[docs]</a>  <span class="k">def</span> <span class="nf">str_internal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Internal helper for __str__ that supports recursion.</span>
+
+<span class="sd">    When recursing on receivers, keep the output short.</span>
+<span class="sd">    Args:</span>
+<span class="sd">      is_recursive: whether to omit some details, particularly receivers.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">      Compact string representing this object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">printable_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;step_name&#39;</span><span class="p">):</span>
+      <span class="n">printable_name</span> <span class="o">+=</span> <span class="s1">&#39; </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span>
+      <span class="k">if</span> <span class="n">is_recursive</span><span class="p">:</span>
+        <span class="c1"># If we have a step name, stop here, no more detail needed.</span>
+        <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="n">printable_name</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">printable_fields</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">printable_fields</span> <span class="o">=</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">worker_printable_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_recursive</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;receivers&#39;</span><span class="p">,</span> <span class="p">[]):</span>
+      <span class="n">printable_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;receivers=[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+          <span class="nb">str</span><span class="p">(</span><span class="n">receiver</span><span class="p">)</span> <span class="k">for</span> <span class="n">receiver</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">receivers</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">printable_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">printable_fields</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="ReadOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ReadOperation">[docs]</a><span class="k">class</span> <span class="nc">ReadOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ReadOperation.start"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.ReadOperation.start">[docs]</a>  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_start_state</span><span class="p">:</span>
+      <span class="nb">super</span><span class="p">(</span><span class="n">ReadOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+      <span class="n">range_tracker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_range_tracker</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">start_position</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">stop_position</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">range_tracker</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">WindowedValue</span><span class="p">):</span>
+          <span class="n">windowed_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">windowed_value</span> <span class="o">=</span> <span class="n">_globally_windowed_value</span><span class="o">.</span><span class="n">with_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="InMemoryWriteOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.InMemoryWriteOperation">[docs]</a><span class="k">class</span> <span class="nc">InMemoryWriteOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A write operation that will write to an in-memory sink.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="InMemoryWriteOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.InMemoryWriteOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_process_state</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging_enabled</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing [</span><span class="si">%s</span><span class="s1">] in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+          <span class="n">o</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">write_windowed_values</span> <span class="k">else</span> <span class="n">o</span><span class="o">.</span><span class="n">value</span><span class="p">)</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_TaggedReceivers</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+
+  <span class="k">class</span> <span class="nc">NullReceiver</span><span class="p">(</span><span class="n">Receiver</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+      <span class="k">pass</span>
+
+    <span class="c1"># For old SDKs.</span>
+    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+      <span class="k">pass</span>
+
+  <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_key</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_null_receiver&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_null_receiver</span> <span class="o">=</span> <span class="n">_TaggedReceivers</span><span class="o">.</span><span class="n">NullReceiver</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null_receiver</span>
+
+
+<div class="viewcode-block" id="DoOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoOperation">[docs]</a><span class="k">class</span> <span class="nc">DoOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A Do operation that will execute a custom DoFn for each input element.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">_read_side_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tags_and_types</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generator reading side inputs in the order prescribed by tags_and_types.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      tags_and_types: List of tuples (tag, type). Each side input has a string</span>
+<span class="sd">        tag that is specified in the worker instruction. The type is actually</span>
+<span class="sd">        a boolean which is True for singleton input (read just first value)</span>
+<span class="sd">        and False for collection input (read all values).</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">      With each iteration it yields the result of reading an entire side source</span>
+<span class="sd">      either in singleton or collection mode according to the tags_and_types</span>
+<span class="sd">      argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># We will read the side inputs in the order prescribed by the</span>
+    <span class="c1"># tags_and_types argument because this is exactly the order needed to</span>
+    <span class="c1"># replace the ArgumentPlaceholder objects in the args/kwargs of the DoFn</span>
+    <span class="c1"># getting the side inputs.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Note that for each tag there could be several read operations in the</span>
+    <span class="c1"># specification. This can happen for instance if the source has been</span>
+    <span class="c1"># sharded into several files.</span>
+    <span class="k">for</span> <span class="n">side_tag</span><span class="p">,</span> <span class="n">view_class</span><span class="p">,</span> <span class="n">view_options</span> <span class="ow">in</span> <span class="n">tags_and_types</span><span class="p">:</span>
+      <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="c1"># Using the side_tag in the lambda below will trigger a pylint warning.</span>
+      <span class="c1"># However in this case it is fine because the lambda is used right away</span>
+      <span class="c1"># while the variable has the value assigned by the current iteration of</span>
+      <span class="c1"># the for loop.</span>
+      <span class="c1"># pylint: disable=cell-var-from-loop</span>
+      <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">ifilter</span><span class="p">(</span>
+          <span class="k">lambda</span> <span class="n">o</span><span class="p">:</span> <span class="n">o</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">side_tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">side_inputs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">si</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerSideInputSource</span><span class="p">):</span>
+          <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Unknown side input type: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">si</span><span class="p">)</span>
+        <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+      <span class="n">iterator_fn</span> <span class="o">=</span> <span class="n">sideinputs</span><span class="o">.</span><span class="n">get_iterator_fn_for_sources</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+      <span class="c1"># Backwards compatibility for pre BEAM-733 SDKs.</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">view_options</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">view_class</span> <span class="o">==</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">SingletonPCollectionView</span><span class="p">:</span>
+          <span class="n">has_default</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="n">view_options</span>
+          <span class="n">view_options</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;default&#39;</span><span class="p">:</span> <span class="n">default</span><span class="p">}</span> <span class="k">if</span> <span class="n">has_default</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">view_options</span> <span class="o">=</span> <span class="p">{}</span>
+
+      <span class="k">yield</span> <span class="n">apache_sideinputs</span><span class="o">.</span><span class="n">SideInputMap</span><span class="p">(</span>
+          <span class="n">view_class</span><span class="p">,</span> <span class="n">view_options</span><span class="p">,</span> <span class="n">sideinputs</span><span class="o">.</span><span class="n">EmulatedIterable</span><span class="p">(</span><span class="n">iterator_fn</span><span class="p">))</span>
+
+<div class="viewcode-block" id="DoOperation.start"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoOperation.start">[docs]</a>  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_start_state</span><span class="p">:</span>
+      <span class="nb">super</span><span class="p">(</span><span class="n">DoOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+      <span class="c1"># See fn_data in dataflow_runner.py</span>
+      <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">tags_and_types</span><span class="p">,</span> <span class="n">window_fn</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">serialized_fn</span><span class="p">))</span>
+
+      <span class="n">state</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DoFnState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_factory</span><span class="p">)</span>
+      <span class="n">state</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span>
+
+      <span class="c1"># TODO(silviuc): What is the proper label here? PCollection being</span>
+      <span class="c1"># processed?</span>
+      <span class="n">context</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DoFnContext</span><span class="p">(</span><span class="s1">&#39;label&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span>
+      <span class="c1"># Tag to output index map used to dispatch the side output values emitted</span>
+      <span class="c1"># by the DoFn function to the appropriate receivers. The main output is</span>
+      <span class="c1"># tagged with None and is associated with its corresponding index.</span>
+      <span class="n">tagged_receivers</span> <span class="o">=</span> <span class="n">_TaggedReceivers</span><span class="p">()</span>
+
+      <span class="n">output_tag_prefix</span> <span class="o">=</span> <span class="n">PropertyNames</span><span class="o">.</span><span class="n">OUT</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span>
+      <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">tag</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">output_tags</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">PropertyNames</span><span class="o">.</span><span class="n">OUT</span><span class="p">:</span>
+          <span class="n">original_tag</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">output_tag_prefix</span><span class="p">):</span>
+          <span class="n">original_tag</span> <span class="o">=</span> <span class="n">tag</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">output_tag_prefix</span><span class="p">):]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unexpected output name for operation: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="n">tagged_receivers</span><span class="p">[</span><span class="n">original_tag</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">receivers</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DoFnRunner</span><span class="p">(</span>
+          <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_side_inputs</span><span class="p">(</span><span class="n">tags_and_types</span><span class="p">),</span>
+          <span class="n">window_fn</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">tagged_receivers</span><span class="p">,</span>
+          <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span>
+          <span class="n">scoped_metrics_container</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scoped_metrics_container</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dofn_receiver</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span><span class="p">,</span> <span class="n">Receiver</span><span class="p">)</span>
+                            <span class="k">else</span> <span class="n">DoFnRunnerReceiver</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span><span class="p">))</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DoOperation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoOperation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_finish_state</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DoOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_process_state</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">dofn_receiver</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DoFnRunnerReceiver"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoFnRunnerReceiver">[docs]</a><span class="k">class</span> <span class="nc">DoFnRunnerReceiver</span><span class="p">(</span><span class="n">Receiver</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dofn_runner</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span> <span class="o">=</span> <span class="n">dofn_runner</span>
+
+<div class="viewcode-block" id="DoFnRunnerReceiver.receive"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.DoFnRunnerReceiver.receive">[docs]</a>  <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dofn_runner</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CombineOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.CombineOperation">[docs]</a><span class="k">class</span> <span class="nc">CombineOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A Combine operation executing a CombineFn for each input element.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">CombineOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="c1"># Combiners do not accept deferred side-inputs (the ignored fourth argument)</span>
+    <span class="c1"># and therefore the code to handle the extra args/kwargs is simpler than for</span>
+    <span class="c1"># the DoFn&#39;s of ParDo.</span>
+    <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">serialized_fn</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">PhasedCombineFnExecutor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">phase</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
+
+<div class="viewcode-block" id="CombineOperation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.CombineOperation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Finishing </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CombineOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.CombineOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging_enabled</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing [</span><span class="si">%s</span><span class="s1">] in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoped_metrics_container</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span>
+          <span class="n">o</span><span class="o">.</span><span class="n">with_value</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">values</span><span class="p">))))</span></div></div>
+
+
+<div class="viewcode-block" id="create_pgbk_op"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.create_pgbk_op">[docs]</a><span class="k">def</span> <span class="nf">create_pgbk_op</span><span class="p">(</span><span class="n">step_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">PGBKCVOperation</span><span class="p">(</span><span class="n">step_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">PGBKOperation</span><span class="p">(</span><span class="n">step_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PGBKOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKOperation">[docs]</a><span class="k">class</span> <span class="nc">PGBKOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Partial group-by-key operation.</span>
+
+<span class="sd">  This takes (windowed) input (key, value) tuples and outputs</span>
+<span class="sd">  (key, [value]) tuples, performing a best effort group-by-key for</span>
+<span class="sd">  values in this bundle, memory permitting.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">PGBKOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">combine_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># TODO(robertwb) Make this configurable.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="mi">1000</span>
+
+<div class="viewcode-block" id="PGBKOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="c1"># TODO(robertwb): Structural (hashable) values.</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">o</span><span class="o">.</span><span class="n">windows</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="mi">9</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">//</span> <span class="mi">10</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PGBKOperation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKOperation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PGBKOperation.flush"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKOperation.flush">[docs]</a>  <span class="k">def</span> <span class="nf">flush</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="n">target</span>
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">vs</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+      <span class="k">if</span> <span class="n">ix</span> <span class="o">&gt;=</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="k">break</span>
+      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kw</span><span class="p">]</span>
+      <span class="n">key</span><span class="p">,</span> <span class="n">windows</span> <span class="o">=</span> <span class="n">kw</span>
+      <span class="n">output_value</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vs</span><span class="p">]</span>
+      <span class="n">windowed_value</span> <span class="o">=</span> <span class="n">WindowedValue</span><span class="p">(</span>
+          <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">output_value</span><span class="p">),</span>
+          <span class="n">vs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">windows</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="PGBKCVOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKCVOperation">[docs]</a><span class="k">class</span> <span class="nc">PGBKCVOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">PGBKCVOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="c1"># Combiners do not accept deferred side-inputs (the ignored fourth</span>
+    <span class="c1"># argument) and therefore the code to handle the extra args/kwargs is</span>
+    <span class="c1"># simpler than for the DoFn&#39;s of ParDo.</span>
+    <span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span> <span class="o">=</span> <span class="n">curry_combine_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">fn</span><span class="o">.</span><span class="n">add_input</span><span class="p">,</span> <span class="s1">&#39;im_func&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="ow">is</span> <span class="n">core</span><span class="o">.</span><span class="n">CombineFn</span><span class="o">.</span><span class="n">add_input</span><span class="o">.</span><span class="n">im_func</span><span class="p">):</span>
+      <span class="c1"># Old versions of the SDK have CombineFns that don&#39;t implement add_input.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn_add_input</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">add_inputs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">[</span><span class="n">e</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn_add_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">add_input</span>
+    <span class="c1"># Optimization for the (known tiny accumulator, often wide keyspace)</span>
+    <span class="c1"># combine functions.</span>
+    <span class="c1"># TODO(b/36567833): Bound by in-memory size rather than key count.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_keys</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">1000</span> <span class="o">*</span> <span class="mi">1000</span> <span class="k">if</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="p">(</span><span class="n">combiners</span><span class="o">.</span><span class="n">CountCombineFn</span><span class="p">,</span> <span class="n">combiners</span><span class="o">.</span><span class="n">MeanCombineFn</span><span class="p">))</span> <span class="ow">or</span>
+        <span class="c1"># TODO(b/36597732): Replace this &#39;or&#39; part by adding the &#39;cy&#39; optimized</span>
+        <span class="c1"># combiners to the short list above.</span>
+        <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">core</span><span class="o">.</span><span class="n">CallableWrapperCombineFn</span><span class="p">)</span> <span class="ow">and</span>
+         <span class="n">fn</span><span class="o">.</span><span class="n">_fn</span> <span class="ow">in</span> <span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="nb">sum</span><span class="p">))</span> <span class="k">else</span> <span class="mi">100</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># pylint: disable=protected-access</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="PGBKCVOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKCVOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkv</span><span class="p">):</span>
+    <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">wkv</span><span class="o">.</span><span class="n">value</span>
+    <span class="c1"># pylint: disable=unidiomatic-typecheck</span>
+    <span class="c1"># Optimization for the global window case.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wkv</span><span class="o">.</span><span class="n">windows</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="nb">type</span><span class="p">(</span><span class="n">wkv</span><span class="o">.</span><span class="n">windows</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">is</span> <span class="n">_global_window_type</span><span class="p">:</span>
+      <span class="n">wkey</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">key</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">wkey</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">wkv</span><span class="o">.</span><span class="n">windows</span><span class="p">),</span> <span class="n">key</span>
+    <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">wkey</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_keys</span><span class="p">:</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">*</span> <span class="mi">9</span> <span class="o">//</span> <span class="mi">10</span>
+        <span class="n">old_wkeys</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># TODO(robertwb): Use an LRU cache?</span>
+        <span class="k">for</span> <span class="n">old_wkey</span><span class="p">,</span> <span class="n">old_wvalue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+          <span class="n">old_wkeys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">old_wkey</span><span class="p">)</span>  <span class="c1"># Can&#39;t mutate while iterating.</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">(</span><span class="n">old_wkey</span><span class="p">,</span> <span class="n">old_wvalue</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">-=</span> <span class="mi">1</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">&lt;=</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">old_wkey</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">old_wkeys</span><span class="p">):</span>
+          <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">old_wkey</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="c1"># We save the accumulator as a one element list so we can efficiently</span>
+      <span class="c1"># mutate when new values are added without searching the cache again.</span>
+      <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">wkey</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">create_accumulator</span><span class="p">()]</span>
+    <span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn_add_input</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PGBKCVOperation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKCVOperation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">wkey</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">(</span><span class="n">wkey</span><span class="p">,</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">key_count</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="PGBKCVOperation.output_key"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.PGBKCVOperation.output_key">[docs]</a>  <span class="k">def</span> <span class="nf">output_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wkey</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">windows</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">wkey</span>
+    <span class="k">if</span> <span class="n">windows</span> <span class="ow">is</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">_globally_windowed_value</span><span class="o">.</span><span class="n">with_value</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">WindowedValue</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">windows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">end</span><span class="p">,</span> <span class="n">windows</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="FlattenOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.FlattenOperation">[docs]</a><span class="k">class</span> <span class="nc">FlattenOperation</span><span class="p">(</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Flatten operation.</span>
+
+<span class="sd">  Receives one or more producer operations, outputs just one list</span>
+<span class="sd">  with all the items.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="FlattenOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.FlattenOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug_logging_enabled</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Processing [</span><span class="si">%s</span><span class="s1">] in </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="create_operation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.create_operation">[docs]</a><span class="k">def</span> <span class="nf">create_operation</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span>
+                     <span class="n">state_sampler</span><span class="p">,</span> <span class="n">test_shuffle_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">test_shuffle_sink</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_streaming</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Create Operation object for given operation specification.&quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerRead</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">iobase</span><span class="o">.</span><span class="n">SourceBundle</span><span class="p">):</span>
+      <span class="n">op</span> <span class="o">=</span> <span class="n">ReadOperation</span><span class="p">(</span>
+          <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="kn">from</span> <span class="nn">dataflow_worker.native_operations</span> <span class="k">import</span> <span class="n">NativeReadOperation</span>
+      <span class="n">op</span> <span class="o">=</span> <span class="n">NativeReadOperation</span><span class="p">(</span>
+          <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerWrite</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.native_operations</span> <span class="k">import</span> <span class="n">NativeWriteOperation</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">NativeWriteOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerCombineFn</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">CombineOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerPartialGroupByKey</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">create_pgbk_op</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerDoFn</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">DoOperation</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerGroupingShuffleRead</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">GroupedShuffleReadOperation</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">GroupedShuffleReadOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">,</span>
+        <span class="n">shuffle_source</span><span class="o">=</span><span class="n">test_shuffle_source</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerUngroupedShuffleRead</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">UngroupedShuffleReadOperation</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">UngroupedShuffleReadOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">,</span>
+        <span class="n">shuffle_source</span><span class="o">=</span><span class="n">test_shuffle_source</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerInMemoryWrite</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">InMemoryWriteOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerShuffleWrite</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">ShuffleWriteOperation</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">ShuffleWriteOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">,</span>
+        <span class="n">shuffle_sink</span><span class="o">=</span><span class="n">test_shuffle_sink</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerFlatten</span><span class="p">):</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">FlattenOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerMergeWindows</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">BatchGroupAlsoByWindowsOperation</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">StreamingGroupAlsoByWindowsOperation</span>
+    <span class="k">if</span> <span class="n">is_streaming</span><span class="p">:</span>
+      <span class="n">op</span> <span class="o">=</span> <span class="n">StreamingGroupAlsoByWindowsOperation</span><span class="p">(</span>
+          <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">op</span> <span class="o">=</span> <span class="n">BatchGroupAlsoByWindowsOperation</span><span class="p">(</span>
+          <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerReifyTimestampAndWindows</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">dataflow_worker.shuffle_operations</span> <span class="k">import</span> <span class="n">ReifyTimestampAndWindowsOperation</span>
+    <span class="n">op</span> <span class="o">=</span> <span class="n">ReifyTimestampAndWindowsOperation</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected an instance of operation_specs.Worker* class &#39;</span>
+                    <span class="s1">&#39;instead of </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">spec</span><span class="p">,))</span>
+  <span class="n">op</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">step_name</span>
+  <span class="n">op</span><span class="o">.</span><span class="n">metrics_container</span> <span class="o">=</span> <span class="n">MetricsContainer</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+  <span class="n">op</span><span class="o">.</span><span class="n">scoped_metrics_container</span> <span class="o">=</span> <span class="n">ScopedMetricsContainer</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">metrics_container</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">op</span></div>
+
+
+<div class="viewcode-block" id="SimpleMapTaskExecutor"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.SimpleMapTaskExecutor">[docs]</a><span class="k">class</span> <span class="nc">SimpleMapTaskExecutor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;An executor for map tasks.</span>
+
+<span class="sd">   Stores progress of the read operation that is the first operation of a map</span>
+<span class="sd">   task.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">map_task</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">,</span>
+      <span class="n">test_shuffle_source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">test_shuffle_sink</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initializes SimpleMapTaskExecutor.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      map_task: The map task we are to run.</span>
+<span class="sd">      counter_factory: The CounterFactory instance for the work item.</span>
+<span class="sd">      state_sampler: The StateSampler tracking the execution step.</span>
+<span class="sd">      test_shuffle_source: Used during tests for dependency injection into</span>
+<span class="sd">        shuffle read operation objects.</span>
+<span class="sd">      test_shuffle_sink: Used during tests for dependency injection into</span>
+<span class="sd">        shuffle write operation objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_map_task</span> <span class="o">=</span> <span class="n">map_task</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_counter_factory</span> <span class="o">=</span> <span class="n">counter_factory</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state_sampler</span> <span class="o">=</span> <span class="n">state_sampler</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_test_shuffle_source</span> <span class="o">=</span> <span class="n">test_shuffle_source</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_test_shuffle_sink</span> <span class="o">=</span> <span class="n">test_shuffle_sink</span>
+
+<div class="viewcode-block" id="SimpleMapTaskExecutor.operations"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.SimpleMapTaskExecutor.operations">[docs]</a>  <span class="k">def</span> <span class="nf">operations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="p">[:]</span></div>
+
+<div class="viewcode-block" id="SimpleMapTaskExecutor.execute"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.operations.SimpleMapTaskExecutor.execute">[docs]</a>  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Executes all the operation_specs.Worker* instructions in a map task.</span>
+
+<span class="sd">    We update the map_task with the execution status, expressed as counters.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      RuntimeError: if we find more than on read instruction in task spec.</span>
+<span class="sd">      TypeError: if the spec parameter is not an instance of the recognized</span>
+<span class="sd">        operation_specs.Worker* classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># operations is a list of operation_specs.Worker* instances.</span>
+    <span class="c1"># The order of the elements is important because the inputs use</span>
+    <span class="c1"># list indexes as references.</span>
+
+    <span class="n">step_names</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_map_task</span><span class="o">.</span><span class="n">step_names</span> <span class="ow">or</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_map_task</span><span class="o">.</span><span class="n">operations</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_map_task</span><span class="o">.</span><span class="n">operations</span><span class="p">):</span>
+      <span class="c1"># This is used for logging and assigning names to counters.</span>
+      <span class="n">operation_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_map_task</span><span class="o">.</span><span class="n">system_names</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+      <span class="n">step_name</span> <span class="o">=</span> <span class="n">step_names</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+      <span class="n">op</span> <span class="o">=</span> <span class="n">create_operation</span><span class="p">(</span>
+          <span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counter_factory</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_state_sampler</span><span class="p">,</span>
+          <span class="n">test_shuffle_source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_shuffle_source</span><span class="p">,</span>
+          <span class="n">test_shuffle_sink</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_test_shuffle_sink</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+      <span class="c1"># Add receiver operations to the appropriate producers.</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">):</span>
+        <span class="n">producer</span><span class="p">,</span> <span class="n">output_index</span> <span class="o">=</span> <span class="n">op</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="p">[</span><span class="n">producer</span><span class="p">]</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">output_index</span><span class="p">)</span>
+      <span class="c1"># Flatten has &#39;inputs&#39;, not &#39;input&#39;</span>
+      <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span> <span class="s1">&#39;inputs&#39;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">producer</span><span class="p">,</span> <span class="n">output_index</span> <span class="ow">in</span> <span class="n">op</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="p">[</span><span class="n">producer</span><span class="p">]</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">output_index</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="p">))):</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Starting op </span><span class="si">%d</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">ix</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+      <span class="k">with</span> <span class="n">op</span><span class="o">.</span><span class="n">scoped_metrics_container</span><span class="p">:</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ops</span><span class="p">:</span>
+      <span class="k">with</span> <span class="n">op</span><span class="o">.</span><span class="n">scoped_metrics_container</span><span class="p">:</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,541 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>apache_beam.runners.worker.sdk_worker &#8212; Apache Beam  documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for apache_beam.runners.worker.sdk_worker</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;SDK harness for executing Python Fns via the Fn API.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">Queue</span> <span class="k">as</span> <span class="nn">queue</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">zlib</span>
+
+<span class="kn">import</span> <span class="nn">dill</span>
+<span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="k">import</span> <span class="n">wrappers_pb2</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="k">import</span> <span class="n">coder_impl</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="k">import</span> <span class="n">WindowedValueCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">pickler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.native_io</span> <span class="k">import</span> <span class="n">iobase</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">counters</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.api</span> <span class="k">import</span> <span class="n">beam_fn_api_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">operation_specs</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">operations</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">statesampler</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.runners.worker</span> <span class="k">import</span> <span class="n">statesampler_fake</span> <span class="k">as</span> <span class="n">statesampler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.worker.data_plane</span> <span class="k">import</span> <span class="n">GrpcClientDataChannelFactory</span>
+
+
+<span class="n">DATA_INPUT_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:source:runner:0.1&#39;</span>
+<span class="n">DATA_OUTPUT_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:sink:runner:0.1&#39;</span>
+<span class="n">IDENTITY_DOFN_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:dofn:identity:0.1&#39;</span>
+<span class="n">PYTHON_ITERABLE_VIEWFN_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:viewfn:iterable:python:0.1&#39;</span>
+<span class="n">PYTHON_CODER_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:coder:python:0.1&#39;</span>
+<span class="c1"># TODO(vikasrk): Fix this once runner sends appropriate python urns.</span>
+<span class="n">PYTHON_DOFN_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:dofn:java:0.1&#39;</span>
+<span class="n">PYTHON_SOURCE_URN</span> <span class="o">=</span> <span class="s1">&#39;urn:org.apache.beam:source:java:0.1&#39;</span>
+
+
+<div class="viewcode-block" id="RunnerIOOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.RunnerIOOperation">[docs]</a><span class="k">class</span> <span class="nc">RunnerIOOperation</span><span class="p">(</span><span class="n">operations</span><span class="o">.</span><span class="n">Operation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Common baseclass for runner harness IO operations.&quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">consumers</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span>
+               <span class="n">state_sampler</span><span class="p">,</span> <span class="n">windowed_coder</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">data_channel</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">RunnerIOOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">windowed_coder</span> <span class="o">=</span> <span class="n">windowed_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">step_name</span>
+    <span class="c1"># target represents the consumer for the bytes in the data plane for a</span>
+    <span class="c1"># DataInputOperation or a producer of these bytes for a DataOutputOperation.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="n">target</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_channel</span> <span class="o">=</span> <span class="n">data_channel</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">consumer_ops</span> <span class="ow">in</span> <span class="n">consumers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">consumer</span> <span class="ow">in</span> <span class="n">consumer_ops</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span><span class="n">consumer</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataOutputOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataOutputOperation">[docs]</a><span class="k">class</span> <span class="nc">DataOutputOperation</span><span class="p">(</span><span class="n">RunnerIOOperation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A sink-like operation that gathers outputs to be sent back to the runner.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DataOutputOperation.set_output_stream"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataOutputOperation.set_output_stream">[docs]</a>  <span class="k">def</span> <span class="nf">set_output_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_stream</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_stream</span> <span class="o">=</span> <span class="n">output_stream</span></div>
+
+<div class="viewcode-block" id="DataOutputOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataOutputOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">windowed_coder</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">encode_to_stream</span><span class="p">(</span>
+        <span class="n">windowed_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataOutputOperation.finish"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataOutputOperation.finish">[docs]</a>  <span class="k">def</span> <span class="nf">finish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DataOutputOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="DataInputOperation"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataInputOperation">[docs]</a><span class="k">class</span> <span class="nc">DataInputOperation</span><span class="p">(</span><span class="n">RunnerIOOperation</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A source-like operation that gathers input from the runner.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">consumers</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span>
+               <span class="n">state_sampler</span><span class="p">,</span> <span class="n">windowed_coder</span><span class="p">,</span> <span class="n">input_target</span><span class="p">,</span> <span class="n">data_channel</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DataInputOperation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">operation_name</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">consumers</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span> <span class="n">state_sampler</span><span class="p">,</span>
+        <span class="n">windowed_coder</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="n">input_target</span><span class="p">,</span> <span class="n">data_channel</span><span class="o">=</span><span class="n">data_channel</span><span class="p">)</span>
+    <span class="c1"># We must do this manually as we don&#39;t have a spec or spec.output_coders.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">receivers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">operations</span><span class="o">.</span><span class="n">ConsumerSet</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">counter_factory</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                               <span class="n">consumers</span><span class="o">.</span><span class="n">itervalues</span><span class="p">()</span><span class="o">.</span><span class="n">next</span><span class="p">(),</span>
+                               <span class="bp">self</span><span class="o">.</span><span class="n">windowed_coder</span><span class="p">)]</span>
+
+<div class="viewcode-block" id="DataInputOperation.process"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataInputOperation.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">windowed_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DataInputOperation.process_encoded"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.DataInputOperation.process_encoded">[docs]</a>  <span class="k">def</span> <span class="nf">process_encoded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded_windowed_values</span><span class="p">):</span>
+    <span class="n">input_stream</span> <span class="o">=</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">create_InputStream</span><span class="p">(</span><span class="n">encoded_windowed_values</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">input_stream</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">decoded_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowed_coder</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">decode_from_stream</span><span class="p">(</span>
+          <span class="n">input_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">decoded_value</span><span class="p">)</span></div></div>
+
+
+<span class="c1"># TODO(robertwb): Revise side input API to not be in terms of native sources.</span>
+<span class="c1"># This will enable lookups, but there&#39;s an open question as to how to handle</span>
+<span class="c1"># custom sources without forcing intermediate materialization.  This seems very</span>
+<span class="c1"># related to the desire to inject key and window preserving [Splittable]DoFns</span>
+<span class="c1"># into the view computation.</span>
+<div class="viewcode-block" id="SideInputSource"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SideInputSource">[docs]</a><span class="k">class</span> <span class="nc">SideInputSource</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">NativeSource</span><span class="p">,</span> <span class="n">iobase</span><span class="o">.</span><span class="n">NativeSourceReader</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A &#39;source&#39; for reading side inputs via state API calls.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_handler</span><span class="p">,</span> <span class="n">state_key</span><span class="p">,</span> <span class="n">coder</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state_handler</span> <span class="o">=</span> <span class="n">state_handler</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state_key</span> <span class="o">=</span> <span class="n">state_key</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_coder</span> <span class="o">=</span> <span class="n">coder</span>
+
+<div class="viewcode-block" id="SideInputSource.reader"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SideInputSource.reader">[docs]</a>  <span class="k">def</span> <span class="nf">reader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span> <span class="nf">returns_windowed_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+  <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exn_info</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+  <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># TODO(robertwb): Support pagination.</span>
+    <span class="n">input_stream</span> <span class="o">=</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">create_InputStream</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_handler</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_key</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">input_stream</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coder</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">decode_from_stream</span><span class="p">(</span><span class="n">input_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="unpack_and_deserialize_py_fn"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.unpack_and_deserialize_py_fn">[docs]</a><span class="k">def</span> <span class="nf">unpack_and_deserialize_py_fn</span><span class="p">(</span><span class="n">function_spec</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Returns unpacked and deserialized object from function spec proto.&quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">unpack_function_spec_data</span><span class="p">(</span><span class="n">function_spec</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="unpack_function_spec_data"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.unpack_function_spec_data">[docs]</a><span class="k">def</span> <span class="nf">unpack_function_spec_data</span><span class="p">(</span><span class="n">function_spec</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Returns unpacked data from function spec proto.&quot;&quot;&quot;</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">wrappers_pb2</span><span class="o">.</span><span class="n">BytesValue</span><span class="p">()</span>
+  <span class="n">function_spec</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Unpack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span></div>
+
+
+<span class="c1"># pylint: disable=redefined-builtin</span>
+<div class="viewcode-block" id="serialize_and_pack_py_fn"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.serialize_and_pack_py_fn">[docs]</a><span class="k">def</span> <span class="nf">serialize_and_pack_py_fn</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">urn</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Returns serialized and packed function in a function spec proto.&quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">pack_function_spec_data</span><span class="p">(</span><span class="n">pickler</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">fn</span><span class="p">),</span> <span class="n">urn</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span></div>
+<span class="c1"># pylint: enable=redefined-builtin</span>
+
+
+<span class="c1"># pylint: disable=redefined-builtin</span>
+<div class="viewcode-block" id="pack_function_spec_data"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.pack_function_spec_data">[docs]</a><span class="k">def</span> <span class="nf">pack_function_spec_data</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">urn</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Returns packed data in a function spec proto.&quot;&quot;&quot;</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="n">wrappers_pb2</span><span class="o">.</span><span class="n">BytesValue</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">)</span>
+  <span class="n">fn_proto</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">FunctionSpec</span><span class="p">(</span><span class="n">urn</span><span class="o">=</span><span class="n">urn</span><span class="p">)</span>
+  <span class="n">fn_proto</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Pack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="k">if</span> <span class="nb">id</span><span class="p">:</span>
+    <span class="n">fn_proto</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="nb">id</span>
+  <span class="k">return</span> <span class="n">fn_proto</span></div>
+<span class="c1"># pylint: enable=redefined-builtin</span>
+
+
+<span class="c1"># TODO(vikasrk): move this method to ``coders.py`` in the SDK.</span>
+<div class="viewcode-block" id="load_compressed"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.load_compressed">[docs]</a><span class="k">def</span> <span class="nf">load_compressed</span><span class="p">(</span><span class="n">compressed_data</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Returns a decompressed and deserialized python object.&quot;&quot;&quot;</span>
+  <span class="c1"># Note: SDK uses ``pickler.dumps`` to serialize certain python objects</span>
+  <span class="c1"># (like sources), which involves serialization, compression and base64</span>
+  <span class="c1"># encoding. We cannot directly use ``pickler.loads`` for</span>
+  <span class="c1"># deserialization, as the runner would have already base64 decoded the</span>
+  <span class="c1"># data. So we only need to decompress and deserialize.</span>
+
+  <span class="n">data</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">compressed_data</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>          <span class="c1"># pylint: disable=broad-except</span>
+    <span class="n">dill</span><span class="o">.</span><span class="n">dill</span><span class="o">.</span><span class="n">_trace</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>   <span class="c1"># pylint: disable=protected-access</span>
+    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="n">dill</span><span class="o">.</span><span class="n">dill</span><span class="o">.</span><span class="n">_trace</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># pylint: disable=protected-access</span></div>
+
+
+<div class="viewcode-block" id="SdkHarness"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkHarness">[docs]</a><span class="k">class</span> <span class="nc">SdkHarness</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control_channel</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_control_channel</span> <span class="o">=</span> <span class="n">control_channel</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_channel_factory</span> <span class="o">=</span> <span class="n">GrpcClientDataChannelFactory</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SdkHarness.run"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkHarness.run">[docs]</a>  <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">contol_stub</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">BeamFnControlStub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_control_channel</span><span class="p">)</span>
+    <span class="c1"># TODO(robertwb): Wire up to new state api.</span>
+    <span class="n">state_stub</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">worker</span> <span class="o">=</span> <span class="n">SdkWorker</span><span class="p">(</span><span class="n">state_stub</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_channel_factory</span><span class="p">)</span>
+
+    <span class="n">responses</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+    <span class="n">no_more_work</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_responses</span><span class="p">():</span>
+      <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">response</span> <span class="ow">is</span> <span class="n">no_more_work</span><span class="p">:</span>
+          <span class="k">return</span>
+        <span class="k">yield</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">process_requests</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">work_request</span> <span class="ow">in</span> <span class="n">contol_stub</span><span class="o">.</span><span class="n">Control</span><span class="p">(</span><span class="n">get_responses</span><span class="p">()):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Got work </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">work_request</span><span class="o">.</span><span class="n">instruction_id</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">worker</span><span class="o">.</span><span class="n">do_instruction</span><span class="p">(</span><span class="n">work_request</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+          <span class="n">response</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">InstructionResponse</span><span class="p">(</span>
+              <span class="n">instruction_id</span><span class="o">=</span><span class="n">work_request</span><span class="o">.</span><span class="n">instruction_id</span><span class="p">,</span>
+              <span class="n">error</span><span class="o">=</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+        <span class="n">responses</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">process_requests</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+    <span class="c1"># get_responses may be blocked on responses.get(), but we need to return</span>
+    <span class="c1"># control to its caller.</span>
+    <span class="n">responses</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">no_more_work</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_channel_factory</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Done consuming work.&#39;</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SdkWorker"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker">[docs]</a><span class="k">class</span> <span class="nc">SdkWorker</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_handler</span><span class="p">,</span> <span class="n">data_channel_factory</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fns</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">state_handler</span> <span class="o">=</span> <span class="n">state_handler</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data_channel_factory</span> <span class="o">=</span> <span class="n">data_channel_factory</span>
+
+<div class="viewcode-block" id="SdkWorker.do_instruction"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker.do_instruction">[docs]</a>  <span class="k">def</span> <span class="nf">do_instruction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+    <span class="n">request_type</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">WhichOneof</span><span class="p">(</span><span class="s1">&#39;request&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">request_type</span><span class="p">:</span>
+      <span class="c1"># E.g. if register is set, this will construct</span>
+      <span class="c1"># InstructionResponse(register=self.register(request.register))</span>
+      <span class="k">return</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">InstructionResponse</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
+          <span class="s1">&#39;instruction_id&#39;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">instruction_id</span><span class="p">,</span>
+          <span class="n">request_type</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request_type</span><span class="p">)</span>
+                        <span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">request_type</span><span class="p">),</span> <span class="n">request</span><span class="o">.</span><span class="n">instruction_id</span><span class="p">)</span>
+      <span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="SdkWorker.register"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker.register">[docs]</a>  <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">unused_instruction_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">process_bundle_descriptor</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">process_bundle_descriptor</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">fns</span><span class="p">[</span><span class="n">process_bundle_descriptor</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_bundle_descriptor</span>
+      <span class="k">for</span> <span class="n">p_transform</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">process_bundle_descriptor</span><span class="o">.</span><span class="n">primitive_transform</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fns</span><span class="p">[</span><span class="n">p_transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_transform</span><span class="o">.</span><span class="n">function_spec</span>
+    <span class="k">return</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">RegisterResponse</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SdkWorker.initial_source_split"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker.initial_source_split">[docs]</a>  <span class="k">def</span> <span class="nf">initial_source_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">unused_instruction_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">source_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fns</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">source_reference</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">PYTHON_SOURCE_URN</span>
+    <span class="n">source_bundle</span> <span class="o">=</span> <span class="n">unpack_and_deserialize_py_fn</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fns</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">source_reference</span><span class="p">])</span>
+    <span class="n">splits</span> <span class="o">=</span> <span class="n">source_bundle</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">desired_bundle_size_bytes</span><span class="p">,</span>
+                                        <span class="n">source_bundle</span><span class="o">.</span><span class="n">start_position</span><span class="p">,</span>
+                                        <span class="n">source_bundle</span><span class="o">.</span><span class="n">stop_position</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">InitialSourceSplitResponse</span><span class="p">()</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">splits</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+        <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">SourceSplit</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">serialize_and_pack_py_fn</span><span class="p">(</span><span class="n">split</span><span class="p">,</span> <span class="n">PYTHON_SOURCE_URN</span><span class="p">),</span>
+            <span class="n">relative_size</span><span class="o">=</span><span class="n">split</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">split</span> <span class="ow">in</span> <span class="n">splits</span>
+    <span class="p">])</span>
+    <span class="k">return</span> <span class="n">response</span></div>
+
+<div class="viewcode-block" id="SdkWorker.create_execution_tree"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker.create_execution_tree">[docs]</a>  <span class="k">def</span> <span class="nf">create_execution_tree</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">descriptor</span><span class="p">):</span>
+    <span class="c1"># TODO(vikasrk): Add an id field to Coder proto and use that instead.</span>
+    <span class="n">coders</span> <span class="o">=</span> <span class="p">{</span><span class="n">coder</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">id</span><span class="p">:</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">get_coder_from_spec</span><span class="p">(</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">unpack_function_spec_data</span><span class="p">(</span><span class="n">coder</span><span class="o">.</span><span class="n">function_spec</span><span class="p">)))</span>
+              <span class="k">for</span> <span class="n">coder</span> <span class="ow">in</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">coders</span><span class="p">}</span>
+
+    <span class="n">counter_factory</span> <span class="o">=</span> <span class="n">counters</span><span class="o">.</span><span class="n">CounterFactory</span><span class="p">()</span>
+    <span class="c1"># TODO(robertwb): Figure out the correct prefix to use for output counters</span>
+    <span class="c1"># from StateSampler.</span>
+    <span class="n">state_sampler</span> <span class="o">=</span> <span class="n">statesampler</span><span class="o">.</span><span class="n">StateSampler</span><span class="p">(</span>
+        <span class="s1">&#39;fnapi-step</span><span class="si">%s</span><span class="s1">-&#39;</span> <span class="o">%</span> <span class="n">descriptor</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">)</span>
+    <span class="n">consumers</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+    <span class="n">ops_by_id</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">reversed_ops</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">transform</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">descriptor</span><span class="o">.</span><span class="n">primitive_transform</span><span class="p">):</span>
+      <span class="c1"># TODO(robertwb): Figure out how to plumb through the operation name (e.g.</span>
+      <span class="c1"># &quot;s3&quot;) from the service through the FnAPI so that msec counters can be</span>
+      <span class="c1"># reported and correctly plumbed through the service and the UI.</span>
+      <span class="n">operation_name</span> <span class="o">=</span> <span class="s1">&#39;fnapis</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">transform</span><span class="o">.</span><span class="n">id</span>
+
+      <span class="k">def</span> <span class="nf">only_element</span><span class="p">(</span><span class="n">iterable</span><span class="p">):</span>
+        <span class="n">element</span><span class="p">,</span> <span class="o">=</span> <span class="n">iterable</span>
+        <span class="k">return</span> <span class="n">element</span>
+
+      <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">DATA_OUTPUT_URN</span><span class="p">:</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">Target</span><span class="p">(</span>
+            <span class="n">primitive_transform_reference</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">only_element</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="n">op</span> <span class="o">=</span> <span class="n">DataOutputOperation</span><span class="p">(</span>
+            <span class="n">operation_name</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">consumers</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">],</span>
+            <span class="n">counter_factory</span><span class="p">,</span>
+            <span class="n">state_sampler</span><span class="p">,</span>
+            <span class="n">coders</span><span class="p">[</span><span class="n">only_element</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">coder_reference</span><span class="p">],</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_channel_factory</span><span class="o">.</span><span class="n">create_data_channel</span><span class="p">(</span>
+                <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="p">))</span>
+
+      <span class="k">elif</span> <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">DATA_INPUT_URN</span><span class="p">:</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">Target</span><span class="p">(</span>
+            <span class="n">primitive_transform_reference</span><span class="o">=</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">only_element</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">DataInputOperation</span><span class="p">(</span>
+            <span class="n">operation_name</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">.</span><span class="n">step_name</span><span class="p">,</span>
+            <span class="n">consumers</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">],</span>
+            <span class="n">counter_factory</span><span class="p">,</span>
+            <span class="n">state_sampler</span><span class="p">,</span>
+            <span class="n">coders</span><span class="p">[</span><span class="n">only_element</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">coder_reference</span><span class="p">],</span>
+            <span class="n">target</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_channel_factory</span><span class="o">.</span><span class="n">create_data_channel</span><span class="p">(</span>
+                <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="p">))</span>
+
+      <span class="k">elif</span> <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">PYTHON_DOFN_URN</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">create_side_input</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">si</span><span class="p">):</span>
+          <span class="c1"># TODO(robertwb): Extract windows (and keys) out of element data.</span>
+          <span class="k">return</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerSideInputSource</span><span class="p">(</span>
+              <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
+              <span class="n">source</span><span class="o">=</span><span class="n">SideInputSource</span><span class="p">(</span>
+                  <span class="bp">self</span><span class="o">.</span><span class="n">state_handler</span><span class="p">,</span>
+                  <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">StateKey</span><span class="p">(</span>
+                      <span class="n">function_spec_reference</span><span class="o">=</span><span class="n">si</span><span class="o">.</span><span class="n">view_fn</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                  <span class="n">coder</span><span class="o">=</span><span class="n">unpack_and_deserialize_py_fn</span><span class="p">(</span><span class="n">si</span><span class="o">.</span><span class="n">view_fn</span><span class="p">)))</span>
+        <span class="n">output_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerDoFn</span><span class="p">(</span>
+            <span class="n">serialized_fn</span><span class="o">=</span><span class="n">unpack_function_spec_data</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="p">),</span>
+            <span class="n">output_tags</span><span class="o">=</span><span class="n">output_tags</span><span class="p">,</span>
+            <span class="nb">input</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">side_inputs</span><span class="o">=</span><span class="p">[</span><span class="n">create_side_input</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">si</span><span class="p">)</span>
+                         <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">transform</span><span class="o">.</span><span class="n">side_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()],</span>
+            <span class="n">output_coders</span><span class="o">=</span><span class="p">[</span><span class="n">coders</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">out</span><span class="p">]</span><span class="o">.</span><span class="n">coder_reference</span><span class="p">]</span>
+                           <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">output_tags</span><span class="p">])</span>
+
+        <span class="n">op</span> <span class="o">=</span> <span class="n">operations</span><span class="o">.</span><span class="n">DoOperation</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span>
+                                    <span class="n">state_sampler</span><span class="p">)</span>
+        <span class="c1"># TODO(robertwb): Move these to the constructor.</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">step_name</span>
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">op_consumers</span> <span class="ow">in</span> <span class="n">consumers</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="k">for</span> <span class="n">consumer</span> <span class="ow">in</span> <span class="n">op_consumers</span><span class="p">:</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span>
+                <span class="n">consumer</span><span class="p">,</span> <span class="n">output_tags</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+
+      <span class="k">elif</span> <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">IDENTITY_DOFN_URN</span><span class="p">:</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">operations</span><span class="o">.</span><span class="n">FlattenOperation</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span>
+                                         <span class="n">state_sampler</span><span class="p">)</span>
+        <span class="c1"># TODO(robertwb): Move these to the constructor.</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">step_name</span>
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">op_consumers</span> <span class="ow">in</span> <span class="n">consumers</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="k">for</span> <span class="n">consumer</span> <span class="ow">in</span> <span class="n">op_consumers</span><span class="p">:</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span><span class="n">consumer</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+      <span class="k">elif</span> <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="o">.</span><span class="n">urn</span> <span class="o">==</span> <span class="n">PYTHON_SOURCE_URN</span><span class="p">:</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="n">load_compressed</span><span class="p">(</span><span class="n">unpack_function_spec_data</span><span class="p">(</span>
+            <span class="n">transform</span><span class="o">.</span><span class="n">function_spec</span><span class="p">))</span>
+        <span class="c1"># TODO(vikasrk): Remove this once custom source is implemented with</span>
+        <span class="c1"># splittable dofn via the data plane.</span>
+        <span class="n">spec</span> <span class="o">=</span> <span class="n">operation_specs</span><span class="o">.</span><span class="n">WorkerRead</span><span class="p">(</span>
+            <span class="n">iobase</span><span class="o">.</span><span class="n">SourceBundle</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="p">[</span><span class="n">WindowedValueCoder</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">default_output_coder</span><span class="p">())])</span>
+        <span class="n">op</span> <span class="o">=</span> <span class="n">operations</span><span class="o">.</span><span class="n">ReadOperation</span><span class="p">(</span><span class="n">operation_name</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">counter_factory</span><span class="p">,</span>
+                                      <span class="n">state_sampler</span><span class="p">)</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">step_name</span> <span class="o">=</span> <span class="n">transform</span><span class="o">.</span><span class="n">step_name</span>
+        <span class="n">output_tags</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">op_consumers</span> <span class="ow">in</span> <span class="n">consumers</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="k">for</span> <span class="n">consumer</span> <span class="ow">in</span> <span class="n">op_consumers</span><span class="p">:</span>
+            <span class="n">op</span><span class="o">.</span><span class="n">add_receiver</span><span class="p">(</span>
+                <span class="n">consumer</span><span class="p">,</span> <span class="n">output_tags</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+      <span class="c1"># Record consumers.</span>
+      <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">inputs</span> <span class="ow">in</span> <span class="n">transform</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">inputs</span><span class="o">.</span><span class="n">target</span><span class="p">:</span>
+          <span class="n">consumers</span><span class="p">[</span><span class="n">target</span><span class="o">.</span><span class="n">primitive_transform_reference</span><span class="p">][</span><span class="n">target</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+              <span class="n">op</span><span class="p">)</span>
+
+      <span class="n">reversed_ops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+      <span class="n">ops_by_id</span><span class="p">[</span><span class="n">transform</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">op</span>
+
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">reversed_ops</span><span class="p">)),</span> <span class="n">ops_by_id</span></div>
+
+<div class="viewcode-block" id="SdkWorker.process_bundle"><a class="viewcode-back" href="../../../../apache_beam.runners.worker.html#apache_beam.runners.worker.sdk_worker.SdkWorker.process_bundle">[docs]</a>  <span class="k">def</span> <span class="nf">process_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">instruction_id</span><span class="p">):</span>
+    <span class="n">ops</span><span class="p">,</span> <span class="n">ops_by_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_execution_tree</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fns</span><span class="p">[</span><span class="n">request</span><span class="o">.</span><span class="n">process_bundle_descriptor_reference</span><span class="p">])</span>
+
+    <span class="n">expected_inputs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops_by_id</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">DataOutputOperation</span><span class="p">):</span>
+        <span class="c1"># TODO(robertwb): Is there a better way to pass the instruction id to</span>
+        <span class="c1"># the operation?</span>
+        <span class="n">op</span><span class="o">.</span><span class="n">set_output_stream</span><span class="p">(</span><span class="n">op</span><span class="o">.</span><span class="n">data_channel</span><span class="o">.</span><span class="n">output_stream</span><span class="p">(</span>
+            <span class="n">instruction_id</span><span class="p">,</span> <span class="n">op</span><span class="o">.</span><span class="n">target</span><span class="p">))</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">DataInputOperation</span><span class="p">):</span>
+        <span class="c1"># We must wait until we receive &quot;end of stream&quot; for each of these ops.</span>
+        <span class="n">expected_inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
+
+    <span class="c1"># Start all operations.</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">ops</span><span class="p">):</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;start </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+      <span class="n">op</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+    <span class="c1"># Inject inputs from data plane.</span>
+    <span class="k">for</span> <span class="n">input_op</span> <span class="ow">in</span> <span class="n">expected_inputs</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">input_op</span><span class="o">.</span><span class="n">data_channel</span><span class="o">.</span><span class="n">input_elements</span><span class="p">(</span>
+          <span class="n">instruction_id</span><span class="p">,</span> <span class="p">[</span><span class="n">input_op</span><span class="o">.</span><span class="n">target</span><span class="p">]):</span>
+        <span class="c1"># ignores input name</span>
+        <span class="n">target_op</span> <span class="o">=</span> <span class="n">ops_by_id</span><span class="p">[</span><span class="n">data</span><span class="o">.</span><span class="n">target</span><span class="o">.</span><span class="n">primitive_transform_reference</span><span class="p">]</span>
+        <span class="c1"># lacks coder for non-input ops</span>
+        <span class="n">target_op</span><span class="o">.</span><span class="n">process_encoded</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Finish all operations.</span>
+    <span class="k">for</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">ops</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;finish </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">op</span><span class="p">)</span>
+      <span class="n">op</span><span class="o">.</span><span class="n">finish</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">beam_fn_api_pb2</span><span class="o">.</span><span class="n">ProcessBundleResponse</span><span class="p">()</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">Apache Beam  documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright .
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.5.
+    </div>
+  </body>
+</html>
