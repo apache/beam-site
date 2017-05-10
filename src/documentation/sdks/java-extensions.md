@@ -7,21 +7,21 @@ permalink: /documentation/sdks/java-extensions/
 
 ## <a name="join-library"></a>Join-library
 
-Join-library provides inner join, outer left and right join functions. The aim
+Join-library provides inner join, outer left join, and outer right join functions. The aim
 is to simplify the most common cases of join to a simple function call.
 
-The functions are generic so it supports join of any types supported by
-Beam. Input to the join functions are `PCollections` of `Key` / `Value`s. Both
+The functions are generic and support joins of any Beam-supported types.
+Input to the join functions are `PCollections` of `Key` / `Value`s. Both
 the left and right `PCollection`s need the same type for the key. All the join
 functions return a `Key` / `Value` where `Key` is the join key and value is
 a `Key` / `Value` where the key is the left value and right is the value.
 
-In the cases of outer join, since `null` cannot be serialized the user have
-to provide a value that represent `null` for that particular use case.
+For outer joins, the user must provide a value that represents `null` because `null`
+cannot be serialized.
 
 Example usage:
 
-```java
+```
 PCollection<KV<String, String>> leftPcollection = ...
 PCollection<KV<String, Long>> rightPcollection = ...
 
@@ -45,7 +45,7 @@ This module provides the `SortValues` transform, which takes a `PCollection<KV<K
 
 ### Example usage of `SortValues`
 
-```java
+```
 PCollection<KV<String, KV<String, Integer>>> input = ...
 
 // Group by primary key, bringing <SecondaryKey, Value> pairs for the same key together.

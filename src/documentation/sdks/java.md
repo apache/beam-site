@@ -27,7 +27,7 @@ See the [Beam-provided I/O Transforms]({{site.baseurl }}/documentation/io/built-
 
 ## Extensions
 
-Java SDK has the following extensions:
+The Java SDK has the following extensions:
 
-- [join-library]({{site.baseurl}}/documentation/sdks/java-extensions/#join-library) provides inner join, outer left and right join functions.
+- [join-library]({{site.baseurl}}/documentation/sdks/java-extensions/#join-library) provides inner join, outer left join, and outer right join functions.
 - [sorter]({{site.baseurl}}/documentation/sdks/java-extensions/#sorter) is an efficient and scalable sorter for large iterables.
