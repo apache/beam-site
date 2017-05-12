@@ -47,7 +47,7 @@ The following sections explain these concepts in detail along with excerpts of t
 
 ### Creating the Pipeline
 
-The first step in creating a Beam pipeline is to create a `PipelineOptions object`. This object lets us set various options for our pipeline, such as the pipeline runner that will execute our pipeline and any runner-specific configuration required by the chosen runner. In this example we set these options programmatically, but more often command-line arguments are used to set `PipelineOptions`. 
+The first step in creating a Beam pipeline is to create a `PipelineOptions` object. This object lets us set various options for our pipeline, such as the pipeline runner that will execute our pipeline and any runner-specific configuration required by the chosen runner. In this example we set these options programmatically, but more often command-line arguments are used to set `PipelineOptions`. 
 
 You can specify a runner for executing your pipeline, such as the `DataflowRunner` or `SparkRunner`. If you omit specifying a runner, as in this example, your pipeline will be executed locally using the `DirectRunner`. In the next sections, we will specify the pipeline's runner.
 
@@ -171,7 +171,7 @@ Note that the `Write` transform produces a trivial result value of type `PDone`,
 Run the pipeline by calling the `run` method, which sends your pipeline to be executed by the pipeline runner that you specified when you created your pipeline.
 
 ```java
-p.run();
+p.run().waitUntilFinish();
 ```
 
 ```py
@@ -354,7 +354,7 @@ The default Dataflow worker logging configuration can be overridden by specifyin
 
 ### Testing your Pipeline via PAssert
 
-`PAssert` is a set of convenient `PTransforms` in the style of Hamcrest's collection matchers that can be used when writing Pipeline level tests to validate the contents of PCollections. `PAssert` is best used in unit tests with small data sets, but is demonstrated here as a teaching tool.
+`PAssert` is a set of convenient PTransforms in the style of Hamcrest's collection matchers that can be used when writing Pipeline level tests to validate the contents of PCollections. `PAssert` is best used in unit tests with small data sets, but is demonstrated here as a teaching tool.
 
 Below, we verify that the set of filtered words matches our expected counts. Note that `PAssert` does not produce any output, and pipeline will only succeed if all of the expectations are met. See [DebuggingWordCountTest](https://github.com/apache/beam/blob/master/examples/java/src/test/java/org/apache/beam/examples/DebuggingWordCountTest.java) for an example unit test.
 
@@ -388,7 +388,7 @@ The following sections explain these key concepts in detail, and break down the 
 
 ### Unbounded and bounded pipeline input modes
 
-Beam allows you to create a single pipeline that can handle both bounded and unbounded types of input. If the input is unbounded, then all `PCollections` of the pipeline will be unbounded as well. The same goes for bounded input. If your input has a fixed number of elements, it's considered a 'bounded' data set. If your input is continuously updating, then it's considered 'unbounded'.
+Beam allows you to create a single pipeline that can handle both bounded and unbounded types of input. If the input is unbounded, then all PCollections of the pipeline will be unbounded as well. The same goes for bounded input. If your input has a fixed number of elements, it's considered a 'bounded' data set. If your input is continuously updating, then it's considered 'unbounded'.
 
 Recall that the input for this example is a a set of Shakespeare's texts, finite data. Therefore, this example reads bounded data from a text file:
 
@@ -451,7 +451,7 @@ This feature is not yet available in the Beam SDK for Python.
 
 ### Windowing
 
-Beam uses a concept called **Windowing** to subdivide a `PCollection` according to the timestamps of its individual elements. `PTransforms` that aggregate multiple elements, process each `PCollection` as a succession of multiple, finite windows, even though the entire collection itself may be of infinite size (unbounded).
+Beam uses a concept called **Windowing** to subdivide a `PCollection` according to the timestamps of its individual elements. PTransforms that aggregate multiple elements, process each `PCollection` as a succession of multiple, finite windows, even though the entire collection itself may be of infinite size (unbounded).
 
 The `WindowedWordCount` example applies fixed-time windowing, wherein each window represents a fixed time interval. The fixed window size for this example defaults to 1 minute (you can change this with a command-line option). 
 
@@ -467,7 +467,7 @@ This feature is not yet available in the Beam SDK for Python.
 
 ### Reusing PTransforms over windowed PCollections
 
-You can reuse existing `PTransforms` that were created for manipulating simple `PCollections` over windowed `PCollections` as well.
+You can reuse existing PTransforms that were created for manipulating simple PCollections over windowed PCollections as well.
 
 ```java
 PCollection<KV<String, Long>> wordCounts = windowedWords.apply(new WordCount.CountWords());
