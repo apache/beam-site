@@ -181,7 +181,7 @@
 <span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.native_io</span> <span class="k">import</span> <span class="n">iobase</span> <span class="k">as</span> <span class="n">dataflow_io</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">DisplayDataItem</span>
 <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">retry</span>
-<span class="kn">from</span> <span class="nn">apache_beam.utils.pipeline_options</span> <span class="k">import</span> <span class="n">GoogleCloudOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">GoogleCloudOptions</span>
 <span class="kn">from</span> <span class="nn">apache_beam.io.gcp.internal.clients</span> <span class="k">import</span> <span class="n">bigquery</span>
 
 <span class="c1"># Protect against environments where bigquery library is not available.</span>
@@ -1184,12 +1184,8 @@
         <span class="n">value</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;v&#39;</span> <span class="ow">in</span> <span class="n">cell</span> <span class="k">else</span> <span class="kc">None</span>
       <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;REPEATED&#39;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-          <span class="c1"># We receive &#39;None&#39; for repeated fields without any values when</span>
-          <span class="c1"># &#39;flatten_results&#39; is &#39;False&#39;.</span>
-          <span class="c1"># When &#39;flatten_results&#39; is &#39;True&#39;, we receive individual values</span>
-          <span class="c1"># instead of a list of values hence we do not hit this condition.</span>
-          <span class="c1"># We return an empty list here instead of &#39;None&#39; to be consistent with</span>
-          <span class="c1"># other runners and to be backwards compatible to users.</span>
+          <span class="c1"># Ideally this should never happen as repeated fields default to</span>
+          <span class="c1"># returning an empty list</span>
           <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
           <span class="n">result</span><span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_convert_cell_value_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">],</span> <span class="n">field</span><span class="p">)</span>

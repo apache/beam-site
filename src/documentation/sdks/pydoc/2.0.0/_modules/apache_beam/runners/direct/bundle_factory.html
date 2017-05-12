@@ -88,7 +88,9 @@
 
 
 <div class="viewcode-block" id="BundleFactory"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.BundleFactory">[docs]</a><span class="k">class</span> <span class="nc">BundleFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;BundleFactory creates output bundles to be used by transform evaluators.</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  BundleFactory creates output bundles to be used by transform evaluators.</span>
 
 <span class="sd">  Args:</span>
 <span class="sd">    stacked: whether or not to stack the WindowedValues within the bundle</span>
@@ -100,7 +102,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_stacked</span> <span class="o">=</span> <span class="n">stacked</span>
 
 <div class="viewcode-block" id="BundleFactory.create_bundle"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.BundleFactory.create_bundle">[docs]</a>  <span class="k">def</span> <span class="nf">create_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_pcollection</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Bundle</span><span class="p">(</span><span class="n">output_pcollection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">_Bundle</span><span class="p">(</span><span class="n">output_pcollection</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stacked</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BundleFactory.create_empty_committed_bundle"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.BundleFactory.create_empty_committed_bundle">[docs]</a>  <span class="k">def</span> <span class="nf">create_empty_committed_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_pcollection</span><span class="p">):</span>
     <span class="n">bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_bundle</span><span class="p">(</span><span class="n">output_pcollection</span><span class="p">)</span>
@@ -109,7 +111,7 @@
 
 
 <span class="c1"># a bundle represents a unit of work that will be processed by a transform.</span>
-<div class="viewcode-block" id="Bundle"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle">[docs]</a><span class="k">class</span> <span class="nc">Bundle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_Bundle</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Part of a PCollection with output elements.</span>
 
 <span class="sd">  Part of a PCollection. Elements are output to a bundle, which will cause them</span>
@@ -131,7 +133,7 @@
 <span class="sd">    b = Bundle(stacked=False)</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Bundle.StackedWindowedValues"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.StackedWindowedValues">[docs]</a>  <span class="k">class</span> <span class="nc">StackedWindowedValues</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">class</span> <span class="nc">_StackedWindowedValues</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A stack of WindowedValues with the same timestamp and windows.</span>
 
 <span class="sd">    It must be initialized from a single WindowedValue.</span>
@@ -158,16 +160,16 @@
     <span class="k">def</span> <span class="nf">windows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_windowed_value</span><span class="o">.</span><span class="n">windows</span>
 
-<div class="viewcode-block" id="Bundle.StackedWindowedValues.add_value"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.StackedWindowedValues.add_value">[docs]</a>    <span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_appended_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">add_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_appended_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Bundle.StackedWindowedValues.windowed_values"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.StackedWindowedValues.windowed_values">[docs]</a>    <span class="k">def</span> <span class="nf">windowed_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">windowed_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
       <span class="c1"># yield first windowed_value as is, then iterate through</span>
       <span class="c1"># _appended_values to yield WindowedValue on the fly.</span>
       <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_windowed_value</span>
       <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_appended_values</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_windowed_value</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">_initial_windowed_value</span><span class="o">.</span><span class="n">windows</span><span class="p">)</span></div></div>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_initial_windowed_value</span><span class="o">.</span><span class="n">windows</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcollection</span><span class="p">,</span> <span class="n">stacked</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcollection</span><span class="p">,</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="p">)</span>
@@ -177,7 +179,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_committed</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># optional tag information for this bundle</span>
 
-<div class="viewcode-block" id="Bundle.get_elements_iterable"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.get_elements_iterable">[docs]</a>  <span class="k">def</span> <span class="nf">get_elements_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_elements_iterable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">make_copy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns iterable elements.</span>
 
 <span class="sd">    Args:</span>
@@ -195,7 +197,7 @@
 
     <span class="k">def</span> <span class="nf">iterable_stacked_or_elements</span><span class="p">(</span><span class="n">elements</span><span class="p">):</span>
       <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">Bundle</span><span class="o">.</span><span class="n">StackedWindowedValues</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">_Bundle</span><span class="o">.</span><span class="n">_StackedWindowedValues</span><span class="p">):</span>
           <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">windowed_values</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">w</span>
         <span class="k">else</span><span class="p">:</span>
@@ -204,10 +206,10 @@
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_committed</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">make_copy</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">iterable_stacked_or_elements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
     <span class="c1"># returns a copy.</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">iterable_stacked_or_elements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)]</span></div>
+    <span class="k">return</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">iterable_stacked_or_elements</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)]</span>
 
-<div class="viewcode-block" id="Bundle.has_elements"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.has_elements">[docs]</a>  <span class="k">def</span> <span class="nf">has_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span></div>
+  <span class="k">def</span> <span class="nf">has_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -223,7 +225,7 @@
     <span class="sd">&quot;&quot;&quot;PCollection that the elements of this UncommittedBundle belong to.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcollection</span>
 
-<div class="viewcode-block" id="Bundle.add"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.add">[docs]</a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Outputs an element to this bundle.</span>
 
 <span class="sd">    Args:</span>
@@ -235,19 +237,19 @@
       <span class="k">return</span>
     <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="ow">and</span>
         <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">(</span><span class="n">WindowedValue</span><span class="p">,</span>
-                                         <span class="n">Bundle</span><span class="o">.</span><span class="n">StackedWindowedValues</span><span class="p">)))</span> <span class="ow">and</span>
+                                         <span class="n">_Bundle</span><span class="o">.</span><span class="n">_StackedWindowedValues</span><span class="p">)))</span> <span class="ow">and</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">==</span> <span class="n">element</span><span class="o">.</span><span class="n">timestamp</span> <span class="ow">and</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">windows</span> <span class="o">==</span> <span class="n">element</span><span class="o">.</span><span class="n">windows</span><span class="p">):</span>
       <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">WindowedValue</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Bundle</span><span class="o">.</span><span class="n">StackedWindowedValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_Bundle</span><span class="o">.</span><span class="n">_StackedWindowedValues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add_value</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Bundle.output"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.output">[docs]</a>  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Bundle.commit"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.bundle_factory.Bundle.commit">[docs]</a>  <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">synchronized_processing_time</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">synchronized_processing_time</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Commits this bundle.</span>
 
 <span class="sd">    Uncommitted bundle will become committed (immutable) after this call.</span>
@@ -259,7 +261,7 @@
     <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_committed</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_committed</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_elements</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_elements</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_synchronized_processing_time</span> <span class="o">=</span> <span class="n">synchronized_processing_time</span></div></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_synchronized_processing_time</span> <span class="o">=</span> <span class="n">synchronized_processing_time</span>
 </pre></div>
 
           </div>

@@ -79,7 +79,10 @@
 <span class="c1"># limitations under the License.</span>
 <span class="c1">#</span>
 
-<span class="sd">&quot;&quot;&quot;Runtime type checking support.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Runtime type checking support.</span>
+
+<span class="sd">For internal use only; no backwards-compatibility guarantees.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
@@ -89,13 +92,13 @@
 <span class="kn">from</span> <span class="nn">apache_beam.pvalue</span> <span class="k">import</span> <span class="n">TaggedOutput</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.core</span> <span class="k">import</span> <span class="n">DoFn</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">WindowedValue</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">check_constraint</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">CompositeTypeHintError</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">GeneratorWrapper</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">SimpleTypeHintError</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">TypeCheckError</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">_check_instance_type</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">getcallargs_forhints</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">GeneratorWrapper</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">TypeCheckError</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="k">import</span> <span class="n">check_constraint</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="k">import</span> <span class="n">CompositeTypeHintError</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="k">import</span> <span class="n">SimpleTypeHintError</span>
 
 
 <div class="viewcode-block" id="AbstractDoFnWrapper"><a class="viewcode-back" href="../../../apache_beam.typehints.html#apache_beam.typehints.typecheck.AbstractDoFnWrapper">[docs]</a><span class="k">class</span> <span class="nc">AbstractDoFnWrapper</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
@@ -170,7 +173,7 @@
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dofn</span><span class="p">,</span> <span class="n">type_hints</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">TypeCheckWrapperDoFn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dofn</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dofn</span> <span class="o">=</span> <span class="n">dofn</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_process_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofn</span><span class="o">.</span><span class="n">process_argspec_fn</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dofn</span><span class="o">.</span><span class="n">_process_argspec_fn</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">input_types</span><span class="p">:</span>
       <span class="n">input_args</span><span class="p">,</span> <span class="n">input_kwargs</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">input_types</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_input_hints</span> <span class="o">=</span> <span class="n">getcallargs_forhints</span><span class="p">(</span>

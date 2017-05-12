@@ -100,25 +100,25 @@
 <span class="kn">import</span> <span class="nn">dill</span>
 
 
-<div class="viewcode-block" id="is_nested_class"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.is_nested_class">[docs]</a><span class="k">def</span> <span class="nf">is_nested_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_is_nested_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Returns true if argument is a class object that appears to be nested.&quot;&quot;&quot;</span>
   <span class="k">return</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span>
           <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">!=</span> <span class="s1">&#39;__builtin__&#39;</span>
-          <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span></div>
+          <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="find_containing_class"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.find_containing_class">[docs]</a><span class="k">def</span> <span class="nf">find_containing_class</span><span class="p">(</span><span class="n">nested_class</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_find_containing_class</span><span class="p">(</span><span class="n">nested_class</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Finds containing class of a nestec class passed as argument.&quot;&quot;&quot;</span>
 
-  <span class="k">def</span> <span class="nf">find_containing_class_inner</span><span class="p">(</span><span class="n">outer</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">_find_containing_class_inner</span><span class="p">(</span><span class="n">outer</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">outer</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
       <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="n">nested_class</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">outer</span><span class="p">,</span> <span class="n">k</span>
       <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ClassType</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;__dict__&#39;</span><span class="p">):</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">find_containing_class_inner</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_find_containing_class_inner</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">res</span><span class="p">:</span> <span class="k">return</span> <span class="n">res</span>
 
-  <span class="k">return</span> <span class="n">find_containing_class_inner</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">nested_class</span><span class="o">.</span><span class="vm">__module__</span><span class="p">])</span></div>
+  <span class="k">return</span> <span class="n">_find_containing_class_inner</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">nested_class</span><span class="o">.</span><span class="vm">__module__</span><span class="p">])</span>
 
 
 <span class="k">def</span> <span class="nf">_nested_type_wrapper</span><span class="p">(</span><span class="n">fun</span><span class="p">):</span>
@@ -140,8 +140,8 @@
     <span class="c1"># do anything special because the pickler itself will save the constituent</span>
     <span class="c1"># parts of the type (i.e., name, base classes, dictionary) and then</span>
     <span class="c1"># recreate it during unpickling.</span>
-    <span class="k">if</span> <span class="n">is_nested_class</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">!=</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-      <span class="n">containing_class_and_name</span> <span class="o">=</span> <span class="n">find_containing_class</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">_is_nested_class</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">!=</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+      <span class="n">containing_class_and_name</span> <span class="o">=</span> <span class="n">_find_containing_class</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">containing_class_and_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">pickler</span><span class="o">.</span><span class="n">save_reduce</span><span class="p">(</span>
             <span class="nb">getattr</span><span class="p">,</span> <span class="n">containing_class_and_name</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">)</span>
@@ -172,11 +172,11 @@
 <span class="c1"># Dill pickles generators objects without complaint, but unpickling produces</span>
 <span class="c1"># TypeError: object.__new__(generator) is not safe, use generator.__new__()</span>
 <span class="c1"># on some versions of Python.</span>
-<div class="viewcode-block" id="reject_generators"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.reject_generators">[docs]</a><span class="k">def</span> <span class="nf">reject_generators</span><span class="p">(</span><span class="n">unused_pickler</span><span class="p">,</span> <span class="n">unused_obj</span><span class="p">):</span>
-  <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;can&#39;t (safely) pickle generator objects&quot;</span><span class="p">)</span></div>
+<span class="k">def</span> <span class="nf">_reject_generators</span><span class="p">(</span><span class="n">unused_pickler</span><span class="p">,</span> <span class="n">unused_obj</span><span class="p">):</span>
+  <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;can&#39;t (safely) pickle generator objects&quot;</span><span class="p">)</span>
 
 
-<span class="n">dill</span><span class="o">.</span><span class="n">dill</span><span class="o">.</span><span class="n">Pickler</span><span class="o">.</span><span class="n">dispatch</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">]</span> <span class="o">=</span> <span class="n">reject_generators</span>
+<span class="n">dill</span><span class="o">.</span><span class="n">dill</span><span class="o">.</span><span class="n">Pickler</span><span class="o">.</span><span class="n">dispatch</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">GeneratorType</span><span class="p">]</span> <span class="o">=</span> <span class="n">_reject_generators</span>
 
 
 <span class="c1"># This if guards against dill not being full initialized when generating docs.</span>
@@ -249,6 +249,8 @@
 <span class="c1"># pickler.loads() being used for data, which results in an unnecessary base64</span>
 <span class="c1"># encoding.  This should be cleaned up.</span>
 <div class="viewcode-block" id="dumps"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.dumps">[docs]</a><span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">enable_trace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.&quot;&quot;&quot;</span>
+
   <span class="k">try</span><span class="p">:</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
   <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>      <span class="c1"># pylint: disable=broad-except</span>
@@ -270,6 +272,8 @@
 
 
 <div class="viewcode-block" id="loads"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.loads">[docs]</a><span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="n">encoded</span><span class="p">,</span> <span class="n">enable_trace</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.&quot;&quot;&quot;</span>
+
   <span class="n">c</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
 
   <span class="n">s</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
@@ -288,7 +292,9 @@
 
 
 <div class="viewcode-block" id="dump_session"><a class="viewcode-back" href="../../../apache_beam.internal.html#apache_beam.internal.pickler.dump_session">[docs]</a><span class="k">def</span> <span class="nf">dump_session</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Pickle the current python session to be used in the worker.</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Pickle the current python session to be used in the worker.</span>
 
 <span class="sd">  Note: Due to the inconsistency in the first dump of dill dump_session we</span>
 <span class="sd">  create and load the dump twice to have consistent results in the worker and</span>

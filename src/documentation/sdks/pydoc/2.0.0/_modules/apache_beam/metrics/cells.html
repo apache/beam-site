@@ -93,9 +93,13 @@
 <span class="kn">from</span> <span class="nn">apache_beam.metrics.metricbase</span> <span class="k">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">apache_beam.metrics.metricbase</span> <span class="k">import</span> <span class="n">Distribution</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DistributionResult&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="CellCommitState"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CellCommitState">[docs]</a><span class="k">class</span> <span class="nc">CellCommitState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Atomically tracks a cell&#39;s dirty/clean commit status.</span>
+
+<span class="k">class</span> <span class="nc">CellCommitState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Atomically tracks a cell&#39;s dirty/clean commit status.</span>
 
 <span class="sd">  Reporting a metric update works in a two-step process: First, updates to the</span>
 <span class="sd">  metric are received, and the metric is marked as &#39;dirty&#39;. Later, updates are</span>
@@ -127,15 +131,15 @@
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span>
 
-<div class="viewcode-block" id="CellCommitState.after_modification"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CellCommitState.after_modification">[docs]</a>  <span class="k">def</span> <span class="nf">after_modification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">after_modification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Indicate that changes have been made to the metric being tracked.</span>
 
 <span class="sd">    Should be called after modification of the metric value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">DIRTY</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">DIRTY</span>
 
-<div class="viewcode-block" id="CellCommitState.after_commit"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CellCommitState.after_commit">[docs]</a>  <span class="k">def</span> <span class="nf">after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">after_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Mark changes made up to the last call to ``before_commit`` as committed.</span>
 
 <span class="sd">    The next call to ``before_commit`` will return ``False`` unless there have</span>
@@ -143,9 +147,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">COMMITTING</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">CLEAN</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">CLEAN</span>
 
-<div class="viewcode-block" id="CellCommitState.before_commit"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CellCommitState.before_commit">[docs]</a>  <span class="k">def</span> <span class="nf">before_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">before_commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check the dirty state, and mark the metric as committing.</span>
 
 <span class="sd">    After this call, the state is either CLEAN, or COMMITTING. If the state</span>
@@ -162,11 +166,13 @@
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">CLEAN</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="o">.</span><span class="n">COMMITTING</span>
-      <span class="k">return</span> <span class="kc">True</span></div></div>
+      <span class="k">return</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="MetricCell"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricCell">[docs]</a><span class="k">class</span> <span class="nc">MetricCell</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Accumulates in-memory changes to a metric.</span>
+<span class="k">class</span> <span class="nc">MetricCell</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Accumulates in-memory changes to a metric.</span>
 
 <span class="sd">  A MetricCell represents a specific metric in a single context and bundle.</span>
 <span class="sd">  All subclasses must be thread safe, as these are used in the pipeline runners,</span>
@@ -177,12 +183,14 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">commit</span> <span class="o">=</span> <span class="n">CellCommitState</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MetricCell.get_cumulative"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricCell.get_cumulative">[docs]</a>  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<div class="viewcode-block" id="CounterCell"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterCell">[docs]</a><span class="k">class</span> <span class="nc">CounterCell</span><span class="p">(</span><span class="n">Counter</span><span class="p">,</span> <span class="n">MetricCell</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tracks the current value and delta of a counter metric.</span>
+<span class="k">class</span> <span class="nc">CounterCell</span><span class="p">(</span><span class="n">Counter</span><span class="p">,</span> <span class="n">MetricCell</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Tracks the current value and delta of a counter metric.</span>
 
 <span class="sd">  Each cell tracks the state of a metric independently per context per bundle.</span>
 <span class="sd">  Therefore, each metric has a different cell in each bundle, cells are</span>
@@ -194,23 +202,25 @@
     <span class="nb">super</span><span class="p">(</span><span class="n">CounterCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="CounterCell.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterCell.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">CounterCell</span><span class="p">()</span>
     <span class="n">result</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span></div>
+    <span class="k">return</span> <span class="n">result</span>
 
-<div class="viewcode-block" id="CounterCell.inc"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterCell.inc">[docs]</a>  <span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">inc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="n">n</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">after_modification</span><span class="p">()</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">after_modification</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CounterCell.get_cumulative"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterCell.get_cumulative">[docs]</a>  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span></div></div>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
 
 
-<div class="viewcode-block" id="DistributionCell"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionCell">[docs]</a><span class="k">class</span> <span class="nc">DistributionCell</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">MetricCell</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Tracks the current value and delta for a distribution metric.</span>
+<span class="k">class</span> <span class="nc">DistributionCell</span><span class="p">(</span><span class="n">Distribution</span><span class="p">,</span> <span class="n">MetricCell</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Tracks the current value and delta for a distribution metric.</span>
 
 <span class="sd">  Each cell tracks the state of a metric independently per context per bundle.</span>
 <span class="sd">  Therefore, each metric has a different cell in each bundle, that is later</span>
@@ -222,15 +232,15 @@
     <span class="nb">super</span><span class="p">(</span><span class="n">DistributionCell</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DistributionData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionCell.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionCell.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">DistributionCell</span><span class="p">()</span>
     <span class="n">result</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span></div>
+    <span class="k">return</span> <span class="n">result</span>
 
-<div class="viewcode-block" id="DistributionCell.update"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionCell.update">[docs]</a>  <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">after_modification</span><span class="p">()</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -243,9 +253,9 @@
                      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span> <span class="o">&lt;</span> <span class="n">value</span>
                      <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionCell.get_cumulative"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionCell.get_cumulative">[docs]</a>  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_cumulative</span><span class="p">()</span></div></div>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_cumulative</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="DistributionResult"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionResult">[docs]</a><span class="k">class</span> <span class="nc">DistributionResult</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -291,8 +301,10 @@
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">count</span></div>
 
 
-<div class="viewcode-block" id="DistributionData"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionData">[docs]</a><span class="k">class</span> <span class="nc">DistributionData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;The data structure that holds data about a distribution metric.</span>
+<span class="k">class</span> <span class="nc">DistributionData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  The data structure that holds data about a distribution metric.</span>
 
 <span class="sd">  Distribution metrics are restricted to distributions of integers only.</span>
 
@@ -321,10 +333,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">,</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionData.get_cumulative"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionData.get_cumulative">[docs]</a>  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">get_cumulative</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionData.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionData.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="k">return</span> <span class="bp">self</span>
 
@@ -336,53 +348,59 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">count</span><span class="p">,</span>
         <span class="n">new_min</span><span class="p">,</span>
-        <span class="n">new_max</span><span class="p">)</span></div>
+        <span class="n">new_max</span><span class="p">)</span>
 
   <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DistributionData.singleton"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionData.singleton">[docs]</a>  <span class="k">def</span> <span class="nf">singleton</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">singleton</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MetricAggregator"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricAggregator">[docs]</a><span class="k">class</span> <span class="nc">MetricAggregator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Base interface for aggregating metric data during pipeline execution.&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="MetricAggregator.zero"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricAggregator.zero">[docs]</a>  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+<span class="k">class</span> <span class="nc">MetricAggregator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
 
-<div class="viewcode-block" id="MetricAggregator.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricAggregator.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+<span class="sd">  Base interface for aggregating metric data during pipeline execution.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="MetricAggregator.result"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.MetricAggregator.result">[docs]</a>  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">updates</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<div class="viewcode-block" id="CounterAggregator"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterAggregator">[docs]</a><span class="k">class</span> <span class="nc">CounterAggregator</span><span class="p">(</span><span class="n">MetricAggregator</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Aggregator for Counter metric data during pipeline execution.</span>
+<span class="k">class</span> <span class="nc">CounterAggregator</span><span class="p">(</span><span class="n">MetricAggregator</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Aggregator for Counter metric data during pipeline execution.</span>
 
 <span class="sd">  Values aggregated should be ``int`` objects.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="CounterAggregator.zero"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterAggregator.zero">[docs]</a>  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="mi">0</span></div>
+  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">0</span>
 
-<div class="viewcode-block" id="CounterAggregator.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterAggregator.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CounterAggregator.result"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.CounterAggregator.result">[docs]</a>  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="DistributionAggregator"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionAggregator">[docs]</a><span class="k">class</span> <span class="nc">DistributionAggregator</span><span class="p">(</span><span class="n">MetricAggregator</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Aggregator for Distribution metric data during pipeline execution.</span>
+<span class="k">class</span> <span class="nc">DistributionAggregator</span><span class="p">(</span><span class="n">MetricAggregator</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Aggregator for Distribution metric data during pipeline execution.</span>
 
 <span class="sd">  Values aggregated should be ``DistributionData`` objects.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="DistributionAggregator.zero"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionAggregator.zero">[docs]</a>  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">zero</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">DistributionData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionAggregator.combine"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionAggregator.combine">[docs]</a>  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">combine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DistributionAggregator.result"><a class="viewcode-back" href="../../../apache_beam.metrics.html#apache_beam.metrics.cells.DistributionAggregator.result">[docs]</a>  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">DistributionResult</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_cumulative</span><span class="p">())</span></div></div>
+  <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">DistributionResult</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">get_cumulative</span><span class="p">())</span>
 </pre></div>
 
           </div>

@@ -108,6 +108,9 @@
 <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">window</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">HasDisplayData</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">DisplayDataItem</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.windowed_value</span> <span class="k">import</span> <span class="n">WindowedValue</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BoundedSource&#39;</span><span class="p">,</span> <span class="s1">&#39;RangeTracker&#39;</span><span class="p">,</span> <span class="s1">&#39;Read&#39;</span><span class="p">,</span> <span class="s1">&#39;Sink&#39;</span><span class="p">,</span> <span class="s1">&#39;Write&#39;</span><span class="p">,</span> <span class="s1">&#39;Writer&#39;</span><span class="p">]</span>
 
 
 <span class="c1"># Encapsulates information about a bundle of a source generated when method</span>
@@ -623,7 +626,9 @@
 
 
 <div class="viewcode-block" id="Sink"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.iobase.Sink">[docs]</a><span class="k">class</span> <span class="nc">Sink</span><span class="p">(</span><span class="n">HasDisplayData</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A resource that can be written to using the ``beam.io.Write`` transform.</span>
+  <span class="sd">&quot;&quot;&quot;This class is deprecated, no backwards-compatibility guarantees.</span>
+
+<span class="sd">  A resource that can be written to using the ``beam.io.Write`` transform.</span>
 
 <span class="sd">  Here ``beam`` stands for Apache Beam Python code imported in following manner.</span>
 <span class="sd">  ``import apache_beam as beam``.</span>
@@ -655,8 +660,8 @@
 <span class="sd">  single record from the bundle and ``close()`` which is called once</span>
 <span class="sd">  at the end of writing a bundle.</span>
 
-<span class="sd">  See also ``apache_beam.io.fileio.FileSink`` which provides a simpler API</span>
-<span class="sd">  for writing sinks that produce files.</span>
+<span class="sd">  See also ``apache_beam.io.filebasedsink.FileBasedSink`` which provides a</span>
+<span class="sd">  simpler API for writing sinks that produce files.</span>
 
 <span class="sd">  **Execution of the Write transform**</span>
 
@@ -820,7 +825,9 @@
 
 
 <div class="viewcode-block" id="Writer"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.iobase.Writer">[docs]</a><span class="k">class</span> <span class="nc">Writer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Writes a bundle of elements from a ``PCollection`` to a sink.</span>
+  <span class="sd">&quot;&quot;&quot;This class is deprecated, no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Writes a bundle of elements from a ``PCollection`` to a sink.</span>
 
 <span class="sd">  A Writer  ``iobase.Writer.write()`` writes and elements to the sink while</span>
 <span class="sd">  ``iobase.Writer.close()`` is called after all elements in the bundle have been</span>
@@ -935,14 +942,14 @@
                        <span class="s1">&#39;or be a PTransform. Received : </span><span class="si">%r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="WriteImpl"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.iobase.WriteImpl">[docs]</a><span class="k">class</span> <span class="nc">WriteImpl</span><span class="p">(</span><span class="n">ptransform</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">WriteImpl</span><span class="p">(</span><span class="n">ptransform</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Implements the writing of custom sinks.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sink</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">WriteImpl</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sink</span> <span class="o">=</span> <span class="n">sink</span>
 
-<div class="viewcode-block" id="WriteImpl.expand"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.iobase.WriteImpl.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
     <span class="n">do_once</span> <span class="o">=</span> <span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">|</span> <span class="s1">&#39;DoOnce&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">Create</span><span class="p">([</span><span class="kc">None</span><span class="p">])</span>
     <span class="n">init_result_coll</span> <span class="o">=</span> <span class="n">do_once</span> <span class="o">|</span> <span class="s1">&#39;InitializeWrite&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
         <span class="k">lambda</span> <span class="n">_</span><span class="p">,</span> <span class="n">sink</span><span class="p">:</span> <span class="n">sink</span><span class="o">.</span><span class="n">initialize_write</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">)</span>
@@ -973,7 +980,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sink</span><span class="p">,</span>
         <span class="n">AsSingleton</span><span class="p">(</span><span class="n">init_result_coll</span><span class="p">),</span>
         <span class="n">AsIter</span><span class="p">(</span><span class="n">write_result_coll</span><span class="p">),</span>
-        <span class="n">min_shards</span><span class="p">)</span></div></div>
+        <span class="n">min_shards</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_WriteBundleDoFn</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
@@ -995,7 +1002,8 @@
 
   <span class="k">def</span> <span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">writer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-      <span class="k">yield</span> <span class="n">window</span><span class="o">.</span><span class="n">TimestampedValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">(),</span> <span class="n">window</span><span class="o">.</span><span class="n">MAX_TIMESTAMP</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">writer</span><span class="o">.</span><span class="n">close</span><span class="p">(),</span> <span class="n">window</span><span class="o">.</span><span class="n">MAX_TIMESTAMP</span><span class="p">,</span>
+                          <span class="p">[</span><span class="n">window</span><span class="o">.</span><span class="n">GlobalWindow</span><span class="p">()])</span>
 
 
 <span class="k">class</span> <span class="nc">_WriteKeyedBundleDoFn</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
@@ -1041,11 +1049,6 @@
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span>
     <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">counter</span><span class="p">,</span> <span class="n">element</span>
-
-
-<span class="c1"># For backwards compatibility.</span>
-<span class="c1"># pylint: disable=wrong-import-position</span>
-<span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.native_io.iobase</span> <span class="k">import</span> <span class="o">*</span>
 </pre></div>
 
           </div>

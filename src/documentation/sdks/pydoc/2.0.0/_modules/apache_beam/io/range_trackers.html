@@ -88,6 +88,9 @@
 
 <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="k">import</span> <span class="n">iobase</span>
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OffsetRangeTracker&#39;</span><span class="p">,</span> <span class="s1">&#39;LexicographicKeyRangeTracker&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;OrderedPositionRangeTracker&#39;</span><span class="p">,</span> <span class="s1">&#39;UnsplittableRangeTracker&#39;</span><span class="p">]</span>
+
 
 <div class="viewcode-block" id="OffsetRangeTracker"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.OffsetRangeTracker">[docs]</a><span class="k">class</span> <span class="nc">OffsetRangeTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A &#39;RangeTracker&#39; for non-negative positions of type &#39;long&#39;.&quot;&quot;&quot;</span>
@@ -254,8 +257,10 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_split_points_unclaimed_callback</span> <span class="o">=</span> <span class="n">callback</span></div></div>
 
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker">[docs]</a><span class="k">class</span> <span class="nc">GroupedShuffleRangeTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A &#39;RangeTracker&#39; for positions used by&#39;GroupedShuffleReader&#39;.</span>
+<span class="k">class</span> <span class="nc">GroupedShuffleRangeTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  A &#39;RangeTracker&#39; for positions used by&#39;GroupedShuffleReader&#39;.</span>
 
 <span class="sd">  These positions roughly correspond to hashes of keys. In case of hash</span>
 <span class="sd">  collisions, multiple groups can have the same position. In that case, the</span>
@@ -273,14 +278,14 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_split_points_seen</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.start_position"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.start_position">[docs]</a>  <span class="k">def</span> <span class="nf">start_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_start_pos</span></div>
+  <span class="k">def</span> <span class="nf">start_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_start_pos</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.stop_position"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.stop_position">[docs]</a>  <span class="k">def</span> <span class="nf">stop_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_stop_pos</span></div>
+  <span class="k">def</span> <span class="nf">stop_position</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_stop_pos</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.last_group_start"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.last_group_start">[docs]</a>  <span class="k">def</span> <span class="nf">last_group_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_last_group_start</span></div>
+  <span class="k">def</span> <span class="nf">last_group_start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_last_group_start</span>
 
   <span class="k">def</span> <span class="nf">_validate_decoded_group_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_group_start</span><span class="p">,</span> <span class="n">split_point</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_position</span><span class="p">()</span> <span class="ow">and</span> <span class="n">decoded_group_start</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_position</span><span class="p">():</span>
@@ -318,7 +323,7 @@
                           <span class="p">,</span> <span class="p">(</span><span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_group_was_at_a_split_point</span>
                              <span class="k">else</span> <span class="s1">&#39;non-&#39;</span><span class="p">)))</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.try_claim"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.try_claim">[docs]</a>  <span class="k">def</span> <span class="nf">try_claim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_group_start</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">try_claim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_group_start</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_validate_decoded_group_start</span><span class="p">(</span><span class="n">decoded_group_start</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
       <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_position</span><span class="p">()</span>
@@ -328,15 +333,15 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_last_group_start</span> <span class="o">=</span> <span class="n">decoded_group_start</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_last_group_was_at_a_split_point</span> <span class="o">=</span> <span class="kc">True</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_split_points_seen</span> <span class="o">+=</span> <span class="mi">1</span>
-      <span class="k">return</span> <span class="kc">True</span></div>
+      <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.set_current_position"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.set_current_position">[docs]</a>  <span class="k">def</span> <span class="nf">set_current_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_group_start</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">set_current_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_group_start</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_validate_decoded_group_start</span><span class="p">(</span><span class="n">decoded_group_start</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_last_group_start</span> <span class="o">=</span> <span class="n">decoded_group_start</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_last_group_was_at_a_split_point</span> <span class="o">=</span> <span class="kc">False</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_last_group_was_at_a_split_point</span> <span class="o">=</span> <span class="kc">False</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.try_split"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.try_split">[docs]</a>  <span class="k">def</span> <span class="nf">try_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_split_position</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">try_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decoded_split_position</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_group_start</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Refusing to split </span><span class="si">%r</span><span class="s1"> at </span><span class="si">%r</span><span class="s1">: unstarted&#39;</span>
@@ -364,22 +369,22 @@
       <span class="c1"># Since GroupedShuffleRangeTracker cannot determine relative sizes of the</span>
       <span class="c1"># two splits, returning 0.5 as the fraction below so that the framework</span>
       <span class="c1"># assumes the splits to be of the same size.</span>
-      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_stop_pos</span><span class="p">,</span> <span class="mf">0.5</span></div>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decoded_stop_pos</span><span class="p">,</span> <span class="mf">0.5</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.fraction_consumed"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.fraction_consumed">[docs]</a>  <span class="k">def</span> <span class="nf">fraction_consumed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">fraction_consumed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># GroupingShuffle sources have special support on the service and the</span>
     <span class="c1"># service will estimate progress from positions for us.</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;GroupedShuffleRangeTracker does not measure fraction&#39;</span>
                        <span class="s1">&#39; consumed due to positions being opaque strings&#39;</span>
-                       <span class="s1">&#39; that are interpreted by the service&#39;</span><span class="p">)</span></div>
+                       <span class="s1">&#39; that are interpreted by the service&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GroupedShuffleRangeTracker.split_points"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.GroupedShuffleRangeTracker.split_points">[docs]</a>  <span class="k">def</span> <span class="nf">split_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">split_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
       <span class="n">splits_points_consumed</span> <span class="o">=</span> <span class="p">(</span>
           <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_points_seen</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_points_seen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
 
       <span class="k">return</span> <span class="p">(</span><span class="n">splits_points_consumed</span><span class="p">,</span>
-              <span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="o">.</span><span class="n">SPLIT_POINTS_UNKNOWN</span><span class="p">)</span></div></div>
+              <span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="o">.</span><span class="n">SPLIT_POINTS_UNKNOWN</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="OrderedPositionRangeTracker"><a class="viewcode-back" href="../../../apache_beam.io.html#apache_beam.io.range_trackers.OrderedPositionRangeTracker">[docs]</a><span class="k">class</span> <span class="nc">OrderedPositionRangeTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RangeTracker</span><span class="p">):</span>

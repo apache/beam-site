@@ -93,27 +93,48 @@
 <span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">util</span>
 <span class="kn">from</span> <span class="nn">apache_beam.runners.api</span> <span class="k">import</span> <span class="n">beam_runner_api_pb2</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">ptransform</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">HasDisplayData</span><span class="p">,</span> <span class="n">DisplayDataItem</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">DisplayDataItem</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">HasDisplayData</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.ptransform</span> <span class="k">import</span> <span class="n">PTransform</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.ptransform</span> <span class="k">import</span> <span class="n">PTransformWithSideInputs</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">MIN_TIMESTAMP</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">OutputTimeFn</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">TimestampCombiner</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">WindowedValue</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">TimestampedValue</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">GlobalWindows</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">WindowFn</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">get_type_hints</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">is_consistent_with</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">KV</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">trivial_inference</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">TypeCheckError</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">WithTypeHints</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">get_type_hints</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">TypeCheckError</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.decorators</span> <span class="k">import</span> <span class="n">WithTypeHints</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints.trivial_inference</span> <span class="k">import</span> <span class="n">element_type</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="k">import</span> <span class="n">is_consistent_with</span>
 <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">urns</span>
-<span class="kn">from</span> <span class="nn">apache_beam.utils.pipeline_options</span> <span class="k">import</span> <span class="n">TypeOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">TypeOptions</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;DoFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CombineFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PartitionFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ParDo&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FlatMap&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Map&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Filter&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CombineGlobally&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CombinePerKey&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;CombineValues&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GroupByKey&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Partition&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Windowing&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;WindowInto&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Flatten&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Create&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
 
 
 <span class="c1"># Type variables</span>
@@ -122,12 +143,12 @@
 <span class="n">V</span> <span class="o">=</span> <span class="n">typehints</span><span class="o">.</span><span class="n">TypeVariable</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="DoFnContext"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFnContext">[docs]</a><span class="k">class</span> <span class="nc">DoFnContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DoFnContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A context available to all methods of DoFn instance.&quot;&quot;&quot;</span>
-  <span class="k">pass</span></div>
+  <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="DoFnProcessContext"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFnProcessContext">[docs]</a><span class="k">class</span> <span class="nc">DoFnProcessContext</span><span class="p">(</span><span class="n">DoFnContext</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DoFnProcessContext</span><span class="p">(</span><span class="n">DoFnContext</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A processing context passed to DoFn process() during execution.</span>
 
 <span class="sd">  Most importantly, a DoFn.process method will access context.element</span>
@@ -165,7 +186,7 @@
     <span class="k">if</span> <span class="n">element</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">set_element</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DoFnProcessContext.set_element"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFnProcessContext.set_element">[docs]</a>  <span class="k">def</span> <span class="nf">set_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">set_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowed_value</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">windowed_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="c1"># Not currently processing an element.</span>
       <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;element&#39;</span><span class="p">):</span>
@@ -175,7 +196,7 @@
     <span class="k">else</span><span class="p">:</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">element</span> <span class="o">=</span> <span class="n">windowed_value</span><span class="o">.</span><span class="n">value</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">windowed_value</span><span class="o">.</span><span class="n">timestamp</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">windows</span> <span class="o">=</span> <span class="n">windowed_value</span><span class="o">.</span><span class="n">windows</span></div></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">windows</span> <span class="o">=</span> <span class="n">windowed_value</span><span class="o">.</span><span class="n">windows</span>
 
 
 <div class="viewcode-block" id="DoFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFn">[docs]</a><span class="k">class</span> <span class="nc">DoFn</span><span class="p">(</span><span class="n">WithTypeHints</span><span class="p">,</span> <span class="n">HasDisplayData</span><span class="p">):</span>
@@ -194,6 +215,8 @@
   <span class="n">SideInputParam</span> <span class="o">=</span> <span class="s1">&#39;SideInputParam&#39;</span>
   <span class="n">TimestampParam</span> <span class="o">=</span> <span class="s1">&#39;TimestampParam&#39;</span>
   <span class="n">WindowParam</span> <span class="o">=</span> <span class="s1">&#39;WindowParam&#39;</span>
+
+  <span class="n">DoFnParams</span> <span class="o">=</span> <span class="p">[</span><span class="n">ElementParam</span><span class="p">,</span> <span class="n">SideInputParam</span><span class="p">,</span> <span class="n">TimestampParam</span><span class="p">,</span> <span class="n">WindowParam</span><span class="p">]</span>
 
   <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="DoFn.from_callable"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFn.from_callable">[docs]</a>  <span class="k">def</span> <span class="nf">from_callable</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
@@ -256,14 +279,14 @@
       <span class="k">return</span> <span class="n">Any</span>
     <span class="k">return</span> <span class="n">type_hint</span>
 
-<div class="viewcode-block" id="DoFn.process_argspec_fn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFn.process_argspec_fn">[docs]</a>  <span class="k">def</span> <span class="nf">process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">_process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the Python callable that will eventually be invoked.</span>
 
 <span class="sd">    This should ideally be the user-level function that is called with</span>
 <span class="sd">    the main and (if any) side inputs, and is used to relate the type</span>
 <span class="sd">    hint parameters with the input parameters (e.g., by argument name).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span>
 
 <div class="viewcode-block" id="DoFn.is_process_bounded"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.DoFn.is_process_bounded">[docs]</a>  <span class="k">def</span> <span class="nf">is_process_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Checks if an object is a bound method on an instance.&quot;&quot;&quot;</span>
@@ -287,8 +310,10 @@
   <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">is_bound</span> <span class="ow">or</span> <span class="n">argspec</span><span class="o">.</span><span class="n">varargs</span> <span class="ow">or</span> <span class="n">argspec</span><span class="o">.</span><span class="n">keywords</span>
 
 
-<div class="viewcode-block" id="CallableWrapperDoFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperDoFn">[docs]</a><span class="k">class</span> <span class="nc">CallableWrapperDoFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A DoFn (function) object wrapping a callable object.</span>
+<span class="k">class</span> <span class="nc">CallableWrapperDoFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  A DoFn (function) object wrapping a callable object.</span>
 
 <span class="sd">  The purpose of this class is to conveniently wrap simple functions and use</span>
 <span class="sd">  them in transforms.</span>
@@ -316,7 +341,7 @@
 
     <span class="nb">super</span><span class="p">(</span><span class="n">CallableWrapperDoFn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-<div class="viewcode-block" id="CallableWrapperDoFn.display_data"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperDoFn.display_data">[docs]</a>  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># If the callable has a name, then it&#39;s likely a function, and</span>
     <span class="c1"># we show its name.</span>
     <span class="c1"># Otherwise, it might be an instance of a callable class. We</span>
@@ -324,12 +349,12 @@
     <span class="n">display_data_value</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="s1">&#39;__name__&#39;</span><span class="p">)</span>
                           <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;fn&#39;</span><span class="p">:</span> <span class="n">DisplayDataItem</span><span class="p">(</span><span class="n">display_data_value</span><span class="p">,</span>
-                                  <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Transform Function&#39;</span><span class="p">)}</span></div>
+                                  <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Transform Function&#39;</span><span class="p">)}</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;CallableWrapperDoFn(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span>
 
-<div class="viewcode-block" id="CallableWrapperDoFn.default_type_hints"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperDoFn.default_type_hints">[docs]</a>  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">type_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">)</span>
     <span class="c1"># If the fn was a DoFn annotated with a type-hint that hinted a return</span>
     <span class="c1"># type compatible with Iterable[Any], then we strip off the outer</span>
@@ -340,14 +365,14 @@
       <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">is_consistent_with</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
         <span class="n">type_hints</span> <span class="o">=</span> <span class="n">type_hints</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">type_hints</span><span class="o">.</span><span class="n">set_output_types</span><span class="p">(</span><span class="n">element_type</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">type_hints</span></div>
+    <span class="k">return</span> <span class="n">type_hints</span>
 
-<div class="viewcode-block" id="CallableWrapperDoFn.infer_output_type"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperDoFn.infer_output_type">[docs]</a>  <span class="k">def</span> <span class="nf">infer_output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">infer_output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strip_output_annotations</span><span class="p">(</span>
-        <span class="n">trivial_inference</span><span class="o">.</span><span class="n">infer_return_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="p">[</span><span class="n">input_type</span><span class="p">]))</span></div>
+        <span class="n">trivial_inference</span><span class="o">.</span><span class="n">infer_return_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="p">[</span><span class="n">input_type</span><span class="p">]))</span>
 
-<div class="viewcode-block" id="CallableWrapperDoFn.process_argspec_fn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperDoFn.process_argspec_fn">[docs]</a>  <span class="k">def</span> <span class="nf">process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="s1">&#39;_argspec_fn&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">_process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="s1">&#39;_argspec_fn&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="CombineFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineFn">[docs]</a><span class="k">class</span> <span class="nc">CombineFn</span><span class="p">(</span><span class="n">WithTypeHints</span><span class="p">,</span> <span class="n">HasDisplayData</span><span class="p">):</span>
@@ -470,8 +495,10 @@
     <span class="k">return</span> <span class="n">fn</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">CombineFn</span><span class="p">)</span> <span class="k">else</span> <span class="n">CallableWrapperCombineFn</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="CallableWrapperCombineFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn">[docs]</a><span class="k">class</span> <span class="nc">CallableWrapperCombineFn</span><span class="p">(</span><span class="n">CombineFn</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A CombineFn (function) object wrapping a callable object.</span>
+<span class="k">class</span> <span class="nc">CallableWrapperCombineFn</span><span class="p">(</span><span class="n">CombineFn</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  A CombineFn (function) object wrapping a callable object.</span>
 
 <span class="sd">  The purpose of this class is to conveniently wrap simple functions and use</span>
 <span class="sd">  them in Combine transforms.</span>
@@ -496,21 +523,21 @@
     <span class="nb">super</span><span class="p">(</span><span class="n">CallableWrapperCombineFn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span> <span class="o">=</span> <span class="n">fn</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.display_data"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.display_data">[docs]</a>  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;fn_dd&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">}</span></div>
+  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;fn_dd&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">}</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;CallableWrapperCombineFn(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.create_accumulator"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.create_accumulator">[docs]</a>  <span class="k">def</span> <span class="nf">create_accumulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span></div>
+  <span class="k">def</span> <span class="nf">create_accumulator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.add_input"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.add_input">[docs]</a>  <span class="k">def</span> <span class="nf">add_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">add_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">accumulator</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">element</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">([</span><span class="n">accumulator</span><span class="p">,</span> <span class="n">element</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">([</span><span class="n">accumulator</span><span class="p">,</span> <span class="n">element</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.add_inputs"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.add_inputs">[docs]</a>  <span class="k">def</span> <span class="nf">add_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">add_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="n">elements</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">accumulator</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span><span class="p">:</span>
       <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elements</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
@@ -520,16 +547,16 @@
       <span class="k">yield</span> <span class="n">accumulator</span>
       <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">e</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">union</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">union</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.merge_accumulators"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.merge_accumulators">[docs]</a>  <span class="k">def</span> <span class="nf">merge_accumulators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulators</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">merge_accumulators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulators</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># It&#39;s (weakly) assumed that self._fn is associative.</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">accumulators</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">accumulators</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.extract_output"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.extract_output">[docs]</a>  <span class="k">def</span> <span class="nf">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(())</span> <span class="k">if</span> <span class="n">accumulator</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span> <span class="k">else</span> <span class="n">accumulator</span></div>
+  <span class="k">def</span> <span class="nf">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">accumulator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(())</span> <span class="k">if</span> <span class="n">accumulator</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EMPTY</span> <span class="k">else</span> <span class="n">accumulator</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.default_type_hints"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.default_type_hints">[docs]</a>  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">fn_hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">fn_hints</span><span class="o">.</span><span class="n">input_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">fn_hints</span>
@@ -551,9 +578,9 @@
       <span class="c1"># TODO(robertwb): Assert output type is consistent with input type?</span>
       <span class="n">hints</span> <span class="o">=</span> <span class="n">fn_hints</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
       <span class="n">hints</span><span class="o">.</span><span class="n">set_input_types</span><span class="p">(</span><span class="o">*</span><span class="n">input_args</span><span class="p">,</span> <span class="o">**</span><span class="n">input_kwargs</span><span class="p">)</span>
-      <span class="k">return</span> <span class="n">hints</span></div>
+      <span class="k">return</span> <span class="n">hints</span>
 
-<div class="viewcode-block" id="CallableWrapperCombineFn.for_input_type"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperCombineFn.for_input_type">[docs]</a>  <span class="k">def</span> <span class="nf">for_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">for_input_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
     <span class="c1"># Avoid circular imports.</span>
     <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">cy_combiners</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span> <span class="ow">is</span> <span class="nb">any</span><span class="p">:</span>
@@ -569,7 +596,7 @@
           <span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span> <span class="n">cy_combiners</span><span class="o">.</span><span class="n">MinFloatFn</span><span class="p">(),</span>
           <span class="p">(</span><span class="nb">max</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span> <span class="n">cy_combiners</span><span class="o">.</span><span class="n">MaxFloatFn</span><span class="p">(),</span>
       <span class="p">}</span>
-    <span class="k">return</span> <span class="n">known_types</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="n">input_type</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div></div>
+    <span class="k">return</span> <span class="n">known_types</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">,</span> <span class="n">input_type</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PartitionFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.PartitionFn">[docs]</a><span class="k">class</span> <span class="nc">PartitionFn</span><span class="p">(</span><span class="n">WithTypeHints</span><span class="p">):</span>
@@ -597,8 +624,10 @@
     <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="CallableWrapperPartitionFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperPartitionFn">[docs]</a><span class="k">class</span> <span class="nc">CallableWrapperPartitionFn</span><span class="p">(</span><span class="n">PartitionFn</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;A PartitionFn object wrapping a callable object.</span>
+<span class="k">class</span> <span class="nc">CallableWrapperPartitionFn</span><span class="p">(</span><span class="n">PartitionFn</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  A PartitionFn object wrapping a callable object.</span>
 
 <span class="sd">  Instances of this class wrap simple functions for use in Partition operations.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
@@ -619,8 +648,8 @@
       <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected a callable object instead of: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">fn</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span> <span class="o">=</span> <span class="n">fn</span>
 
-<div class="viewcode-block" id="CallableWrapperPartitionFn.partition_for"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CallableWrapperPartitionFn.partition_for">[docs]</a>  <span class="k">def</span> <span class="nf">partition_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">num_partitions</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">num_partitions</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">partition_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">num_partitions</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">num_partitions</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ParDo"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.ParDo">[docs]</a><span class="k">class</span> <span class="nc">ParDo</span><span class="p">(</span><span class="n">PTransformWithSideInputs</span><span class="p">):</span>
@@ -660,6 +689,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">,</span> <span class="n">DoFn</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;ParDo must be called with a DoFn instance.&#39;</span><span class="p">)</span>
 
+    <span class="c1"># Validate the DoFn by creating a DoFnSignature</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.runners.common</span> <span class="k">import</span> <span class="n">DoFnSignature</span>
+    <span class="n">DoFnSignature</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">)</span>
+
 <div class="viewcode-block" id="ParDo.default_type_hints"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.ParDo.default_type_hints">[docs]</a>  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">()</span></div>
 
@@ -672,8 +705,8 @@
       <span class="k">return</span> <span class="n">fn</span>
     <span class="k">return</span> <span class="n">CallableWrapperDoFn</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ParDo.process_argspec_fn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.ParDo.process_argspec_fn">[docs]</a>  <span class="k">def</span> <span class="nf">process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">process_argspec_fn</span><span class="p">()</span></div>
+  <span class="k">def</span> <span class="nf">_process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">_process_argspec_fn</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ParDo.display_data"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.ParDo.display_data">[docs]</a>  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;fn&#39;</span><span class="p">:</span> <span class="n">DisplayDataItem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span>
@@ -901,19 +934,19 @@
 <div class="viewcode-block" id="CombineGlobally.default_label"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.default_label">[docs]</a>  <span class="k">def</span> <span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;CombineGlobally(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">label_from_callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CombineGlobally.clone"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.clone">[docs]</a>  <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_attributes</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">_clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_attributes</span><span class="p">):</span>
     <span class="n">clone</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     <span class="n">clone</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">extra_attributes</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">clone</span></div>
+    <span class="k">return</span> <span class="n">clone</span>
 
 <div class="viewcode-block" id="CombineGlobally.with_defaults"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.with_defaults">[docs]</a>  <span class="k">def</span> <span class="nf">with_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">has_defaults</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">has_defaults</span><span class="o">=</span><span class="n">has_defaults</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">has_defaults</span><span class="o">=</span><span class="n">has_defaults</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CombineGlobally.without_defaults"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.without_defaults">[docs]</a>  <span class="k">def</span> <span class="nf">without_defaults</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CombineGlobally.as_singleton_view"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.as_singleton_view">[docs]</a>  <span class="k">def</span> <span class="nf">as_singleton_view</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">as_view</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clone</span><span class="p">(</span><span class="n">as_view</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="CombineGlobally.expand"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineGlobally.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">add_input_types</span><span class="p">(</span><span class="n">transform</span><span class="p">):</span>
@@ -995,8 +1028,8 @@
 <div class="viewcode-block" id="CombinePerKey.default_label"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombinePerKey.default_label">[docs]</a>  <span class="k">def</span> <span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fn_label</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="CombinePerKey.process_argspec_fn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombinePerKey.process_argspec_fn">[docs]</a>  <span class="k">def</span> <span class="nf">process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">_fn</span>  <span class="c1"># pylint: disable=protected-access</span></div>
+  <span class="k">def</span> <span class="nf">_process_argspec_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">_fn</span>  <span class="c1"># pylint: disable=protected-access</span>
 
 <div class="viewcode-block" id="CombinePerKey.expand"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombinePerKey.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
     <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">insert_values_in_args</span><span class="p">(</span>
@@ -1027,7 +1060,7 @@
         <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="CombineValuesDoFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineValuesDoFn">[docs]</a><span class="k">class</span> <span class="nc">CombineValuesDoFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CombineValuesDoFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;DoFn for performing per-key Combine transforms.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_pcoll_type</span><span class="p">,</span> <span class="n">combinefn</span><span class="p">,</span> <span class="n">runtime_type_check</span><span class="p">):</span>
@@ -1035,7 +1068,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">combinefn</span> <span class="o">=</span> <span class="n">combinefn</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">runtime_type_check</span> <span class="o">=</span> <span class="n">runtime_type_check</span>
 
-<div class="viewcode-block" id="CombineValuesDoFn.process"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineValuesDoFn.process">[docs]</a>  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1"># Expected elements input to this DoFn are 2-tuples of the form</span>
     <span class="c1"># (key, iter), with iter an iterable of all the values associated with key</span>
     <span class="c1"># in the input PCollection.</span>
@@ -1063,9 +1096,9 @@
         <span class="n">accumulators</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="c1"># Convert accumulator to the final result.</span>
     <span class="k">return</span> <span class="p">[(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-             <span class="bp">self</span><span class="o">.</span><span class="n">combinefn</span><span class="o">.</span><span class="n">extract_output</span><span class="p">(</span><span class="n">accumulator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))]</span></div>
+             <span class="bp">self</span><span class="o">.</span><span class="n">combinefn</span><span class="o">.</span><span class="n">extract_output</span><span class="p">(</span><span class="n">accumulator</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))]</span>
 
-<div class="viewcode-block" id="CombineValuesDoFn.default_type_hints"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.CombineValuesDoFn.default_type_hints">[docs]</a>  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">default_type_hints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">hints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">combinefn</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">hints</span><span class="o">.</span><span class="n">input_types</span><span class="p">:</span>
       <span class="n">K</span> <span class="o">=</span> <span class="n">typehints</span><span class="o">.</span><span class="n">TypeVariable</span><span class="p">(</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
@@ -1077,7 +1110,7 @@
     <span class="k">if</span> <span class="n">hints</span><span class="o">.</span><span class="n">output_types</span><span class="p">:</span>
       <span class="n">main_output_type</span> <span class="o">=</span> <span class="n">hints</span><span class="o">.</span><span class="n">simple_output_type</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
       <span class="n">hints</span><span class="o">.</span><span class="n">set_output_types</span><span class="p">(</span><span class="n">typehints</span><span class="o">.</span><span class="n">Tuple</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">main_output_type</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">hints</span></div></div>
+    <span class="k">return</span> <span class="n">hints</span>
 
 
 <span class="nd">@typehints</span><span class="o">.</span><span class="n">with_input_types</span><span class="p">(</span><span class="n">typehints</span><span class="o">.</span><span class="n">KV</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">])</span>
@@ -1164,7 +1197,7 @@
       <span class="k">return</span> <span class="p">(</span><span class="n">pcoll</span>
               <span class="o">|</span> <span class="s1">&#39;ReifyWindows&#39;</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">ParDo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ReifyWindows</span><span class="p">())</span>
                  <span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="n">reify_output_type</span><span class="p">))</span>
-              <span class="o">|</span> <span class="s1">&#39;GroupByKey&#39;</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">GroupByKeyOnly</span><span class="p">()</span>
+              <span class="o">|</span> <span class="s1">&#39;GroupByKey&#39;</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">_GroupByKeyOnly</span><span class="p">()</span>
                  <span class="o">.</span><span class="n">with_input_types</span><span class="p">(</span><span class="n">reify_output_type</span><span class="p">)</span>
                  <span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="n">gbk_input_type</span><span class="p">))</span>
               <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;GroupByWindow&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">ParDo</span><span class="p">(</span>
@@ -1175,22 +1208,22 @@
       <span class="c1"># The input_type is None, run the default</span>
       <span class="k">return</span> <span class="p">(</span><span class="n">pcoll</span>
               <span class="o">|</span> <span class="s1">&#39;ReifyWindows&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">ParDo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ReifyWindows</span><span class="p">())</span>
-              <span class="o">|</span> <span class="s1">&#39;GroupByKey&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">GroupByKeyOnly</span><span class="p">()</span>
+              <span class="o">|</span> <span class="s1">&#39;GroupByKey&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">_GroupByKeyOnly</span><span class="p">()</span>
               <span class="o">|</span> <span class="s1">&#39;GroupByWindow&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">ParDo</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">GroupAlsoByWindow</span><span class="p">(</span><span class="n">pcoll</span><span class="o">.</span><span class="n">windowing</span><span class="p">)))</span></div></div>
 
 
 <span class="nd">@typehints</span><span class="o">.</span><span class="n">with_input_types</span><span class="p">(</span><span class="n">typehints</span><span class="o">.</span><span class="n">KV</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">])</span>
 <span class="nd">@typehints</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="n">typehints</span><span class="o">.</span><span class="n">KV</span><span class="p">[</span><span class="n">K</span><span class="p">,</span> <span class="n">typehints</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">V</span><span class="p">]])</span>
-<div class="viewcode-block" id="GroupByKeyOnly"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.GroupByKeyOnly">[docs]</a><span class="k">class</span> <span class="nc">GroupByKeyOnly</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_GroupByKeyOnly</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A group by key transform, ignoring windows.&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="GroupByKeyOnly.infer_output_type"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.GroupByKeyOnly.infer_output_type">[docs]</a>  <span class="k">def</span> <span class="nf">infer_output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">infer_output_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="p">):</span>
     <span class="n">key_type</span><span class="p">,</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">trivial_inference</span><span class="o">.</span><span class="n">key_value_types</span><span class="p">(</span><span class="n">input_type</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">KV</span><span class="p">[</span><span class="n">key_type</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">value_type</span><span class="p">]]</span></div>
+    <span class="k">return</span> <span class="n">KV</span><span class="p">[</span><span class="n">key_type</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">value_type</span><span class="p">]]</span>
 
-<div class="viewcode-block" id="GroupByKeyOnly.expand"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.GroupByKeyOnly.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_check_pcollection</span><span class="p">(</span><span class="n">pcoll</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="p">(</span><span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span></div></div>
+    <span class="k">return</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="p">(</span><span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Partition"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.Partition">[docs]</a><span class="k">class</span> <span class="nc">Partition</span><span class="p">(</span><span class="n">PTransformWithSideInputs</span><span class="p">):</span>
@@ -1236,7 +1269,7 @@
 <div class="viewcode-block" id="Windowing"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.Windowing">[docs]</a><span class="k">class</span> <span class="nc">Windowing</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowfn</span><span class="p">,</span> <span class="n">triggerfn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accumulation_mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">output_time_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+               <span class="n">timestamp_combiner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">global</span> <span class="n">AccumulationMode</span><span class="p">,</span> <span class="n">DefaultTrigger</span>  <span class="c1"># pylint: disable=global-variable-not-assigned</span>
     <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
     <span class="kn">from</span> <span class="nn">apache_beam.transforms.trigger</span> <span class="k">import</span> <span class="n">AccumulationMode</span><span class="p">,</span> <span class="n">DefaultTrigger</span>
@@ -1256,17 +1289,18 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">windowfn</span> <span class="o">=</span> <span class="n">windowfn</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">triggerfn</span> <span class="o">=</span> <span class="n">triggerfn</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span> <span class="o">=</span> <span class="n">accumulation_mode</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn</span> <span class="o">=</span> <span class="n">output_time_fn</span> <span class="ow">or</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">timestamp_combiner</span> <span class="ow">or</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_is_default</span> <span class="o">=</span> <span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">windowfn</span> <span class="o">==</span> <span class="n">GlobalWindows</span><span class="p">()</span> <span class="ow">and</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">triggerfn</span> <span class="o">==</span> <span class="n">DefaultTrigger</span><span class="p">()</span> <span class="ow">and</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span> <span class="o">==</span> <span class="n">AccumulationMode</span><span class="o">.</span><span class="n">DISCARDING</span> <span class="ow">and</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s2">&quot;Windowing(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowfn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">triggerfn</span><span class="p">,</span>
                                           <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span><span class="p">,</span>
-                                          <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn</span><span class="p">)</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">):</span>
@@ -1276,7 +1310,7 @@
           <span class="bp">self</span><span class="o">.</span><span class="n">windowfn</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">windowfn</span>
           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">triggerfn</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">triggerfn</span>
           <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">accumulation_mode</span>
-          <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">output_time_fn</span><span class="p">)</span>
+          <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">timestamp_combiner</span><span class="p">)</span>
     <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="Windowing.is_default"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.Windowing.is_default">[docs]</a>  <span class="k">def</span> <span class="nf">is_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1293,7 +1327,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">windowfn</span><span class="o">.</span><span class="n">get_window_coder</span><span class="p">()),</span>
         <span class="n">trigger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">triggerfn</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">context</span><span class="p">),</span>
         <span class="n">accumulation_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span><span class="p">,</span>
-        <span class="n">output_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn</span><span class="p">,</span>
+        <span class="n">output_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner</span><span class="p">,</span>
         <span class="c1"># TODO(robertwb): Support EMIT_IF_NONEMPTY</span>
         <span class="n">closing_behavior</span><span class="o">=</span><span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">EMIT_ALWAYS</span><span class="p">,</span>
         <span class="n">allowed_lateness</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
@@ -1306,7 +1340,7 @@
         <span class="n">windowfn</span><span class="o">=</span><span class="n">WindowFn</span><span class="o">.</span><span class="n">from_runner_api</span><span class="p">(</span><span class="n">proto</span><span class="o">.</span><span class="n">window_fn</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
         <span class="n">triggerfn</span><span class="o">=</span><span class="n">TriggerFn</span><span class="o">.</span><span class="n">from_runner_api</span><span class="p">(</span><span class="n">proto</span><span class="o">.</span><span class="n">trigger</span><span class="p">,</span> <span class="n">context</span><span class="p">),</span>
         <span class="n">accumulation_mode</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">accumulation_mode</span><span class="p">,</span>
-        <span class="n">output_time_fn</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">output_time</span><span class="p">)</span></div></div>
+        <span class="n">timestamp_combiner</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">output_time</span><span class="p">)</span></div></div>
 
 
 <span class="nd">@typehints</span><span class="o">.</span><span class="n">with_input_types</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
@@ -1339,9 +1373,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">triggerfn</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;trigger&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">accumulation_mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;accumulation_mode&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-    <span class="n">output_time_fn</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;output_time_fn&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">timestamp_combiner</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;timestamp_combiner&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">windowing</span> <span class="o">=</span> <span class="n">Windowing</span><span class="p">(</span><span class="n">windowfn</span><span class="p">,</span> <span class="n">triggerfn</span><span class="p">,</span> <span class="n">accumulation_mode</span><span class="p">,</span>
-                               <span class="n">output_time_fn</span><span class="p">)</span>
+                               <span class="n">timestamp_combiner</span><span class="p">)</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">WindowInto</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">WindowIntoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowing</span><span class="p">))</span>
 
 <div class="viewcode-block" id="WindowInto.get_windowing"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.core.WindowInto.get_windowing">[docs]</a>  <span class="k">def</span> <span class="nf">get_windowing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_inputs</span><span class="p">):</span>
@@ -1371,7 +1405,7 @@
         <span class="n">windowing</span><span class="o">.</span><span class="n">windowfn</span><span class="p">,</span>
         <span class="n">trigger</span><span class="o">=</span><span class="n">windowing</span><span class="o">.</span><span class="n">triggerfn</span><span class="p">,</span>
         <span class="n">accumulation_mode</span><span class="o">=</span><span class="n">windowing</span><span class="o">.</span><span class="n">accumulation_mode</span><span class="p">,</span>
-        <span class="n">output_time_fn</span><span class="o">=</span><span class="n">windowing</span><span class="o">.</span><span class="n">output_time_fn</span><span class="p">)</span></div></div>
+        <span class="n">timestamp_combiner</span><span class="o">=</span><span class="n">windowing</span><span class="o">.</span><span class="n">timestamp_combiner</span><span class="p">)</span></div></div>
 
 
 <span class="n">PTransform</span><span class="o">.</span><span class="n">register_urn</span><span class="p">(</span>

@@ -102,7 +102,9 @@
 
 
 <div class="viewcode-block" id="set_running_in_gce"><a class="viewcode-back" href="../../../../apache_beam.internal.gcp.html#apache_beam.internal.gcp.auth.set_running_in_gce">[docs]</a><span class="k">def</span> <span class="nf">set_running_in_gce</span><span class="p">(</span><span class="n">worker_executing_project</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Informs the authentication library that we are running in GCE.</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Informs the authentication library that we are running in GCE.</span>
 
 <span class="sd">  When we are running in GCE, we have the option of using the VM metadata</span>
 <span class="sd">  credentials for authentication to Google services.</span>
@@ -121,8 +123,10 @@
   <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="GCEMetadataCredentials"><a class="viewcode-back" href="../../../../apache_beam.internal.gcp.html#apache_beam.internal.gcp.auth.GCEMetadataCredentials">[docs]</a><span class="k">class</span> <span class="nc">GCEMetadataCredentials</span><span class="p">(</span><span class="n">OAuth2Credentials</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Credential object initialized using access token from GCE VM metadata.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">_GCEMetadataCredentials</span><span class="p">(</span><span class="n">OAuth2Credentials</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Credential object initialized using access token from GCE VM metadata.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_agent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create an instance of GCEMetadataCredentials.</span>
@@ -133,7 +137,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">      user_agent: string, The HTTP User-Agent to provide for this application.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">GCEMetadataCredentials</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">_GCEMetadataCredentials</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span>  <span class="c1"># access_token</span>
         <span class="kc">None</span><span class="p">,</span>  <span class="c1"># client_id</span>
         <span class="kc">None</span><span class="p">,</span>  <span class="c1"># client_secret</span>
@@ -154,11 +158,13 @@
     <span class="n">token_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">urllib2</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">access_token</span> <span class="o">=</span> <span class="n">token_data</span><span class="p">[</span><span class="s1">&#39;access_token&#39;</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">token_expiry</span> <span class="o">=</span> <span class="p">(</span><span class="n">refresh_time</span> <span class="o">+</span>
-                         <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">token_data</span><span class="p">[</span><span class="s1">&#39;expires_in&#39;</span><span class="p">]))</span></div>
+                         <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">token_data</span><span class="p">[</span><span class="s1">&#39;expires_in&#39;</span><span class="p">]))</span>
 
 
 <div class="viewcode-block" id="get_service_credentials"><a class="viewcode-back" href="../../../../apache_beam.internal.gcp.html#apache_beam.internal.gcp.auth.get_service_credentials">[docs]</a><span class="k">def</span> <span class="nf">get_service_credentials</span><span class="p">():</span>
-  <span class="sd">&quot;&quot;&quot;Get credentials to access Google services.&quot;&quot;&quot;</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Get credentials to access Google services.&quot;&quot;&quot;</span>
   <span class="n">user_agent</span> <span class="o">=</span> <span class="s1">&#39;beam-python-sdk/1.0&#39;</span>
   <span class="k">if</span> <span class="n">is_running_in_gce</span><span class="p">:</span>
     <span class="c1"># We are currently running as a GCE taskrunner worker.</span>
@@ -166,7 +172,7 @@
     <span class="c1"># TODO(ccy): It&#39;s not entirely clear if these credentials are thread-safe.</span>
     <span class="c1"># If so, we can cache these credentials to save the overhead of creating</span>
     <span class="c1"># them again.</span>
-    <span class="k">return</span> <span class="n">GCEMetadataCredentials</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_GCEMetadataCredentials</span><span class="p">(</span><span class="n">user_agent</span><span class="o">=</span><span class="n">user_agent</span><span class="p">)</span>
   <span class="k">else</span><span class="p">:</span>
     <span class="n">client_scopes</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s1">&#39;https://www.googleapis.com/auth/bigquery&#39;</span><span class="p">,</span>

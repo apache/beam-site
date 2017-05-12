@@ -101,11 +101,13 @@
 <span class="kn">from</span> <span class="nn">apache_beam.typehints.typecheck</span> <span class="k">import</span> <span class="n">TypeCheckError</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints.typecheck</span> <span class="k">import</span> <span class="n">TypeCheckWrapperDoFn</span>
 <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">counters</span>
-<span class="kn">from</span> <span class="nn">apache_beam.utils.pipeline_options</span> <span class="k">import</span> <span class="n">TypeOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">TypeOptions</span>
 
 
 <div class="viewcode-block" id="TransformEvaluatorRegistry"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.html#apache_beam.runners.direct.transform_evaluator.TransformEvaluatorRegistry">[docs]</a><span class="k">class</span> <span class="nc">TransformEvaluatorRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Creates instances of TransformEvaluator for the application of a transform.</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Creates instances of TransformEvaluator for the application of a transform.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluation_context</span><span class="p">):</span>
@@ -115,7 +117,7 @@
         <span class="n">io</span><span class="o">.</span><span class="n">Read</span><span class="p">:</span> <span class="n">_BoundedReadEvaluator</span><span class="p">,</span>
         <span class="n">core</span><span class="o">.</span><span class="n">Flatten</span><span class="p">:</span> <span class="n">_FlattenEvaluator</span><span class="p">,</span>
         <span class="n">core</span><span class="o">.</span><span class="n">ParDo</span><span class="p">:</span> <span class="n">_ParDoEvaluator</span><span class="p">,</span>
-        <span class="n">core</span><span class="o">.</span><span class="n">GroupByKeyOnly</span><span class="p">:</span> <span class="n">_GroupByKeyOnlyEvaluator</span><span class="p">,</span>
+        <span class="n">core</span><span class="o">.</span><span class="n">_GroupByKeyOnly</span><span class="p">:</span> <span class="n">_GroupByKeyOnlyEvaluator</span><span class="p">,</span>
         <span class="n">_NativeWrite</span><span class="p">:</span> <span class="n">_NativeWriteEvaluator</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -145,7 +147,7 @@
     <span class="sd">&quot;&quot;&quot;Returns True if this applied_ptransform should run one bundle at a time.</span>
 
 <span class="sd">    Some TransformEvaluators use a global state object to keep track of their</span>
-<span class="sd">    global execution state. For example evaluator for GroupByKeyOnly uses this</span>
+<span class="sd">    global execution state. For example evaluator for _GroupByKeyOnly uses this</span>
 <span class="sd">    state as an in memory dictionary to buffer keys.</span>
 
 <span class="sd">    Serially executed evaluators will act as syncing point in the graph and</span>
@@ -161,7 +163,7 @@
 <span class="sd">      True if executor should execute applied_ptransform serially.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span>
-                      <span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">GroupByKeyOnly</span><span class="p">,</span> <span class="n">_NativeWrite</span><span class="p">))</span></div></div>
+                      <span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">_GroupByKeyOnly</span><span class="p">,</span> <span class="n">_NativeWrite</span><span class="p">))</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">_TransformEvaluator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -317,7 +319,7 @@
     <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
       <span class="k">pass</span>
 
-  <span class="k">class</span> <span class="nc">InMemoryReceiver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">class</span> <span class="nc">_InMemoryReceiver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Buffers undeclared outputs to the given dictionary.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
@@ -331,7 +333,7 @@
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluation_context</span><span class="o">.</span><span class="n">has_cache</span><span class="p">:</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_undeclared_in_memory_tag_values</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_undeclared_in_memory_tag_values</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
-      <span class="n">receiver</span> <span class="o">=</span> <span class="n">_TaggedReceivers</span><span class="o">.</span><span class="n">InMemoryReceiver</span><span class="p">(</span>
+      <span class="n">receiver</span> <span class="o">=</span> <span class="n">_TaggedReceivers</span><span class="o">.</span><span class="n">_InMemoryReceiver</span><span class="p">(</span>
           <span class="bp">self</span><span class="o">.</span><span class="n">_undeclared_in_memory_tag_values</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_null_receiver</span><span class="p">:</span>
@@ -387,7 +389,7 @@
 
 
 <span class="k">class</span> <span class="nc">_GroupByKeyOnlyEvaluator</span><span class="p">(</span><span class="n">_TransformEvaluator</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;TransformEvaluator for GroupByKeyOnly transform.&quot;&quot;&quot;</span>
+  <span class="sd">&quot;&quot;&quot;TransformEvaluator for _GroupByKeyOnly transform.&quot;&quot;&quot;</span>
 
   <span class="n">MAX_ELEMENT_PER_BUNDLE</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -431,7 +433,7 @@
       <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">element</span><span class="o">.</span><span class="n">value</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="n">TypeCheckError</span><span class="p">(</span><span class="s1">&#39;Input to GroupByKeyOnly must be a PCollection of &#39;</span>
+      <span class="k">raise</span> <span class="n">TypeCheckError</span><span class="p">(</span><span class="s1">&#39;Input to _GroupByKeyOnly must be a PCollection of &#39;</span>
                            <span class="s1">&#39;windowed key-value pairs. Instead received: </span><span class="si">%r</span><span class="s1">.&#39;</span>
                            <span class="o">%</span> <span class="n">element</span><span class="p">)</span>
 

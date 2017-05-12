@@ -107,7 +107,10 @@
 <span class="kn">from</span> <span class="nn">apache_beam.runners.runner</span> <span class="k">import</span> <span class="n">PipelineState</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.display</span> <span class="k">import</span> <span class="n">DisplayData</span>
 <span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="k">import</span> <span class="n">typehints</span>
-<span class="kn">from</span> <span class="nn">apache_beam.utils.pipeline_options</span> <span class="k">import</span> <span class="n">StandardOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="k">import</span> <span class="n">StandardOptions</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;DataflowRunner&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="DataflowRunner"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowRunner">[docs]</a><span class="k">class</span> <span class="nc">DataflowRunner</span><span class="p">(</span><span class="n">PipelineRunner</span><span class="p">):</span>
@@ -221,7 +224,7 @@
 
     <span class="k">class</span> <span class="nc">GroupByKeyInputVisitor</span><span class="p">(</span><span class="n">PipelineVisitor</span><span class="p">):</span>
       <span class="sd">&quot;&quot;&quot;A visitor that replaces `Any` element type for input `PCollection` of</span>
-<span class="sd">      a `GroupByKey` or `GroupByKeyOnly` with a `KV` type.</span>
+<span class="sd">      a `GroupByKey` or `_GroupByKeyOnly` with a `KV` type.</span>
 
 <span class="sd">      TODO(BEAM-115): Once Python SDk is compatible with the new Runner API,</span>
 <span class="sd">      we could directly replace the coder instead of mutating the element type.</span>
@@ -230,8 +233,8 @@
       <span class="k">def</span> <span class="nf">visit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_node</span><span class="p">):</span>
         <span class="c1"># Imported here to avoid circular dependencies.</span>
         <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
-        <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">GroupByKey</span><span class="p">,</span> <span class="n">GroupByKeyOnly</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform_node</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="p">(</span><span class="n">GroupByKey</span><span class="p">,</span> <span class="n">GroupByKeyOnly</span><span class="p">)):</span>
+        <span class="kn">from</span> <span class="nn">apache_beam.transforms.core</span> <span class="k">import</span> <span class="n">GroupByKey</span><span class="p">,</span> <span class="n">_GroupByKeyOnly</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform_node</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="p">(</span><span class="n">GroupByKey</span><span class="p">,</span> <span class="n">_GroupByKeyOnly</span><span class="p">)):</span>
           <span class="n">pcoll</span> <span class="o">=</span> <span class="n">transform_node</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
           <span class="n">input_type</span> <span class="o">=</span> <span class="n">pcoll</span><span class="o">.</span><span class="n">element_type</span>
           <span class="c1"># If input_type is not specified, then treat it as `Any`.</span>
@@ -759,7 +762,7 @@
          <span class="n">PropertyNames</span><span class="o">.</span><span class="n">OUTPUT_NAME</span><span class="p">:</span> <span class="n">input_step</span><span class="o">.</span><span class="n">get_output</span><span class="p">(</span><span class="n">input_tag</span><span class="p">)})</span></div></div>
 
 
-<div class="viewcode-block" id="DataflowPipelineResult"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowPipelineResult">[docs]</a><span class="k">class</span> <span class="nc">DataflowPipelineResult</span><span class="p">(</span><span class="n">PipelineResult</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataflowPipelineResult</span><span class="p">(</span><span class="n">PipelineResult</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Represents the state of a pipeline run on the Dataflow service.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
@@ -768,11 +771,11 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">_runner</span> <span class="o">=</span> <span class="n">runner</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">metric_results</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="DataflowPipelineResult.job_id"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowPipelineResult.job_id">[docs]</a>  <span class="k">def</span> <span class="nf">job_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">id</span></div>
+  <span class="k">def</span> <span class="nf">job_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">id</span>
 
-<div class="viewcode-block" id="DataflowPipelineResult.metrics"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowPipelineResult.metrics">[docs]</a>  <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_results</span></div>
+  <span class="k">def</span> <span class="nf">metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_results</span>
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">has_job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -812,7 +815,7 @@
         <span class="n">PipelineState</span><span class="o">.</span><span class="n">STOPPED</span><span class="p">,</span> <span class="n">PipelineState</span><span class="o">.</span><span class="n">DONE</span><span class="p">,</span> <span class="n">PipelineState</span><span class="o">.</span><span class="n">FAILED</span><span class="p">,</span>
         <span class="n">PipelineState</span><span class="o">.</span><span class="n">CANCELLED</span><span class="p">,</span> <span class="n">PipelineState</span><span class="o">.</span><span class="n">DRAINED</span><span class="p">]</span>
 
-<div class="viewcode-block" id="DataflowPipelineResult.wait_until_finish"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowPipelineResult.wait_until_finish">[docs]</a>  <span class="k">def</span> <span class="nf">wait_until_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">wait_until_finish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_in_terminal_state</span><span class="p">():</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_job</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s1">&#39;Failed to get the Dataflow job id.&#39;</span><span class="p">)</span>
@@ -837,7 +840,7 @@
         <span class="k">raise</span> <span class="n">DataflowRuntimeException</span><span class="p">(</span>
             <span class="s1">&#39;Dataflow pipeline failed. State: </span><span class="si">%s</span><span class="s1">, Error:</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
             <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_runner</span><span class="p">,</span> <span class="s1">&#39;last_error_msg&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span>
 
   <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span>
@@ -846,15 +849,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span></div>
+    <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="p">,</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
 
 
-<div class="viewcode-block" id="DataflowRuntimeException"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.html#apache_beam.runners.dataflow.dataflow_runner.DataflowRuntimeException">[docs]</a><span class="k">class</span> <span class="nc">DataflowRuntimeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataflowRuntimeException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Indicates an error has occurred in running this pipeline.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">DataflowRuntimeException</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
 </pre></div>
 
           </div>

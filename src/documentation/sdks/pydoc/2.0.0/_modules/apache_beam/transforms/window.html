@@ -117,21 +117,36 @@
 
 <span class="kn">from</span> <span class="nn">google.protobuf</span> <span class="k">import</span> <span class="n">struct_pb2</span>
 
-<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">coders</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="k">import</span> <span class="n">coders</span>
 <span class="kn">from</span> <span class="nn">apache_beam.runners.api</span> <span class="k">import</span> <span class="n">beam_runner_api_pb2</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">timeutil</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">Duration</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">MAX_TIMESTAMP</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">MIN_TIMESTAMP</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">Timestamp</span>
-<span class="kn">from</span> <span class="nn">apache_beam.utils.windowed_value</span> <span class="k">import</span> <span class="n">WindowedValue</span>
 <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">proto_utils</span>
 <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="k">import</span> <span class="n">urns</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">Duration</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">MIN_TIMESTAMP</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">Timestamp</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.windowed_value</span> <span class="k">import</span> <span class="n">WindowedValue</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;TimestampCombiner&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;WindowFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;BoundedWindow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;IntervalWindow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TimestampedValue&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GlobalWindow&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;NonMergingWindowFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;GlobalWindows&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;FixedWindows&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SlidingWindows&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Sessions&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
 
 
 <span class="c1"># TODO(ccy): revisit naming and semantics once Java Apache Beam finalizes their</span>
 <span class="c1"># behavior.</span>
-<div class="viewcode-block" id="OutputTimeFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.OutputTimeFn">[docs]</a><span class="k">class</span> <span class="nc">OutputTimeFn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="TimestampCombiner"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.TimestampCombiner">[docs]</a><span class="k">class</span> <span class="nc">TimestampCombiner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Determines how output timestamps of grouping operations are assigned.&quot;&quot;&quot;</span>
 
   <span class="n">OUTPUT_AT_EOW</span> <span class="o">=</span> <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">END_OF_WINDOW</span>
@@ -141,17 +156,17 @@
   <span class="n">OUTPUT_AT_EARLIEST_TRANSFORMED</span> <span class="o">=</span> <span class="s1">&#39;OUTPUT_AT_EARLIEST_TRANSFORMED&#39;</span>
 
   <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="OutputTimeFn.get_impl"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.OutputTimeFn.get_impl">[docs]</a>  <span class="k">def</span> <span class="nf">get_impl</span><span class="p">(</span><span class="n">output_time_fn</span><span class="p">,</span> <span class="n">window_fn</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span><span class="p">:</span>
+<div class="viewcode-block" id="TimestampCombiner.get_impl"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.TimestampCombiner.get_impl">[docs]</a>  <span class="k">def</span> <span class="nf">get_impl</span><span class="p">(</span><span class="n">timestamp_combiner</span><span class="p">,</span> <span class="n">window_fn</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_EOW</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">timeutil</span><span class="o">.</span><span class="n">OutputAtEndOfWindowImpl</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_EARLIEST</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_EARLIEST</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">timeutil</span><span class="o">.</span><span class="n">OutputAtEarliestInputTimestampImpl</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_LATEST</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_LATEST</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">timeutil</span><span class="o">.</span><span class="n">OutputAtLatestInputTimestampImpl</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">output_time_fn</span> <span class="o">==</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">OUTPUT_AT_EARLIEST_TRANSFORMED</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">timestamp_combiner</span> <span class="o">==</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">OUTPUT_AT_EARLIEST_TRANSFORMED</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">timeutil</span><span class="o">.</span><span class="n">OutputAtEarliestTransformedInputTimestampImpl</span><span class="p">(</span><span class="n">window_fn</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid OutputTimeFn: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">output_time_fn</span><span class="p">)</span></div></div>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid TimestampCombiner: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">timestamp_combiner</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="WindowFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.WindowFn">[docs]</a><span class="k">class</span> <span class="nc">WindowFn</span><span class="p">(</span><span class="n">urns</span><span class="o">.</span><span class="n">RunnerApiFn</span><span class="p">):</span>
@@ -196,10 +211,10 @@
 <div class="viewcode-block" id="WindowFn.get_transformed_output_time"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.WindowFn.get_transformed_output_time">[docs]</a>  <span class="k">def</span> <span class="nf">get_transformed_output_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">input_timestamp</span><span class="p">):</span>  <span class="c1"># pylint: disable=unused-argument</span>
     <span class="sd">&quot;&quot;&quot;Given input time and output window, returns output time for window.</span>
 
-<span class="sd">    If OutputTimeFn.OUTPUT_AT_EARLIEST_TRANSFORMED is used in the Windowing,</span>
-<span class="sd">    the output timestamp for the given window will be the earliest of the</span>
-<span class="sd">    timestamps returned by get_transformed_output_time() for elements of the</span>
-<span class="sd">    window.</span>
+<span class="sd">    If TimestampCombiner.OUTPUT_AT_EARLIEST_TRANSFORMED is used in the</span>
+<span class="sd">    Windowing, the output timestamp for the given window will be the earliest</span>
+<span class="sd">    of the timestamps returned by get_transformed_output_time() for elements</span>
+<span class="sd">    of the window.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">      window: Output window of element.</span>
@@ -478,7 +493,7 @@
 
 <div class="viewcode-block" id="Sessions.merge"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.window.Sessions.merge">[docs]</a>  <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merge_context</span><span class="p">):</span>
     <span class="n">to_merge</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">end</span> <span class="o">=</span> <span class="n">timeutil</span><span class="o">.</span><span class="n">MIN_TIMESTAMP</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">MIN_TIMESTAMP</span>
     <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">merge_context</span><span class="o">.</span><span class="n">windows</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">w</span><span class="o">.</span><span class="n">start</span><span class="p">):</span>
       <span class="k">if</span> <span class="n">to_merge</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">w</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>

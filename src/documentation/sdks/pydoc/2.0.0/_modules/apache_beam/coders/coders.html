@@ -79,7 +79,10 @@
 <span class="c1"># limitations under the License.</span>
 <span class="c1">#</span>
 
-<span class="sd">&quot;&quot;&quot;Collection of useful coders.&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;Collection of useful coders.</span>
+
+<span class="sd">Only those coders listed in __all__ are part of the public API of this module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">cPickle</span> <span class="k">as</span> <span class="nn">pickle</span>
@@ -109,14 +112,21 @@
   <span class="kn">import</span> <span class="nn">dill</span>
 
 
-<div class="viewcode-block" id="serialize_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.serialize_coder">[docs]</a><span class="k">def</span> <span class="nf">serialize_coder</span><span class="p">(</span><span class="n">coder</span><span class="p">):</span>
-  <span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">pickler</span>
-  <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">$</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">pickler</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">coder</span><span class="p">))</span></div>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Coder&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;BytesCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;DillCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;FastPrimitivesCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;FloatCoder&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;IterableCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;PickleCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;ProtoCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;SingletonCoder&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;StrUtf8Coder&#39;</span><span class="p">,</span> <span class="s1">&#39;TimestampCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;TupleCoder&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;TupleSequenceCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;VarIntCoder&#39;</span><span class="p">,</span> <span class="s1">&#39;WindowedValueCoder&#39;</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="deserialize_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.deserialize_coder">[docs]</a><span class="k">def</span> <span class="nf">deserialize_coder</span><span class="p">(</span><span class="n">serialized</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">serialize_coder</span><span class="p">(</span><span class="n">coder</span><span class="p">):</span>
   <span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">pickler</span>
-  <span class="k">return</span> <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span></div>
+  <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">$</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">coder</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">pickler</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">coder</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">deserialize_coder</span><span class="p">(</span><span class="n">serialized</span><span class="p">):</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.internal</span> <span class="k">import</span> <span class="n">pickler</span>
+  <span class="k">return</span> <span class="n">pickler</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">serialized</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
 <span class="c1"># pylint: enable=wrong-import-order, wrong-import-position</span>
 
 
@@ -180,6 +190,10 @@
                                         <span class="bp">self</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Coder.get_impl"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Coder.get_impl">[docs]</a>  <span class="k">def</span> <span class="nf">get_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">    Returns the CoderImpl backing this Coder.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_impl&#39;</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_impl</span><span class="p">()</span>
       <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_impl</span><span class="p">,</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">CoderImpl</span><span class="p">)</span>
@@ -216,13 +230,17 @@
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Not a KV coder: </span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span></div>
 
   <span class="k">def</span> <span class="nf">_get_component_coders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns the internal component coders of this coder.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">    Returns the internal component coders of this coder.&quot;&quot;&quot;</span>
     <span class="c1"># This is an internal detail of the Coder API and does not need to be</span>
     <span class="c1"># refined in user-defined Coders.</span>
     <span class="k">return</span> <span class="p">[]</span>
 
 <div class="viewcode-block" id="Coder.as_cloud_object"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Coder.as_cloud_object">[docs]</a>  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Returns Google Cloud Dataflow API description of this coder.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">    Returns Google Cloud Dataflow API description of this coder.&quot;&quot;&quot;</span>
     <span class="c1"># This is an internal detail of the Coder API and does not need to be</span>
     <span class="c1"># refined in user-defined Coders.</span>
 
@@ -248,6 +266,8 @@
     <span class="c1"># pylint: enable=protected-access</span>
 
 <div class="viewcode-block" id="Coder.to_runner_api"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Coder.to_runner_api">[docs]</a>  <span class="k">def</span> <span class="nf">to_runner_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO(BEAM-115): Use specialized URNs and components.</span>
     <span class="kn">from</span> <span class="nn">apache_beam.runners.api</span> <span class="k">import</span> <span class="n">beam_runner_api_pb2</span>
     <span class="k">return</span> <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">Coder</span><span class="p">(</span>
@@ -260,6 +280,8 @@
 
   <span class="nd">@staticmethod</span>
 <div class="viewcode-block" id="Coder.from_runner_api"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Coder.from_runner_api">[docs]</a>  <span class="k">def</span> <span class="nf">from_runner_api</span><span class="p">(</span><span class="n">proto</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">any_proto</span> <span class="o">=</span> <span class="n">proto</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">parameter</span>
     <span class="n">bytes_proto</span> <span class="o">=</span> <span class="n">google</span><span class="o">.</span><span class="n">protobuf</span><span class="o">.</span><span class="n">wrappers_pb2</span><span class="o">.</span><span class="n">BytesValue</span><span class="p">()</span>
     <span class="n">any_proto</span><span class="o">.</span><span class="n">Unpack</span><span class="p">(</span><span class="n">bytes_proto</span><span class="p">)</span>
@@ -279,24 +301,24 @@
     <span class="k">return</span> <span class="kc">True</span></div></div>
 
 
-<div class="viewcode-block" id="ToStringCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.ToStringCoder">[docs]</a><span class="k">class</span> <span class="nc">ToStringCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ToStringCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A default string coder used if no sink coder is specified.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ToStringCoder.encode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.ToStringCoder.encode">[docs]</a>  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unicode</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">value</span>
-    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ToStringCoder.decode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.ToStringCoder.decode">[docs]</a>  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;ToStringCoder cannot be used for decoding.&#39;</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;ToStringCoder cannot be used for decoding.&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ToStringCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.ToStringCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span></div></div>
+  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
 
-<div class="viewcode-block" id="FastCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.FastCoder">[docs]</a><span class="k">class</span> <span class="nc">FastCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">FastCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Coder subclass used when a (faster) CoderImpl is supplied directly.</span>
 
 <span class="sd">  The Coder class defines _create_impl in terms of encode() and decode();</span>
@@ -304,19 +326,19 @@
 <span class="sd">  _create_impl().</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FastCoder.encode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.FastCoder.encode">[docs]</a>  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Encodes the given object into a byte string.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FastCoder.decode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.FastCoder.decode">[docs]</a>  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Decodes the given byte string into the corresponding object.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FastCoder.estimate_size"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.FastCoder.estimate_size">[docs]</a>  <span class="k">def</span> <span class="nf">estimate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">estimate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">_create_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
 <div class="viewcode-block" id="BytesCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.BytesCoder">[docs]</a><span class="k">class</span> <span class="nc">BytesCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
@@ -402,22 +424,22 @@
     <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="maybe_dill_dumps"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.maybe_dill_dumps">[docs]</a><span class="k">def</span> <span class="nf">maybe_dill_dumps</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">maybe_dill_dumps</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Pickle using cPickle or the Dill pickler as a fallback.&quot;&quot;&quot;</span>
   <span class="c1"># We need to use the dill pickler for objects of certain custom classes,</span>
   <span class="c1"># including, for example, ones that contain lambdas.</span>
   <span class="k">try</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
   <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
-    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="maybe_dill_loads"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.maybe_dill_loads">[docs]</a><span class="k">def</span> <span class="nf">maybe_dill_loads</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">maybe_dill_loads</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Unpickle using cPickle or the Dill pickler as a fallback.&quot;&quot;&quot;</span>
   <span class="k">try</span><span class="p">:</span>
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
   <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
-    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">o</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">dill</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_PickleCoderBase</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
@@ -478,7 +500,7 @@
     <span class="k">return</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">CallbackCoderImpl</span><span class="p">(</span><span class="n">maybe_dill_dumps</span><span class="p">,</span> <span class="n">maybe_dill_loads</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DeterministicFastPrimitivesCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.DeterministicFastPrimitivesCoder">[docs]</a><span class="k">class</span> <span class="nc">DeterministicFastPrimitivesCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DeterministicFastPrimitivesCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Throws runtime errors when encoding non-deterministic values.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coder</span><span class="p">,</span> <span class="n">step_label</span><span class="p">):</span>
@@ -489,17 +511,17 @@
     <span class="k">return</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">DeterministicFastPrimitivesCoderImpl</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_underlying_coder</span><span class="o">.</span><span class="n">get_impl</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_label</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DeterministicFastPrimitivesCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.DeterministicFastPrimitivesCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="DeterministicFastPrimitivesCoder.is_kv_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.DeterministicFastPrimitivesCoder.is_kv_coder">[docs]</a>  <span class="k">def</span> <span class="nf">is_kv_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+  <span class="k">def</span> <span class="nf">is_kv_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="DeterministicFastPrimitivesCoder.key_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.DeterministicFastPrimitivesCoder.key_coder">[docs]</a>  <span class="k">def</span> <span class="nf">key_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span></div>
+  <span class="k">def</span> <span class="nf">key_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="DeterministicFastPrimitivesCoder.value_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.DeterministicFastPrimitivesCoder.value_coder">[docs]</a>  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span></div></div>
+  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
 
 
 <div class="viewcode-block" id="FastPrimitivesCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.FastPrimitivesCoder">[docs]</a><span class="k">class</span> <span class="nc">FastPrimitivesCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
@@ -551,21 +573,21 @@
     <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="Base64PickleCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder">[docs]</a><span class="k">class</span> <span class="nc">Base64PickleCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Base64PickleCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Coder of objects by Python pickle, then base64 encoding.&quot;&quot;&quot;</span>
   <span class="c1"># TODO(robertwb): Do base64 encoding where it&#39;s needed (e.g. in json) rather</span>
   <span class="c1"># than via a special Coder.</span>
 
-<div class="viewcode-block" id="Base64PickleCoder.encode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.encode">[docs]</a>  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+  <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Base64PickleCoder.decode"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.decode">[docs]</a>  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">))</span></div>
+  <span class="k">def</span> <span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Base64PickleCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="c1"># Note that the Base64PickleCoder is not deterministic.  See the</span>
     <span class="c1"># corresponding comments for PickleCoder above.</span>
-    <span class="k">return</span> <span class="kc">False</span></div>
+    <span class="k">return</span> <span class="kc">False</span>
 
   <span class="c1"># We allow .key_coder() and .value_coder() to be called on Base64PickleCoder</span>
   <span class="c1"># since we can&#39;t always infer the return values of lambdas in ParDo</span>
@@ -573,14 +595,14 @@
   <span class="c1">#</span>
   <span class="c1"># TODO(ccy): this is currently only used for KV values from Create transforms.</span>
   <span class="c1"># Investigate a way to unify this with PickleCoder.</span>
-<div class="viewcode-block" id="Base64PickleCoder.is_kv_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.is_kv_coder">[docs]</a>  <span class="k">def</span> <span class="nf">is_kv_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+  <span class="k">def</span> <span class="nf">is_kv_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="Base64PickleCoder.key_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.key_coder">[docs]</a>  <span class="k">def</span> <span class="nf">key_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span></div>
+  <span class="k">def</span> <span class="nf">key_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
 
-<div class="viewcode-block" id="Base64PickleCoder.value_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.Base64PickleCoder.value_coder">[docs]</a>  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span></div></div>
+  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span>
 
 
 <div class="viewcode-block" id="ProtoCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.ProtoCoder">[docs]</a><span class="k">class</span> <span class="nc">ProtoCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
@@ -752,38 +774,38 @@
     <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_elem_coder</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="GlobalWindowCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.GlobalWindowCoder">[docs]</a><span class="k">class</span> <span class="nc">GlobalWindowCoder</span><span class="p">(</span><span class="n">SingletonCoder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GlobalWindowCoder</span><span class="p">(</span><span class="n">SingletonCoder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Coder for global windows.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">window</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">GlobalWindowCoder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">window</span><span class="o">.</span><span class="n">GlobalWindow</span><span class="p">())</span>
 
-<div class="viewcode-block" id="GlobalWindowCoder.as_cloud_object"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.GlobalWindowCoder.as_cloud_object">[docs]</a>  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;@type&#39;</span><span class="p">:</span> <span class="s1">&#39;kind:global_window&#39;</span><span class="p">,</span>
-    <span class="p">}</span></div></div>
+    <span class="p">}</span>
 
 
-<div class="viewcode-block" id="IntervalWindowCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.IntervalWindowCoder">[docs]</a><span class="k">class</span> <span class="nc">IntervalWindowCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">IntervalWindowCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Coder for an window defined by a start timestamp and a duration.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">_create_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">IntervalWindowCoderImpl</span><span class="p">()</span>
 
-<div class="viewcode-block" id="IntervalWindowCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.IntervalWindowCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="kc">True</span></div>
+  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="IntervalWindowCoder.as_cloud_object"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.IntervalWindowCoder.as_cloud_object">[docs]</a>  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;@type&#39;</span><span class="p">:</span> <span class="s1">&#39;kind:interval_window&#39;</span><span class="p">,</span>
-    <span class="p">}</span></div>
+    <span class="p">}</span>
 
   <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="WindowedValueCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.WindowedValueCoder">[docs]</a><span class="k">class</span> <span class="nc">WindowedValueCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
@@ -842,8 +864,10 @@
         <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wrapped_value_coder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_coder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_coder</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="LengthPrefixCoder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.LengthPrefixCoder">[docs]</a><span class="k">class</span> <span class="nc">LengthPrefixCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Coder which prefixes the length of the encoded object in the stream.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">LengthPrefixCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Coder which prefixes the length of the encoded object in the stream.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_coder</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span> <span class="o">=</span> <span class="n">value_coder</span>
@@ -851,21 +875,21 @@
   <span class="k">def</span> <span class="nf">_create_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">coder_impl</span><span class="o">.</span><span class="n">LengthPrefixCoderImpl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LengthPrefixCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.LengthPrefixCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="o">.</span><span class="n">is_deterministic</span><span class="p">()</span></div>
+  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="o">.</span><span class="n">is_deterministic</span><span class="p">()</span>
 
-<div class="viewcode-block" id="LengthPrefixCoder.estimate_size"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.LengthPrefixCoder.estimate_size">[docs]</a>  <span class="k">def</span> <span class="nf">estimate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">estimate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="n">value_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">get_varint_size</span><span class="p">(</span><span class="n">value_size</span><span class="p">)</span> <span class="o">+</span> <span class="n">value_size</span></div>
+    <span class="k">return</span> <span class="n">get_varint_size</span><span class="p">(</span><span class="n">value_size</span><span class="p">)</span> <span class="o">+</span> <span class="n">value_size</span>
 
-<div class="viewcode-block" id="LengthPrefixCoder.value_coder"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.LengthPrefixCoder.value_coder">[docs]</a>  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span></div>
+  <span class="k">def</span> <span class="nf">value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span>
 
-<div class="viewcode-block" id="LengthPrefixCoder.as_cloud_object"><a class="viewcode-back" href="../../../apache_beam.coders.html#apache_beam.coders.coders.LengthPrefixCoder.as_cloud_object">[docs]</a>  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s1">&#39;@type&#39;</span><span class="p">:</span> <span class="s1">&#39;kind:length_prefix&#39;</span><span class="p">,</span>
         <span class="s1">&#39;component_encodings&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="o">.</span><span class="n">as_cloud_object</span><span class="p">()],</span>
-    <span class="p">}</span></div>
+    <span class="p">}</span>
 
   <span class="k">def</span> <span class="nf">_get_component_coders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="p">,)</span>
@@ -878,7 +902,7 @@
             <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_coder</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_coder</span><span class="p">))</span>
 </pre></div>
 
           </div>

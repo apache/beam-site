@@ -92,14 +92,28 @@
 <span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="k">import</span> <span class="n">observable</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">combiners</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="k">import</span> <span class="n">core</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">MAX_TIMESTAMP</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">MIN_TIMESTAMP</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.timeutil</span> <span class="k">import</span> <span class="n">TimeDomain</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">GlobalWindow</span>
-<span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">OutputTimeFn</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">TimestampCombiner</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">WindowedValue</span>
 <span class="kn">from</span> <span class="nn">apache_beam.transforms.window</span> <span class="k">import</span> <span class="n">WindowFn</span>
 <span class="kn">from</span> <span class="nn">apache_beam.runners.api</span> <span class="k">import</span> <span class="n">beam_runner_api_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="k">import</span> <span class="n">MIN_TIMESTAMP</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;AccumulationMode&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TriggerFn&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;DefaultTrigger&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AfterWatermark&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AfterCount&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Repeatedly&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AfterAny&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AfterAll&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AfterEach&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OrFinally&#39;</span><span class="p">,</span>
+    <span class="p">]</span>
 
 
 <div class="viewcode-block" id="AccumulationMode"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AccumulationMode">[docs]</a><span class="k">class</span> <span class="nc">AccumulationMode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -111,7 +125,7 @@
   <span class="c1"># RETRACTING = 3</span>
 
 
-<div class="viewcode-block" id="StateTag"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.StateTag">[docs]</a><span class="k">class</span> <span class="nc">StateTag</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_StateTag</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;An identifier used to store and retrieve typed, combinable state.</span>
 
 <span class="sd">  The given tag must be unique for this stage.  If CombineFn is None then</span>
@@ -121,25 +135,25 @@
   <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
 
 
-<div class="viewcode-block" id="ValueStateTag"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ValueStateTag">[docs]</a><span class="k">class</span> <span class="nc">ValueStateTag</span><span class="p">(</span><span class="n">StateTag</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_ValueStateTag</span><span class="p">(</span><span class="n">_StateTag</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;StateTag pointing to an element.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;ValueStateTag(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ValueStateTag.with_prefix"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ValueStateTag.with_prefix">[docs]</a>  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ValueStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_ValueStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CombiningValueStateTag"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.CombiningValueStateTag">[docs]</a><span class="k">class</span> <span class="nc">CombiningValueStateTag</span><span class="p">(</span><span class="n">StateTag</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_CombiningValueStateTag</span><span class="p">(</span><span class="n">_StateTag</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;StateTag pointing to an element, accumulated with a combiner.&quot;&quot;&quot;</span>
 
   <span class="c1"># TODO(robertwb): Also store the coder (perhaps extracted from the combine_fn)</span>
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">combine_fn</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">CombiningValueStateTag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">_CombiningValueStateTag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">combine_fn</span><span class="p">:</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;combine_fn must be specified.&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">combine_fn</span><span class="p">,</span> <span class="n">core</span><span class="o">.</span><span class="n">CombineFn</span><span class="p">):</span>
@@ -149,32 +163,32 @@
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;CombiningValueStateTag(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CombiningValueStateTag.with_prefix"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.CombiningValueStateTag.with_prefix">[docs]</a>  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">CombiningValueStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_CombiningValueStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="ListStateTag"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ListStateTag">[docs]</a><span class="k">class</span> <span class="nc">ListStateTag</span><span class="p">(</span><span class="n">StateTag</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_ListStateTag</span><span class="p">(</span><span class="n">_StateTag</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;StateTag pointing to a list of elements.&quot;&quot;&quot;</span>
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;ListStateTag(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span>
 
-<div class="viewcode-block" id="ListStateTag.with_prefix"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ListStateTag.with_prefix">[docs]</a>  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">ListStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_ListStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WatermarkHoldStateTag"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.WatermarkHoldStateTag">[docs]</a><span class="k">class</span> <span class="nc">WatermarkHoldStateTag</span><span class="p">(</span><span class="n">StateTag</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_WatermarkHoldStateTag</span><span class="p">(</span><span class="n">_StateTag</span><span class="p">):</span>
 
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">output_time_fn_impl</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">WatermarkHoldStateTag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span> <span class="o">=</span> <span class="n">output_time_fn_impl</span>
+  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">timestamp_combiner_impl</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">_WatermarkHoldStateTag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span> <span class="o">=</span> <span class="n">timestamp_combiner_impl</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;WatermarkHoldStateTag(</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
-                                              <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="p">)</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="p">)</span>
 
-<div class="viewcode-block" id="WatermarkHoldStateTag.with_prefix"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.WatermarkHoldStateTag.with_prefix">[docs]</a>  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">WatermarkHoldStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
-                                 <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_WatermarkHoldStateTag</span><span class="p">(</span><span class="n">prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="p">)</span>
 
 
 <span class="c1"># pylint: disable=unused-argument</span>
@@ -315,7 +329,7 @@
 <span class="sd">      late: if not None, a speculative trigger to repeatedly evaluate after</span>
 <span class="sd">        the watermark passes the end of the window</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">LATE_TAG</span> <span class="o">=</span> <span class="n">CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;is_late&#39;</span><span class="p">,</span> <span class="nb">any</span><span class="p">)</span>
+  <span class="n">LATE_TAG</span> <span class="o">=</span> <span class="n">_CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;is_late&#39;</span><span class="p">,</span> <span class="nb">any</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">early</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">late</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">early</span> <span class="o">=</span> <span class="n">Repeatedly</span><span class="p">(</span><span class="n">early</span><span class="p">)</span> <span class="k">if</span> <span class="n">early</span> <span class="k">else</span> <span class="kc">None</span>
@@ -419,7 +433,7 @@
 <div class="viewcode-block" id="AfterCount"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterCount">[docs]</a><span class="k">class</span> <span class="nc">AfterCount</span><span class="p">(</span><span class="n">TriggerFn</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Fire when there are at least count elements in this window pane.&quot;&quot;&quot;</span>
 
-  <span class="n">COUNT_TAG</span> <span class="o">=</span> <span class="n">CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">combiners</span><span class="o">.</span><span class="n">CountCombineFn</span><span class="p">())</span>
+  <span class="n">COUNT_TAG</span> <span class="o">=</span> <span class="n">_CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;count&#39;</span><span class="p">,</span> <span class="n">combiners</span><span class="o">.</span><span class="n">CountCombineFn</span><span class="p">())</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="n">count</span>
@@ -496,7 +510,7 @@
             <span class="n">subtrigger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">underlying</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">context</span><span class="p">)))</span></div></div>
 
 
-<div class="viewcode-block" id="ParallelTriggerFn"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn">[docs]</a><span class="k">class</span> <span class="nc">ParallelTriggerFn</span><span class="p">(</span><span class="n">TriggerFn</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">_ParallelTriggerFn</span><span class="p">(</span><span class="n">TriggerFn</span><span class="p">):</span>
 
   <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
@@ -511,41 +525,41 @@
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">triggers</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="ParallelTriggerFn.combine_op"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.combine_op">[docs]</a>  <span class="k">def</span> <span class="nf">combine_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger_results</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">combine_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trigger_results</span><span class="p">):</span>
+    <span class="k">pass</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.on_element"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.on_element">[docs]</a>  <span class="k">def</span> <span class="nf">on_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">on_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">):</span>
-      <span class="n">trigger</span><span class="o">.</span><span class="n">on_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span></div>
+      <span class="n">trigger</span><span class="o">.</span><span class="n">on_element</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.on_merge"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.on_merge">[docs]</a>  <span class="k">def</span> <span class="nf">on_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">on_merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">):</span>
       <span class="n">trigger</span><span class="o">.</span><span class="n">on_merge</span><span class="p">(</span>
-          <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span></div>
+          <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.should_fire"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.should_fire">[docs]</a>  <span class="k">def</span> <span class="nf">should_fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">should_fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_op</span><span class="p">(</span>
         <span class="n">trigger</span><span class="o">.</span><span class="n">should_fire</span><span class="p">(</span><span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span>
-        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">))</span></div>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">))</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.on_fire"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.on_fire">[docs]</a>  <span class="k">def</span> <span class="nf">on_fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">on_fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="n">finished</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">):</span>
       <span class="n">nested_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">)</span>
       <span class="k">if</span> <span class="n">trigger</span><span class="o">.</span><span class="n">should_fire</span><span class="p">(</span><span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">nested_context</span><span class="p">):</span>
         <span class="n">finished</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trigger</span><span class="o">.</span><span class="n">on_fire</span><span class="p">(</span><span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">nested_context</span><span class="p">))</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_op</span><span class="p">(</span><span class="n">finished</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_op</span><span class="p">(</span><span class="n">finished</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.reset"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.reset">[docs]</a>  <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">trigger</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">):</span>
-      <span class="n">trigger</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span></div>
+      <span class="n">trigger</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">ix</span><span class="p">))</span>
 
   <span class="nd">@staticmethod</span>
   <span class="k">def</span> <span class="nf">_sub_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">NestedContext</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="s1">&#39;</span><span class="si">%d</span><span class="s1">/&#39;</span> <span class="o">%</span> <span class="n">index</span><span class="p">)</span>
 
   <span class="nd">@staticmethod</span>
-<div class="viewcode-block" id="ParallelTriggerFn.from_runner_api"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.from_runner_api">[docs]</a>  <span class="k">def</span> <span class="nf">from_runner_api</span><span class="p">(</span><span class="n">proto</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">from_runner_api</span><span class="p">(</span><span class="n">proto</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="n">subtriggers</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">TriggerFn</span><span class="o">.</span><span class="n">from_runner_api</span><span class="p">(</span><span class="n">subtrigger</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">subtrigger</span>
@@ -553,9 +567,9 @@
     <span class="k">if</span> <span class="n">proto</span><span class="o">.</span><span class="n">after_all</span><span class="o">.</span><span class="n">subtriggers</span><span class="p">:</span>
       <span class="k">return</span> <span class="n">AfterAll</span><span class="p">(</span><span class="o">*</span><span class="n">subtriggers</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">return</span> <span class="n">AfterAny</span><span class="p">(</span><span class="o">*</span><span class="n">subtriggers</span><span class="p">)</span></div>
+      <span class="k">return</span> <span class="n">AfterAny</span><span class="p">(</span><span class="o">*</span><span class="n">subtriggers</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ParallelTriggerFn.to_runner_api"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.ParallelTriggerFn.to_runner_api">[docs]</a>  <span class="k">def</span> <span class="nf">to_runner_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">to_runner_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
     <span class="n">subtriggers</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">subtrigger</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="k">for</span> <span class="n">subtrigger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">]</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">combine_op</span> <span class="o">==</span> <span class="nb">all</span><span class="p">:</span>
@@ -567,10 +581,10 @@
           <span class="n">after_any</span><span class="o">=</span><span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">Trigger</span><span class="o">.</span><span class="n">AfterAny</span><span class="p">(</span>
               <span class="n">subtriggers</span><span class="o">=</span><span class="n">subtriggers</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div></div>
+      <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AfterAny"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterAny">[docs]</a><span class="k">class</span> <span class="nc">AfterAny</span><span class="p">(</span><span class="n">ParallelTriggerFn</span><span class="p">):</span>
+<div class="viewcode-block" id="AfterAny"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterAny">[docs]</a><span class="k">class</span> <span class="nc">AfterAny</span><span class="p">(</span><span class="n">_ParallelTriggerFn</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Fires when any subtrigger fires.</span>
 
 <span class="sd">  Also finishes when any subtrigger finishes.</span>
@@ -578,7 +592,7 @@
   <span class="n">combine_op</span> <span class="o">=</span> <span class="nb">any</span></div>
 
 
-<div class="viewcode-block" id="AfterAll"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterAll">[docs]</a><span class="k">class</span> <span class="nc">AfterAll</span><span class="p">(</span><span class="n">ParallelTriggerFn</span><span class="p">):</span>
+<div class="viewcode-block" id="AfterAll"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterAll">[docs]</a><span class="k">class</span> <span class="nc">AfterAll</span><span class="p">(</span><span class="n">_ParallelTriggerFn</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Fires when all subtriggers have fired.</span>
 
 <span class="sd">  Also finishes when all subtriggers have finished.</span>
@@ -588,7 +602,7 @@
 
 <div class="viewcode-block" id="AfterEach"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.AfterEach">[docs]</a><span class="k">class</span> <span class="nc">AfterEach</span><span class="p">(</span><span class="n">TriggerFn</span><span class="p">):</span>
 
-  <span class="n">INDEX_TAG</span> <span class="o">=</span> <span class="n">CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="p">(</span>
+  <span class="n">INDEX_TAG</span> <span class="o">=</span> <span class="n">_CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="p">(</span>
       <span class="k">lambda</span> <span class="n">indices</span><span class="p">:</span> <span class="mi">0</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">indices</span> <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">indices</span><span class="p">)))</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">triggers</span><span class="p">):</span>
@@ -672,53 +686,53 @@
             <span class="o">**</span><span class="p">{</span><span class="s1">&#39;finally&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">context</span><span class="p">)}))</span></div></div>
 
 
-<div class="viewcode-block" id="TriggerContext"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext">[docs]</a><span class="k">class</span> <span class="nc">TriggerContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TriggerContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outer</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span> <span class="o">=</span> <span class="n">outer</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_window</span> <span class="o">=</span> <span class="n">window</span>
 
-<div class="viewcode-block" id="TriggerContext.set_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext.set_timer">[docs]</a>  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TriggerContext.clear_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext.clear_timer">[docs]</a>  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TriggerContext.add_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext.add_state">[docs]</a>  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TriggerContext.get_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TriggerContext.clear_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerContext.clear_state">[docs]</a>  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_window</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="NestedContext"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext">[docs]</a><span class="k">class</span> <span class="nc">NestedContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NestedContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Namespaced context useful for defining composite triggers.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outer</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span> <span class="o">=</span> <span class="n">outer</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">=</span> <span class="n">prefix</span>
 
-<div class="viewcode-block" id="NestedContext.set_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext.set_timer">[docs]</a>  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
 
-<div class="viewcode-block" id="NestedContext.clear_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext.clear_timer">[docs]</a>  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span>
 
-<div class="viewcode-block" id="NestedContext.add_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext.add_state">[docs]</a>  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="NestedContext.get_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">))</span></div>
+  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">))</span>
 
-<div class="viewcode-block" id="NestedContext.clear_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.NestedContext.clear_state">[docs]</a>  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">))</span></div></div>
+  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outer</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">with_prefix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="p">))</span>
 
 
 <span class="c1"># pylint: disable=unused-argument</span>
-<div class="viewcode-block" id="SimpleState"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState">[docs]</a><span class="k">class</span> <span class="nc">SimpleState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Basic state storage interface used for triggering.</span>
 
 <span class="sd">  Only timers must hold the watermark (by their timestamp).</span>
@@ -727,81 +741,81 @@
   <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.set_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.set_timer">[docs]</a>  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.get_window"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.get_window">[docs]</a>  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.clear_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.clear_timer">[docs]</a>  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.add_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.add_state">[docs]</a>  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.get_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="SimpleState.clear_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.clear_state">[docs]</a>  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">pass</span>
 
-<div class="viewcode-block" id="SimpleState.at"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.SimpleState.at">[docs]</a>  <span class="k">def</span> <span class="nf">at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">TriggerContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TriggerContext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="UnmergedState"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.UnmergedState">[docs]</a><span class="k">class</span> <span class="nc">UnmergedState</span><span class="p">(</span><span class="n">SimpleState</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">UnmergedState</span><span class="p">(</span><span class="n">SimpleState</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;State suitable for use in TriggerDriver.</span>
 
 <span class="sd">  This class must be implemented by each backend.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="UnmergedState.set_global_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.UnmergedState.set_global_state">[docs]</a>  <span class="k">def</span> <span class="nf">set_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">set_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="UnmergedState.get_global_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.UnmergedState.get_global_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">pass</span></div></div>
+  <span class="k">def</span> <span class="nf">get_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">pass</span>
 <span class="c1"># pylint: enable=unused-argument</span>
 
 
-<div class="viewcode-block" id="MergeableStateAdapter"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter">[docs]</a><span class="k">class</span> <span class="nc">MergeableStateAdapter</span><span class="p">(</span><span class="n">SimpleState</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">MergeableStateAdapter</span><span class="p">(</span><span class="n">SimpleState</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Wraps an UnmergedState, tracking merged windows.&quot;&quot;&quot;</span>
   <span class="c1"># TODO(robertwb): A similar indirection could be used for sliding windows</span>
   <span class="c1"># or other window_fns when a single element typically belongs to many windows.</span>
 
-  <span class="n">WINDOW_IDS</span> <span class="o">=</span> <span class="n">ValueStateTag</span><span class="p">(</span><span class="s1">&#39;window_ids&#39;</span><span class="p">)</span>
+  <span class="n">WINDOW_IDS</span> <span class="o">=</span> <span class="n">_ValueStateTag</span><span class="p">(</span><span class="s1">&#39;window_ids&#39;</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">raw_state</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span> <span class="o">=</span> <span class="n">raw_state</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">get_global_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">WINDOW_IDS</span><span class="p">,</span> <span class="p">{})</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">counter</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.set_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.set_timer">[docs]</a>  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_id</span><span class="p">(</span><span class="n">window</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_id</span><span class="p">(</span><span class="n">window</span><span class="p">),</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.clear_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.clear_timer">[docs]</a>  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">window_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ids</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.add_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.add_state">[docs]</a>  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ValueStateTag</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ValueStateTag</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
           <span class="s1">&#39;Merging requested for non-mergeable state tag: </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">tag</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_id</span><span class="p">(</span><span class="n">window</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_id</span><span class="p">(</span><span class="n">window</span><span class="p">),</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.get_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
     <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
               <span class="k">for</span> <span class="n">window_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ids</span><span class="p">(</span><span class="n">window</span><span class="p">)]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ValueStateTag</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ValueStateTag</span><span class="p">):</span>
       <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
           <span class="s1">&#39;Merging requested for non-mergeable state tag: </span><span class="si">%r</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="n">tag</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">CombiningValueStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_CombiningValueStateTag</span><span class="p">):</span>
       <span class="c1"># TODO(robertwb): Strip combine_fn.extract_output from raw_state tag.</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">values</span><span class="p">:</span>
         <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">create_accumulator</span><span class="p">()</span>
@@ -811,21 +825,21 @@
         <span class="n">accumulator</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">merge_accumulators</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
         <span class="c1"># TODO(robertwb): Store the merged value in the first tag.</span>
       <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">extract_output</span><span class="p">(</span><span class="n">accumulator</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ListStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ListStateTag</span><span class="p">):</span>
       <span class="k">return</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">vs</span> <span class="ow">in</span> <span class="n">values</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vs</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">WatermarkHoldStateTag</span><span class="p">):</span>
-      <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="o">.</span><span class="n">combine_all</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_WatermarkHoldStateTag</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="o">.</span><span class="n">combine_all</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.clear_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.clear_state">[docs]</a>  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">window_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_ids</span><span class="p">(</span><span class="n">window</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="p">[</span><span class="n">window</span><span class="p">]</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">_persist_window_ids</span><span class="p">()</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_persist_window_ids</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.merge"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.merge">[docs]</a>  <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_be_merged</span><span class="p">,</span> <span class="n">merge_result</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">to_be_merged</span><span class="p">:</span>
       <span class="k">if</span> <span class="n">window</span> <span class="o">!=</span> <span class="n">merge_result</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="p">:</span>
@@ -834,16 +848,16 @@
           <span class="k">else</span><span class="p">:</span>
             <span class="n">merge_window_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="p">[</span><span class="n">merge_result</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
           <span class="n">merge_window_ids</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
-          <span class="bp">self</span><span class="o">.</span><span class="n">_persist_window_ids</span><span class="p">()</span></div>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_persist_window_ids</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.known_windows"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.known_windows">[docs]</a>  <span class="k">def</span> <span class="nf">known_windows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span></div>
+  <span class="k">def</span> <span class="nf">known_windows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MergeableStateAdapter.get_window"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.MergeableStateAdapter.get_window">[docs]</a>  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">window</span><span class="p">,</span> <span class="n">ids</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
       <span class="k">if</span> <span class="n">window_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">window</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No window for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">window_id</span><span class="p">)</span></div>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;No window for </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">window_id</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">_get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="p">:</span>
@@ -870,10 +884,10 @@
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window_ids</span><span class="p">)]</span> <span class="o">+</span>
-                       <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span></div>
+                       <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">raw_state</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="create_trigger_driver"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.create_trigger_driver">[docs]</a><span class="k">def</span> <span class="nf">create_trigger_driver</span><span class="p">(</span><span class="n">windowing</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">phased_combine_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">create_trigger_driver</span><span class="p">(</span><span class="n">windowing</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">phased_combine_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Create the TriggerDriver for the given windowing and options.&quot;&quot;&quot;</span>
 
   <span class="c1"># TODO(robertwb): We can do more if we know elements are in timestamp</span>
@@ -887,21 +901,21 @@
     <span class="c1"># TODO(ccy): Refactor GeneralTriggerDriver to combine values eagerly using</span>
     <span class="c1"># the known phased_combine_fn here.</span>
     <span class="n">driver</span> <span class="o">=</span> <span class="n">CombiningTriggerDriver</span><span class="p">(</span><span class="n">phased_combine_fn</span><span class="p">,</span> <span class="n">driver</span><span class="p">)</span>
-  <span class="k">return</span> <span class="n">driver</span></div>
+  <span class="k">return</span> <span class="n">driver</span>
 
 
-<div class="viewcode-block" id="TriggerDriver"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerDriver">[docs]</a><span class="k">class</span> <span class="nc">TriggerDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">TriggerDriver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Breaks a series of bundle and timer firings into window (pane)s.&quot;&quot;&quot;</span>
 
   <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="TriggerDriver.process_elements"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerDriver.process_elements">[docs]</a>  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
+    <span class="k">pass</span>
 
   <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="TriggerDriver.process_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.TriggerDriver.process_timer">[docs]</a>  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-    <span class="k">pass</span></div></div>
+  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">pass</span>
 
 
 <span class="k">class</span> <span class="nc">_UnwindowedValues</span><span class="p">(</span><span class="n">observable</span><span class="o">.</span><span class="n">ObservableMixin</span><span class="p">):</span>
@@ -924,7 +938,7 @@
     <span class="k">return</span> <span class="nb">list</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="p">),)</span>
 
 
-<div class="viewcode-block" id="DefaultGlobalBatchTriggerDriver"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.DefaultGlobalBatchTriggerDriver">[docs]</a><span class="k">class</span> <span class="nc">DefaultGlobalBatchTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DefaultGlobalBatchTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Breaks a bundles into window (pane)s according to the default triggering.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
   <span class="n">GLOBAL_WINDOW_TUPLE</span> <span class="o">=</span> <span class="p">(</span><span class="n">GlobalWindow</span><span class="p">(),)</span>
@@ -932,58 +946,58 @@
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">pass</span>
 
-<div class="viewcode-block" id="DefaultGlobalBatchTriggerDriver.process_elements"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.DefaultGlobalBatchTriggerDriver.process_elements">[docs]</a>  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">unused_output_watermark</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">unused_output_watermark</span><span class="p">):</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">windowed_values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
       <span class="n">unwindowed</span> <span class="o">=</span> <span class="p">[</span><span class="n">wv</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">wv</span> <span class="ow">in</span> <span class="n">windowed_values</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="n">unwindowed</span> <span class="o">=</span> <span class="n">_UnwindowedValues</span><span class="p">(</span><span class="n">windowed_values</span><span class="p">)</span>
-    <span class="k">yield</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="n">unwindowed</span><span class="p">,</span> <span class="n">MIN_TIMESTAMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GLOBAL_WINDOW_TUPLE</span><span class="p">)</span></div>
+    <span class="k">yield</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="n">unwindowed</span><span class="p">,</span> <span class="n">MIN_TIMESTAMP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">GLOBAL_WINDOW_TUPLE</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DefaultGlobalBatchTriggerDriver.process_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.DefaultGlobalBatchTriggerDriver.process_timer">[docs]</a>  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Triggers never set or called for batch default windowing.&#39;</span><span class="p">)</span></div></div>
+  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Triggers never set or called for batch default windowing.&#39;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="CombiningTriggerDriver"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.CombiningTriggerDriver">[docs]</a><span class="k">class</span> <span class="nc">CombiningTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CombiningTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Uses a phased_combine_fn to process output of wrapped TriggerDriver.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phased_combine_fn</span><span class="p">,</span> <span class="n">underlying</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span> <span class="o">=</span> <span class="n">phased_combine_fn</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">underlying</span> <span class="o">=</span> <span class="n">underlying</span>
 
-<div class="viewcode-block" id="CombiningTriggerDriver.process_elements"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.CombiningTriggerDriver.process_elements">[docs]</a>  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
     <span class="n">uncombined</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">underlying</span><span class="o">.</span><span class="n">process_elements</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span>
                                                   <span class="n">output_watermark</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">uncombined</span><span class="p">:</span>
-      <span class="k">yield</span> <span class="n">output</span><span class="o">.</span><span class="n">with_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div>
+      <span class="k">yield</span> <span class="n">output</span><span class="o">.</span><span class="n">with_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 
-<div class="viewcode-block" id="CombiningTriggerDriver.process_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.CombiningTriggerDriver.process_timer">[docs]</a>  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="n">uncombined</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">underlying</span><span class="o">.</span><span class="n">process_timer</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span>
                                                <span class="n">timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">uncombined</span><span class="p">:</span>
-      <span class="k">yield</span> <span class="n">output</span><span class="o">.</span><span class="n">with_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">))</span></div></div>
+      <span class="k">yield</span> <span class="n">output</span><span class="o">.</span><span class="n">with_value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phased_combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="GeneralTriggerDriver"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.GeneralTriggerDriver">[docs]</a><span class="k">class</span> <span class="nc">GeneralTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">GeneralTriggerDriver</span><span class="p">(</span><span class="n">TriggerDriver</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Breaks a series of bundle and timer firings into window (pane)s.</span>
 
 <span class="sd">  Suitable for all variants of Windowing.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="n">ELEMENTS</span> <span class="o">=</span> <span class="n">ListStateTag</span><span class="p">(</span><span class="s1">&#39;elements&#39;</span><span class="p">)</span>
-  <span class="n">TOMBSTONE</span> <span class="o">=</span> <span class="n">CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;tombstone&#39;</span><span class="p">,</span> <span class="n">combiners</span><span class="o">.</span><span class="n">CountCombineFn</span><span class="p">())</span>
+  <span class="n">ELEMENTS</span> <span class="o">=</span> <span class="n">_ListStateTag</span><span class="p">(</span><span class="s1">&#39;elements&#39;</span><span class="p">)</span>
+  <span class="n">TOMBSTONE</span> <span class="o">=</span> <span class="n">_CombiningValueStateTag</span><span class="p">(</span><span class="s1">&#39;tombstone&#39;</span><span class="p">,</span> <span class="n">combiners</span><span class="o">.</span><span class="n">CountCombineFn</span><span class="p">())</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowing</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">window_fn</span> <span class="o">=</span> <span class="n">windowing</span><span class="o">.</span><span class="n">windowfn</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span> <span class="o">=</span> <span class="n">OutputTimeFn</span><span class="o">.</span><span class="n">get_impl</span><span class="p">(</span><span class="n">windowing</span><span class="o">.</span><span class="n">output_time_fn</span><span class="p">,</span>
-                                                     <span class="bp">self</span><span class="o">.</span><span class="n">window_fn</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span> <span class="o">=</span> <span class="n">TimestampCombiner</span><span class="o">.</span><span class="n">get_impl</span><span class="p">(</span>
+        <span class="n">windowing</span><span class="o">.</span><span class="n">timestamp_combiner</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window_fn</span><span class="p">)</span>
     <span class="c1"># pylint: disable=invalid-name</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">WATERMARK_HOLD</span> <span class="o">=</span> <span class="n">WatermarkHoldStateTag</span><span class="p">(</span><span class="s1">&#39;watermark&#39;</span><span class="p">,</span>
-                                                <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">WATERMARK_HOLD</span> <span class="o">=</span> <span class="n">_WatermarkHoldStateTag</span><span class="p">(</span>
+        <span class="s1">&#39;watermark&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="p">)</span>
     <span class="c1"># pylint: enable=invalid-name</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">trigger_fn</span> <span class="o">=</span> <span class="n">windowing</span><span class="o">.</span><span class="n">triggerfn</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_mode</span> <span class="o">=</span> <span class="n">windowing</span><span class="o">.</span><span class="n">accumulation_mode</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">is_merging</span> <span class="o">=</span> <span class="kc">True</span>
 
-<div class="viewcode-block" id="GeneralTriggerDriver.process_elements"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.GeneralTriggerDriver.process_elements">[docs]</a>  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">windowed_values</span><span class="p">,</span> <span class="n">output_watermark</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_merging</span><span class="p">:</span>
       <span class="n">state</span> <span class="o">=</span> <span class="n">MergeableStateAdapter</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
@@ -1029,10 +1043,10 @@
         <span class="k">continue</span>
       <span class="c1"># Add watermark hold.</span>
       <span class="c1"># TODO(ccy): Add late data and garbage-collection hold support.</span>
-      <span class="n">output_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+      <span class="n">output_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
           <span class="n">window</span><span class="p">,</span>
           <span class="p">(</span><span class="n">element_output_time</span> <span class="k">for</span> <span class="n">element_output_time</span> <span class="ow">in</span>
-           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="o">.</span><span class="n">assign_output_time</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+           <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="o">.</span><span class="n">assign_output_time</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">unused_value</span><span class="p">,</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">)</span>
            <span class="k">if</span> <span class="n">element_output_time</span> <span class="o">&gt;=</span> <span class="n">output_watermark</span><span class="p">))</span>
       <span class="k">if</span> <span class="n">output_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1047,9 +1061,9 @@
       <span class="n">watermark</span> <span class="o">=</span> <span class="n">MIN_TIMESTAMP</span>
       <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_fn</span><span class="o">.</span><span class="n">should_fire</span><span class="p">(</span><span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="n">finished</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_fn</span><span class="o">.</span><span class="n">on_fire</span><span class="p">(</span><span class="n">watermark</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">finished</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span></div>
+        <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">finished</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 
-<div class="viewcode-block" id="GeneralTriggerDriver.process_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.GeneralTriggerDriver.process_timer">[docs]</a>  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">unused_name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span>
+  <span class="k">def</span> <span class="nf">process_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">,</span> <span class="n">unused_name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span>
                     <span class="n">state</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_merging</span><span class="p">:</span>
       <span class="n">state</span> <span class="o">=</span> <span class="n">MergeableStateAdapter</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -1063,7 +1077,7 @@
           <span class="n">finished</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_fn</span><span class="o">.</span><span class="n">on_fire</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
           <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">finished</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unexpected time domain: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">time_domain</span><span class="p">)</span></div>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unexpected time domain: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">time_domain</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">finished</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Output window and clean up if appropriate.&quot;&quot;&quot;</span>
@@ -1083,10 +1097,10 @@
     <span class="k">else</span><span class="p">:</span>
       <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">WATERMARK_HOLD</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="p">(</span><span class="n">window</span><span class="p">,))</span></div>
+    <span class="k">return</span> <span class="n">WindowedValue</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="p">(</span><span class="n">window</span><span class="p">,))</span>
 
 
-<div class="viewcode-block" id="InMemoryUnmergedState"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState">[docs]</a><span class="k">class</span> <span class="nc">InMemoryUnmergedState</span><span class="p">(</span><span class="n">UnmergedState</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">InMemoryUnmergedState</span><span class="p">(</span><span class="n">UnmergedState</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;In-memory implementation of UnmergedState.</span>
 
 <span class="sd">  Used for batch and testing.</span>
@@ -1098,57 +1112,57 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">global_state</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">defensive_copy</span> <span class="o">=</span> <span class="n">defensive_copy</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.set_global_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.set_global_state">[docs]</a>  <span class="k">def</span> <span class="nf">set_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ValueStateTag</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">set_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ValueStateTag</span><span class="p">)</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">defensive_copy</span><span class="p">:</span>
       <span class="n">value</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">global_state</span><span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+    <span class="bp">self</span><span class="o">.</span><span class="n">global_state</span><span class="p">[</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.get_global_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.get_global_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">get_global_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.set_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.set_timer">[docs]</a>  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">[</span><span class="n">window</span><span class="p">][(</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)]</span> <span class="o">=</span> <span class="n">timestamp</span></div>
+  <span class="k">def</span> <span class="nf">set_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">[</span><span class="n">window</span><span class="p">][(</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)]</span> <span class="o">=</span> <span class="n">timestamp</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.clear_timer"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.clear_timer">[docs]</a>  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span></div>
+  <span class="k">def</span> <span class="nf">clear_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.get_window"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.get_window">[docs]</a>  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">window_id</span></div>
+  <span class="k">def</span> <span class="nf">get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">window_id</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.add_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.add_state">[docs]</a>  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">defensive_copy</span><span class="p">:</span>
       <span class="n">value</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ValueStateTag</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ValueStateTag</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">][</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">CombiningValueStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_CombiningValueStateTag</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">][</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ListStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ListStateTag</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">][</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">WatermarkHoldStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_WatermarkHoldStateTag</span><span class="p">):</span>
       <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">][</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.get_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
     <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">][</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ValueStateTag</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ValueStateTag</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">values</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">CombiningValueStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_CombiningValueStateTag</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">combine_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ListStateTag</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_ListStateTag</span><span class="p">):</span>
       <span class="k">return</span> <span class="n">values</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">WatermarkHoldStateTag</span><span class="p">):</span>
-      <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">output_time_fn_impl</span><span class="o">.</span><span class="n">combine_all</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">_WatermarkHoldStateTag</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">timestamp_combiner_impl</span><span class="o">.</span><span class="n">combine_all</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span></div>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid tag.&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.clear_state"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.clear_state">[docs]</a>  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">clear_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">tag</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">window</span><span class="p">]:</span>
-      <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+      <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-<div class="viewcode-block" id="InMemoryUnmergedState.get_and_clear_timers"><a class="viewcode-back" href="../../../apache_beam.transforms.html#apache_beam.transforms.trigger.InMemoryUnmergedState.get_and_clear_timers">[docs]</a>  <span class="k">def</span> <span class="nf">get_and_clear_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="o">=</span><span class="n">MAX_TIMESTAMP</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_and_clear_timers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="o">=</span><span class="n">MAX_TIMESTAMP</span><span class="p">):</span>
     <span class="n">expired</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">window</span><span class="p">,</span> <span class="n">timers</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
       <span class="k">for</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">),</span> <span class="n">timestamp</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">timers</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -1157,12 +1171,12 @@
           <span class="k">del</span> <span class="n">timers</span><span class="p">[(</span><span class="n">name</span><span class="p">,</span> <span class="n">time_domain</span><span class="p">)]</span>
       <span class="k">if</span> <span class="ow">not</span> <span class="n">timers</span><span class="p">:</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">[</span><span class="n">window</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">expired</span></div>
+    <span class="k">return</span> <span class="n">expired</span>
 
   <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="n">state_str</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">state</span><span class="p">))</span>
                           <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-    <span class="k">return</span> <span class="s1">&#39;timers: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">state: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">),</span> <span class="n">state_str</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="s1">&#39;timers: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">state: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timers</span><span class="p">),</span> <span class="n">state_str</span><span class="p">)</span>
 </pre></div>
 
           </div>

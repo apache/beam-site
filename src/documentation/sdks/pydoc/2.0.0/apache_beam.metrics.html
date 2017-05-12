@@ -26,7 +26,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="apache_beam.runners package" href="apache_beam.runners.html" />
+    <link rel="next" title="apache_beam.options package" href="apache_beam.options.html" />
     <link rel="prev" title="apache_beam.io.gcp.tests package" href="apache_beam.io.gcp.tests.html" /> 
   </head>
   <body role="document">
@@ -40,7 +40,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="apache_beam.runners.html" title="apache_beam.runners package"
+          <a href="apache_beam.options.html" title="apache_beam.options package"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="apache_beam.io.gcp.tests.html" title="apache_beam.io.gcp.tests package"
@@ -68,8 +68,8 @@
   <p class="topless"><a href="apache_beam.io.gcp.tests.html"
                         title="previous chapter">apache_beam.io.gcp.tests package</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="apache_beam.runners.html"
-                        title="next chapter">apache_beam.runners package</a></p>
+  <p class="topless"><a href="apache_beam.options.html"
+                        title="next chapter">apache_beam.options package</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -108,196 +108,6 @@ context.</p>
 <p>Cells depend on a &#8216;dirty-bit&#8217; in the CellCommitState class that tracks whether
 a cell&#8217;s updates have been committed.</p>
 <dl class="class">
-<dt id="apache_beam.metrics.cells.CellCommitState">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">CellCommitState</code><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CellCommitState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Atomically tracks a cell&#8217;s dirty/clean commit status.</p>
-<p>Reporting a metric update works in a two-step process: First, updates to the
-metric are received, and the metric is marked as &#8216;dirty&#8217;. Later, updates are
-committed, and then the cell may be marked as &#8216;clean&#8217;.</p>
-<p>The tracking of a cell&#8217;s state is done conservatively: A metric may be
-reported DIRTY even if updates have not occurred.</p>
-<p>This class is thread-safe.</p>
-<dl class="attribute">
-<dt id="apache_beam.metrics.cells.CellCommitState.CLEAN">
-<code class="descname">CLEAN</code><em class="property"> = 1</em><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.CLEAN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="apache_beam.metrics.cells.CellCommitState.COMMITTING">
-<code class="descname">COMMITTING</code><em class="property"> = 2</em><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.COMMITTING" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="apache_beam.metrics.cells.CellCommitState.DIRTY">
-<code class="descname">DIRTY</code><em class="property"> = 0</em><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.DIRTY" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CellCommitState.after_commit">
-<code class="descname">after_commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CellCommitState.after_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.after_commit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Mark changes made up to the last call to <code class="docutils literal"><span class="pre">before_commit</span></code> as committed.</p>
-<p>The next call to <code class="docutils literal"><span class="pre">before_commit</span></code> will return <code class="docutils literal"><span class="pre">False</span></code> unless there have
-been changes made.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CellCommitState.after_modification">
-<code class="descname">after_modification</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CellCommitState.after_modification"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.after_modification" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indicate that changes have been made to the metric being tracked.</p>
-<p>Should be called after modification of the metric value.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CellCommitState.before_commit">
-<code class="descname">before_commit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CellCommitState.before_commit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.before_commit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check the dirty state, and mark the metric as committing.</p>
-<p>After this call, the state is either CLEAN, or COMMITTING. If the state
-was already CLEAN, then we simply return. If it was either DIRTY or
-COMMITTING, then we set the cell as COMMITTING (e.g. in the middle of
-a commit).</p>
-<p>After a commit is successful, <code class="docutils literal"><span class="pre">after_commit</span></code> should be called.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A boolean, which is false if the cell is CLEAN, and true otherwise.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="apache_beam.metrics.cells.CellCommitState.state">
-<code class="descname">state</code><a class="headerlink" href="#apache_beam.metrics.cells.CellCommitState.state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.CounterAggregator">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">CounterAggregator</code><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterAggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterAggregator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.cells.MetricAggregator" title="apache_beam.metrics.cells.MetricAggregator"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.cells.MetricAggregator</span></code></a></p>
-<p>Aggregator for Counter metric data during pipeline execution.</p>
-<p>Values aggregated should be <code class="docutils literal"><span class="pre">int</span></code> objects.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterAggregator.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterAggregator.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterAggregator.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterAggregator.result">
-<code class="descname">result</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterAggregator.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterAggregator.result" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterAggregator.zero">
-<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterAggregator.zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterAggregator.zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.CounterCell">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">CounterCell</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterCell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Counter" title="apache_beam.metrics.metricbase.Counter"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.metricbase.Counter</span></code></a>, <a class="reference internal" href="#apache_beam.metrics.cells.MetricCell" title="apache_beam.metrics.cells.MetricCell"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.cells.MetricCell</span></code></a></p>
-<p>Tracks the current value and delta of a counter metric.</p>
-<p>Each cell tracks the state of a metric independently per context per bundle.
-Therefore, each metric has a different cell in each bundle, cells are
-aggregated by the runner.</p>
-<p>This class is thread safe.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterCell.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterCell.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterCell.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterCell.get_cumulative">
-<code class="descname">get_cumulative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterCell.get_cumulative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterCell.get_cumulative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.CounterCell.inc">
-<code class="descname">inc</code><span class="sig-paren">(</span><em>n=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#CounterCell.inc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.CounterCell.inc" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.DistributionAggregator">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">DistributionAggregator</code><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionAggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionAggregator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.cells.MetricAggregator" title="apache_beam.metrics.cells.MetricAggregator"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.cells.MetricAggregator</span></code></a></p>
-<p>Aggregator for Distribution metric data during pipeline execution.</p>
-<p>Values aggregated should be <code class="docutils literal"><span class="pre">DistributionData</span></code> objects.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionAggregator.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionAggregator.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionAggregator.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionAggregator.result">
-<code class="descname">result</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionAggregator.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionAggregator.result" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionAggregator.zero">
-<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionAggregator.zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionAggregator.zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.DistributionCell">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">DistributionCell</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionCell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Distribution" title="apache_beam.metrics.metricbase.Distribution"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.metricbase.Distribution</span></code></a>, <a class="reference internal" href="#apache_beam.metrics.cells.MetricCell" title="apache_beam.metrics.cells.MetricCell"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.cells.MetricCell</span></code></a></p>
-<p>Tracks the current value and delta for a distribution metric.</p>
-<p>Each cell tracks the state of a metric independently per context per bundle.
-Therefore, each metric has a different cell in each bundle, that is later
-aggregated.</p>
-<p>This class is thread safe.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionCell.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionCell.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionCell.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionCell.get_cumulative">
-<code class="descname">get_cumulative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionCell.get_cumulative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionCell.get_cumulative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionCell.update">
-<code class="descname">update</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionCell.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionCell.update" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.DistributionData">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">DistributionData</code><span class="sig-paren">(</span><em>sum</em>, <em>count</em>, <em>min</em>, <em>max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionData" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>The data structure that holds data about a distribution metric.</p>
-<p>Distribution metrics are restricted to distributions of integers only.</p>
-<p>This object is not thread safe, so it&#8217;s not supposed to be modified
-by other than the DistributionCell that contains it.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionData.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>other</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionData.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionData.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.DistributionData.get_cumulative">
-<code class="descname">get_cumulative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionData.get_cumulative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionData.get_cumulative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="classmethod">
-<dt id="apache_beam.metrics.cells.DistributionData.singleton">
-<em class="property">classmethod </em><code class="descname">singleton</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionData.singleton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionData.singleton" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="apache_beam.metrics.cells.DistributionResult">
 <em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">DistributionResult</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#DistributionResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.DistributionResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -331,55 +141,17 @@ by other than the DistributionCell that contains it.</p>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="apache_beam.metrics.cells.MetricAggregator">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">MetricAggregator</code><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricAggregator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricAggregator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Base interface for aggregating metric data during pipeline execution.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.MetricAggregator.combine">
-<code class="descname">combine</code><span class="sig-paren">(</span><em>updates</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricAggregator.combine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricAggregator.combine" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.MetricAggregator.result">
-<code class="descname">result</code><span class="sig-paren">(</span><em>x</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricAggregator.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricAggregator.result" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.cells.MetricAggregator.zero">
-<code class="descname">zero</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricAggregator.zero"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricAggregator.zero" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.cells.MetricCell">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.cells.</code><code class="descname">MetricCell</code><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricCell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricCell" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Accumulates in-memory changes to a metric.</p>
-<p>A MetricCell represents a specific metric in a single context and bundle.
-All subclasses must be thread safe, as these are used in the pipeline runners,
-and may be subject to parallel/concurrent updates. Cells should only be used
-directly within a runner.</p>
-<dl class="method">
-<dt id="apache_beam.metrics.cells.MetricCell.get_cumulative">
-<code class="descname">get_cumulative</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/cells.html#MetricCell.get_cumulative"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.cells.MetricCell.get_cumulative" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-apache_beam.metrics.execution">
 <span id="apache-beam-metrics-execution-module"></span><h2>apache_beam.metrics.execution module<a class="headerlink" href="#module-apache_beam.metrics.execution" title="Permalink to this headline">¶</a></h2>
-<p>Internal classes for Metrics API.</p>
+<p>This module is for internal use only; no backwards-compatibility guarantees.</p>
 <p>The classes in this file keep shared state, and organize metrics information.</p>
 <p>Available classes:</p>
 <ul class="simple">
 <li>MetricKey - Internal key for a metric.</li>
 <li>MetricResult - Current status of a metric&#8217;s updates/commits.</li>
 <li><dl class="first docutils">
-<dt>MetricsEnvironment - Keeps track of MetricsContainer and other metrics</dt>
+<dt>_MetricsEnvironment - Keeps track of MetricsContainer and other metrics</dt>
 <dd>information for every single execution working thread.</dd>
 </dl>
 </li>
@@ -502,22 +274,6 @@ and displayed as part of their pipeline execution.</p>
 </li>
 </ul>
 <dl class="class">
-<dt id="apache_beam.metrics.metric.MetricResults">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.metric.</code><code class="descname">MetricResults</code><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricResults" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<dl class="staticmethod">
-<dt id="apache_beam.metrics.metric.MetricResults.matches">
-<em class="property">static </em><code class="descname">matches</code><span class="sig-paren">(</span><em>filter</em>, <em>metric_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricResults.matches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricResults.matches" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="apache_beam.metrics.metric.MetricResults.query">
-<code class="descname">query</code><span class="sig-paren">(</span><em>filter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricResults.query"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricResults.query" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="apache_beam.metrics.metric.Metrics">
 <em class="property">class </em><code class="descclassname">apache_beam.metrics.metric.</code><code class="descname">Metrics</code><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
@@ -599,6 +355,7 @@ and displayed as part of their pipeline execution.</p>
 <em class="property">class </em><code class="descclassname">apache_beam.metrics.metric.</code><code class="descname">MetricsFilter</code><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
 <p>Simple object to filter metrics results.</p>
+<p>This class is experimental. No backwards-compatibility guarantees.</p>
 <p>If filters by matching a result&#8217;s step-namespace-name with three internal
 sets. No execution/matching logic is added to this object, so that it may
 be used to construct arguments as an RPC request. It is left for runners
@@ -672,6 +429,13 @@ users should use the classes and methods exposed in metric.py.</p>
 <li>MetricName - Namespace and name used to refer to a Metric.</li>
 </ul>
 <dl class="class">
+<dt id="apache_beam.metrics.metricbase.Metric">
+<em class="property">class </em><code class="descclassname">apache_beam.metrics.metricbase.</code><code class="descname">Metric</code><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Metric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Base interface of a metric object.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="apache_beam.metrics.metricbase.Counter">
 <em class="property">class </em><code class="descclassname">apache_beam.metrics.metricbase.</code><code class="descname">Counter</code><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Counter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Counter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal"><span class="pre">apache_beam.metrics.metricbase.Metric</span></code></a></p>
@@ -700,13 +464,6 @@ distribution of a variable to be collected during pipeline execution.</p>
 <code class="descname">update</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Distribution.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Distribution.update" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="apache_beam.metrics.metricbase.Metric">
-<em class="property">class </em><code class="descclassname">apache_beam.metrics.metricbase.</code><code class="descname">Metric</code><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Metric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Metric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
-<p>Base interface of a metric object.</p>
 </dd></dl>
 
 <dl class="class">
@@ -741,7 +498,7 @@ between multiple metrics of the same name.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="apache_beam.runners.html" title="apache_beam.runners package"
+          <a href="apache_beam.options.html" title="apache_beam.options package"
              >next</a> |</li>
         <li class="right" >
           <a href="apache_beam.io.gcp.tests.html" title="apache_beam.io.gcp.tests package"

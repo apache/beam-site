@@ -90,6 +90,9 @@
 <span class="kn">import</span> <span class="nn">tempfile</span>
 
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PipelineRunner&#39;</span><span class="p">,</span> <span class="s1">&#39;PipelineState&#39;</span><span class="p">,</span> <span class="s1">&#39;PipelineResult&#39;</span><span class="p">]</span>
+
+
 <span class="k">def</span> <span class="nf">_get_runner_map</span><span class="p">(</span><span class="n">runner_names</span><span class="p">,</span> <span class="n">module_path</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Create a map of runner name in lower case to full import path to the</span>
 <span class="sd">  runner class.</span>
@@ -119,8 +122,10 @@
     <span class="n">_KNOWN_DIRECT_RUNNERS</span> <span class="o">+</span> <span class="n">_KNOWN_DATAFLOW_RUNNERS</span> <span class="o">+</span> <span class="n">_KNOWN_TEST_RUNNERS</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="create_runner"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.create_runner">[docs]</a><span class="k">def</span> <span class="nf">create_runner</span><span class="p">(</span><span class="n">runner_name</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Creates a runner instance from a runner class name.</span>
+<span class="k">def</span> <span class="nf">create_runner</span><span class="p">(</span><span class="n">runner_name</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Creates a runner instance from a runner class name.</span>
 
 <span class="sd">  Args:</span>
 <span class="sd">    runner_name: Name of the pipeline runner. Possible values are:</span>
@@ -155,7 +160,7 @@
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
         <span class="s1">&#39;Unexpected pipeline runner: </span><span class="si">%s</span><span class="s1">. Valid values are </span><span class="si">%s</span><span class="s1"> &#39;</span>
         <span class="s1">&#39;or the fully qualified name of a PipelineRunner subclass.&#39;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">runner_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_ALL_KNOWN_RUNNERS</span><span class="p">)))</span></div>
+            <span class="n">runner_name</span><span class="p">,</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_ALL_KNOWN_RUNNERS</span><span class="p">)))</span>
 
 
 <div class="viewcode-block" id="PipelineRunner"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PipelineRunner">[docs]</a><span class="k">class</span> <span class="nc">PipelineRunner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -233,8 +238,10 @@
             <span class="n">transform_node</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div></div>
 
 
-<div class="viewcode-block" id="PValueCache"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache">[docs]</a><span class="k">class</span> <span class="nc">PValueCache</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-  <span class="sd">&quot;&quot;&quot;Local cache for arbitrary information computed for PValue objects.&quot;&quot;&quot;</span>
+<span class="k">class</span> <span class="nc">PValueCache</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Local cache for arbitrary information computed for PValue objects.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_disk_backed_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="c1"># Cache of values computed while a runner executes a pipeline. This is a</span>
@@ -259,8 +266,8 @@
   <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PValueCache.to_cache_key"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.to_cache_key">[docs]</a>  <span class="k">def</span> <span class="nf">to_cache_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">transform</span><span class="o">.</span><span class="n">full_label</span><span class="p">,</span> <span class="n">tag</span></div>
+  <span class="k">def</span> <span class="nf">to_cache_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">transform</span><span class="o">.</span><span class="n">full_label</span><span class="p">,</span> <span class="n">tag</span>
 
   <span class="k">def</span> <span class="nf">_ensure_pvalue_has_real_producer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Ensure the passed-in PValue has the real_producer attribute.</span>
@@ -279,7 +286,7 @@
         <span class="n">real_producer</span> <span class="o">=</span> <span class="n">real_producer</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
       <span class="n">pvalue</span><span class="o">.</span><span class="n">real_producer</span> <span class="o">=</span> <span class="n">real_producer</span>
 
-<div class="viewcode-block" id="PValueCache.is_cached"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.is_cached">[docs]</a>  <span class="k">def</span> <span class="nf">is_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pobj</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">is_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pobj</span><span class="p">):</span>
     <span class="kn">from</span> <span class="nn">apache_beam.pipeline</span> <span class="k">import</span> <span class="n">AppliedPTransform</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pobj</span><span class="p">,</span> <span class="n">AppliedPTransform</span><span class="p">):</span>
       <span class="n">transform</span> <span class="o">=</span> <span class="n">pobj</span>
@@ -288,18 +295,18 @@
       <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_pvalue_has_real_producer</span><span class="p">(</span><span class="n">pobj</span><span class="p">)</span>
       <span class="n">transform</span> <span class="o">=</span> <span class="n">pobj</span><span class="o">.</span><span class="n">real_producer</span>
       <span class="n">tag</span> <span class="o">=</span> <span class="n">pobj</span><span class="o">.</span><span class="n">tag</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span>
 
-<div class="viewcode-block" id="PValueCache.cache_output"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.cache_output">[docs]</a>  <span class="k">def</span> <span class="nf">cache_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">tag_or_value</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">cache_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">tag_or_value</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
       <span class="n">value</span> <span class="o">=</span> <span class="n">tag_or_value</span>
       <span class="n">tag</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
       <span class="n">tag</span> <span class="o">=</span> <span class="n">tag_or_value</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">refcounts</span><span class="p">[</span><span class="n">tag</span><span class="p">]]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">tag</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">,</span> <span class="n">transform</span><span class="o">.</span><span class="n">refcounts</span><span class="p">[</span><span class="n">tag</span><span class="p">]]</span>
 
-<div class="viewcode-block" id="PValueCache.get_pvalue"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.get_pvalue">[docs]</a>  <span class="k">def</span> <span class="nf">get_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Gets the value associated with a PValue from the cache.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_pvalue_has_real_producer</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span>
     <span class="k">try</span><span class="p">:</span>
@@ -318,19 +325,19 @@
         <span class="c1"># in the local runner before this output was referenced.</span>
         <span class="k">return</span> <span class="p">[]</span>
       <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span></div>
+        <span class="k">raise</span>
 
-<div class="viewcode-block" id="PValueCache.get_unwindowed_pvalue"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.get_unwindowed_pvalue">[docs]</a>  <span class="k">def</span> <span class="nf">get_unwindowed_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pvalue</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)]</span></div>
+  <span class="k">def</span> <span class="nf">get_unwindowed_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pvalue</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)]</span>
 
-<div class="viewcode-block" id="PValueCache.clear_pvalue"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.clear_pvalue">[docs]</a>  <span class="k">def</span> <span class="nf">clear_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">clear_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Removes a PValue from the cache.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_cached</span><span class="p">(</span><span class="n">pvalue</span><span class="p">):</span>
-      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)]</span></div>
+      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)]</span>
 
-<div class="viewcode-block" id="PValueCache.key"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PValueCache.key">[docs]</a>  <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pobj</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pobj</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_pvalue_has_real_producer</span><span class="p">(</span><span class="n">pobj</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">pobj</span><span class="o">.</span><span class="n">real_producer</span><span class="p">,</span> <span class="n">pobj</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span></div></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_cache_key</span><span class="p">(</span><span class="n">pobj</span><span class="o">.</span><span class="n">real_producer</span><span class="p">,</span> <span class="n">pobj</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PipelineState"><a class="viewcode-back" href="../../../apache_beam.runners.html#apache_beam.runners.runner.PipelineState">[docs]</a><span class="k">class</span> <span class="nc">PipelineState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>

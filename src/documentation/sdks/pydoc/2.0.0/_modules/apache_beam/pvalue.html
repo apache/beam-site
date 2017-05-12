@@ -95,7 +95,18 @@
 <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="k">import</span> <span class="n">typehints</span>
 
 
-<div class="viewcode-block" id="PValue"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.PValue">[docs]</a><span class="k">class</span> <span class="nc">PValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;PCollection&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;TaggedOutput&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AsSingleton&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AsIter&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AsList&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;AsDict&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;EmptySideInput&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">PValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Base class for PCollection.</span>
 
 <span class="sd">  Dataflow users should not construct PValue objects directly in their</span>
@@ -134,7 +145,7 @@
                           <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">full_label</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">producer</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PValue.apply"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.PValue.apply">[docs]</a>  <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Applies a transform or callable to a PValue.</span>
 
 <span class="sd">    Args:</span>
@@ -147,10 +158,10 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">arglist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="n">arglist</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="o">*</span><span class="n">arglist</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="o">*</span><span class="n">arglist</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
   <span class="k">def</span> <span class="nf">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">):</span>
-    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ptransform</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">ptransform</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="PCollection"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.PCollection">[docs]</a><span class="k">class</span> <span class="nc">PCollection</span><span class="p">(</span><span class="n">PValue</span><span class="p">):</span>
@@ -203,23 +214,23 @@
   <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="PBegin"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.PBegin">[docs]</a><span class="k">class</span> <span class="nc">PBegin</span><span class="p">(</span><span class="n">PValue</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PBegin</span><span class="p">(</span><span class="n">PValue</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;A pipeline begin marker used as input to create/read transforms.</span>
 
 <span class="sd">  The class is used internally to represent inputs to Create and Read</span>
 <span class="sd">  transforms. This allows us to have transforms that uniformly take PValue(s)</span>
 <span class="sd">  as inputs.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="k">pass</span></div>
+  <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="PDone"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.PDone">[docs]</a><span class="k">class</span> <span class="nc">PDone</span><span class="p">(</span><span class="n">PValue</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">PDone</span><span class="p">(</span><span class="n">PValue</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;PDone is the output of a transform that has a trivial result such as Write.</span>
 <span class="sd">  &quot;&quot;&quot;</span>
-  <span class="k">pass</span></div>
+  <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="DoOutputsTuple"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.DoOutputsTuple">[docs]</a><span class="k">class</span> <span class="nc">DoOutputsTuple</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DoOutputsTuple</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;An object grouping the multiple outputs of a ParDo or FlatMap transform.&quot;&quot;&quot;</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">tags</span><span class="p">,</span> <span class="n">main_tag</span><span class="p">):</span>
@@ -291,7 +302,7 @@
       <span class="c1"># Main output is output of inner ParDo.</span>
       <span class="n">pcoll</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">producer</span><span class="o">.</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_pcolls</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcoll</span>
-    <span class="k">return</span> <span class="n">pcoll</span></div>
+    <span class="k">return</span> <span class="n">pcoll</span>
 
 
 <div class="viewcode-block" id="TaggedOutput"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.TaggedOutput">[docs]</a><span class="k">class</span> <span class="nc">TaggedOutput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -311,7 +322,7 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
 
 
-<div class="viewcode-block" id="AsSideInput"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.AsSideInput">[docs]</a><span class="k">class</span> <span class="nc">AsSideInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">AsSideInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
   <span class="sd">&quot;&quot;&quot;Marker specifying that a PCollection will be used as a side input.</span>
 
 <span class="sd">  When a PCollection is supplied as a side input to a PTransform, it is</span>
@@ -340,7 +351,7 @@
 
   <span class="nd">@property</span>
   <span class="k">def</span> <span class="nf">element_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">typehints</span><span class="o">.</span><span class="n">Any</span></div>
+    <span class="k">return</span> <span class="n">typehints</span><span class="o">.</span><span class="n">Any</span>
 
 
 <div class="viewcode-block" id="AsSingleton"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.AsSingleton">[docs]</a><span class="k">class</span> <span class="nc">AsSingleton</span><span class="p">(</span><span class="n">AsSideInput</span><span class="p">):</span>
@@ -455,13 +466,6 @@
   <span class="nd">@staticmethod</span>
   <span class="k">def</span> <span class="nf">_from_runtime_iterable</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">it</span><span class="p">)</span></div>
-
-
-<span class="c1"># For backwards compatibility with worker code.</span>
-<span class="n">SingletonPCollectionView</span> <span class="o">=</span> <span class="n">AsSingleton</span>
-<span class="n">IterablePCollectionView</span> <span class="o">=</span> <span class="n">AsIter</span>
-<span class="n">ListPCollectionView</span> <span class="o">=</span> <span class="n">AsList</span>
-<span class="n">DictPCollectionView</span> <span class="o">=</span> <span class="n">AsDict</span>
 
 
 <div class="viewcode-block" id="EmptySideInput"><a class="viewcode-back" href="../../apache_beam.html#apache_beam.pvalue.EmptySideInput">[docs]</a><span class="k">class</span> <span class="nc">EmptySideInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
