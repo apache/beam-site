@@ -44,7 +44,8 @@ cards:
         </div>
         <div class="hero__ctas">
           <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
-          <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Quickstart</a>
+          <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
+          <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
         </div>
       </div>
     </div>
@@ -68,7 +69,7 @@ cards:
 
 <div class="pillars section">
   <div class="pillars__title">
-    All about beam
+    All about Apache Beam
   </div>
   <div class="pillars__cols">
     {% for pillar in page.pillars %}
@@ -137,6 +138,7 @@ cards:
   </div>
   <div class="ctas__ctas">
   <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
-  <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
   </div>
 </div>
