@@ -25,42 +25,46 @@ pillars:
   body: Write and share new SDKs, IO connectors, and transformation libraries.
 
 cards:
-- quote: "Lorem ipsum dolor sit amit. Qaz qux."
-  name: Person 1
-- quote: "Lorem ipsum dolor sit amit. Qaz qux."
-  name: Person 2
+- quote: "Beam is the perfect framework giving us a lot of flexibility and great functionality."
+  name: Talend
+- quote: "Apache Beam [has] powerful semantics that solve real-world challenges of stream processing."
+  name: PayPal
 - quote: "Lorem ipsum dolor sit amit. Qaz qux."
   name: Person 3
 ---
-<div class="hero section">
-  <div class="hero__cols">
-    <div class="hero__cols__col">
-      <div class="hero__cols__col__content">
-        <div class="hero__title">
-          Apache Beam: An advanced unified programming model
-        </div>
-        <div class="hero__subtitle">
-          Implement batch and streaming data processing jobs that run on any execution engine.
-        </div>
-        <div class="hero__ctas">
-          <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
-          <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
-          <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
+<div class="hero-bg">
+  <div class="hero section">
+    <div class="hero__cols">
+      <div class="hero__cols__col">
+        <div class="hero__cols__col__content">
+          <div class="hero__title">
+            Apache Beam: An advanced unified programming model
+          </div>
+          <div class="hero__subtitle">
+            Implement batch and streaming data processing jobs that run on any execution engine.
+          </div>
+          <div class="hero__ctas hero__ctas--first">
+            <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
+          </div>
+          <div class="hero__ctas">
+            <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
+            <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="hero__cols__col">
-      <div class="hero__blog">
-        <div class="hero__blog__title">
-          The latest from the blog
-        </div>
-        <div class="hero__blog__cards">
-          {% for post in site.posts limit:3 %}
-          <a class="hero__blog__cards__card" href="{{ post.url | prepend: site.baseurl }}">
-            <div class="hero__blog__cards__card__title">{{post.title}}</div>
-            <div class="hero__blog__cards__card__date">{{ post.date | date: "%b %-d, %Y" }}</div>
-          </a>
-          {% endfor %}
+      <div class="hero__cols__col">
+        <div class="hero__blog">
+          <div class="hero__blog__title">
+            The latest from the blog
+          </div>
+          <div class="hero__blog__cards">
+            {% for post in site.posts limit:3 %}
+            <a class="hero__blog__cards__card" href="{{ post.url | prepend: site.baseurl }}">
+              <div class="hero__blog__cards__card__title">{{post.title}}</div>
+              <div class="hero__blog__cards__card__date">{{ post.date | date: "%b %-d, %Y" }}</div>
+            </a>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
@@ -116,8 +120,10 @@ cards:
           {{card.quote}}
         </div>
         <div class="cards__cards__card__user">
+          <!-- TODO: Implement icons.
           <div class="cards__cards__card__user__icon">
           </div>
+          -->
           <div class="cards__cards__card__user__name">
             {{card.name}}
           </div>
@@ -136,8 +142,10 @@ cards:
   <div class="ctas__title">
     Get started
   </div>
-  <div class="ctas__ctas">
+  <div class="ctas__ctas ctas__ctas--top">
   <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
+  </div>
+  <div class="ctas__ctas">
   <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
   <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
   </div>
