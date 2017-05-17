@@ -48,7 +48,7 @@ cards:
           </div>
           <div class="hero__ctas">
             <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
-            <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseurl}}">Python Quickstart</a>
+            <a class="button" href="{{'/get-started/quickstart-py/'|prepend:site.baseurl}}">Python Quickstart</a>
           </div>
         </div>
       </div>
@@ -147,6 +147,6 @@ cards:
   </div>
   <div class="ctas__ctas">
   <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
-  <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseurl}}">Python Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-py/'|prepend:site.baseurl}}">Python Quickstart</a>
   </div>
 </div>
