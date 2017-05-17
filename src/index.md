@@ -29,8 +29,8 @@ cards:
   name: Talend
 - quote: "Apache Beam [has] powerful semantics that solve real-world challenges of stream processing."
   name: PayPal
-- quote: "Lorem ipsum dolor sit amit. Qaz qux."
-  name: Person 3
+- quote: "Apache Beam represents a principled approach for analyzing data streams."
+  name: data Artisans
 ---
 <div class="hero-bg">
   <div class="hero section">
@@ -91,7 +91,7 @@ cards:
 
 <div class="graphic section">
 <div class="graphic__image">
-<img src="{{'/images/beam_architecture.png'|prepend:site.baseUrl}}" alt="Beam architecture">
+<img src="{{ '/images/beam_architecture.png' | prepend: site.baseUrl }}" alt="Beam architecture">
 </div>
 </div>
 
@@ -102,7 +102,7 @@ cards:
   <div class="logos__logos">
     {% for logo in page.logos %}
     <div class="logos__logos__logo">
-      <a href="{{logo.url|prepend:base.siteUrl}}"><img src="{{logo.image_url|prepend:site.baseUrl}}" alt="{{logo.title}}"></a>
+      <a href="{{ logo.url | prepend: base.siteUrl }}"><img src="{{logo.image_url|prepend:site.baseUrl}}" alt="{{logo.title}}"></a>
     </div>
     {% endfor %}
   </div>
