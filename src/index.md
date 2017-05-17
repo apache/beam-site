@@ -44,11 +44,11 @@ cards:
             Implement batch and streaming data processing jobs that run on any execution engine.
           </div>
           <div class="hero__ctas hero__ctas--first">
-            <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
+            <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseurl}}">Learn more</a>
           </div>
           <div class="hero__ctas">
-            <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
-            <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
+            <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
+            <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseurl}}">Python Quickstart</a>
           </div>
         </div>
       </div>
@@ -91,7 +91,7 @@ cards:
 
 <div class="graphic section">
 <div class="graphic__image">
-<img src="{{ '/images/beam_architecture.png' | prepend: site.baseUrl }}" alt="Beam architecture">
+<img src="{{ '/images/beam_architecture.png' | prepend: site.baseurl }}" alt="Beam architecture">
 </div>
 </div>
 
@@ -102,7 +102,7 @@ cards:
   <div class="logos__logos">
     {% for logo in page.logos %}
     <div class="logos__logos__logo">
-      <a href="{{ logo.url | prepend: base.siteUrl }}"><img src="{{logo.image_url|prepend:site.baseUrl}}" alt="{{logo.title}}"></a>
+      <a href="{{ logo.url | prepend: base.siteUrl }}"><img src="{{logo.image_url|prepend:site.baseurl}}" alt="{{logo.title}}"></a>
     </div>
     {% endfor %}
   </div>
@@ -133,7 +133,7 @@ cards:
     </div>
     <div class="cards__body">
       Beam is an open source community and contributions are greatly appreciated!
-      If you’d like to contribute, please see the <a href="{{'/contribute/'|prepend:site.baseUrl}}">Contribute</a> section.
+      If you’d like to contribute, please see the <a href="{{'/contribute/'|prepend:site.baseurl}}">Contribute</a> section.
     </div>
   </div>
 </div>
@@ -143,10 +143,10 @@ cards:
     Get started
   </div>
   <div class="ctas__ctas ctas__ctas--top">
-  <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseUrl}}">Learn more</a>
+  <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseurl}}">Learn more</a>
   </div>
   <div class="ctas__ctas">
-  <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseUrl}}">Java Quickstart</a>
-  <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseUrl}}">Python Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-python/'|prepend:site.baseurl}}">Python Quickstart</a>
   </div>
 </div>
