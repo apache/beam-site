@@ -25,7 +25,7 @@ pillars:
   body: Write and share new SDKs, IO connectors, and transformation libraries.
 
 cards:
-- quote: "Beam is the perfect framework giving us a lot of flexibility and great functionality."
+- quote: "Apache Beam is a powerful framework that delivers the flexibility and advanced functionality our customers needs."
   name: Talend
 - quote: "Apache Beam [has] powerful semantics that solve real-world challenges of stream processing."
   name: PayPal
