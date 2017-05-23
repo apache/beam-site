@@ -195,3 +195,50 @@ PCollection<KV<Text, LinkedMapWritable>> elasticData = p.apply("read",
 ```
 
 The `org.elasticsearch.hadoop.mr.EsInputFormat`'s `EsInputFormat` key class is `org.apache.hadoop.io.Text` `Text`, and its value class is `org.elasticsearch.hadoop.mr.LinkedMapWritable` `LinkedMapWritable`. Both key and value classes have Beam Coders.
+
+### HCatalog - HCatInputFormat
+
+To read data using HCatalog, use `org.apache.hive.hcatalog.mapreduce.HCatInputFormat`, which needs the following properties to be set:
+
+```java
+Configuration hcatConf = new Configuration();
+hcatConf.setClass("mapreduce.job.inputformat.class", HCatInputFormat.class, InputFormat.class);
+hcatConf.setClass("key.class", LongWritable.class, Object.class);
+hcatConf.setClass("value.class", DefaultHCatRecord.class, Object.class);
+hcatConf.set("hive.metastore.uris", "thrift://metastore-host:port");
+
+org.apache.hive.hcatalog.mapreduce.HCatInputFormat.setInput(hcatConf, "my_database", "my_table", "my_filter");
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
+
+Call Read transform as follows:
+
+```java
+PCollection<KV<Long, String>> hcatData =
+  p.apply("read",
+  HadoopInputFormatIO.<Long, String>read()
+  .withConfiguration(hcatConf)
+  .withValueTranslation(hcatOutputValueType);
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
+
+The `HCatInputFormat` key class is `java.lang.Long` `Long`, which has a Beam `Coder`. The `HCatInputFormat` value class is `org.apache.hive.hcatalog.data.DefaultHCatRecord` `DefaultHCatRecord`, which does not have a Beam `Coder`. Rather than write a new coder, you can provide your own translation method, as follows:
+
+```java
+SimpleFunction<DefaultHCatRecord, String> hcatOutputValueType = SimpleFunction<DefaultHCatRecord, String>()
+{
+  public String apply(DefaultHCatRecord record) {
+    return record.toString();
+  }
+};
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
