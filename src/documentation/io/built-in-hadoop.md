@@ -204,7 +204,7 @@ To read data using HCatalog, use `org.apache.hive.hcatalog.mapreduce.HCatInputFo
 Configuration hcatConf = new Configuration();
 hcatConf.setClass("mapreduce.job.inputformat.class", HCatInputFormat.class, InputFormat.class);
 hcatConf.setClass("key.class", LongWritable.class, Object.class);
-hcatConf.setClass("value.class", DefaultHCatRecord.class, Object.class);
+hcatConf.setClass("value.class", HCatRecord.class, Object.class);
 hcatConf.set("hive.metastore.uris", "thrift://metastore-host:port");
 
 org.apache.hive.hcatalog.mapreduce.HCatInputFormat.setInput(hcatConf, "my_database", "my_table", "my_filter");
@@ -228,12 +228,12 @@ PCollection<KV<Long, String>> hcatData =
   # The Beam SDK for Python does not support Hadoop InputFormat IO.
 ```
 
-The `HCatInputFormat` key class is `java.lang.Long` `Long`, which has a Beam `Coder`. The `HCatInputFormat` value class is `org.apache.hive.hcatalog.data.DefaultHCatRecord` `DefaultHCatRecord`, which does not have a Beam `Coder`. Rather than write a new coder, you can provide your own translation method, as follows:
+The `HCatInputFormat` key class is `java.lang.Long` `Long`, which has a Beam `Coder`. The `HCatInputFormat` value class is `org.apache.hive.hcatalog.data.HCatRecord` `HCatRecord`, which does not have a Beam `Coder`. Rather than write a new coder, you can provide your own translation method, as follows:
 
 ```java
-SimpleFunction<DefaultHCatRecord, String> hcatOutputValueType = SimpleFunction<DefaultHCatRecord, String>()
+SimpleFunction<HCatRecord, String> hcatOutputValueType = SimpleFunction<HCatRecord, String>()
 {
-  public String apply(DefaultHCatRecord record) {
+  public String apply(HCatRecord record) {
     return record.toString();
   }
 };
