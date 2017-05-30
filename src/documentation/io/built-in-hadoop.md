@@ -217,26 +217,10 @@ org.apache.hive.hcatalog.mapreduce.HCatInputFormat.setInput(hcatConf, "my_databa
 Call Read transform as follows:
 
 ```java
-PCollection<KV<Long, String>> hcatData =
+PCollection<KV<Long, HCatRecord>> hcatData =
   p.apply("read",
-  HadoopInputFormatIO.<Long, String>read()
-  .withConfiguration(hcatConf)
-  .withValueTranslation(hcatOutputValueType);
-```
-
-```py
-  # The Beam SDK for Python does not support Hadoop InputFormat IO.
-```
-
-The `HCatInputFormat` key class is `java.lang.Long` `Long`, which has a Beam `Coder`. The `HCatInputFormat` value class is `org.apache.hive.hcatalog.data.HCatRecord` `HCatRecord`, which does not have a Beam `Coder`. Rather than write a new coder, you can provide your own translation method, as follows:
-
-```java
-SimpleFunction<HCatRecord, String> hcatOutputValueType = SimpleFunction<HCatRecord, String>()
-{
-  public String apply(HCatRecord record) {
-    return record.toString();
-  }
-};
+  HadoopInputFormatIO.<Long, HCatRecord>read()
+  .withConfiguration(hcatConf);
 ```
 
 ```py
