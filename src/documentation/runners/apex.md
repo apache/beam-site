@@ -62,3 +62,10 @@ Depending on your installation, you may be able to monitor the progress of your 
 * YARN : Using YARN web UI generally running on 8088 on the node running resource manager.
 * Apex command-line interface: [Using the Apex CLI to get running application information](http://apex.apache.org/docs/apex/apex_cli/#apex-cli-commands).
 
+## Status
+
+Apex runner can be used to run pipelines, please report issues in [JIRA](https://issues.apache.org/jira/issues/?jql=project%20%3D%20BEAM%20AND%20component%20%3D%20runner-apex%20AND%20resolution%20%3D%20Unresolved).
+
+## Running pipelines on an Apex YARN cluster
+
+Coming soon.
