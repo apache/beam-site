@@ -35,8 +35,10 @@ Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/prog
     <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">Google Cloud PubSub</a></p>
   </td>
   <td>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/cassandra">Apache Cassandra</a></p>
     <p><a href="{{site.baseurl}}/documentation/io/built-in/hadoop/">Apache Hadoop InputFormat</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hbase">Apache HBase</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hcatalog">Apache Hive (HCatalog)</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
@@ -73,16 +75,8 @@ This table contains I/O transforms that are currently planned or in-progress. St
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1237">BEAM-1237</a></td>
   </tr>
   <tr>
-    <td>Apache Cassandra</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-245">BEAM-245</a></td>
-  </tr>
-  <tr>
     <td>Apache DistributedLog</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-607">BEAM-607</a></td>
-  </tr>
-  <tr>
-    <td>Apache Hive</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1158">BEAM-1158</a></td>
   </tr>
   <tr>
     <td>Apache Parquet</td><td>Java</td>
@@ -123,5 +117,13 @@ This table contains I/O transforms that are currently planned or in-progress. St
   <tr>
     <td>RestIO</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1946">BEAM-1946</a></td>
+  </tr>
+  <tr>
+    <td>TikaIO</td><td>Java</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-2328">BEAM-2328</a></td>
+  </tr>
+  <tr>
+    <td>Cloud Spanner</td><td>Java</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-1542">BEAM-1542</a></td>
   </tr>
 </table>
