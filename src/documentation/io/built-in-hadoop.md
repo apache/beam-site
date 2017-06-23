@@ -229,7 +229,7 @@ PCollection<KV<Long, HCatRecord>> hcatData =
 
 ### EMR DynamoDB - DynamoDBInputFormat
 
-To read data using EMR DynamoDB, use `org.apache.hadoop.dynamodb.read.DynamoDBInputFormat`.
+To read data from EMR DynamoDB, use `org.apache.hadoop.dynamodb.read.DynamoDBInputFormat`.
 DynamoDBInputFormat implements the older `org.apache.hadoop.mapred.InputFormat` interface and to make it compatible with HadoopInputFormatIO which uses the newer abstract class `org.apache.hadoop.mapreduce.InputFormat`, 
 a wrapper API is required which acts as an adapter between HadoopInputFormatIO and DynamoDBInputFormat (or in general any InputFormat implementing `org.apache.hadoop.mapred.InputFormat`)
 The below example uses one such available wrapper API - <https://github.com/twitter/elephant-bird/blob/master/core/src/main/java/com/twitter/elephantbird/mapreduce/input/MapReduceInputFormatWrapper.java>
@@ -263,7 +263,7 @@ Call Read transform as follows:
 PCollection<Text, DynamoDBItemWritable> dynamoDBData =
   p.apply("read",
   HadoopInputFormatIO.<Text, DynamoDBItemWritable>read()
-  .withConfiguration(emrDynamoDBConf );
+  .withConfiguration(emrDynamoDBConf);
 ```
 
 ```py
