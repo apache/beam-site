@@ -49,7 +49,7 @@ If your pipeline uses packages that are not available publicly (e.g. packages th
 
         --extra_package /path/to/package/package-name
 
-   Where package-name is the package's tarball. If you have the `setup.py` for that
+   where package-name is the package's tarball. If you have the `setup.py` for that
    package then you can build the tarball with the following command:
 
         python setup.py sdist
