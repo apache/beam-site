@@ -263,7 +263,7 @@ Call Read transform as follows:
 PCollection<Text, DynamoDBItemWritable> dynamoDBData =
   p.apply("read",
   HadoopInputFormatIO.<Text, DynamoDBItemWritable>read()
-  .withConfiguration(hcatConf);
+  .withConfiguration(emrDynamoDBConf );
 ```
 
 ```py
