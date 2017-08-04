@@ -452,32 +452,41 @@ public static class FooV2 {
 
 #### Validation
 
-* Validate individual parameters in `.withBlah()` methods. Error messages should mention the method being called, the actual value and the range of valid values.
-* Validate inter-parameter invariants in the `PTransform`'s `.validate()` method.
+* Validate individual parameters in `.withBlah()` methods using `checkArgument()`. Error messages should mention the name of the parameter, the actual value, and the range of valid values.
+* Validate parameter combinations and missing required parameters in the `PTransform`'s `.validate()` or `.expand()` method.
 
 ```java
 @AutoValue
 public abstract class TwiddleThumbs
     extends PTransform<PCollection<Foo>, PCollection<Bar>> {
   abstract int getMoo();
-  abstract int getBoo();
+  abstract String getBoo();
 
   ...
   // Validating individual parameters
   public TwiddleThumbs withMoo(int moo) {
-    checkArgument(moo >= 0 && moo < 100,
-      "TwiddleThumbs.withMoo() called with an invalid moo of %s. "
-              + "Valid values are 0 (exclusive) to 100 (exclusive)",
-              moo);
-        return toBuilder().setMoo(moo).build();
+    checkArgument(
+        moo >= 0 && moo < 100,
+        "Moo must be between 0 (inclusive) and 100 (exclusive), but was: %s",
+        moo);
+    return toBuilder().setMoo(moo).build();
   }
 
-  // Validating cross-parameter invariants
+  public TwiddleThumbs withBoo(String boo) {
+    checkArgument(boo != null, "Boo can not be null");
+    checkArgument(!boo.isEmpty(), "Boo can not be empty");
+    return toBuilder().setBoo(boo).build();
+  }
+
   public void validate(PCollection<Foo> input) {
-    checkArgument(getMoo() == 0 || getBoo() == 0,
-      "TwiddleThumbs created with both .withMoo(%s) and .withBoo(%s). "
-      + "Only one of these must be specified.",
-      getMoo(), getBoo());
+    // Validating that a required parameter is present
+    checkArgument(getBoo() != null, "Must specify boo");
+
+    // Validating a combination of parameters
+    checkArgument(
+        getMoo() == 0 || getBoo() == null,
+        "Must specify at most one of moo or boo, but was: moo = %s, boo = %s",
+        getMoo(), getBoo());
   }
 }
 ```
