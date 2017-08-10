@@ -500,13 +500,15 @@ public abstract class TwiddleThumbs
         getMoo() == 0 || getBoo() == null,
         "Must specify at most one of moo or boo, but was: moo = %s, boo = %s",
         getMoo(), getBoo());
+
+    ...
   }
 }
 ```
 
 #### Coders
 
-`Coder`s are a way for a Beam runner to materialize intermediate data or transmit it between workers when necessary. Do not use `Coder` as a general-purpose API for parsing or writing binary formats.
+`Coder`s are a way for a Beam runner to materialize intermediate data or transmit it between workers when necessary. `Coder` should not be used as a general-purpose API for parsing or writing binary formats because the particular binary encoding of a `Coder` is intended to be its private implementation detail.
 
 ##### Providing default coders for types
 
@@ -514,7 +516,7 @@ Provide default `Coder`s for all new data types. Use `@DefaultCoder` annotations
 
 ##### Setting coders on output collections
 
-The outputs of your `PTransform` must always have a `Coder` set: a user should never need to call `.setCoder()` on a `PCollection` produced by your `PTransform` (in fact, `setCoder` will soon be deprecated). In some cases, coder inference will be sufficient to achieve this; in other cases, your transform will need to explicitly call `setCoder` on its output collections.
+All `PCollection`s created by your `PTransform` (both output and intermediate collections) must have a `Coder` set on them: a user should never need to call `.setCoder()` to "fix up" a coder on a `PCollection` produced by your `PTransform` (in fact, Beam intends to eventually deprecate `setCoder`). In some cases, coder inference will be sufficient to achieve this; in other cases, your transform will need to explicitly call `setCoder` on its collections.
 
 If the collection is of a concrete type, that type usually has a corresponding coder. Use a specific most efficient coder (e.g. `StringUtf8Coder.of()` for strings, `ByteArrayCoder.of()` for byte arrays, etc.), rather than a general-purpose coder like `SerializableCoder`.
 
