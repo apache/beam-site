@@ -453,7 +453,10 @@ public static class FooV2 {
 #### Validation
 
 * Validate individual parameters in `.withBlah()` methods using `checkArgument()`. Error messages should mention the name of the parameter, the actual value, and the range of valid values.
-* Validate parameter combinations and missing required parameters in the `PTransform`'s `.validate()` or `.expand()` method.
+* Validate parameter combinations and missing required parameters in the `PTransform`'s `.expand()` method.
+* Validate parameters that the `PTransform` takes from `PipelineOptions` in the `PTransform`'s `.validate(PipelineOptions)` method.
+  These validations will be executed when the pipeline is already fully constructed/expanded and is about to be run with a particular `PipelineOptions`.
+  Most `PTransform`s do not use `PipelineOptions` and thus don't need a `validate()` method - instead, they should perform their validation via the two other methods above.
 
 ```java
 @AutoValue
@@ -478,7 +481,17 @@ public abstract class TwiddleThumbs
     return toBuilder().setBoo(boo).build();
   }
 
-  public void validate(PCollection<Foo> input) {
+  @Override
+  public void validate(PipelineOptions options) {
+    int woo = options.as(TwiddleThumbsOptions.class).getWoo();
+    checkArgument(
+       woo > getMoo(),
+      "Woo (%s) must be smaller than moo (%s)",
+      woo, getMoo());
+  }
+
+  @Override
+  public PCollection<Bar> expand(PCollection<Foo> input) {
     // Validating that a required parameter is present
     checkArgument(getBoo() != null, "Must specify boo");
 
