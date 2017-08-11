@@ -97,6 +97,7 @@ members:
     email: reuvenlax [at] apache [dot] org
     organization: Google
     roles: committer
+    time_zone: "-8"
   - name: Jingsong Lee
     apache_id: lzljs3620320
     email: lzljs3620320 [at] apache [dot] org
