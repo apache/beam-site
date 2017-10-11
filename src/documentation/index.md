@@ -17,6 +17,7 @@ This section provides in-depth conceptual information and reference material for
 Learn about the Beam Programming Model and the concepts common to all Beam SDKs and Runners.
 
 * The [Programming Guide]({{ site.baseurl }}/documentation/programming-guide/) introduces all the key Beam concepts.
+* Learn about Beam's [execution model]({{ site.baseurl }}/documentation/execution-model/) to better understand how pipelines execute.
 * Visit [Additional Resources]({{ site.baseurl }}/documentation/resources/) for some of our favorite articles and talks about Beam.
 
 ## Pipeline Fundamentals
