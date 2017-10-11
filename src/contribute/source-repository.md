@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: section
 title: "Beam Source Repository"
+section_menu: section-menu/contribute.html
 permalink: /contribute/source-repository/
 redirect_from: /source_repository/
 ---
@@ -12,7 +13,7 @@ This project uses [Git](http://git-scm.com) to manage its source code.
 ## Web Browser Access
 The following is a link to a browsable version of the source repository:
 
-[https://git-wip-us.apache.org/repos/asf/beam.git](https://git-wip-us.apache.org/repos/asf/beam.git)
+    https://git-wip-us.apache.org/repos/asf/beam.git
 
 ## Anonymous Access
 The source can be checked out anonymously from Git with this command (See http://git-scm.com/docs/git-clone):

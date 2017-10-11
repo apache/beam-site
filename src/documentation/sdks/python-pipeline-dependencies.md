@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: section
 title: "Managing Python Pipeline Dependencies"
+section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/python-pipeline-dependencies/
 ---
 # Managing Python Pipeline Dependencies
@@ -109,4 +110,3 @@ If your pipeline uses non-Python packages (e.g. packages that require installati
         --setup_file /path/to/setup.py
 
 **Note:** Because custom commands execute after the dependencies for your workflow are installed (by `pip`), you should omit the PyPI package dependency from the pipeline's `requirements.txt` file and from the `install_requires` parameter in the `setuptools.setup()` call of your `setup.py` file.
-

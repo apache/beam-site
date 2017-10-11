@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: section
 title: 'Beam Docker Images'
+section_menu: section-menu/contribute.html
 permalink: /contribute/docker-images/
 ---
 

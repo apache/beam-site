@@ -1,7 +1,8 @@
 ---
-layout: default
+layout: section
 title: "Cloud Dataflow Runner"
 permalink: /documentation/runners/dataflow/
+section_menu: section-menu/runners.html
 redirect_from: /learn/runners/dataflow/
 ---
 # Using the Google Cloud Dataflow Runner
@@ -31,10 +32,7 @@ To use the Cloud Dataflow Runner, you must complete the following setup:
 
 2. Enable billing for your project.
 
-3. Enable the required Google Cloud APIs: Cloud Dataflow, Compute Engine,
-   Stackdriver Logging, Cloud Storage, Cloud Storage JSON, and Cloud Resource
-   Manager. You may need to enable additional APIs (such as BigQuery, Cloud
-   Pub/Sub, or Cloud Datastore) if you use them in your pipeline code.
+3. Enable required Google Cloud APIs: Cloud Dataflow, Compute Engine, Stackdriver Logging, Cloud Storage, and Cloud Storage JSON. You may need to enable additional APIs (such as BigQuery, Cloud Pub/Sub, or Cloud Datastore) if you use them in your pipeline code.
 
 4. Install the Google Cloud SDK.
 
@@ -171,4 +169,3 @@ To block until your job completes, call <span class="language-java"><code>waitTo
 
 <span class="language-java">If your pipeline uses an unbounded data source or sink, you must set the `streaming` option to `true`.</span>
 <span class="language-py">The Beam SDK for Python does not currently support streaming pipelines.</span>
-

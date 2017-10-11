@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: section
 title: "DSLs: SQL"
+section_menu: section-menu/sdks.html
 permalink: /documentation/dsls/sql/
 ---
 
@@ -26,7 +27,7 @@ There are two main pieces to the SQL DSL API:
 
 We'll look at each of these below.
 
-# <a name="usage"></a>2. Usage of DSL APIs 
+# <a name="usage"></a>2. Usage of DSL APIs
 
 ## BeamRecord
 
@@ -85,7 +86,7 @@ Once you have a `PCollection<BeamRecord>` in hand, you may use the `BeamSql` API
 
 `BeamSql` provides two methods for generating a `PTransform` from a SQL query, both of which are equivalent except for the number of inputs they support:
 
-* `BeamSql.query()`, which may be applied to a single `PCollection`. The input collection must be referenced via the table name `PCOLLECTION` in the query: 
+* `BeamSql.query()`, which may be applied to a single `PCollection`. The input collection must be referenced via the table name `PCOLLECTION` in the query:
   ```
   PCollection<BeamRecord> filteredNames = testApps.apply(
       BeamSql.query("SELECT appId, description, rowtime FROM PCOLLECTION WHERE id=1"));
@@ -107,7 +108,7 @@ Once you have a `PCollection<BeamRecord>` in hand, you may use the `BeamSql` API
                           FROM Apps INNER JOIN Reviews ON Apps.appId == Reviews.appId"));
   ```
 
-Both methods wrap the back-end details of parsing/validation/assembling, and deliver a Beam SDK style API that can express simple TABLE_FILTER queries up to complex queries containing JOIN/GROUP_BY etc. 
+Both methods wrap the back-end details of parsing/validation/assembling, and deliver a Beam SDK style API that can express simple TABLE_FILTER queries up to complex queries containing JOIN/GROUP_BY etc.
 
 [BeamSqlExample](https://github.com/apache/beam/blob/DSL_SQL/sdks/java/extensions/sql/src/main/java/org/apache/beam/sdk/extensions/sql/example/BeamSqlExample.java) in the code repository shows basic usage of both APIs.
 
@@ -146,7 +147,7 @@ tableExpression:
 booleanExpression:
     expression [ IS NULL | IS NOT NULL ]
   | expression [ > | >= | = | < | <= | <> ] expression
-  | booleanExpression [ AND | OR ] booleanExpression 
+  | booleanExpression [ AND | OR ] booleanExpression
   | NOT booleanExpression
   | '(' booleanExpression ')'
 
@@ -185,11 +186,11 @@ SELECT f_int, COUNT(*) AS `size` FROM PCOLLECTION GROUP BY f_int, HOP(f_timestam
 SELECT f_int, COUNT(*) AS `size` FROM PCOLLECTION GROUP BY f_int, SESSION(f_timestamp, INTERVAL '5' MINUTE)
 ```
 
-Note: 
+Note:
 
 1. distinct aggregation is not supported yet.
 2. the default trigger is `Repeatedly.forever(AfterWatermark.pastEndOfWindow())`;
-3. when `time` field in `HOP(dateTime, slide, size [, time ])`/`TUMBLE(dateTime, interval [, time ])`/`SESSION(dateTime, interval [, time ])` is specified, a lateFiring trigger is added as 
+3. when `time` field in `HOP(dateTime, slide, size [, time ])`/`TUMBLE(dateTime, interval [, time ])`/`SESSION(dateTime, interval [, time ])` is specified, a lateFiring trigger is added as
 
 ```
 Repeatedly.forever(AfterWatermark.pastEndOfWindow().withLateFirings(AfterProcessingTime
@@ -289,7 +290,7 @@ PCollection<BeamSqlRow> result =
     input.apply("udafExample",
         BeamSql.simpleQuery(sql).withUdaf("squaresum", new SquareSum()));
 ```
-  
+
 ## <a name="data-type"></a>3.2. Data Types
 Each type in Beam SQL maps to a Java class to holds the value in `BeamRecord`. The following table lists the relation between SQL types and Java classes, which are supported in current repository:
 
@@ -337,11 +338,11 @@ Beam SQL has implemented lots of build-in functions defined in [Apache Calcite](
 
 | Operator syntax | Description|
 | ---- | ---- |
-| numeric1 + numeric2 | Returns numeric1 plus numeric2| 
-| numeric1 - numeric2 | Returns numeric1 minus numeric2| 
-| numeric1 * numeric2 | Returns numeric1 multiplied by numeric2| 
-| numeric1 / numeric2 | Returns numeric1 divided by numeric2| 
-| MOD(numeric, numeric) | Returns the remainder (modulus) of numeric1 divided by numeric2. The result is negative only if numeric1 is negative| 
+| numeric1 + numeric2 | Returns numeric1 plus numeric2|
+| numeric1 - numeric2 | Returns numeric1 minus numeric2|
+| numeric1 * numeric2 | Returns numeric1 multiplied by numeric2|
+| numeric1 / numeric2 | Returns numeric1 divided by numeric2|
+| MOD(numeric, numeric) | Returns the remainder (modulus) of numeric1 divided by numeric2. The result is negative only if numeric1 is negative|
 {:.table}
 
 **Math functions**
@@ -466,4 +467,3 @@ And compiled as a composite `PTransform`
 pCollection.apply(BeamSqlFilter...)
            .apply(BeamSqlProject...)
 ```
-

@@ -1,12 +1,13 @@
 ---
-layout: default
+layout: section
 title: "Beam Java SDK"
+section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/java/
 redirect_from: /learn/sdks/java/
 ---
 # Apache Beam Java SDK
 
-The Java SDK for Apache Beam provides a simple, powerful API for building both batch and streaming parallel data processing pipelines in Java. 
+The Java SDK for Apache Beam provides a simple, powerful API for building both batch and streaming parallel data processing pipelines in Java.
 
 
 ## Get Started with the Java SDK
@@ -31,4 +32,3 @@ The Java SDK has the following extensions:
 
 - [join-library]({{site.baseurl}}/documentation/sdks/java-extensions/#join-library) provides inner join, outer left join, and outer right join functions.
 - [sorter]({{site.baseurl}}/documentation/sdks/java-extensions/#sorter) is an efficient and scalable sorter for large iterables.
-- [Nexmark]({{site.baseurl}}/documentation/sdks/nexmark) is a benchmark suite that runs in batch and streaming modes.

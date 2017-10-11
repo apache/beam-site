@@ -1,6 +1,7 @@
 ---
-layout: default
+layout: section
 title: "Apache Beam: Creating New Sources and Sinks with the Python SDK"
+section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/python-custom-io/
 ---
 # Creating New Sources and Sinks with the Python SDK
@@ -291,4 +292,3 @@ Finally, write to the sink:
 
 ```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets.py tag:model_custom_sink_use_ptransform %}```
-
