@@ -7,7 +7,8 @@ $(document).ready(function() {
         idSectionNav = conf["classNameSectionNav"];
 
     var CONST = {
-      OPEN_CLASS: "open"
+      OPEN_CLASS: "open",
+      DESKTOP_BREAKPOINT: 1024
     };
 
     return {
@@ -20,6 +21,19 @@ $(document).ready(function() {
 
       "bindEvents": function() {
           var _self = this;
+          var sectionNavEl = $("." + idSectionNav);
+          var sectionNavHeight = $(sectionNavEl).height();
+
+          $(".container-main-content").css({"min-height": sectionNavHeight});
+
+          $(window).resize(function() {
+            if($(window).width() > CONST.DESKTOP_BREAKPOINT) {
+              var sectionNavHeight = $(sectionNavEl).height();
+              $(".container-main-content").css({"min-height": sectionNavHeight});
+            }else {
+              $(".container-main-content").css({"min-height": ''});
+            }
+          });
 
           if(_self.hasSectionNav) {
             $("." + _self.idCTA ).click(function(el) {
