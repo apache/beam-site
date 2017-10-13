@@ -1,23 +1,21 @@
 ---
 layout: section
-title: "DSLs: SQL"
+title: "Beam DSLs: SQL"
 section_menu: section-menu/sdks.html
 permalink: /documentation/dsls/sql/
 ---
 
-* [1. Overview](#overview)
-* [2. Usage of DSL APIs](#usage)
-* [3. Functionality in Beam SQL](#functionality)
-  * [3.1. Supported Features](#features)
-  * [3.2. Data Types](#data-type)
-  * [3.3. built-in SQL functions](#built-in-functions)
-* [4. The Internal of Beam SQL](#internal-of-sql)
+# Beam SQL
+
+* TOC
+{:toc}
 
 This page describes the implementation of Beam SQL, and how to simplify a Beam pipeline with DSL APIs.
 
-> Note, Beam SQL hasn't been merged to master branch yet(being developed with branch [DSL_SQL](https://github.com/apache/beam/tree/DSL_SQL)), but is coming soon.
+> Note: Beam SQL hasn't been merged to master branch yet (being developed with branch [DSL_SQL](https://github.com/apache/beam/tree/DSL_SQL)), but is coming soon.
 
-# <a name="overview"></a>1. Overview
+## 1. Overview {#overview}
+
 SQL is a well-adopted standard to process data with concise syntax. With DSL APIs (currently available only in Java), now `PCollection`s can be queried with standard SQL statements, like a regular table. The DSL APIs leverage [Apache Calcite](http://calcite.apache.org/) to parse and optimize SQL queries, then translate into a composite Beam `PTransform`. In this way, both SQL and normal Beam `PTransform`s can be mixed in the same pipeline.
 
 There are two main pieces to the SQL DSL API:
@@ -27,11 +25,11 @@ There are two main pieces to the SQL DSL API:
 
 We'll look at each of these below.
 
-# <a name="usage"></a>2. Usage of DSL APIs
+## 2. Usage of DSL APIs {#usage}
 
-## BeamRecord
+### BeamRecord
 
-Before applying a SQL query to a `PCollection`, the data in the collection must be in `BeamRecord` format. A `BeamRecord` represents a single, immutable row in a Beam SQL `PCollection`. The names and types of the fields/columns in the record are defined by its associated [BeamRecordType]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/values/BeamRecordType.html); for SQL queries, you should use the [BeamRecordSqlType]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/extensions/sql/BeamRecordSqlType.html) subclass (see [Data Types](#data-type) for more details on supported primitive data types).
+Before applying a SQL query to a `PCollection`, the data in the collection must be in `BeamRecord` format. A `BeamRecord` represents a single, immutable row in a Beam SQL `PCollection`. The names and types of the fields/columns in the record are defined by its associated [BeamRecordType]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/values/BeamRecordType.html); for SQL queries, you should use the [BeamRecordSqlType]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/extensions/sql/BeamRecordSqlType.html) subclass (see [Data Types](#data-types) for more details on supported primitive data types).
 
 
 A `PCollection<BeamRecord>` can be created explicitly or implicitly:
@@ -82,7 +80,7 @@ Implicitly:
 
 Once you have a `PCollection<BeamRecord>` in hand, you may use the `BeamSql` APIs to apply SQL queries to it.
 
-## BeamSql
+### BeamSql
 
 `BeamSql` provides two methods for generating a `PTransform` from a SQL query, both of which are equivalent except for the number of inputs they support:
 
@@ -112,7 +110,7 @@ Both methods wrap the back-end details of parsing/validation/assembling, and del
 
 [BeamSqlExample](https://github.com/apache/beam/blob/DSL_SQL/sdks/java/extensions/sql/src/main/java/org/apache/beam/sdk/extensions/sql/example/BeamSqlExample.java) in the code repository shows basic usage of both APIs.
 
-# <a name="functionality"></a>3. Functionality in Beam SQL
+## 3. Functionality in Beam SQL {#functionality}
 Just as the unified model for both bounded and unbounded data in Beam, SQL DSL provides the same functionalities for bounded and unbounded `PCollection` as well. Here's the supported SQL grammar supported in [BNF](http://en.wikipedia.org/wiki/Backus%E2%80%93Naur_Form)-like form. An `UnsupportedOperationException` is thrown for unsupported features.
 
 ```
@@ -169,7 +167,7 @@ groupItem:
 
 ```
 
-## <a name="features"></a>3.1. Supported Features
+### 3.1. Supported Features {#features}
 
 **1. aggregations;**
 
@@ -291,7 +289,7 @@ PCollection<BeamSqlRow> result =
         BeamSql.simpleQuery(sql).withUdaf("squaresum", new SquareSum()));
 ```
 
-## <a name="data-type"></a>3.2. Data Types
+### 3.2. Data Types {#data-types}
 Each type in Beam SQL maps to a Java class to holds the value in `BeamRecord`. The following table lists the relation between SQL types and Java classes, which are supported in current repository:
 
 | SQL Type | Java class |
@@ -307,7 +305,7 @@ Each type in Beam SQL maps to a Java class to holds the value in `BeamRecord`. T
 | Types.TIMESTAMP | java.util.Date |
 {:.table}
 
-## <a name="built-in-functions"></a>3.3. built-in SQL functions
+### 3.3. Built-in SQL functions {#built-in-functions}
 
 Beam SQL has implemented lots of build-in functions defined in [Apache Calcite](http://calcite.apache.org). The available functions are listed as below:
 
@@ -433,7 +431,7 @@ Beam SQL has implemented lots of build-in functions defined in [Apache Calcite](
 | MIN(value) | Returns the minimum value of value across all input values |
 {:.table}
 
-# <a name="internal-of-sql"></a>4. The Internal of Beam SQL
+## 4. Internals of Beam SQL {#internals-of-sql}
 Figure 1 describes the back-end steps from a SQL statement to a Beam `PTransform`.
 
 ![Workflow of Beam SQL DSL]({{ "/images/beam_sql_dsl_workflow.png" | prepend: site.baseurl }} "workflow of Beam SQL DSL")
