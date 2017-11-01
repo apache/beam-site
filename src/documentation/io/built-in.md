@@ -44,12 +44,13 @@ Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/prog
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hbase">Apache HBase</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hcatalog">Apache Hive (HCatalog)</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/solr">Apache Solr</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/elasticsearch">Elasticsearch (v2.x)</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/elasticsearch">Elasticsearch (v2.x and v5.x)</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigtable">Google Cloud Bigtable</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/datastore">Google Cloud Datastore</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/redis">Redis</a></p>
   </td>
 </tr>
 <tr>
@@ -98,10 +99,6 @@ This table contains I/O transforms that are currently planned or in-progress. St
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1893">BEAM-1893</a></td>
   </tr>
   <tr>
-    <td>Elasticsearch (v5.x)</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1637">BEAM-1637</a></td>
-  </tr>
-  <tr>
     <td>Google Cloud Spanner</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1542">BEAM-1542</a></td>
   </tr>
@@ -124,10 +121,6 @@ This table contains I/O transforms that are currently planned or in-progress. St
   <tr>
     <td>RabbitMQ</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1240">BEAM-1240</a></td>
-  </tr>
-  <tr>
-    <td>Redis</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1017">BEAM-1017</a></td>
   </tr>
   <tr>
     <td>RestIO</td><td>Java</td>
