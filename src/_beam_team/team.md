@@ -182,4 +182,10 @@ members:
     organization: Alipay
     roles: committer
     time_zone: "+8"
+  - name: Etienne Chauchot
+    apache_id: echauchot
+    email: echauchot [at] apache [dot] org
+    organization: Talend
+    roles: committer
+    time_zone: "+1"
 ---
