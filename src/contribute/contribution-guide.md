@@ -308,7 +308,7 @@ From another local branch, run:
 The community will close stale pull requests in order to keep the project healthy. A pull request becomes stale after its author fails to respond to actionable comments for 60 days.  Author of a closed pull request is welcome to reopen the same pull request again in the future. The associated JIRAs will be unassigned from the author but will stay open.
 
 ## Commit (committers only)
-Once the code has been peer reviewed by a committer, the next step is for the committer to merge it into the [authoritative Apache repository](https://gitbox.apache.org/repos/asf/beam.git), not the read-only GitHub mirror. (In the case that the author is also a committer, it is acceptable for either the author of the change or committer who reviewed the change to do the merge. Just be explicit about whose job it is!)
+Once the code has been peer reviewed by a committer, the next step is for the committer to merge it into the [authoritative Apache repository](https://gitbox.apache.org/repos/asf/beam.git) or [GitHub](https://github.com/apache/beam). (In the case that the author is also a committer, it is acceptable for either the author of the change or committer who reviewed the change to do the merge. Just be explicit about whose job it is!)
 
 Pull requests should not be merged before the review has received an explicit LGTM from another committer. Exceptions to this rule may be made rarely, on a case-by-case basis only, in the committer’s discretion for situations such as build breakages.
 
@@ -382,6 +382,14 @@ At this point, you want to ensure everything is right. Test it with `mvn verify`
     $ git push apache HEAD:master
 
 Done. You can delete the local `finish-pr-<pull-request-#>` branch if you like.
+
+It's also possible to use the "Merge Pull Request" button on GitHub, supporting three modes:
+
+* Merge
+* Squash & Merge
+* Rebase & Merge
+
+It's similar to do the merge by hand.
 
 ## Granting more rights to a contributor
 
