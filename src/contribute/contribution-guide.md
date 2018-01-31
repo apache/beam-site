@@ -164,7 +164,8 @@ We assume you are using SSH-based authentication with GitHub. If necessary,
 exchange SSH keys with GitHub by following [their
 instructions](https://help.github.com/articles/generating-an-ssh-key/).
 
-Clone Beam’s read-only GitHub mirror.
+There are two options with regards to cloning Apache Beam. The first is to
+clone Beam’s read-only GitHub mirror:
 
     $ git clone https://github.com/apache/beam.git
     $ cd beam
@@ -173,6 +174,17 @@ Add your forked repository as an additional Git remote, where you’ll push your
 changes.
 
 	$ git remote add <GitHub_user> git@github.com:<GitHub_user>/beam.git
+
+The second option is to go to https://github.com/apache/beam and to click on
+the "Fork" button to fork your own copy of apache/beam to your account. Then
+clone this fork as follows:
+
+    $ git clone git@github.com:<GitHub_user>/beam.git
+    $ cd beam
+
+Then add Beam's GitHub mirror as an additional Git remote:
+
+    $ git remote add upstream git@github.com:apache/beam.git
 
 You are now ready to start developing!
 
@@ -210,6 +222,10 @@ branch.
 
     $ git pull --rebase
 
+Or if you have cloned Apache Beam from a fork in your github account:
+
+    $ git pull upstream master --rebase
+
 Remember to always use `--rebase` parameter to avoid extraneous merge commits.
 
 Then you can push your local, committed changes to your (forked) repository on
@@ -217,6 +233,10 @@ GitHub. Since rebase may change that branch's history, you may need to force
 push. You'll run:
 
 	$ git push <GitHub_user> <my-branch> --force
+
+Or if you have cloned Apache Beam from a fork in your github account:
+
+    $ git push origin <my-branch> --force
 
 ### Testing
 

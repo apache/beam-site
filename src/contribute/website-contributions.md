@@ -26,11 +26,23 @@ in the website repository has more information on how to set up the required
 dependencies for your development environment.
 
 The general guidelines for cloning a repository can be adjusted to use the
-`asf-site` branch of `beam-site`:
+`asf-site` branch of `beam-site`. There are two options with regards to
+cloning the website repository. The first is to clone the read-only GitHub
+mirror:
 
 	$ git clone -b asf-site https://github.com/apache/beam-site.git
 	$ cd beam-site
 	$ git remote add <GitHub_user> git@github.com:<GitHub_user>/beam-site.git
+	$ git fetch --all
+	$ git checkout -b <my-branch> origin/asf-site
+
+The second option is to go to https://github.com/apache/beam-site and to click
+on the "Fork" button to fork your own copy of apache/beam-site to your
+account. Then clone this fork as follows:
+
+	$ git clone -b asf-site git@github.com:<GitHub_user>/beam-site.git
+	$ cd beam-site
+	$ git remote add upstream git@github.com:apache/beam-site.git
 	$ git fetch --all
 	$ git checkout -b <my-branch> origin/asf-site
 
