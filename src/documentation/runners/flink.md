@@ -51,7 +51,7 @@ For more information, the [Flink Documentation](https://ci.apache.org/projects/f
 ```java
 <dependency>
   <groupId>org.apache.beam</groupId>
-  <artifactId>beam-runners-flink_2.10</artifactId>
+  <artifactId>beam-runners-flink_2.11</artifactId>
   <version>{{ site.release_latest }}</version>
   <scope>runtime</scope>
 </dependency>
@@ -80,6 +80,62 @@ $ mvn exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 ```
 If you have a Flink `JobManager` running on your local machine you can give `localhost:6123` for
 `flinkMaster`.
+
+Behind the hood, to create your shaded jar (containing your pipeline and the Flink runner dependencies), you have to use the `maven-shade-plugin`:
+
+```java
+                <dependency>
+                    <groupId>org.apache.beam</groupId>
+                    <artifactId>beam-runners-flink_2.10</artifactId>
+                    <version>{{ site.release_latest }}</version>
+                </dependency>
+```
+
+```java
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>shaded</shadedClassifierName>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+```
+
+Then, Maven build will create the shaded jar.
+
+If you prefer to use Gradle, you can achieve the same using `shadowJar`:
+
+```java
+shadowJar {
+    mergeServiceFiles()
+}
+```
 
 ## Pipeline options for the Flink Runner
 

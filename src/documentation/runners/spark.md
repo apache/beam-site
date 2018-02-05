@@ -37,7 +37,7 @@ You can add a dependency on the latest version of the Spark runner by adding to 
 
 ### Deploying Spark with your application
 
-In some cases, such as running in local mode/Standalone, your (self-contained) application would be required to pack Spark by explicitly adding the following dependencies in your pom.xml:
+Most of the time (running in local mode/Standalone or using `spark-submit`), your (self-contained) application would be required to pack Spark by explicitly adding the following dependencies in your pom.xml:
 ```java
 <dependency>
   <groupId>org.apache.spark</groupId>
@@ -92,6 +92,17 @@ And shading the application jar using the maven shade plugin:
 After running <code>mvn package</code>, run <code>ls target</code> and you should see (assuming your artifactId is `beam-examples` and the version is `1.0.0`):
 ```
 beam-examples-1.0.0-shaded.jar
+```
+
+If you are using gradle, you have to use `shadowJar` to create the shaded jar enabling `mergeServiceFiles()`:
+```java
+shadowJar {
+    transform(AppendingTransformer) {
+        resource = 'reference.conf'
+    }
+    relocate 'com.google.protobuf', 'shaded.protobuf'
+    mergeServiceFiles()
+}
 ```
 
 To run against a Standalone cluster simply run:
