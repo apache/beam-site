@@ -88,7 +88,7 @@
             <li><span class="section-nav-list-main-title">Documentation</span></li>
 <li><a href="/documentation">Using the Documentation</a></li>
 <li><a href="/documentation/execution-model">Beam Execution Model</a></li>
-<li>
+<li class="section-nav-item--collapsible">
   <span class="section-nav-list-title">Pipeline development lifecycle</span>
 
   <ul class="section-nav-list">
@@ -97,13 +97,13 @@
     <li><a href="/documentation/pipelines/test-your-pipeline/">Test Your Pipeline</a></li>
   </ul>
 </li>
-<li>
+<li class="section-nav-item--collapsible">
   <span class="section-nav-list-title">Beam programming guide</span>
 
   <ul class="section-nav-list">
     <li><a href="/documentation/programming-guide/">Overview</a></li>
     <li><a href="/documentation/programming-guide/#creating-a-pipeline">Pipelines</a></li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">PCollections</span>
 
       <ul class="section-nav-list">
@@ -111,7 +111,7 @@
         <li><a href="/documentation/programming-guide/#pcollection-characteristics">PCollection characteristics</a></li>
       </ul>
     </li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">Transforms</span>
 
       <ul class="section-nav-list">
@@ -135,7 +135,7 @@
         <li><a href="/documentation/programming-guide/#composite-transforms">Composite transforms</a></li>
       </ul>
     </li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">Pipeline I/O</span>
 
       <ul class="section-nav-list">
@@ -145,7 +145,7 @@
         <li><a href="/documentation/io/testing/">Testing I/O transforms</a></li>
       </ul>
     </li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">Data encoding and type safety</span>
 
       <ul class="section-nav-list">
@@ -154,7 +154,7 @@
         <li><a href="/documentation/programming-guide/#default-coders-and-the-coderregistry">Default coders and the CoderRegistry</a></li>
       </ul>
     </li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">Windowing</span>
 
       <ul class="section-nav-list">
@@ -165,7 +165,7 @@
         <li><a href="/documentation/programming-guide/#adding-timestamps-to-a-pcollections-elements">Adding timestamps to a PCollection’s elements</a></li>
       </ul>
     </li>
-    <li>
+    <li class="section-nav-item--collapsible">
       <span class="section-nav-list-title">Triggers</span>
 
       <ul class="section-nav-list">
@@ -1350,8 +1350,8 @@ data contains names and phone numbers.
 <p>After <code class="highlighter-rouge">CoGroupByKey</code>, the resulting data contains all data associated with each
 unique key from any of the input collections.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">final</span> <span class="n">TupleTag</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">emailsTag</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TupleTag</span><span class="o">();</span>
-<span class="kd">final</span> <span class="n">TupleTag</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">phonesTag</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TupleTag</span><span class="o">();</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">final</span> <span class="n">TupleTag</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">emailsTag</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TupleTag</span><span class="o">&lt;&gt;();</span>
+<span class="kd">final</span> <span class="n">TupleTag</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">phonesTag</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TupleTag</span><span class="o">&lt;&gt;();</span>
 
 <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">KV</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">CoGbkResult</span><span class="o">&gt;&gt;</span> <span class="n">expectedResults</span> <span class="o">=</span> <span class="n">Arrays</span><span class="o">.</span><span class="na">asList</span><span class="o">(</span>
     <span class="n">KV</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"amy"</span><span class="o">,</span> <span class="n">CoGbkResult</span>
@@ -1390,9 +1390,10 @@ followed by a <code class="highlighter-rouge">ParDo</code> to consume the result
 and format data from each collection.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">PCollection</span><span class="o">&lt;</span><span class="n">KV</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">CoGbkResult</span><span class="o">&gt;&gt;</span> <span class="n">results</span> <span class="o">=</span>
-    <span class="n">KeyedPCollectionTuple</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">emailsTag</span><span class="o">,</span> <span class="n">emails</span><span class="o">)</span>
-        <span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">phonesTag</span><span class="o">,</span> <span class="n">phones</span><span class="o">)</span>
-        <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">CoGroupByKey</span><span class="o">.</span><span class="na">create</span><span class="o">());</span>
+    <span class="n">KeyedPCollectionTuple</span>
+    <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">emailsTag</span><span class="o">,</span> <span class="n">emails</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">and</span><span class="o">(</span><span class="n">phonesTag</span><span class="o">,</span> <span class="n">phones</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">CoGroupByKey</span><span class="o">.</span><span class="na">create</span><span class="o">());</span>
 
 <span class="n">PCollection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">contactLines</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">ParDo</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
   <span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">KV</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">CoGbkResult</span><span class="o">&gt;,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
