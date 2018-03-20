@@ -45,13 +45,13 @@ $(document).ready(function() {
                 var sectionNavHeight = $(sectionNavEl).height();
 
                 $(".container-main-content").css({"min-height": sectionNavHeight});
-                $(".section-nav").css({"max-height": $(".body__contained").height()});
+                $(".section-nav").css({"max-height": $(".container-main-content").height()});
 
                 $(window).resize(function() {
                     if($(window).width() > CONST.DESKTOP_BREAKPOINT) {
                         var sectionNavHeight = $(sectionNavEl).height();
                         $(".container-main-content").css({"min-height": sectionNavHeight});
-                        $(".section-nav").css({"max-height": $(".body__contained").height()});
+                        $(".section-nav").css({"max-height": $(".container-main-content").height()});
                     }else {
                         $(".container-main-content").css({"min-height": ''});
                         $(".section-nav").css({"max-height": ''});
