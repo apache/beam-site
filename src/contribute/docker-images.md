@@ -7,7 +7,9 @@ permalink: /contribute/docker-images/
 
 # Docker Images
 
-<!-- TODO(BEAM-4117): Update documentation for Gradle build -->
+> Note: There is an open issue to update this page for Gradle:
+[BEAM-4117](https://issues.apache.org/jira/browse/BEAM-4117).
+
 Docker images allow to create a reproducible environment to build and test
 Beam. You can use the docker images by using the provided [Docker scripts](https://github.com/apache/beam/tree/master/sdks/java/build-tools/src/main/resources/docker).
 
