@@ -2306,7 +2306,7 @@ outside that range (data from 5:00 or later) belong to a different window.
 However, data isn't always guaranteed to arrive in a pipeline in time order, or
 to always arrive at predictable intervals. Beam tracks a _watermark_, which is
 the system's notion of when all data in a certain window can be expected to have
-arrived in the pipeline. Data that arrives with a timestamp after the watermark
+arrived in the pipeline. Data that arrives with a timestamp before the watermark
 is considered **late data**.
 
 From our example, suppose we have a simple watermark that assumes approximately
