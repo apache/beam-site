@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beam Java SDK</title>
+  <title>Euphoria Java 8 DSL</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -15,7 +15,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/documentation/sdks/java/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/documentation/sdks/java/euphoria/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -166,45 +166,83 @@
         
 
 <ul class="nav">
-  <li><a href="#get-started-with-the-java-sdk">Get Started with the Java SDK</a></li>
-  <li><a href="#supported-features">Supported Features</a></li>
-  <li><a href="#pipeline-io">Pipeline I/O</a></li>
-  <li><a href="#extensions">Extensions</a></li>
+  <li><a href="#what-is-euphoria">What is Euphoria</a></li>
+  <li><a href="#how-to-build">How to build</a></li>
+  <li><a href="#wordcount-example">WordCount example</a></li>
 </ul>
 
 
       </nav>
 
       <div class="body__contained body__section-nav">
-        <h1 id="apache-beam-java-sdk">Apache Beam Java SDK</h1>
+        <h1 id="euphoria-java-8-dsl">Euphoria Java 8 DSL</h1>
 
-<p>The Java SDK for Apache Beam provides a simple, powerful API for building both batch and streaming parallel data processing pipelines in Java.</p>
+<h2 id="what-is-euphoria">What is Euphoria</h2>
 
-<h2 id="get-started-with-the-java-sdk">Get Started with the Java SDK</h2>
+<p>Easy to use Java 8 DSL for the Beam Java SDK. Provides a high-level abstraction of Beam transformations, which is both easy to read and write. Can be used as a complement to existing Beam pipelines (convertible back and forth).</p>
 
-<p>Get started with the <a href="/documentation/programming-guide/">Beam Programming Model</a> to learn the basic concepts that apply to all SDKs in Beam.</p>
+<p>Integration of Euphoria API to Beam is in <strong>progress</strong> (<a href="https://issues.apache.org/jira/browse/BEAM-3900">BEAM-3900</a>).</p>
 
-<p>See the <a href="/documentation/sdks/javadoc/">Java API Reference</a> for more information on individual APIs.</p>
+<h2 id="how-to-build">How to build</h2>
 
-<h2 id="supported-features">Supported Features</h2>
+<p>Euphoria is located in <code class="highlighter-rouge">dsl-euphoria</code> branch. To build <code class="highlighter-rouge">euphoria</code> subprojects use command:</p>
 
-<p>The Java SDK supports all features currently supported by the Beam model.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-sdks-java-extensions-euphoria-beam:build 
+</code></pre>
+</div>
 
-<h2 id="pipeline-io">Pipeline I/O</h2>
-<p>See the <a href="/documentation/io/built-in/">Beam-provided I/O Transforms</a> page for a list of the currently available I/O transforms.</p>
+<h2 id="wordcount-example">WordCount example</h2>
 
-<h2 id="extensions">Extensions</h2>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Pipeline</span> <span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">options</span><span class="o">);</span>
 
-<p>The Java SDK has the following extensions:</p>
+<span class="c1">// Transform to euphoria's flow.</span>
+<span class="n">BeamFlow</span> <span class="n">flow</span> <span class="o">=</span> <span class="n">BeamFlow</span><span class="o">.</span><span class="na">create</span><span class="o">(</span><span class="n">pipeline</span><span class="o">);</span>
 
-<ul>
-  <li><a href="/documentation/sdks/java-extensions/#join-library">join-library</a> provides inner join, outer left join, and outer right join functions.</li>
-  <li><a href="/documentation/sdks/java-extensions/#sorter">sorter</a> is an efficient and scalable sorter for large iterables.</li>
-  <li><a href="/documentation/sdks/java/nexmark">Nexmark</a> is a benchmark suite that runs in batch and streaming modes.</li>
-  <li><a href="/documentation/sdks/java/euphoria">euphoria</a> is easy to use Java 8 DSL for BEAM.</li>
-</ul>
+<span class="c1">// Source of data loaded from Beam IO.</span>
+<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">input</span> <span class="o">=</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">Create</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">inputs</span><span class="o">)).</span><span class="na">setTypeDescriptor</span><span class="o">(</span><span class="n">TypeDescriptor</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+<span class="c1">// Transform PCollection to euphoria's Dataset.</span>
+<span class="n">Dataset</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">lines</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="na">wrapped</span><span class="o">(</span><span class="n">input</span><span class="o">);</span>
 
-<p>In addition several <a href="/documentation/sdks/java-thirdparty/">3rd party Java libraries</a> exist.</p>
+<span class="c1">// FlatMap processes one input element at a time and allows user code to emit</span>
+<span class="c1">// zero, one, or more output elements. From input lines we will get data set of words.</span>
+<span class="n">Dataset</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">words</span> <span class="o">=</span> <span class="n">FlatMap</span><span class="o">.</span><span class="na">named</span><span class="o">(</span><span class="s">"TOKENIZER"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">lines</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">using</span><span class="o">((</span><span class="n">String</span> <span class="n">line</span><span class="o">,</span> <span class="n">Collector</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">context</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+      <span class="k">for</span> <span class="o">(</span><span class="n">String</span> <span class="n">word</span> <span class="o">:</span> <span class="n">line</span><span class="o">.</span><span class="na">split</span><span class="o">(</span><span class="s">"\\s+"</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">context</span><span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
+      <span class="o">}</span>
+    <span class="o">})</span>
+    <span class="o">.</span><span class="na">output</span><span class="o">();</span>
+
+<span class="c1">// From each input element we extract a key (word) and value, which is the constant `1`.</span>
+<span class="c1">// Then, we reduce by the key - the operator ensures that all values for the same</span>
+<span class="c1">// key end up being processed together. It applies user defined function (summing word counts for each</span>
+<span class="c1">// unique word) and its emitted to output. </span>
+<span class="n">Dataset</span><span class="o">&lt;</span><span class="n">Pair</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Long</span><span class="o">&gt;&gt;</span> <span class="n">counted</span> <span class="o">=</span> <span class="n">ReduceByKey</span><span class="o">.</span><span class="na">named</span><span class="o">(</span><span class="s">"COUNT"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">words</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">keyBy</span><span class="o">(</span><span class="n">w</span> <span class="o">-&gt;</span> <span class="n">w</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">valueBy</span><span class="o">(</span><span class="n">w</span> <span class="o">-&gt;</span> <span class="mi">1L</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">combineBy</span><span class="o">(</span><span class="n">Sums</span><span class="o">.</span><span class="na">ofLongs</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">output</span><span class="o">();</span>
+
+<span class="c1">// Format output.</span>
+<span class="n">Dataset</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">output</span> <span class="o">=</span> <span class="n">MapElements</span><span class="o">.</span><span class="na">named</span><span class="o">(</span><span class="s">"FORMAT"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">counted</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">using</span><span class="o">(</span><span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="na">getFirst</span><span class="o">()</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="na">getSecond</span><span class="o">())</span>
+    <span class="o">.</span><span class="na">output</span><span class="o">();</span>
+
+<span class="c1">// Transform Dataset back to PCollection. It can be done in any step of this flow.</span>
+<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">outputCollection</span> <span class="o">=</span> <span class="n">flow</span><span class="o">.</span><span class="na">unwrapped</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
+
+<span class="c1">// Now we can again use Beam transformation. In this case we save words and their count</span>
+<span class="c1">// into the text file.</span>
+<span class="n">outputCollection</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">TextIO</span><span class="o">.</span><span class="na">write</span><span class="o">().</span><span class="na">to</span><span class="o">(</span><span class="n">options</span><span class="o">.</span><span class="na">getOutput</span><span class="o">()));</span>
+
+<span class="n">pipeline</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+</code></pre>
+</div>
+
 
       </div>
     </div>
