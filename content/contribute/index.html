@@ -131,7 +131,9 @@
   <li><a href="#contributing-code">Contributing code</a>
     <ul>
       <li><a href="#building--testing">Building &amp; Testing</a></li>
-      <li><a href="#testing-the-python-sdk">Testing the Python SDK</a></li>
+      <li><a href="#developing-with-an-ide">Developing with an IDE</a></li>
+      <li><a href="#pull-requests">Pull requests</a></li>
+      <li><a href="#developing-with-the-python-sdk">Developing with the Python SDK</a></li>
     </ul>
   </li>
   <li><a href="#contributing-to-the-website">Contributing to the website</a></li>
@@ -147,6 +149,7 @@
       <li><a href="#next-java-lts-version-support-java-11--189">Next Java LTS version support (Java 11 / 18.9)</a></li>
       <li><a href="#io-performance-testing">IO Performance Testing</a></li>
       <li><a href="#euphoria-java-8-dsl">Euphoria Java 8 DSL</a></li>
+      <li><a href="#improving-the-contributor-experience">Improving the contributor experience</a></li>
       <li><a href="#beam-sql">Beam SQL</a></li>
     </ul>
   </li>
@@ -164,8 +167,12 @@
 <p>There are lots of opportunities:</p>
 
 <ul>
-  <li>write new examples</li>
+  <li>ask or answer questions on <a href="/community/contact-us/">user@beam.apache.org</a> or
+<a href="https://stackoverflow.com/questions/tagged/apache-beam">stackoverflow</a></li>
+  <li>review proposed design ideas on <a href="/community/contact-us/">dev@beam.apache.org</a></li>
   <li>improve the documentation</li>
+  <li>contribute <a href="https://issues.apache.org/jira/projects/BEAM/issues">bug reports</a></li>
+  <li>write new examples</li>
   <li>add new user-facing libraries (new statistical libraries, new IO connectors,
 etc)</li>
   <li>improve your favorite language SDK (Java, Python, Go, etc)</li>
@@ -173,6 +180,7 @@ etc)</li>
 Cloud Dataflow, etc)</li>
   <li>work on the core programming model (what is a Beam pipeline and how does it
 run?)</li>
+  <li>improve the developer experience on Windows</li>
 </ul>
 
 <p>Most importantly, if you have an idea of how to contribute, then do it!</p>
@@ -180,30 +188,37 @@ run?)</li>
 <p>For a list of open starter tasks, check
 <a href="https://s.apache.org/beam-starter-tasks">https://s.apache.org/beam-starter-tasks</a>.</p>
 
-<p>And, of course, we would love if you <a href="/community/contact-us/">contact us</a> and introduce yourself.</p>
-
 <h2 id="contributing-code">Contributing code</h2>
+
+<p>Discussons about contributing code to beam  happens on the <a href="/community/contact-us/">dev@ mailing list</a>. Introduce yourself!</p>
+
+<p>Questions can be asked on the <a href="/community/contact-us/">#beam channel of the ASF slack</a>. Introduce yourself!</p>
 
 <p>Coding happens at
 <a href="https://github.com/apache/beam">https://github.com/apache/beam</a>. To
 contribute, follow the usual GitHub process: fork the repo, make your changes,
-and open a pull request. If you are unfamiliar with this workflow, GitHub
-maintains these helpful guides:</p>
+and open a pull request and @mention a reviewer. If you have more than one commit
+in your change, you many be asked to rebase and squash the commits.
+If you are unfamiliar with this workflow, GitHub maintains these helpful guides:</p>
 
 <ul>
   <li><a href="https://guides.github.com/introduction/git-handbook/">Git Handbook</a></li>
   <li><a href="https://guides.github.com/activities/forking/">Forking a repository</a></li>
 </ul>
 
-<p>If your change is large, it is a good idea to <a href="/community/contact-us/">discuss it on the dev@ mailing list</a> (you may be asked to create a design doc
+<p>If your change is large or it is your first change, it is a good idea to
+<a href="/community/contact-us/">discuss it on the dev@ mailing list</a></p>
+
+<p>For large changes (you may be asked to create a design doc
 (<a href="https://s.apache.org/beam-design-doc-template">template</a>,
-<a href="https://s.apache.org/beam-design-docs">examples</a>)). You will also
-need to submit a signed <a href="https://www.apache.org/licenses/icla.pdf">Individual Contributor License
+<a href="https://s.apache.org/beam-design-docs">examples</a>)).</p>
+
+<p>Documentation happens at <a href="https://github.com/apache/beam-site">https://github.com/apache/beam-site</a>
+and contributions are welcome.</p>
+
+<p>Large contributions require a signed <a href="https://www.apache.org/licenses/icla.pdf">Individual Contributor License
 Agreement</a> (ICLA) to the Apache
-Software Foundation (ASF).  The purpose of this agreement is to clearly define
-the terms under which intellectual property has been contributed to the ASF and
-thereby allow us to defend the project should there be a legal dispute
-regarding the software at some future time.</p>
+Software Foundation (ASF).</p>
 
 <p>If you are contributing a <code class="highlighter-rouge">PTransform</code> to Beam, we have an extensive
 <a href="/contribute/ptransform-style-guide">PTransform Style Guide</a>.</p>
@@ -211,6 +226,11 @@ regarding the software at some future time.</p>
 <h3 id="building--testing">Building &amp; Testing</h3>
 
 <p>We use Gradle to orchestrate building and testing.</p>
+
+<p>You do not need to install gradle, but you do need a Java SDK installed.
+You can develop on Linux, macOS, or Microsoft Windows. There have been
+issues noted when developing using Windows; feel free to contribute fixes
+to make it easier.</p>
 
 <p>The entire set of tests can be run with this command at the root of the git
 repository.</p>
@@ -228,35 +248,118 @@ $ ./gradlew -p runners/flink check
 </code></pre>
 </div>
 
-<h3 id="testing-the-python-sdk">Testing the Python SDK</h3>
+<p>You can see what build tasks are available with</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ./gradlew tasks
+</code></pre>
+</div>
+
+<p>or for a module,</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ./gradlew sdks/java/io/cassandra tasks
+</code></pre>
+</div>
+
+<h3 id="developing-with-an-ide">Developing with an IDE</h3>
+
+<p>Generate an IDEA project .ipr file with:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ ./gradlew idea
+</code></pre>
+</div>
+
+<h3 id="pull-requests">Pull requests</h3>
+
+<p>When your change is ready to be reviewed and merged, create a pull request.
+Format the pull request title like <code class="highlighter-rouge">[BEAM-XXX] Fixes bug in ApproximateQuantiles</code>,
+where you replace BEAM-XXX with the appropriate JIRA issue.
+This will automatically link the pull request to the issue.</p>
+
+<p>Pull requests can only be merged by a
+<a href="https://people.apache.org/phonebook.html?unix=beam">beam committer</a>.
+To find a committer for your area, look for similar code merges or ask on 
+<a href="/community/contact-us/">dev@beam.apache.org</a></p>
+
+<p>Use @mention in the pull request to notify the reviewer.</p>
+
+<p>The pull request and any changes pushed to it will trigger precommit jobs.
+If a test fails and appears unrelated to your change, you can cause tests
+to be re-run by adding a single line comment on your PR</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code> retest this please
+</code></pre>
+</div>
+
+<p>There are other trigger phrases for post-commit tests found in
+.testinfra/jenkins, but use these sparingly because postcommit
+tests consume shared development resources.</p>
+
+<h3 id="developing-with-the-python-sdk">Developing with the Python SDK</h3>
+
+<p>Gradle can build and test python, and is used by the Jenkins jobs, so needs to
+be maintained.</p>
 
 <p>You can directly use the Python toolchain instead of having Gradle orchestrate
-it. This may be faster for you. We recommend setting up a virtual environment
-before testing your code.</p>
+it, which may be faster for you, but it is your preference.
+If you do want to use Python tools directly, we recommend setting up a virtual
+environment before testing your code.</p>
 
 <p>If you update any of the <a href="http://cython.org">cythonized</a> files in Python SDK,
 you must install the <code class="highlighter-rouge">cython</code> package before running following command to
 properly test your code.</p>
 
 <p>The following commands should be run in the <code class="highlighter-rouge">sdks/python</code> directory.
-This command runs all Python tests.</p>
+This installs Python from source and includes the test and gcp dependencies.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ python setup.py nosetests
+<p>On macOS/Linix:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ virtualenv env
+$ . ./env/bin/activate
+(env) $ pip install .[gcp,test]
+</code></pre>
+</div>
+
+<p>On Windows:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt; c:\Python27\python.exe -m virtualenv
+&gt; env\Scripts\activate
+(env) &gt; pip install .[gcp,test]
+</code></pre>
+</div>
+
+<p>This command runs all Python tests. The nose dependency is installed by [test] in pip install.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>(env) $ python setup.py nosetests
 </code></pre>
 </div>
 
 <p>You can use following command to run a single test method.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ python setup.py nosetests --tests &lt;module&gt;:&lt;test class&gt;.&lt;test method&gt;
+<div class="highlighter-rouge"><pre class="highlight"><code>(env) $ python setup.py nosetests --tests &lt;module&gt;:&lt;test class&gt;.&lt;test method&gt;
 
-Example:
-$ python setup.py nosetests --tests apache_beam.io.textio_test:TextSourceTest.test_progress
+For example:
+(env) $ python setup.py nosetests --tests apache_beam.io.textio_test:TextSourceTest.test_progress
 </code></pre>
 </div>
 
-<p>To check just for lint errors, run the following command.</p>
+<p>You can deactivate the virtualenv when done.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>(env) $ deactivate
+$
+</code></pre>
+</div>
+
+<p>To check just for Python lint errors, run the following command.</p>
 
 <div class="highlighter-rouge"><pre class="highlight"><code>$ ../../gradlew lint
+</code></pre>
+</div>
+
+<p>Or use <code class="highlighter-rouge">tox</code> commands to run the lint tasks:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>$ tox -e py27-lint    # For python 2.7
+$ tox -e py3-lint     # For python 3 
+$ tox -e py27-lint3   # For python 2-3 compatibility
 </code></pre>
 </div>
 
@@ -397,6 +500,12 @@ When submitting a new PR, please tag <a href="https://github.com/robbesneyders">
   <li>JIRA: <a href="https://issues.apache.org/jira/browse/BEAM-4366?jql=project%20%3D%20BEAM%20AND%20component%20%3D%20dsl-euphoria">dsl-euphoria</a> / <a href="https://issues.apache.org/jira/browse/BEAM-3900">BEAM-3900</a></li>
   <li>Contact: <a href="mailto:david.moravek@gmail.com">David Moravek</a></li>
 </ul>
+
+<h3 id="improving-the-contributor-experience">Improving the contributor experience</h3>
+
+<p>Making it easier to write code, run tests, and release. Investigating using docker for jenkins builds, automating the release process, and improving the reliability of tests.</p>
+
+<p>Ideas and help welcome! Contact: <a href="mailto:amyrvold@google.com">Alan Myrvold</a>, <a href="mailto:markliu@google.com">Mark Liu</a>, <a href="mailto:yifanzou@google.com">Yifan Zou</a></p>
 
 <h3 id="beam-sql">Beam SQL</h3>
 
