@@ -398,6 +398,44 @@ Staging binaries
 
 Verify that files are [present](https://dist.apache.org/repos/dist/dev/beam).
 
+
+### Build python wheels and upload it to test.pypi.org
+
+1. Create your test.pypi.org account in https://test.pypi.org/account/register/ .
+   * Note: Please ping dev@ thread to ask for permissions accessing apache_beam in test.pypi.org.
+1. Fork https://github.com/robertwb/apache-beam-wheels .
+1. git clone your apache-beam-wheels repo
+1. In apache-beam-wheels/.travis.yml file:
+   * change RC=current rc
+   * change VERSION=current release version
+   * change WHEELHOUSE_UPLOADER_USERNAM=your test pypi account username 
+   * delete secure line
+1. Generate your own secure
+   * Install ruby dev
+   
+     ```
+     sudo apt-get install ruby2.3-dev
+     ```
+   * Install travis
+   
+     ```
+     sudo gem install travis 
+     ```
+   * Add secure to ./travis.yml file
+     ```
+     travis encrypt SOMEVAR="secretvalue" --add
+     ```
+1. Commit changes and push into your repo.
+1. Trigger build:
+   * Sign up [Travis CI](https://travis-ci.org/) with your github account.
+   * Choose ```apache-beam-wheels``` to build.
+   * Setup Environment Variables:
+     * Register test.pypi account: https://test.pypi.org/account/register/ .
+     * Goto ```More options``` and choose ```Settings```.
+     * In ```Environment Variables```, add value pair <WHEELHOUSE_UPLOADER_SECRET, your test pypi account password>.
+   * In ```More options```, click ```Trigger build```.
+
+
 ### Build the Pydoc API reference
 
 Make sure you have ```tox``` installed: 
