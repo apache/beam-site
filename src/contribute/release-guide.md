@@ -423,16 +423,12 @@ Verify that files are [present](https://dist.apache.org/repos/dist/dev/beam).
      ```
    * Add secure to ./travis.yml file
      ```
-     travis encrypt SOMEVAR="secretvalue" --add
+     travis encrypt -r github_suername/apache-beam-wheels WHEELHOUSE_UPLOADER_SECRET=your pypi password --add
      ```
 1. Commit changes and push into your repo.
 1. Trigger build:
    * Sign up [Travis CI](https://travis-ci.org/) with your github account.
    * Choose ```apache-beam-wheels``` to build.
-   * Setup Environment Variables:
-     * Register test.pypi account: https://test.pypi.org/account/register/ .
-     * Goto ```More options``` and choose ```Settings```.
-     * In ```Environment Variables```, add value pair <WHEELHOUSE_UPLOADER_SECRET, your test pypi account password>.
    * In ```More options```, click ```Trigger build```.
 
 
