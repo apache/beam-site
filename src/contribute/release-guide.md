@@ -650,6 +650,9 @@ All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1q
     --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
     --dataset ${USER}_test
     ```
+    Inspect results:
+    * Check whether there is any error messages in console.
+    * Goto your BigQuery console and check whether your ${USER}_test has leader_board table.
   * Run Leaderboard with Dataflow Runner
     ```
     python -m apache_beam.examples.complete.game.leader_board \ 
@@ -660,6 +663,9 @@ All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1q
     --temp_location=${YOUR_GS_BUCKET}/temp/ \ 
     --sdk_location dist/*
     ```
+    Inspect results:
+    * Goto your Dataflow job console and check whether there is any error.
+    * Goto your BigQuery console and check whether your ${USER}_test has leader_board table.
   * Run GameStats with Direct Runner
     ```
     python -m apache_beam.examples.complete.game.game_stats \
@@ -667,7 +673,10 @@ All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1q
     --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
     --dataset ${USER}_test
     ```
-  * Run Leaderboard with Dataflow Runner
+    Inspect results:
+    * Check whether there is any error messages in console.
+    * Goto your BigQuery console and check whether your ${USER}_test has game_stats table.
+  * Run GameStats with Dataflow Runner
     ```
     python -m apache_beam.examples.complete.game.game_stats \ 
     --project=${YOUR_PROJECT} \ 
@@ -677,6 +686,9 @@ All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1q
     --temp_location=${YOUR_GS_BUCKET}/temp/ \ 
     --sdk_location dist/*
     ```
+    Inspect results:
+    * Goto your Dataflow job console and check whether there is any error.
+    * Goto your BigQuery console and check whether your ${USER}_test has game_stats table.
 ### Checklist to proceed to the finalization step
 
 1. Community votes to release the proposed candidate, with at least three approving PMC votes
