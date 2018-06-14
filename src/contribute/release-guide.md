@@ -30,6 +30,7 @@ The release process consists of several steps:
 1. Prepare for the release
 1. Build a release candidate
 1. Vote on the release candidate
+1. During vote process, run validation tests
 1. If necessary, fix any issues and go back to step 3.
 1. Finalize the release
 1. Promote the release
@@ -511,7 +512,171 @@ If there are no issues, reply on the vote thread to close the voting. Then, tall
     There are no disapproving votes.
 
     Thanks everyone!
+    
+### Run validation tests
+All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1qk-N5vjXvbcEk68GjbkSZTR8AGqyNUM-oLFo_ZXBpJw/edit#gid=152451807)
 
+* Java Quickstart Validation
+
+  Direct Runner:
+  ```
+  ./gradlew :beam-runners-direct-java:runQuickstartJavaDirect \ 
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Pver=${RELEASE_VERSION}
+  ```
+  Apex Local Runner
+  ```
+  ./gradlew :beam-runners-apex:runQuickstartJavaApex \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Pver=${RELEASE_VERSION}
+  ```
+  Flink Local Runner
+  ```
+  ./gradlew :beam-runners-flink_2.11:runQuickstartJavaFlinkLocal \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Pver=${RELEASE_VERSION}
+  ```
+  Spark Local Runner
+  ```
+  ./gradlew :beam-runners-spark:runQuickstartJavaSpark \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Pver=${RELEASE_VERSION}
+  ```
+  Dataflow Runner
+  ```
+  ./gradlew :beam-runners-google-cloud-dataflow-java:runQuickstartJavaDataflow \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Pver= ${RELEASE_VERSION}\
+  -PgcpProject=${YOUR_GCP_PROJECT} \
+  -PgcsBucket=${YOUR_GCP_BUCKET}
+  ```
+* Java Mobile Game(UserScore, HourlyTeamScore, Leaderboard)
+  
+  Pre-request
+  * Create your own BigQuery dataset
+    ```
+    bq mk --project=${YOUR_GCP_PROJECT} ${YOUR_DATASET}
+    ```
+  * Create yout PubSub topic 
+    ```
+    gcloud alpha pubsub topics create --project=${YOUR_GCP_PROJECT} ${YOUR_PROJECT_PUBSUB_TOPIC} 
+    ```
+  * Setup your service account
+    
+    Goto IAM console in your project to create a service account as ```project owner```
+    
+    Run 
+    ```
+    gcloud iam service-accounts keys create ${YOUR_KEY_JSON} --iam-account ${YOUR_SERVICE_ACCOUNT_NAME}@${YOUR_PROJECT_NAME}
+    export GOOGLE_APPLICATION_CREDENTIALS=${PATH_TO_YOUR_KEY_JSON} 
+    ```
+  Run 
+  ```
+  ./gradlew :beam-runners-google-cloud-dataflow-java:runMobileGamingJavaDataflow \
+   -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \ 
+   -Pver= ${RELEASE_VERSION}\
+   -PgcpProject=${YOUR_GCP_PROJECT} \
+   -PgcsBucket=gs://dataflow-samples/game/gaming_data1.csv \
+   -PbqDataset=${YOUR_DATASET} -PpubsubTopic=${YOUR_PROJECT_PUBSUB_TOPIC}
+  ```
+* Python Quickstart(batch & streaming), MobileGame(UserScore, HourlyTeamScore)
+  
+  Create a new PR in apache/beam
+  
+  In comment area, type in ```Run Python ReleaseCandidate```
+ 
+* Python Leaderboard & GameStats
+  * Get staging RC ```wget https://dist.apache.org/repos/dist/dev/beam/2.5.0/* ```
+  * Verify the hashes
+  
+    ```
+    sha512sum -c apache-beam-2.5.0-python.zip.sha512
+    sha512sum -c apache-beam-2.5.0-source-release.zip.sha512
+    ```
+  * Build SDK
+  
+    ```
+    sudo apt-get install unzip
+    unzip apache-beam-2.5.0-source-release.zip
+    ```
+  * Setup virtualenv
+    
+    ```
+    pip install --upgrade pip
+    pip install --upgrade setuptools
+    pip install --upgrade virtualenv
+    virtualenv beam_env
+     . beam_env/bin/activate
+    ```
+  * Install SDK
+    
+    ```
+    pip install dist/apache-beam-2.5.0.tar.gz
+    pip install dist/apache-beam-2.5.0.tar.gz[gcp]
+    ```
+  * Setup GCP
+    
+    Please repeat following steps for every following test
+    
+    ```
+    bq rm -rf --project=${YOUR_PROJECT} ${USER}_test
+    bq mk --project=${YOUR_PROJECT} ${USER}_test
+    gsutil rm -rf ${YOUR_GS_STORAGE]
+    gsutil mb -p ${YOUR_PROJECT} ${YOUR_GS_STORAGE}
+    gcloud alpha pubsub topics create --project=${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC}
+    ```
+    Setup your service account as described in ```Java Mobile Game``` section above
+  
+    Produce data by using java injector
+    
+    ```
+    mvn archetype:generate \
+          -DarchetypeGroupId=org.apache.beam \
+          -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
+          -DarchetypeVersion=2.4.0 \
+          -DgroupId=org.example \
+          -DartifactId=word-count-beam \
+          -Dversion="0.1" \
+          -Dpackage=org.apache.beam.examples \
+          -DinteractiveMode=false
+          
+    mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.complete.game.injector.Injector \
+      -Dexec.args="${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC} none"
+    ```
+  * Run Leaderboard with Direct Runner
+    ```
+    python -m apache_beam.examples.complete.game.leader_board \
+    --project=${YOUR_PROJECT} \
+    --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
+    --dataset ${USER}_test
+    ```
+  * Run Leaderboard with Dataflow Runner
+    ```
+    python -m apache_beam.examples.complete.game.leader_board \ 
+    --project=${YOUR_PROJECT} \ 
+    --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \ 
+    --dataset ${USER}_test \ 
+    --runner DataflowRunner \ 
+    --temp_location=${YOUR_GS_BUCKET}/temp/ \ 
+    --sdk_location dist/*
+    ```
+  * Run GameStats with Direct Runner
+    ```
+    python -m apache_beam.examples.complete.game.game_stats \
+    --project=${YOUR_PROJECT} \
+    --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
+    --dataset ${USER}_test
+    ```
+  * Run Leaderboard with Dataflow Runner
+    ```
+    python -m apache_beam.examples.complete.game.game_stats \ 
+    --project=${YOUR_PROJECT} \ 
+    --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \ 
+    --dataset ${USER}_test \ 
+    --runner DataflowRunner \ 
+    --temp_location=${YOUR_GS_BUCKET}/temp/ \ 
+    --sdk_location dist/*
+    ```
 ### Checklist to proceed to the finalization step
 
 1. Community votes to release the proposed candidate, with at least three approving PMC votes
