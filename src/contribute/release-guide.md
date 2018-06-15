@@ -516,36 +516,38 @@ If there are no issues, reply on the vote thread to close the voting. Then, tall
 ### Run validation tests
 All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1qk-N5vjXvbcEk68GjbkSZTR8AGqyNUM-oLFo_ZXBpJw/edit#gid=152451807)
 
+_Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Manager.
+
 * Java Quickstart Validation
 
   Direct Runner:
   ```
   ./gradlew :beam-runners-direct-java:runQuickstartJavaDirect \ 
-  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
   -Pver=${RELEASE_VERSION}
   ```
   Apex Local Runner
   ```
   ./gradlew :beam-runners-apex:runQuickstartJavaApex \
-  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam${KEY} \
   -Pver=${RELEASE_VERSION}
   ```
   Flink Local Runner
   ```
   ./gradlew :beam-runners-flink_2.11:runQuickstartJavaFlinkLocal \
-  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
   -Pver=${RELEASE_VERSION}
   ```
   Spark Local Runner
   ```
   ./gradlew :beam-runners-spark:runQuickstartJavaSpark \
-  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
   -Pver=${RELEASE_VERSION}
   ```
   Dataflow Runner
   ```
   ./gradlew :beam-runners-google-cloud-dataflow-java:runQuickstartJavaDataflow \
-  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \
+  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
   -Pver= ${RELEASE_VERSION}\
   -PgcpProject=${YOUR_GCP_PROJECT} \
   -PgcsBucket=${YOUR_GCP_BUCKET}
@@ -573,7 +575,7 @@ All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1q
   Run 
   ```
   ./gradlew :beam-runners-google-cloud-dataflow-java:runMobileGamingJavaDataflow \
-   -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-1041 \ 
+   -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \ 
    -Pver= ${RELEASE_VERSION}\
    -PgcpProject=${YOUR_GCP_PROJECT} \
    -PgcsBucket=gs://dataflow-samples/game/gaming_data1.csv \
