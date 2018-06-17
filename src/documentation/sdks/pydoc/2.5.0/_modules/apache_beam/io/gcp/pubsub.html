@@ -278,7 +278,7 @@
   <span class="c1"># Implementation note: This ``PTransform`` is overridden by Directrunner.</span>
 
   <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">subscription</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">id_label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-               <span class="n">with_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">timestamp_attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+               <span class="n">timestamp_attribute</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Initializes ``ReadFromPubSub``.</span>
 
 <span class="sd">    Args:</span>
@@ -288,12 +288,8 @@
 <span class="sd">        deduplication of messages. If not provided, we cannot guarantee</span>
 <span class="sd">        that no duplicate data will be delivered on the Pub/Sub stream. In this</span>
 <span class="sd">        case, deduplication of the stream will be strictly best effort.</span>
-<span class="sd">      with_attributes:</span>
-<span class="sd">        True - output elements will be :class:`~PubsubMessage` objects.</span>
-<span class="sd">        False - output elements will be of type ``str`` (message payload only).</span>
 <span class="sd">      timestamp_attribute: Message value to use as element timestamp. If None,</span>
 <span class="sd">        uses message publishing time as the timestamp.</span>
-<span class="sd">        Note that this argument doesn&#39;t require with_attributes=True.</span>
 
 <span class="sd">        Timestamp values should be in one of two formats:</span>
 
@@ -305,12 +301,13 @@
 <span class="sd">          units smaller than milliseconds) may be ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">super</span><span class="p">(</span><span class="n">ReadFromPubSub</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">with_attributes</span> <span class="o">=</span> <span class="n">with_attributes</span>
+    <span class="c1"># TODO(BEAM-4536): Add with_attributes to kwargs once fixed.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">with_attributes</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">_PubSubSource</span><span class="p">(</span>
         <span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
         <span class="n">subscription</span><span class="o">=</span><span class="n">subscription</span><span class="p">,</span>
         <span class="n">id_label</span><span class="o">=</span><span class="n">id_label</span><span class="p">,</span>
-        <span class="n">with_attributes</span><span class="o">=</span><span class="n">with_attributes</span><span class="p">,</span>
+        <span class="n">with_attributes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">with_attributes</span><span class="p">,</span>
         <span class="n">timestamp_attribute</span><span class="o">=</span><span class="n">timestamp_attribute</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ReadFromPubSub.expand"><a class="viewcode-back" href="../../../../apache_beam.io.gcp.pubsub.html#apache_beam.io.gcp.pubsub.ReadFromPubSub.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
@@ -344,8 +341,7 @@
 
 <div class="viewcode-block" id="ReadStringsFromPubSub.expand"><a class="viewcode-back" href="../../../../apache_beam.io.gcp.pubsub.html#apache_beam.io.gcp.pubsub.ReadStringsFromPubSub.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalue</span><span class="p">):</span>
     <span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="n">pvalue</span><span class="o">.</span><span class="n">pipeline</span>
-         <span class="o">|</span> <span class="n">ReadFromPubSub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_label</span><span class="p">,</span>
-                          <span class="n">with_attributes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+         <span class="o">|</span> <span class="n">ReadFromPubSub</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topic</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subscription</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">id_label</span><span class="p">)</span>
          <span class="o">|</span> <span class="s1">&#39;DecodeString&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">b</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)))</span>
     <span class="n">p</span><span class="o">.</span><span class="n">element_type</span> <span class="o">=</span> <span class="n">text_type</span>
     <span class="k">return</span> <span class="n">p</span></div></div>

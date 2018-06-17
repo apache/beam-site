@@ -220,6 +220,7 @@
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
 
@@ -1015,7 +1016,8 @@
                    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_side_input</span><span class="p">(</span><span class="n">tag</span><span class="p">)]</span>
     <span class="c1"># Ordering is important here.</span>
-    <span class="n">indexed_side_inputs</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="mi">4</span><span class="p">:]),</span> <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
+    <span class="n">indexed_side_inputs</span> <span class="o">=</span> <span class="p">[(</span><span class="nb">int</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s1">&#39;side([0-9]+)(-.*)?$&#39;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)),</span>
+                            <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="nb">id</span><span class="p">))</span>
                            <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                            <span class="k">if</span> <span class="n">is_side_input</span><span class="p">(</span><span class="n">tag</span><span class="p">)]</span>
     <span class="n">side_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">si</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">si</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">indexed_side_inputs</span><span class="p">)]</span>
