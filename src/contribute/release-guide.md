@@ -618,7 +618,7 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     ```
   * Setup GCP
     
-    Please repeat following steps for every following test
+    Please repeat following steps for every following test.
     
     ```
     bq rm -rf --project=${YOUR_PROJECT} ${USER}_test
@@ -627,24 +627,47 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     gsutil mb -p ${YOUR_PROJECT} ${YOUR_GS_STORAGE}
     gcloud alpha pubsub topics create --project=${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC}
     ```
-    Setup your service account as described in ```Java Mobile Game``` section above
+    Setup your service account as described in ```Java Mobile Game``` section above.
   
-    Produce data by using java injector
+    Produce data by using java injector:
+    * Configure your ~/.m2/settings.xml as following:
+      ```
+      <settings>
+        <profiles>
+          <profile>
+            <id>release-repo</id>
+            <activation>
+              <activeByDefault>true</activeByDefault>
+            </activation>
+            <repositories>
+              <repository>
+                <id>Release 2.4.0 RC3</id>
+                <name>Release 2.4.0 RC3</name>
+                <url>https://repository.apache.org/content/repositories/orgapachebeam-1031/</url>
+              </repository>
+            </repositories>
+          </profile>
+        </profiles>
+      </settings>
+      ```
+      _Note_: You can found the latest  ```id```, ```name``` and ```url``` for one RC in the vote email thread sent out by Release Manager.
     
-    ```
-    mvn archetype:generate \
-          -DarchetypeGroupId=org.apache.beam \
-          -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
-          -DarchetypeVersion=2.4.0 \
-          -DgroupId=org.example \
-          -DartifactId=word-count-beam \
-          -Dversion="0.1" \
-          -Dpackage=org.apache.beam.examples \
-          -DinteractiveMode=false
-          
-    mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.complete.game.injector.Injector \
-      -Dexec.args="${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC} none"
-    ```
+    * Run 
+      ```
+      mvn archetype:generate \
+            -DarchetypeGroupId=org.apache.beam \
+            -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
+            -DarchetypeVersion=${RELEASE_VERSION} \
+            -DgroupId=org.example \
+            -DartifactId=word-count-beam \
+            -Dversion="0.1" \
+            -Dpackage=org.apache.beam.examples \
+            -DinteractiveMode=false
+            -DarchetypeCatalog=internal
+            
+      mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.complete.game.injector.Injector \
+        -Dexec.args="${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC} none"
+      ```
   * Run Leaderboard with Direct Runner
     ```
     python -m apache_beam.examples.complete.game.leader_board \
