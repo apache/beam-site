@@ -600,6 +600,7 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     ```
     sudo apt-get install unzip
     unzip apache-beam-2.5.0-source-release.zip
+    python setup.py sdist
     ```
   * Setup virtualenv
     
@@ -677,7 +678,9 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     ```
     Inspect results:
     * Check whether there is any error messages in console.
-    * Goto your BigQuery console and check whether your ${USER}_test has leader_board table.
+    * Goto your BigQuery console and check whether your ${USER}_test has leader_board_users and leader_board_teams table.
+    * bq head -n 10 ${USER}_test.leader_board_users
+    * bq head -n 10 ${USER}_test.leader_board_teams
   * Run Leaderboard with Dataflow Runner
     ```
     python -m apache_beam.examples.complete.game.leader_board \ 
@@ -690,17 +693,23 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     ```
     Inspect results:
     * Goto your Dataflow job console and check whether there is any error.
-    * Goto your BigQuery console and check whether your ${USER}_test has leader_board table.
+    * Goto your BigQuery console and check whether your ${USER}_test has leader_board_users and leader_board_teams table.
+    * bq head -n 10 ${USER}_test.leader_board_users
+    * bq head -n 10 ${USER}_test.leader_board_teams
   * Run GameStats with Direct Runner
     ```
     python -m apache_beam.examples.complete.game.game_stats \
     --project=${YOUR_PROJECT} \
     --topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
-    --dataset ${USER}_test
+    --dataset ${USER}_test \
+    --fixed_window_duration ${SOME_SMALL_DURATION}
     ```
     Inspect results:
     * Check whether there is any error messages in console.
-    * Goto your BigQuery console and check whether your ${USER}_test has game_stats table.
+    * Goto your BigQuery console and check whether your ${USER}_test has game_stats_teams and game_stats_sessions table.
+    * bq head -n 10 ${USER}_test.game_stats_teams
+    * bq head -n 10 ${USER}_test.game_stats_sessions
+
   * Run GameStats with Dataflow Runner
     ```
     python -m apache_beam.examples.complete.game.game_stats \ 
@@ -709,11 +718,14 @@ _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Ma
     --dataset ${USER}_test \ 
     --runner DataflowRunner \ 
     --temp_location=${YOUR_GS_BUCKET}/temp/ \ 
-    --sdk_location dist/*
+    --sdk_location dist/* \
+    --fixed_window_duration ${SOME_SMALL_DURATION}
     ```
     Inspect results:
     * Goto your Dataflow job console and check whether there is any error.
-    * Goto your BigQuery console and check whether your ${USER}_test has game_stats table.
+    * Goto your BigQuery console and check whether your ${USER}_test has game_stats_teams and game_stats_sessions table.
+    * bq head -n 10 ${USER}_test.game_stats_teams
+    * bq head -n 10 ${USER}_test.game_stats_sessions
 ### Checklist to proceed to the finalization step
 
 1. Community votes to release the proposed candidate, with at least three approving PMC votes
