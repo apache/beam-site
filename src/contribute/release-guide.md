@@ -514,7 +514,7 @@ If there are no issues, reply on the vote thread to close the voting. Then, tall
     Thanks everyone!
     
 ### Run validation tests
-All tests listed in this [spreadsheet](https://docs.google.com/spreadsheets/d/1qk-N5vjXvbcEk68GjbkSZTR8AGqyNUM-oLFo_ZXBpJw/edit#gid=152451807)
+All tests listed in this [spreadsheet](https://s.apache.org/beam-release-validation)
 
 _Note_: -Prepourl and -Pver can be found in the RC vote email sent by Release Manager.
 
