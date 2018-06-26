@@ -163,6 +163,7 @@
   </li>
   <li><a href="#vote-on-the-release-candidate">Vote on the release candidate</a>
     <ul>
+      <li><a href="#run-validation-tests">Run validation tests</a></li>
       <li><a href="#checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</a></li>
     </ul>
   </li>
@@ -239,6 +240,7 @@
     </ul>
   </li>
   <li><a href="#vote-on-the-release-candidate" id="markdown-toc-vote-on-the-release-candidate">Vote on the release candidate</a>    <ul>
+      <li><a href="#run-validation-tests" id="markdown-toc-run-validation-tests">Run validation tests</a></li>
       <li><a href="#checklist-to-proceed-to-the-finalization-step" id="markdown-toc-checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</a></li>
     </ul>
   </li>
@@ -290,6 +292,7 @@
   <li>Prepare for the release</li>
   <li>Build a release candidate</li>
   <li>Vote on the release candidate</li>
+  <li>During vote process, run validation tests</li>
   <li>If necessary, fix any issues and go back to step 3.</li>
   <li>Finalize the release</li>
   <li>Promote the release</li>
@@ -876,7 +879,262 @@ Thanks everyone!
 </code></pre>
 </div>
 
-<h3 id="checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</h3>
+<h3 id="run-validation-tests">Run validation tests</h3>
+<p>All tests listed in this <a href="https://s.apache.org/beam-release-validation">spreadsheet</a></p>
+
+<p><em>Note</em>: -Prepourl and -Pver can be found in the RC vote email sent by Release Manager.</p>
+
+<ul>
+  <li>
+    <p>Java Quickstart Validation</p>
+
+    <p>Direct Runner:</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-direct-java:runQuickstartJavaDirect \ 
+-Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
+-Pver=${RELEASE_VERSION}
+</code></pre>
+    </div>
+    <p>Apex Local Runner</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-apex:runQuickstartJavaApex \
+-Prepourl=https://repository.apache.org/content/repositories/orgapachebeam${KEY} \
+-Pver=${RELEASE_VERSION}
+</code></pre>
+    </div>
+    <p>Flink Local Runner</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-flink_2.11:runQuickstartJavaFlinkLocal \
+-Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
+-Pver=${RELEASE_VERSION}
+</code></pre>
+    </div>
+    <p>Spark Local Runner</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-spark:runQuickstartJavaSpark \
+-Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
+-Pver=${RELEASE_VERSION}
+</code></pre>
+    </div>
+    <p>Dataflow Runner</p>
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-google-cloud-dataflow-java:runQuickstartJavaDataflow \
+-Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \
+-Pver= ${RELEASE_VERSION}\
+-PgcpProject=${YOUR_GCP_PROJECT} \
+-PgcsBucket=${YOUR_GCP_BUCKET}
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Java Mobile Game(UserScore, HourlyTeamScore, Leaderboard)</p>
+
+    <p>Pre-request</p>
+    <ul>
+      <li>Create your own BigQuery dataset
+        <div class="highlighter-rouge"><pre class="highlight"><code>bq mk --project=${YOUR_GCP_PROJECT} ${YOUR_DATASET}
+</code></pre>
+        </div>
+      </li>
+      <li>Create yout PubSub topic
+        <div class="highlighter-rouge"><pre class="highlight"><code>gcloud alpha pubsub topics create --project=${YOUR_GCP_PROJECT} ${YOUR_PROJECT_PUBSUB_TOPIC} 
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Setup your service account</p>
+
+        <p>Goto IAM console in your project to create a service account as <code class="highlighter-rouge">project owner</code></p>
+
+        <p>Run</p>
+        <div class="highlighter-rouge"><pre class="highlight"><code>gcloud iam service-accounts keys create ${YOUR_KEY_JSON} --iam-account ${YOUR_SERVICE_ACCOUNT_NAME}@${YOUR_PROJECT_NAME}
+export GOOGLE_APPLICATION_CREDENTIALS=${PATH_TO_YOUR_KEY_JSON} 
+</code></pre>
+        </div>
+        <p>Run</p>
+        <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew :beam-runners-google-cloud-dataflow-java:runMobileGamingJavaDataflow \
+ -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \ 
+ -Pver= ${RELEASE_VERSION}\
+ -PgcpProject=${YOUR_GCP_PROJECT} \
+ -PgcsBucket=gs://dataflow-samples/game/gaming_data1.csv \
+ -PbqDataset=${YOUR_DATASET} -PpubsubTopic=${YOUR_PROJECT_PUBSUB_TOPIC}
+</code></pre>
+        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Python Quickstart(batch &amp; streaming), MobileGame(UserScore, HourlyTeamScore)</p>
+
+    <p>Create a new PR in apache/beam</p>
+
+    <p>In comment area, type in <code class="highlighter-rouge">Run Python ReleaseCandidate</code></p>
+  </li>
+  <li>
+    <p>Python Leaderboard &amp; GameStats</p>
+    <ul>
+      <li>Get staging RC <code class="highlighter-rouge">wget https://dist.apache.org/repos/dist/dev/beam/2.5.0/*</code></li>
+      <li>
+        <p>Verify the hashes</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code>sha512sum -c apache-beam-2.5.0-python.zip.sha512
+sha512sum -c apache-beam-2.5.0-source-release.zip.sha512
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Build SDK</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install unzip
+unzip apache-beam-2.5.0-source-release.zip
+python setup.py sdist
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Setup virtualenv</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code>pip install --upgrade pip
+pip install --upgrade setuptools
+pip install --upgrade virtualenv
+virtualenv beam_env
+ . beam_env/bin/activate
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Install SDK</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code>pip install dist/apache-beam-2.5.0.tar.gz
+pip install dist/apache-beam-2.5.0.tar.gz[gcp]
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Setup GCP</p>
+
+        <p>Please repeat following steps for every following test.</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code>bq rm -rf --project=${YOUR_PROJECT} ${USER}_test
+bq mk --project=${YOUR_PROJECT} ${USER}_test
+gsutil rm -rf ${YOUR_GS_STORAGE]
+gsutil mb -p ${YOUR_PROJECT} ${YOUR_GS_STORAGE}
+gcloud alpha pubsub topics create --project=${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC}
+</code></pre>
+        </div>
+        <p>Setup your service account as described in <code class="highlighter-rouge">Java Mobile Game</code> section above.</p>
+
+        <p>Produce data by using java injector:</p>
+        <ul>
+          <li>Configure your ~/.m2/settings.xml as following:
+            <div class="highlighter-rouge"><pre class="highlight"><code>&lt;settings&gt;
+  &lt;profiles&gt;
+    &lt;profile&gt;
+      &lt;id&gt;release-repo&lt;/id&gt;
+      &lt;activation&gt;
+        &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
+      &lt;/activation&gt;
+      &lt;repositories&gt;
+        &lt;repository&gt;
+          &lt;id&gt;Release 2.4.0 RC3&lt;/id&gt;
+          &lt;name&gt;Release 2.4.0 RC3&lt;/name&gt;
+          &lt;url&gt;https://repository.apache.org/content/repositories/orgapachebeam-1031/&lt;/url&gt;
+        &lt;/repository&gt;
+      &lt;/repositories&gt;
+    &lt;/profile&gt;
+  &lt;/profiles&gt;
+&lt;/settings&gt;
+</code></pre>
+            </div>
+            <p><em>Note</em>: You can found the latest  <code class="highlighter-rouge">id</code>, <code class="highlighter-rouge">name</code> and <code class="highlighter-rouge">url</code> for one RC in the vote email thread sent out by Release Manager.</p>
+          </li>
+          <li>Run
+            <div class="highlighter-rouge"><pre class="highlight"><code>mvn archetype:generate \
+      -DarchetypeGroupId=org.apache.beam \
+      -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
+      -DarchetypeVersion=${RELEASE_VERSION} \
+      -DgroupId=org.example \
+      -DartifactId=word-count-beam \
+      -Dversion="0.1" \
+      -Dpackage=org.apache.beam.examples \
+      -DinteractiveMode=false
+      -DarchetypeCatalog=internal
+            
+mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.complete.game.injector.Injector \
+  -Dexec.args="${YOUR_PROJECT} ${YOUR_PUBSUB_TOPIC} none"
+</code></pre>
+            </div>
+          </li>
+        </ul>
+      </li>
+      <li>Run Leaderboard with Direct Runner
+        <div class="highlighter-rouge"><pre class="highlight"><code>python -m apache_beam.examples.complete.game.leader_board \
+--project=${YOUR_PROJECT} \
+--topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
+--dataset ${USER}_test
+</code></pre>
+        </div>
+        <p>Inspect results:</p>
+        <ul>
+          <li>Check whether there is any error messages in console.</li>
+          <li>Goto your BigQuery console and check whether your ${USER}_test has leader_board_users and leader_board_teams table.</li>
+          <li>bq head -n 10 ${USER}_test.leader_board_users</li>
+          <li>bq head -n 10 ${USER}_test.leader_board_teams</li>
+        </ul>
+      </li>
+      <li>Run Leaderboard with Dataflow Runner
+        <div class="highlighter-rouge"><pre class="highlight"><code>python -m apache_beam.examples.complete.game.leader_board \ 
+--project=${YOUR_PROJECT} \ 
+--topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \ 
+--dataset ${USER}_test \ 
+--runner DataflowRunner \ 
+--temp_location=${YOUR_GS_BUCKET}/temp/ \ 
+--sdk_location dist/*
+</code></pre>
+        </div>
+        <p>Inspect results:</p>
+        <ul>
+          <li>Goto your Dataflow job console and check whether there is any error.</li>
+          <li>Goto your BigQuery console and check whether your ${USER}_test has leader_board_users and leader_board_teams table.</li>
+          <li>bq head -n 10 ${USER}_test.leader_board_users</li>
+          <li>bq head -n 10 ${USER}_test.leader_board_teams</li>
+        </ul>
+      </li>
+      <li>Run GameStats with Direct Runner
+        <div class="highlighter-rouge"><pre class="highlight"><code>python -m apache_beam.examples.complete.game.game_stats \
+--project=${YOUR_PROJECT} \
+--topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \
+--dataset ${USER}_test \
+--fixed_window_duration ${SOME_SMALL_DURATION}
+</code></pre>
+        </div>
+        <p>Inspect results:</p>
+        <ul>
+          <li>Check whether there is any error messages in console.</li>
+          <li>Goto your BigQuery console and check whether your ${USER}_test has game_stats_teams and game_stats_sessions table.</li>
+          <li>bq head -n 10 ${USER}_test.game_stats_teams</li>
+          <li>bq head -n 10 ${USER}_test.game_stats_sessions</li>
+        </ul>
+      </li>
+      <li>Run GameStats with Dataflow Runner
+        <div class="highlighter-rouge"><pre class="highlight"><code>python -m apache_beam.examples.complete.game.game_stats \ 
+--project=${YOUR_PROJECT} \ 
+--topic projects/${YOUR_PROJECT}/topics/${YOUR_PUBSUB_TOPIC} \ 
+--dataset ${USER}_test \ 
+--runner DataflowRunner \ 
+--temp_location=${YOUR_GS_BUCKET}/temp/ \ 
+--sdk_location dist/* \
+--fixed_window_duration ${SOME_SMALL_DURATION}
+</code></pre>
+        </div>
+        <p>Inspect results:</p>
+        <ul>
+          <li>Goto your Dataflow job console and check whether there is any error.</li>
+          <li>Goto your BigQuery console and check whether your ${USER}_test has game_stats_teams and game_stats_sessions table.</li>
+          <li>bq head -n 10 ${USER}_test.game_stats_teams</li>
+          <li>bq head -n 10 ${USER}_test.game_stats_sessions
+            <h3 id="checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</h3>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 
 <ol>
   <li>Community votes to release the proposed candidate, with at least three approving PMC votes</li>
