@@ -28,7 +28,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Apache Beam Python SDK</title>
+  <title>Beam SQL: SELECT Statement</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -39,7 +39,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/documentation/sdks/python/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/documentation/dsls/sql/select/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -220,13 +220,6 @@
 
 
 
-<ul class="nav">
-  <li><a href="#get-started-with-the-python-sdk">Get started with the Python SDK</a></li>
-  <li><a href="#python-streaming-pipelines">Python streaming pipelines</a></li>
-  <li><a href="#python-type-safety">Python type safety</a></li>
-  <li><a href="#managing-python-pipeline-dependencies">Managing Python pipeline dependencies</a></li>
-  <li><a href="#creating-new-sources-and-sinks">Creating new sources and Sinks</a></li>
-</ul>
 
 
       </nav>
@@ -245,33 +238,78 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<h1 id="apache-beam-python-sdk">Apache Beam Python SDK</h1>
 
-<p>The Python SDK for Apache Beam provides a simple, powerful API for building batch and streaming data processing pipelines.</p>
+<h1 id="select">SELECT</h1>
 
-<h2 id="get-started-with-the-python-sdk">Get started with the Python SDK</h2>
+<p>The main functionality of Beam SQL is the <code class="highlighter-rouge">SELECT</code> statement. This is how you
+query and join data. The operations supported are a subset of
+<a href="http://calcite.apache.org/docs/reference.html#grammar">Apache Calcite SQL</a>.</p>
 
-<p>Get started with the <a href="/get-started/quickstart-py">Beam Python SDK quickstart</a> to set up your Python development environment, get the Beam SDK for Python, and run an example pipeline. Then, read through the <a href="/documentation/programming-guide">Beam programming guide</a> to learn the basic concepts that apply to all SDKs in Beam.</p>
+<p>Generally, the semantics of queries is standard. Please see the following
+sections to learn about extensions for supporting Beam’s unified
+batch/streaming model:</p>
 
-<p>See the <a href="/documentation/sdks/pydoc/">Python API reference</a> for more information on individual APIs.</p>
+<ul>
+  <li><a href="/documentation/dsls/sql/joins">Joins</a></li>
+  <li><a href="/documentation/dsls/sql/windowing-and-triggering/">Windowing &amp; Triggering</a></li>
+</ul>
 
-<h2 id="python-streaming-pipelines">Python streaming pipelines</h2>
+<p>Below is a curated grammar of the supported syntax in Beam SQL</p>
 
-<p>Python <a href="/documentation/sdks/python-streaming">streaming pipeline execution</a>
-is experimentally available (with some <a href="/documentation/sdks/python-streaming/#unsupported-features">limitations</a>)
-starting with Beam SDK version 2.5.0.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>query:
+	{
+          select
+      |   query UNION [ ALL ] query
+      |   query MINUS [ ALL ] query
+      |   query INTERSECT [ ALL ] query
+	}
+    [ ORDER BY orderItem [, orderItem ]* LIMIT count [OFFSET offset] ]
 
-<h2 id="python-type-safety">Python type safety</h2>
+orderItem:
+      expression [ ASC | DESC ]
 
-<p>Python is a dynamically-typed language with no static type checking. The Beam SDK for Python uses type hints during pipeline construction and runtime to try to emulate the correctness guarantees achieved by true static typing. <a href="/documentation/sdks/python-type-safety">Ensuring Python Type Safety</a> walks through how to use type hints, which help you to catch potential bugs up front with the <a href="/documentation/runners/direct/">Direct Runner</a>.</p>
+select:
+      SELECT
+          { * | projectItem [, projectItem ]* }
+      FROM tableExpression
+      [ WHERE booleanExpression ]
+      [ GROUP BY { groupItem [, groupItem ]* } ]
+      [ HAVING booleanExpression ]
 
-<h2 id="managing-python-pipeline-dependencies">Managing Python pipeline dependencies</h2>
+projectItem:
+      expression [ [ AS ] columnAlias ]
+  |   tableAlias . *
 
-<p>When you run your pipeline locally, the packages that your pipeline depends on are available because they are installed on your local machine. However, when you want to run your pipeline remotely, you must make sure these dependencies are available on the remote machines. <a href="/documentation/sdks/python-pipeline-dependencies">Managing Python Pipeline Dependencies</a> shows you how to make your dependencies available to the remote workers.</p>
+tableExpression:
+      tableReference [, tableReference ]*
+  |   tableExpression [ ( LEFT | RIGHT ) [ OUTER ] ] JOIN tableExpression [ joinCondition ]
 
-<h2 id="creating-new-sources-and-sinks">Creating new sources and Sinks</h2>
+booleanExpression:
+    expression [ IS NULL | IS NOT NULL ]
+  | expression [ &gt; | &gt;= | = | &lt; | &lt;= | &lt;&gt; ] expression
+  | booleanExpression [ AND | OR ] booleanExpression
+  | NOT booleanExpression
+  | '(' booleanExpression ')'
 
-<p>The Beam SDK for Python provides an extensible API that you can use to create new data sources and sinks. <a href="/documentation/sdks/python-custom-io">Creating New Sources and Sinks with the Python SDK</a> shows how to create new sources and sinks using <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py">Beam’s Source and Sink API</a>.</p>
+joinCondition:
+      ON booleanExpression
+
+tableReference:
+      tableName [ [ AS ] alias ]
+
+values:
+      VALUES expression [, expression ]*
+
+groupItem:
+      expression
+  |   '(' expression [, expression ]* ')'
+  |   HOP '(' expression [, expression ]* ')'
+  |   TUMBLE '(' expression [, expression ]* ')'
+  |   SESSION '(' expression [, expression ]* ')'
+
+</code></pre>
+</div>
+
 
       </div>
     </div>
