@@ -28,7 +28,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Apache Flink Runner</title>
+  <title>Apache Samza Runner</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -39,7 +39,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/documentation/runners/flink/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/documentation/runners/samza/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -166,119 +166,117 @@
 
 
 <ul class="nav">
-  <li><a href="#flink-runner-prerequisites-and-setup">Flink Runner prerequisites and setup</a>
+  <li><a href="#samza-runner-prerequisites-and-setup">Samza Runner prerequisites and setup</a>
     <ul>
       <li><a href="#specify-your-dependency">Specify your dependency</a></li>
     </ul>
   </li>
-  <li><a href="#executing-a-pipeline-on-a-flink-cluster">Executing a pipeline on a Flink cluster</a></li>
-  <li><a href="#pipeline-options-for-the-flink-runner">Pipeline options for the Flink Runner</a></li>
-  <li><a href="#additional-information-and-caveats">Additional information and caveats</a>
-    <ul>
-      <li><a href="#monitoring-your-job">Monitoring your job</a></li>
-      <li><a href="#streaming-execution">Streaming Execution</a></li>
-    </ul>
-  </li>
+  <li><a href="#executing-a-pipeline-with-samza-runner">Executing a pipeline with Samza Runner</a></li>
+  <li><a href="#pipeline-options-for-the-samza-runner">Pipeline options for the Samza Runner</a></li>
+  <li><a href="#monitoring-your-job">Monitoring your job</a></li>
 </ul>
 
 
       </nav>
 
       <div class="body__contained body__section-nav">
-        <!--
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+        <h1 id="using-the-apache-samza-runner">Using the Apache Samza Runner</h1>
 
-http://www.apache.org/licenses/LICENSE-2.0
+<p>The Apache Samza Runner can be used to execute Beam pipelines using <a href="http://samza.apache.org/">Apache Samza</a>. The Samza Runner executes Beam pipeline in a Samza application and can run locally. The application can further be built into a .tgz file, and deployed to a YARN cluster or Samza standalone cluster with Zookeeper.</p>
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
-<h1 id="using-the-apache-flink-runner">Using the Apache Flink Runner</h1>
-
-<nav class="language-switcher">
-  <strong>Adapt for:</strong>
-  <ul>
-    <li data-type="language-java">Java SDK</li>
-    <li data-type="language-py">Python SDK</li>
-  </ul>
-</nav>
-
-<p>The Apache Flink Runner can be used to execute Beam pipelines using <a href="https://flink.apache.org">Apache Flink</a>. When using the Flink Runner you will create a jar file containing your job that can be executed on a regular Flink cluster. It’s also possible to execute a Beam pipeline using Flink’s local execution mode without setting up a cluster. This is helpful for development and debugging of your pipeline.</p>
-
-<p>The Flink Runner and Flink are suitable for large scale, continuous jobs, and provide:</p>
+<p>The Samza Runner and Samza are suitable for large scale, stateful streaming jobs, and provide:</p>
 
 <ul>
-  <li>A streaming-first runtime that supports both batch processing and data streaming programs</li>
-  <li>A runtime that supports very high throughput and low event latency at the same time</li>
-  <li>Fault-tolerance with <em>exactly-once</em> processing guarantees</li>
-  <li>Natural back-pressure in streaming programs</li>
-  <li>Custom memory management for efficient and robust switching between in-memory and out-of-core data processing algorithms</li>
-  <li>Integration with YARN and other components of the Apache Hadoop ecosystem</li>
+  <li>First class support for local state (with RocksDB store). This allows fast state access for high frequency streaming jobs.</li>
+  <li>Fault-tolerance with support for incremental checkpointing of state instead of full snapshots. This enables Samza to scale to applications with very large state.</li>
+  <li>A fully asynchronous processing engine that makes remote calls efficient.</li>
+  <li>Flexible deployment model for running the the applications in any hosting environment with Zookeeper.</li>
+  <li>Features like canaries, upgrades and rollbacks that support extremely large deployments with minimal downtime.</li>
 </ul>
 
-<p>The <a href="/documentation/runners/capability-matrix/">Beam Capability Matrix</a> documents the supported capabilities of the Flink Runner.</p>
+<p>The <a href="/documentation/runners/capability-matrix/">Beam Capability Matrix</a> documents the currently supported capabilities of the Samza Runner.</p>
 
-<h2 id="flink-runner-prerequisites-and-setup">Flink Runner prerequisites and setup</h2>
+<h2 id="samza-runner-prerequisites-and-setup">Samza Runner prerequisites and setup</h2>
 
-<p>If you want to use the local execution mode with the Flink runner to don’t have to complete any setup.</p>
-
-<p>To use the Flink Runner for executing on a cluster, you have to setup a Flink cluster by following the Flink <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.1/quickstart/setup_quickstart.html">setup quickstart</a>.</p>
-
-<p>To find out which version of Flink you need you can run this command to check the version of the Flink dependency that your project is using:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>$ mvn dependency:tree -Pflink-runner |grep flink
-...
-[INFO] |  +- org.apache.flink:flink-streaming-java_2.10:jar:1.2.1:runtime
-...
-</code></pre>
-</div>
-<p>Here, we would need Flink 1.2.1. Please also note the Scala version in the dependency name. In this case we need to make sure to use a Flink cluster with Scala version 2.10.</p>
-
-<p>For more information, the <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.1/">Flink Documentation</a> can be helpful.</p>
+<p>The Samza Runner is built on Samza version greater than 0.14.1, and uses Scala version 2.11.</p>
 
 <h3 id="specify-your-dependency">Specify your dependency</h3>
 
-<p><span class="language-java">When using Java, you must specify your dependency on the Flink Runner in your <code class="highlighter-rouge">pom.xml</code>.</span></p>
+<p><span class="language-java">You can specify your dependency on the Samza Runner by adding the following to your <code class="highlighter-rouge">pom.xml</code>:</span></p>
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">beam</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
-  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">beam</span><span class="o">-</span><span class="n">runners</span><span class="o">-</span><span class="n">flink_2</span><span class="o">.</span><span class="mi">10</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">beam</span><span class="o">-</span><span class="n">runners</span><span class="o">-</span><span class="n">samza_2</span><span class="o">.</span><span class="mi">11</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="mf">2.5</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
   <span class="o">&lt;</span><span class="n">scope</span><span class="o">&gt;</span><span class="n">runtime</span><span class="o">&lt;/</span><span class="n">scope</span><span class="o">&gt;</span>
 <span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="o">&lt;!--</span> <span class="n">Samza</span> <span class="n">dependencies</span> <span class="o">--&gt;</span>
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">samza</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">samza</span><span class="o">-</span><span class="n">api</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="err">$</span><span class="o">{</span><span class="n">samza</span><span class="o">.</span><span class="na">version</span><span class="o">}&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">samza</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">samza</span><span class="o">-</span><span class="n">core_2</span><span class="o">.</span><span class="mi">11</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="err">$</span><span class="o">{</span><span class="n">samza</span><span class="o">.</span><span class="na">version</span><span class="o">}&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">samza</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">samza</span><span class="o">-</span><span class="n">kafka_2</span><span class="o">.</span><span class="mi">11</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="err">$</span><span class="o">{</span><span class="n">samza</span><span class="o">.</span><span class="na">version</span><span class="o">}&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">scope</span><span class="o">&gt;</span><span class="n">runtime</span><span class="o">&lt;/</span><span class="n">scope</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">samza</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">samza</span><span class="o">-</span><span class="n">kv_2</span><span class="o">.</span><span class="mi">11</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="err">$</span><span class="o">{</span><span class="n">samza</span><span class="o">.</span><span class="na">version</span><span class="o">}&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">scope</span><span class="o">&gt;</span><span class="n">runtime</span><span class="o">&lt;/</span><span class="n">scope</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">dependency</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">groupId</span><span class="o">&gt;</span><span class="n">org</span><span class="o">.</span><span class="na">apache</span><span class="o">.</span><span class="na">samza</span><span class="o">&lt;/</span><span class="n">groupId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">artifactId</span><span class="o">&gt;</span><span class="n">samza</span><span class="o">-</span><span class="n">kv</span><span class="o">-</span><span class="n">rocksdb_2</span><span class="o">.</span><span class="mi">11</span><span class="o">&lt;/</span><span class="n">artifactId</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">version</span><span class="o">&gt;</span><span class="err">$</span><span class="o">{</span><span class="n">samza</span><span class="o">.</span><span class="na">version</span><span class="o">}&lt;/</span><span class="n">version</span><span class="o">&gt;</span>
+  <span class="o">&lt;</span><span class="n">scope</span><span class="o">&gt;</span><span class="n">runtime</span><span class="o">&lt;/</span><span class="n">scope</span><span class="o">&gt;</span>
+<span class="o">&lt;/</span><span class="n">dependency</span><span class="o">&gt;</span>
+    
 </code></pre>
 </div>
 
-<p><span class="language-py">This section is not applicable to the Beam SDK for Python.</span></p>
+<h2 id="executing-a-pipeline-with-samza-runner">Executing a pipeline with Samza Runner</h2>
 
-<h2 id="executing-a-pipeline-on-a-flink-cluster">Executing a pipeline on a Flink cluster</h2>
+<p>If you run your pipeline locally or deploy it to a standalone cluster with all the jars and resource files, no packaging is required. For example, the following command runs the WordCount example:</p>
 
-<p>For executing a pipeline on a Flink cluster you need to package your program along will all dependencies in a so-called fat jar. How you do this depends on your build system but if you follow along the <a href="/get-started/quickstart/">Beam Quickstart</a> this is the command that you have to run:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>$ mvn package -Pflink-runner
-</code></pre>
-</div>
-<p>The Beam Quickstart Maven project is setup to use the Maven Shade plugin to create a fat jar and the <code class="highlighter-rouge">-Pflink-runner</code> argument makes sure to include the dependency on the Flink Runner.</p>
-
-<p>For actually running the pipeline you would use this command</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>$ mvn exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
-    -Pflink-runner \
-    -Dexec.args="--runner=FlinkRunner \
-      --inputFile=/path/to/pom.xml \
-      --output=/path/to/counts \
-      --flinkMaster=&lt;flink master url&gt; \
-      --filesToStage=target/word-count-beam--bundled-0.1.jar"
+    -Psamza-runner \
+    -Dexec.args="--runner=SamzaRunner \
+      --inputFile=/path/to/input \
+      --output=/path/to/counts"
 </code></pre>
 </div>
-<p>If you have a Flink <code class="highlighter-rouge">JobManager</code> running on your local machine you can give <code class="highlighter-rouge">localhost:6123</code> for
-<code class="highlighter-rouge">flinkMaster</code>.</p>
 
-<h2 id="pipeline-options-for-the-flink-runner">Pipeline options for the Flink Runner</h2>
+<p>To deploy your pipeline to a YARN cluster, here is the <a href="https://samza.apache.org/startup/hello-samza/latest/">instructions</a> of deploying a sample Samza job. First you need to package your application jars and resource files into a <code class="highlighter-rouge">.tgz</code> archive file, and make it available to download for Yarn containers. In your config, you need to specify the URI of this TGZ file location:</p>
 
-<p>When executing your pipeline with the Flink Runner, you can set these pipeline options.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>yarn.package.path=${your_job_tgz_URI}
+
+job.name=${your_job_name}
+job.factory.class=org.apache.samza.job.yarn.YarnJobFactory
+job.coordinator.system=${job_coordinator_system}
+job.default.system=${job_default_system}
+</code></pre>
+</div>
+
+<p>For more details on the configuration, see <a href="https://samza.apache.org/learn/documentation/latest/jobs/configuration-table.html">Samza Configuration Reference</a>.</p>
+
+<p>The config file will be passed in by setting the command line arg <code class="highlighter-rouge">--configFilePath=/path/to/config.properties</code>. With that, you can run your main class of Beam pipeline in a Yarn Resource Manager, and the Samza Runner will submit a Yarn job under the hood.</p>
+
+<h2 id="pipeline-options-for-the-samza-runner">Pipeline options for the Samza Runner</h2>
+
+<p>When executing your pipeline with the Samza Runner, you can use the following pipeline options.</p>
 
 <table class="table table-bordered">
 <tr>
@@ -289,62 +287,45 @@ limitations under the License.
 <tr>
   <td><code>runner</code></td>
   <td>The pipeline runner to use. This option allows you to determine the pipeline runner at runtime.</td>
-  <td>Set to <code>FlinkRunner</code> to run using Flink.</td>
+  <td>Set to <code>SamzaRunner</code> to run using Samza.</td>
 </tr>
 <tr>
-  <td><code>streaming</code></td>
-  <td>Whether streaming mode is enabled or disabled; <code>true</code> if enabled. Set to <code>true</code> if running pipelines with unbounded <code>PCollection</code>s.</td>
-  <td><code>false</code></td>
+  <td><code>configFilePath</code></td>
+  <td>The config for Samza using a properties file.</td>
+  <td><code>empty</code>, i.e. use local execution.</td>
 </tr>
 <tr>
-  <td><code>flinkMaster</code></td>
-  <td>The url of the Flink JobManager on which to execute pipelines. This can either be the address of a cluster JobManager, in the form <code>"host:port"</code> or one of the special Strings <code>"[local]"</code> or <code>"[auto]"</code>. <code>"[local]"</code> will start a local Flink Cluster in the JVM while <code>"[auto]"</code> will let the system decide where to execute the pipeline based on the environment.</td>
-  <td><code>[auto]</code></td>
+  <td><code>configOverride</code></td>
+  <td>The config override to set programmatically.</td>
+  <td><code>empty</code>, i.e. use config file or local execution.</td>
 </tr>
 <tr>
-  <td><code>filesToStage</code></td>
-  <td>Jar Files to send to all workers and put on the classpath. Here you have to put the fat jar that contains your program along with all dependencies.</td>
-  <td>empty</td>
+  <td><code>watermarkInterval</code></td>
+  <td>The interval to check for watermarks in milliseconds.</td>
+  <td><code>1000</code></td>
 </tr>
-
 <tr>
-  <td><code>parallelism</code></td>
-  <td>The degree of parallelism to be used when distributing operations onto workers.</td>
+  <td><code>systemBufferSize</code></td>
+  <td>The maximum number of messages to buffer for a given system.</td>
+  <td><code>5000</code></td>
+</tr>
+<tr>
+  <td><code>maxSourceParallelism</code></td>
+  <td>The maximum parallelism allowed for any data source.</td>
   <td><code>1</code></td>
 </tr>
 <tr>
-  <td><code>checkpointingInterval</code></td>
-  <td>The interval between consecutive checkpoints (i.e. snapshots of the current pipeline state used for fault tolerance).</td>
-  <td><code>-1L</code>, i.e. disabled</td>
-</tr>
-<tr>
-  <td><code>numberOfExecutionRetries</code></td>
-  <td>Sets the number of times that failed tasks are re-executed. A value of <code>0</code> effectively disables fault tolerance. A value of <code>-1</code> indicates that the system default value (as defined in the configuration) should be used.</td>
-  <td><code>-1</code></td>
-</tr>
-<tr>
-  <td><code>executionRetryDelay</code></td>
-  <td>Sets the delay between executions. A value of <code>-1</code> indicates that the default value should be used.</td>
-  <td><code>-1</code></td>
-</tr>
-<tr>
-  <td><code>stateBackend</code></td>
-  <td>Sets the state backend to use in streaming mode. The default is to read this setting from the Flink config.</td>
-  <td><code>empty</code>, i.e. read from Flink config</td>
+  <td><code>storeBatchGetSize</code></td>
+  <td>The batch get size limit for the state store.</td>
+  <td><code>10000</code></td>
 </tr>
 </table>
 
-<p>See the reference documentation for the  <span class="language-java"><a href="/documentation/sdks/javadoc/2.5.0/index.html?org/apache/beam/runners/flink/FlinkPipelineOptions.html">FlinkPipelineOptions</a></span><span class="language-py"><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/options/pipeline_options.py">PipelineOptions</a></span> interface (and its subinterfaces) for the complete list of pipeline configuration options.</p>
+<h2 id="monitoring-your-job">Monitoring your job</h2>
 
-<h2 id="additional-information-and-caveats">Additional information and caveats</h2>
+<p>You can monitor your pipeline job using metrics emitted from both Beam and Samza, e.g. Beam source metrics such as <code class="highlighter-rouge">elements_read</code> and <code class="highlighter-rouge">backlog_elements</code>, and Samza job metrics such as <code class="highlighter-rouge">job-healthy</code> and <code class="highlighter-rouge">process-envelopes</code>. A complete list of Samza metrics is in <a href="https://samza.apache.org/learn/documentation/latest/container/metrics-table.html">Samza Metrics Reference</a>. You can view your job’s metrics via JMX in development, and send the metrics to graphing system such as <a href="http://graphiteapp.org/">Graphite</a>. For more details, please see <a href="https://samza.apache.org/learn/documentation/latest/container/metrics.html">Samza Metrics</a>.</p>
 
-<h3 id="monitoring-your-job">Monitoring your job</h3>
-
-<p>You can monitor a running Flink job using the Flink JobManager Dashboard. By default, this is available at port <code class="highlighter-rouge">8081</code> of the JobManager node. If you have a Flink installation on your local machine that would be <code class="highlighter-rouge">http://localhost:8081</code>.</p>
-
-<h3 id="streaming-execution">Streaming Execution</h3>
-
-<p>If your pipeline uses an unbounded data source or sink, the Flink Runner will automatically switch to streaming mode. You can enforce streaming mode by using the <code class="highlighter-rouge">streaming</code> setting mentioned above.</p>
+<p>For a running Samza YARN job, you can use YARN web UI to monitor the job status and check logs.</p>
 
       </div>
     </div>
