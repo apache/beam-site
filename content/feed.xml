@@ -20,6 +20,107 @@
     <generator>Jekyll v3.2.0</generator>
     
       <item>
+        <title>Apache Beam 2.5.0</title>
+        <description>&lt;p&gt;We are glad to present the new 2.5.0 release of Beam. This release includes
+multiple fixes and new functionalities. &lt;!--more--&gt; For more information
+please check the detailed release notes.&lt;/p&gt;
+
+&lt;h1 id=&quot;new-features--improvements&quot;&gt;New Features / Improvements&lt;/h1&gt;
+
+&lt;h2 id=&quot;go-sdk-support&quot;&gt;Go SDK support&lt;/h2&gt;
+&lt;p&gt;The Go SDK has been officially accepted into the project, after an incubation period and community effort. Go pipelines run on Dataflow runner. More details are &lt;a href=&quot;https://beam.apache.org/documentation/sdks/go/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;parquet-support&quot;&gt;Parquet support&lt;/h2&gt;
+&lt;p&gt;Support for Apache Parquet format was added. It uses Parquet 1.10 release which, thanks to AvroParquerWriter’s API changes, allows FileIO.Sink implementation.&lt;/p&gt;
+
+&lt;h2 id=&quot;performanceintegration-tests&quot;&gt;Performance/Integration Tests&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Added new integration tests - HCatalogIOIT (Hive), HBaseIOIT, ParquetIOIT (with the IO itself, local filesystem, HDFS)&lt;/li&gt;
+  &lt;li&gt;Multinode (3 data node) HDFS cluster is used for running tests on HDFS.&lt;/li&gt;
+  &lt;li&gt;Several improvements on performance tests running and results analysis.&lt;/li&gt;
+  &lt;li&gt;Scaled up Kubernetes cluster from 1 to 3 nodes.&lt;/li&gt;
+  &lt;li&gt;Added metrics in Spark streaming.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;internal-build-system-migrated-to-gradle&quot;&gt;Internal Build System: Migrated to Gradle&lt;/h2&gt;
+&lt;p&gt;After a months-long community effort, the internal Beam build has been migrated from Maven to Gradle. The new build system was chosen because of dependency-driven build support, incremental build/test, and support for non-Java languages.&lt;/p&gt;
+
+&lt;h2 id=&quot;nexmark-improvements&quot;&gt;Nexmark Improvements&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Kafka support as a source/sink for events and results.&lt;/li&gt;
+  &lt;li&gt;Translation of some queries to Beam SQL.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;beam-sql&quot;&gt;Beam SQL&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Support for MAP, ROW, ARRAY data types&lt;/li&gt;
+  &lt;li&gt;Support UNNEST on array fields&lt;/li&gt;
+  &lt;li&gt;Improved optimizations&lt;/li&gt;
+  &lt;li&gt;Upgrade Calcite to 1.16&lt;/li&gt;
+  &lt;li&gt;Support SQL on POJOs via automatic conversion&lt;/li&gt;
+  &lt;li&gt;Schema moved into core Beam&lt;/li&gt;
+  &lt;li&gt;UDAFs can be indirect suclasses of CombineFn&lt;/li&gt;
+  &lt;li&gt;Many other small bugfixes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;portability&quot;&gt;Portability&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Common shared code related to supporting portable execution for runners.&lt;/li&gt;
+  &lt;li&gt;Python SDK supporting side inputs over the portability APIs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;extract-metrics-in-a-runner-agnostic-way&quot;&gt;Extract metrics in a runner agnostic way&lt;/h2&gt;
+&lt;p&gt;Metrics are pushed by the runners to configurable sinks (Http REST sink available). It is already enabled in Flink and Spark runner, work is in progress for Dataflow.&lt;/p&gt;
+
+&lt;h1 id=&quot;miscellaneous-fixes&quot;&gt;Miscellaneous Fixes&lt;/h1&gt;
+
+&lt;h2 id=&quot;sdks&quot;&gt;SDKs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Implemented HDFS FileSystem for Python SDK.&lt;/li&gt;
+  &lt;li&gt;Python SDK adds support for side inputs for streaming execution.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;runners&quot;&gt;Runners&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Updated Spark runner to Spark version 2.3.1&lt;/li&gt;
+  &lt;li&gt;Fixed issue with late elements windowed into expired fixed windows get dropped in Directrunner.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ios&quot;&gt;IOs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CassandraIO gained a better split algorithm based on overlapping regions.&lt;/li&gt;
+  &lt;li&gt;ElasticsearchIO supports partial updates.&lt;/li&gt;
+  &lt;li&gt;ElasticsearchIO allows to pass id, type and index per document.&lt;/li&gt;
+  &lt;li&gt;SolrIO supports a more robust retry on write strategy.&lt;/li&gt;
+  &lt;li&gt;S3 FileSystem supports encryption (SSE-S3, SSE-C and SSE-KMS).&lt;/li&gt;
+  &lt;li&gt;Improved connection management in JdbcIO.&lt;/li&gt;
+  &lt;li&gt;Added support the element timestamps while publishing to Kafka.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;other&quot;&gt;Other&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use Java ErrorProne for static analysis.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;list-of-contributors&quot;&gt;List of Contributors&lt;/h1&gt;
+
+&lt;p&gt;According to git shortlog, the following 84 people contributed to the 2.5.0 release. Thank you to all contributors!&lt;/p&gt;
+
+&lt;p&gt;Ahmet Altay, Alan Myrvold, Alex Amato, Alex Van Boxel, Alexander Dejanovski, Alexey Romanenko, Aljoscha Krettek, ananvay, Andreas Ehrencrona, Andrew Pilloud, Ankur Goenka, Anton Kedin, arkash, Austin Bennett, Axel Magnuson, Ben Chambers, Ben Sidhom, Bill Neubauer, Boyuan Zhang, Braden Bassingthwaite, Cade Markegard, cclauss, Chamikara Jayalath, Charles Chen, Chuan Yu Foo, Cody Schroeder, Colm O hEigeartaigh, Daniel Oliveira, Dariusz Aniszewski, David Cavazos, Dawid Wysakowicz, Eric Roshan-Eisner, Etienne Chauchot, Eugene Kirpichov, Flavio Fiszman, Geet Kumar, GlennAmmons, Grzegorz Kołakowski, Henning Rohde, Innocent Djiofack, Ismaël Mejía, Jack Hsueh, Jason Kuster, Javier Antonio Gonzalez Trejo, Jean-Baptiste Onofré, Kai Jiang, Kamil Szewczyk, Katarzyna Kucharczyk, Kenneth Jung, Kenneth Knowles, Kevin Peterson, Lukasz Cwik, Łukasz Gajowy, Mairbek Khadikov, Manu Zhang, Maria Garcia Herrero, Marian Dvorsky, Mark Liu, Matthias Feys, Matthias Wessendorf, mingmxu, Nathan Howell, Pablo Estrada, Paul Gerver, Raghu Angadi, rarokni, Reuven Lax, Rezan Achmad, Robbe Sneyders, Robert Bradshaw, Robert Burke, Romain Manni-Bucau, Sam Waggoner, Sam Whittle, Scott Wegner, Stephan Hoyer, Thomas Groh, Thomas Weise, Tim Robertson, Udi Meiri, Valentyn Tymofieiev, XuMingmin, Yifan Zou, Yunqing Zhou&lt;/p&gt;
+</description>
+        <pubDate>Tue, 26 Jun 2018 01:00:01 -0700</pubDate>
+        <link>https://beam.apache.org/blog/2018/06/26/beam-2.5.0.html</link>
+        <guid isPermaLink="true">https://beam.apache.org/blog/2018/06/26/beam-2.5.0.html</guid>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
         <title>Apache Beam 2.3.0</title>
         <description>&lt;!--
 Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -2340,61 +2441,6 @@ tracker, pull requests, and events.&lt;/p&gt;
         <pubDate>Tue, 10 Jan 2017 00:00:01 -0800</pubDate>
         <link>https://beam.apache.org/blog/2017/01/10/beam-graduates.html</link>
         <guid isPermaLink="true">https://beam.apache.org/blog/2017/01/10/beam-graduates.html</guid>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Release 0.4.0 adds a runner for Apache Apex</title>
-        <description>&lt;!--
-Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
---&gt;
-
-&lt;p&gt;The latest release 0.4.0 of &lt;a href=&quot;/&quot;&gt;Apache Beam&lt;/a&gt; adds a new runner for &lt;a href=&quot;http://apex.apache.org/&quot;&gt;Apache Apex&lt;/a&gt;. We are excited to reach this initial milestone and are looking forward to continued collaboration between the Beam and Apex communities to advance the runner.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;Beam evolved from the Google Dataflow SDK and as incubator project has quickly adapted the Apache way, grown the community and attracts increasing interest from users that hope to benefit from a conceptual strong unified programming model that is portable between different big data processing frameworks (see &lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101&quot;&gt;Streaming-101&lt;/a&gt; and &lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102&quot;&gt;Streaming-102&lt;/a&gt;). Multiple Apache projects already provide runners for Beam (see &lt;a href=&quot;/documentation/runners/capability-matrix/&quot;&gt;runners and capabilities matrix&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;Apex is a stream processing framework for low-latency, high-throughput, stateful and reliable processing of complex analytics pipelines on clusters. Apex was developed since 2012 and is used in production by large companies for real-time and batch processing at scale.&lt;/p&gt;
-
-&lt;p&gt;The initial revision of the runner was focussed on broad coverage of the Beam model on a functional level. That means, there will be follow up work in several areas to take the runner from functional to scalable and high performance to match the capabilities of Apex and its native API. The runner capabilities matrix shows that the Apex capabilities are well aligned with the Beam model. Specifically, the ability to track computational state in a fault tolerant and efficient manner is needed to broadly support the windowing concepts, including event time based processing.&lt;/p&gt;
-
-&lt;h2 id=&quot;stateful-stream-processor&quot;&gt;Stateful Stream Processor&lt;/h2&gt;
-
-&lt;p&gt;Apex was built as stateful stream processor from the ground up. Operators &lt;a href=&quot;https://www.datatorrent.com/blog/blog-introduction-to-checkpoint/&quot;&gt;checkpoint&lt;/a&gt; state in a distributed and asynchronous manner that produces a consistent snapshot for the entire processing graph, which can be used for recovery. Apex also supports such recovery in an incremental, or fine grained, manner. This means only the portion of the DAG that is actually affected by a failure will be recovered while the remaining pipeline continues processing (this can be leveraged to implement use cases with special needs, such as speculative execution to achieve SLA on the processing latency). The state checkpointing along with idempotent processing guarantee is the basis for &lt;a href=&quot;https://www.datatorrent.com/blog/end-to-end-exactly-once-with-apache-apex/&quot;&gt;exactly-once results&lt;/a&gt; support in Apex.&lt;/p&gt;
-
-&lt;h2 id=&quot;translation-to-apex-dag&quot;&gt;Translation to Apex DAG&lt;/h2&gt;
-
-&lt;p&gt;A Beam runner needs to implement the translation from the Beam model to the underlying frameworks execution model. In the case of Apex, the runner will translate the pipeline into the &lt;a href=&quot;https://www.datatorrent.com/blog/tracing-dags-from-specification-to-execution/&quot;&gt;native (compositional, low level) DAG API&lt;/a&gt; (which is also the base for a number of other API that are available to specify applications that run on Apex). The DAG consists of operators (functional building blocks that are connected with streams. The runner provides the execution layer. In the case of Apex it is distributed stream processing, operators process data event by event. The minimum set of operators covers Beam’s primitive transforms: &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo.Bound&lt;/code&gt;,  &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo.BoundMulti&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Read.Unbounded&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Read.Bounded&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;GroupByKey&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Flatten.FlattenPCollectionList&lt;/code&gt; etc.&lt;/p&gt;
-
-&lt;h2 id=&quot;execution-and-testing&quot;&gt;Execution and Testing&lt;/h2&gt;
-
-&lt;p&gt;In this release, the Apex runner executes the pipelines in embedded mode, where, similar to the direct runner, everything is executed in a single JVM. See &lt;a href=&quot;/get-started/quickstart/&quot;&gt;quickstart&lt;/a&gt; on how to run the Beam examples with the Apex runner.&lt;/p&gt;
-
-&lt;p&gt;Embedded mode is useful for development and debugging. Apex in production runs distributed on Apache Hadoop YARN clusters. An example how a Beam pipeline can be embedded into an Apex application package to run on YARN can be found &lt;a href=&quot;https://github.com/tweise/apex-samples/tree/master/beam-apex-wordcount&quot;&gt;here&lt;/a&gt; and support for direct launch in the runner is currently being worked on.&lt;/p&gt;
-
-&lt;p&gt;The Beam project has a strong focus on development process and tooling, including testing. For the runners, there is a comprehensive test suite with more than 200 integration tests that are executed against each runner to ensure they don’t break as changes are made. The tests cover the capabilities of the matrix and thus are a measure of completeness and correctness of the runner implementations. The suite was very helpful when developing the Apex runner.&lt;/p&gt;
-
-&lt;h2 id=&quot;outlook&quot;&gt;Outlook&lt;/h2&gt;
-
-&lt;p&gt;The next step is to take the Apex runner from functional to ready for real applications that run distributed, leveraging the scalability and performance features of Apex, similar to its native API. This includes chaining of ParDos, partitioning, optimizing combine operations etc. To get involved, please see &lt;a href=&quot;https://issues.apache.org/jira/issues/?jql=project%20%3D%20BEAM%20and%20component%20%3D%20runner-apex%20and%20resolution%20%3D%20unresolved&quot;&gt;JIRA&lt;/a&gt; and join the Beam community.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 09 Jan 2017 09:00:01 -0800</pubDate>
-        <link>https://beam.apache.org/blog/2017/01/09/added-apex-runner.html</link>
-        <guid isPermaLink="true">https://beam.apache.org/blog/2017/01/09/added-apex-runner.html</guid>
         
         
         <category>blog</category>
