@@ -27,12 +27,12 @@ This page illustrates the usage of Beam SQL with example code.
 Before applying a SQL query to a `PCollection`, the data in the collection must
 be in `Row` format. A `Row` represents a single, immutable record in a Beam SQL
 `PCollection`. The names and types of the fields/columns in the row are defined
-by its associated [RowType]({{ site.baseurl }}/documentation/sdks/javadoc/{{
-site.release_latest }}/index.html?org/apache/beam/sdk/values/RowType.html).
-For SQL queries, you should use the [RowSqlType.builder()]({{ site.baseurl
+by its associated [Schema]({{ site.baseurl }}/documentation/sdks/javadoc/{{
+site.release_latest }}/index.html?org/apache/beam/sdk/schemas/Schema.html).
+For SQL queries, you should use the [Schema.builder()]({{ site.baseurl
 }}/documentation/sdks/javadoc/{{ site.release_latest
-}}/index.html?org/apache/beam/sdk/extensions/sql/RowSqlType.html) to create
-`RowTypes`, it allows creating schemas with all supported SQL types (see [Data
+}}/index.html?org/apache/beam/sdk/schemas/Schema.html) to create
+`Schema`s, it allows creating schemas with all supported SQL types (see [Data
 Types]({{ site.baseurl }}/documentation/dsls/sql/data-types) for more details on supported primitive data types).
 
 
@@ -43,24 +43,24 @@ A `PCollection<Row>` can be obtained multiple ways, for example:
     **Note:** you have to explicitly specify the `Row` coder. In this example we're doing it by calling `Create.of(..).withCoder()`:
 
     ```java
-    // Define the record type (i.e., schema).
-    RowType appType = 
-        RowSqlType
+    // Define the schema
+    Schema appType =
+        Schema
           .builder()
-          .withIntegerField("appId")
-          .withVarcharField("description")
-          .withTimestampField("rowtime")
+          .addInt32Field("appId")
+          .addStringField("description")
+          .addDateTimeField("rowtime")
           .build();
 
     // Create a concrete row with that type.
-    Row row = 
+    Row row =
         Row
-          .withRowType(appType)
-          .addValues(1, "Some cool app", new Date())
+          .withSchema(appType)
+          .addValues(1, "Some cool app", new DateTime())
           .build();
 
     // Create a source PCollection containing only that row
-    PCollection<Row> testApps = 
+    PCollection<Row> testApps =
         PBegin
           .in(p)
           .apply(Create
@@ -75,7 +75,7 @@ A `PCollection<Row>` can be obtained multiple ways, for example:
     class AppPojo {
       Integer appId;
       String description;
-      Date timestamp;
+      DateTime timestamp;
     }
 
     // Acquire a collection of POJOs somehow.
@@ -94,7 +94,7 @@ A `PCollection<Row>` can be obtained multiple ways, for example:
               // and values from the current POJO
               Row appRow = 
                     Row
-                      .withRowType(appType)
+                      .withSchema(appType)
                       .addValues(
                         pojo.appId, 
                         pojo.description, 
@@ -108,13 +108,13 @@ A `PCollection<Row>` can be obtained multiple ways, for example:
       .setCoder(appType.getRowCoder());
     ```
 
-  - **As an output of another `BeamSql` query**. Details in the next section.
+  - **As an output of another `SqlTransform` query**. Details in the next section.
 
-Once you have a `PCollection<Row>` in hand, you may use the `BeamSql` APIs to apply SQL queries to it.
+Once you have a `PCollection<Row>` in hand, you may use the `SqlTransform` APIs to apply SQL queries to it.
 
-## BeamSql transform
+## SqlTransform
 
-`BeamSql.query(queryString)` method is the only API to create a `PTransform`
+`SqlTransform.query(queryString)` method is the only API to create a `PTransform`
 from a string representation of the SQL query. You can apply this `PTransform`
 to either a single `PCollection` or a `PCollectionTuple` which holds multiple
 `PCollections`:
@@ -122,22 +122,23 @@ to either a single `PCollection` or a `PCollectionTuple` which holds multiple
   - when applying to a single `PCollection` it can be referenced via the table name `PCOLLECTION` in the query:
     ```java
     PCollection<Row> filteredNames = testApps.apply(
-        BeamSql.query(
+        SqlTransform.query(
           "SELECT appId, description, rowtime "
             + "FROM PCOLLECTION "
-            + "WHERE id=1"));
+            + "WHERE appId=1"));
     ```
   - when applying to a `PCollectionTuple`, the tuple tag for each `PCollection` in the tuple defines the table name that may be used to query it. Note that table names are bound to the specific `PCollectionTuple`, and thus are only valid in the context of queries applied to it.  
 
     For example, you can join two `PCollections`:  
     ```java
     // Create the schema for reviews
-    RowType reviewType = 
-        RowSqlType.
-          .withIntegerField("appId")
-          .withIntegerField("reviewerId")
-          .withFloatField("rating")
-          .withTimestampField("rowtime")
+    Schema reviewType =
+        Schema
+          .builder()
+          .addInt32Field("appId")
+          .addInt32Field("reviewerId")
+          .addFloatField("rating")
+          .addDateTimeField("rowtime")
           .build();
     
     // Obtain the reviews records with this schema
@@ -145,17 +146,18 @@ to either a single `PCollection` or a `PCollectionTuple` which holds multiple
 
     // Create a PCollectionTuple containing both PCollections.
     // TupleTags IDs will be used as table names in the SQL query
-    PCollectionTuple namesAndFoods = PCollectionTuple.of(
-        new TupleTag<>("Apps"), appsRows), // appsRows from the previous example
-        new TupleTag<>("Reviews"), reviewsRows));
+    PCollectionTuple namesAndFoods = PCollectionTuple
+        .of(new TupleTag<>("Apps"), appsRows) // appsRows from the previous example
+        .and(new TupleTag<>("Reviews"), reviewsRows);
 
-    // Compute the total number of reviews 
+    // Compute the number of reviews
     // and average rating per app 
     // by joining two PCollections
     PCollection<Row> output = namesAndFoods.apply(
-        BeamSql.query(
-            "SELECT Names.appId, COUNT(Reviews.rating), AVG(Reviews.rating)"
-                + "FROM Apps INNER JOIN Reviews ON Apps.appId == Reviews.appId"));
+        SqlTransform.query(
+            "SELECT Apps.appId, COUNT(Reviews.rating), AVG(Reviews.rating)"
+                + " FROM Apps INNER JOIN Reviews ON Apps.appId == Reviews.appId"
+                + " GROUP BY Apps.appId"));
     ```
 
 [BeamSqlExample](https://github.com/apache/beam/blob/master/sdks/java/extensions/sql/src/main/java/org/apache/beam/sdk/extensions/sql/example/BeamSqlExample.java)
