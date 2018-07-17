@@ -272,6 +272,7 @@
       <li><a href="#it-goals">Goals</a></li>
       <li><a href="#integration-tests-data-stores-and-kubernetes">Integration tests, data stores, and Kubernetes</a></li>
       <li><a href="#running-integration-tests">Running integration tests</a></li>
+      <li><a href="#performance-testing-dashboard">Performance testing dashboard</a></li>
       <li><a href="#implementing-integration-tests">Implementing Integration Tests</a></li>
     </ul>
   </li>
@@ -433,9 +434,9 @@ limitations under the License.
 
 <p>The high level steps for running an integration test are:</p>
 <ol>
-  <li>Set up the data store corresponding to the test being run</li>
-  <li>Run the test, passing it connection info from the just created data store</li>
-  <li>Clean up the data store</li>
+  <li>Set up the data store corresponding to the test being run.</li>
+  <li>Run the test, passing it connection info from the just created data store.</li>
+  <li>Clean up the data store.</li>
 </ol>
 
 <p>Since setting up data stores and running the tests involves a number of steps, and we wish to time these tests when running performance benchmarks, we use PerfKit Benchmarker to manage the process end to end. With a single command, you can go from an empty Kubernetes cluster to a running integration test.</p>
@@ -447,20 +448,28 @@ limitations under the License.
 <p>Prerequisites:</p>
 <ol>
   <li><a href="https://github.com/GoogleCloudPlatform/PerfKitBenchmarker">Install PerfKit Benchmarker</a></li>
-  <li>Have a running Kubernetes cluster you can connect to locally using kubectl</li>
+  <li>Have a running Kubernetes cluster you can connect to locally using kubectl. We recommend using Google Kubernetes Engine - it’s proven working for all the use cases we tested.</li>
 </ol>
 
-<p>You won’t need to invoke PerfKit Benchmarker directly. Run <code class="highlighter-rouge">./gradlew performanceTest</code> in project’s root directory, passing appropriate kubernetes scripts depending on the network you’re using (local network or remote one).</p>
+<p>You won’t need to invoke PerfKit Benchmarker directly. Run <code class="highlighter-rouge">./gradlew performanceTest</code> task in project’s root directory, passing kubernetes scripts of your choice (located in .test_infra/kubernetes directory). It will setup PerfKitBenchmarker for you.</p>
 
-<p>Example run with the direct runner:</p>
+<p>Example run with the <a href="https://beam.apache.org/documentation/runners/direct/">Direct</a> runner:</p>
 <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew performanceTest -DpkbLocation="/Users/me/PerfKitBenchmarker/pkb.py" -DintegrationTestPipelineOptions='["--numberOfRecords=1000"]' -DitModule=sdks/java/io/jdbc/ -DintegrationTest=org.apache.beam.sdk.io.jdbc.JdbcIOIT -DkubernetesScripts="/Users/me/beam/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml" -DbeamITOptions="/Users/me/beam/.test-infra/kubernetes/postgres/pkb-config-local.yml" -DintegrationTestRunner=direct
 </code></pre>
 </div>
 
-<p>Example run with the Cloud Dataflow runner:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>/gradlew performanceTest -DpkbLocation="/Users/me/PerfKitBenchmarker/pkb.py" -DintegrationTestPipelineOptions='["--numberOfRecords=1000", "--project=GOOGLE_CLOUD_PROJECT", "--tempRoot=GOOGLE_STORAGE_BUCKET"]' -DitModule=sdks/java/io/jdbc/ -DintegrationTest=org.apache.beam.sdk.io.jdbc.JdbcIOIT -DkubernetesScripts="/Users/me/beam/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml" -DbeamITOptions="/Users/me/beam/.test-infra/kubernetes/postgres/pkb-config-local.yml" -DintegrationTestRunner=dataflow
+<p>Example run with the <a href="https://beam.apache.org/documentation/runners/dataflow/">Google Cloud Dataflow</a> runner:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew performanceTest -DpkbLocation="/Users/me/PerfKitBenchmarker/pkb.py" -DintegrationTestPipelineOptions='["--numberOfRecords=1000", "--project=GOOGLE_CLOUD_PROJECT", "--tempRoot=GOOGLE_STORAGE_BUCKET"]' -DitModule=sdks/java/io/jdbc/ -DintegrationTest=org.apache.beam.sdk.io.jdbc.JdbcIOIT -DkubernetesScripts="/Users/me/beam/.test-infra/kubernetes/postgres/postgres-service-for-local-dev.yml" -DbeamITOptions="/Users/me/beam/.test-infra/kubernetes/postgres/pkb-config-local.yml" -DintegrationTestRunner=dataflow
 </code></pre>
 </div>
+
+<p>Example run with the HDFS filesystem and Cloud Dataflow runner:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew performanceTest -DpkbLocation="/Users/me/PerfKitBenchmarker/pkb.py" -DintegrationTestPipelineOptions='["--numberOfRecords=100000", "--project=GOOGLE_CLOUD_PROJECT", "--tempRoot=GOOGLE_STORAGE_BUCKET"]' -DitModule=sdks/java/io/file-based-io-tests/ -DintegrationTest=org.apache.beam.sdk.io.text.TextIOIT -DkubernetesScripts=".test-infra/kubernetes/hadoop/LargeITCluster/hdfs-multi-datanode-cluster.yml,.test-infra/kubernetes/hadoop/LargeITCluster/hdfs-multi-datanode-cluster-for-local-dev.yml" -DbeamITOptions=".test-infra/kubernetes/hadoop/LargeITCluster/pkb-config.yml" -DintegrationTestRunner=dataflow -DbeamExtraProperties='[filesystem=hdfs]'
+</code></pre>
+</div>
+
+<p>NOTE: When using Direct runner along with HDFS cluster, please set <code class="highlighter-rouge">export HADOOP_USER_NAME=root</code> before runnning <code class="highlighter-rouge">performanceTest</code> task.</p>
 
 <p>Parameter descriptions:</p>
 
@@ -485,7 +494,7 @@ limitations under the License.
     <tr>
      <td>-DintegrationTestPipelineOptions
      </td>
-     <td>Passes pipeline options directly to the test being run.
+     <td>Passes pipeline options directly to the test being run. Note that some pipeline options may be runner specific (like "--project" or "--tempRoot"). 
      </td>
     </tr>
     <tr>
@@ -497,7 +506,7 @@ limitations under the License.
     <tr>
      <td>-DintegrationTest
      </td>
-     <td>Specifies the test to be run.
+     <td>Specifies the test to be run (fully qualified reference to class/test method).
      </td>
     </tr>
     <tr>
@@ -518,12 +527,18 @@ limitations under the License.
       <td>Runner to be used for running the test. Currently possible options are: direct, dataflow.
       </td>
     </tr>
+    <tr>
+      <td>-DbeamExtraProperties
+      </td>
+      <td>Any other "extra properties" to be passed to Gradle, eg. "'[filesystem=hdfs]'". 
+      </td>
+    </tr>
   </tbody>
 </table>
 
 <h4 id="without-perfkit-benchmarker">Without PerfKit Benchmarker</h4>
 
-<p>If you’re using Kubernetes, make sure you can connect to your cluster locally using kubectl. Otherwise, skip to step 3 below.</p>
+<p>If you’re using Kubernetes scripts to host data stores, make sure you can connect to your cluster locally using kubectl. If you have your own data stores already setup, you just need to execute step 3 from below list.</p>
 
 <ol>
   <li>Set up the data store corresponding to the test you wish to run. You can find Kubernetes scripts for all currently supported data stores in <a href="https://github.com/apache/beam/tree/master/.test-infra/kubernetes">.test-infra/kubernetes</a>.
@@ -531,8 +546,8 @@ limitations under the License.
       <li>In some cases, there is a setup script (*.sh). In other cases, you can just run <code class="highlighter-rouge">kubectl create -f [scriptname]</code> to create the data store.</li>
       <li>Convention dictates there will be:
         <ol>
-          <li>A core yml script for the data store itself, plus a <code class="highlighter-rouge">NodePort</code> service. The <code class="highlighter-rouge">NodePort</code> service opens a port to the data store for anyone who connects to the Kubernetes cluster’s machines.</li>
-          <li>A separate script, called for-local-dev, which sets up a LoadBalancer service.</li>
+          <li>A yml script for the data store itself, plus a <code class="highlighter-rouge">NodePort</code> service. The <code class="highlighter-rouge">NodePort</code> service opens a port to the data store for anyone who connects to the Kubernetes cluster’s machines from within same subnetwork. Such scripts are typically useful when running the scripts on Minikube Kubernetes Engine.</li>
+          <li>A separate script, with LoadBalancer service. Such service will expose an <em>external ip</em> for the datastore. Such scripts are needed when external access is required (eg. on Jenkins).</li>
         </ol>
       </li>
       <li>Examples:
@@ -549,7 +564,7 @@ limitations under the License.
       <li>LoadBalancer service:<code class="highlighter-rouge"> kubectl get svc elasticsearch-external -o jsonpath='{.status.loadBalancer.ingress[0].ip}'</code></li>
     </ol>
   </li>
-  <li>Run the test using the instructions in the class (e.g. see the instructions in JdbcIOIT.java)</li>
+  <li>Run the test using <code class="highlighter-rouge">integrationTest</code> gradle task and the instructions in the test class (e.g. see the instructions in JdbcIOIT.java).</li>
   <li>Tell Kubernetes to delete the resources specified in the Kubernetes scripts:
     <ol>
       <li>JDBC: <code class="highlighter-rouge">kubectl delete -f .test-infra/kubernetes/postgres/postgres.yml</code></li>
@@ -557,6 +572,179 @@ limitations under the License.
     </ol>
   </li>
 </ol>
+
+<h5 id="integration-test-task">integrationTest Task</h5>
+
+<p>Since <code class="highlighter-rouge">performanceTest</code> task involved running PerfkitBenchmarker, we can’t use it to run the tests manually. For such purposes a more “low-level” task called <code class="highlighter-rouge">integrationTest</code> was introduced.</p>
+
+<p>Example usage on Cloud Dataflow runner:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew integrationTest -p sdks/java/io/hadoop-input-format -DintegrationTestPipelineOptions='["--project=GOOGLE_CLOUD_PROJECT", "--tempRoot=GOOGLE_STORAGE_BUCKET", "--numberOfRecords=1000", "--postgresPort=5432", "--postgresServerName=SERVER_NAME", "--postgresUsername=postgres", "--postgresPassword=PASSWORD", "--postgresDatabaseName=postgres", "--postgresSsl=false", "--runner=TestDataflowRunner"]' -DintegrationTestRunner=dataflow --tests=org.apache.beam.sdk.io.hadoop.inputformat.HadoopInputFormatIOIT
+</code></pre>
+</div>
+
+<p>Example usage on HDFS filesystem and Direct runner:</p>
+
+<p>NOTE: Below setup will only work when /etc/hosts file contains entries with hadoop namenode and hadoop datanodes external IPs. Please see explanation in: <a href="https://github.com/apache/beam/blob/master/.test-infra/kubernetes/hadoop/SmallITCluster/pkb-config.yml">Small Cluster config file</a> and <a href="https://github.com/apache/beam/blob/master/.test-infra/kubernetes/hadoop/LargeITCluster/pkb-config.yml">Large Cluster config file</a>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>export HADOOP_USER_NAME=root 
+
+./gradlew integrationTest -p sdks/java/io/file-based-io-tests -DintegrationTestPipelineOptions='["--numberOfRecords=1000", "--filenamePrefix=hdfs://HDFS_NAMENODE:9000/XMLIOIT", "--hdfsConfiguration=[{\"fs.defaultFS\":\"hdfs://HDFS_NAMENODE:9000\",\"dfs.replication\":1,\"dfs.client.use.datanode.hostname\":\"true\" }]" ]' -DintegrationTestRunner=direct -Dfilesystem=hdfs --tests org.apache.beam.sdk.io.xml.XmlIOIT
+</code></pre>
+</div>
+
+<p>Parameter descriptions:</p>
+
+<table class="table">
+  <thead>
+    <tr>
+     <td>
+      <strong>Option</strong>
+     </td>
+     <td>
+       <strong>Function</strong>
+     </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td>-p sdks/java/io/file-based-io-tests/
+     </td>
+     <td>Specifies the project submodule of the I/O to test.
+     </td>
+    </tr>
+    <tr>
+     <td>-DintegrationTestPipelineOptions
+     </td>
+     <td>Passes pipeline options directly to the test being run.
+     </td>
+    </tr>
+    <tr>
+     <td>-DintegrationTestRunner
+     </td>
+     <td>Runner to be used for running the test. Currently possible options are: direct, dataflow.
+     </td>
+    </tr>
+    <tr>
+     <td>-Dfilesystem
+     </td>
+     <td>(optional, where applicable) Filesystem to be used to run the test. Currently possible options are: gcs, hdfs, s3. If not provided, local filesystem will be used. 
+     </td>
+    </tr>
+    <tr>
+     <td>--tests
+     </td>
+     <td>Specifies the test to be run (fully qualified reference to class/test method). 
+     </td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="running-on-pull-requests">Running Integration Tests on Pull Requests</h4>
+
+<p>Thanks to <a href="https://github.com/janinko/ghprb">ghprb</a> plugin it is possible to run Jenkins jobs when specific phrase is typed in a Github Pull Request’s comment. Integration tests that have Jenkins job defined can be triggered this way. You can run integration tests using these phrases:</p>
+
+<table class="table">
+  <thead>
+    <tr>
+     <td>
+      <strong>Test</strong>
+     </td>
+     <td>
+       <strong>Phrase</strong>
+     </td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+     <td>JdbcIOIT
+     </td>
+     <td>Run Java JdbcIO Performance Test
+     </td>
+    </tr>
+    <tr>
+     <td>MongoDBIOIT
+     </td>
+     <td>Run Java MongoDBIO Performance Test
+     </td>
+    </tr>
+    <tr>
+     <td>HadoopInputFormatIOIT
+     </td>
+     <td>Run Java HadoopInputFormatIO Performance Test
+     </td>
+    </tr>
+    <tr>
+     <td>TextIO - local filesystem
+     </td>
+     <td>Run Java TextIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>TextIO - HDFS
+     </td>
+     <td>Run Java TextIO Performance Test HDFS 
+     </td>
+    </tr>
+    <tr>
+     <td>Compressed TextIO - local filesystem
+     </td>
+     <td>Run Java CompressedTextIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>Compressed TextIO - HDFS
+     </td>
+     <td>Run Java CompressedTextIO Performance Test HDFS 
+     </td>
+    </tr>
+    <tr>
+     <td>AvroIO - local filesystem
+     </td>
+     <td>Run Java AvroIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>AvroIO - HDFS
+     </td>
+     <td>Run Java AvroIO Performance Test HDFS 
+     </td>
+    </tr>
+    <tr>
+     <td>TFRecordIO - local filesystem
+     </td>
+     <td>Run Java TFRecordIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>ParquetIO - local filesystem
+     </td>
+     <td>Run Java ParquetIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>XmlIO - local filesystem
+     </td>
+     <td>Run Java XmlIO Performance Test 
+     </td>
+    </tr>
+    <tr>
+     <td>XmlIO - HDFS
+     </td>
+     <td>Run Java XmlIO Performance Test on HDFS
+     </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Every job definition can be found in <a href="https://github.com/apache/beam/tree/master/.test-infra/jenkins">.test-infra/jenkins</a>. 
+If you modified/added new Jenkins job definitions in your Pull Request, run the seed job before running the integration test (comment: “Run seed job”).</p>
+
+<h3 id="performance-testing-dashboard">Performance testing dashboard</h3>
+
+<p>We measure the performance of IOITs by gathering test execution times from Jenkins jobs that run periodically. The consequent results are stored in a database (BigQuery), therefore we can display them in a form of plots.</p>
+
+<p>The dashboard gathering all the results is available here: <a href="https://apache-beam-testing.appspot.com/explore?dashboard=5755685136498688">Performance Testing Dashboard</a></p>
 
 <h3 id="implementing-integration-tests">Implementing Integration Tests</h3>
 
@@ -608,17 +796,13 @@ limitations under the License.
 <p>If you would like help with this or have other questions, contact the Beam dev@ mailing list and the community may be able to assist you.</p>
 
 <p>Guidelines for creating a Beam data store Kubernetes script:</p>
+
 <ol>
-  <li><strong>You must only provide access to the data store instance via a <code class="highlighter-rouge">NodePort</code> service.</strong>
-    <ul>
-      <li>This is a requirement for security, since it means that only the local network has access to the data store. This is particularly important since many data stores don’t have security on by default, and even if they do, their passwords will be checked in to our public Github repo.</li>
-    </ul>
-  </li>
   <li><strong>You should define two Kubernetes scripts.</strong>
     <ul>
       <li>This is the best known way to implement item #1.</li>
       <li>The first script will contain the main datastore instance script (<code class="highlighter-rouge">StatefulSet</code>) plus a <code class="highlighter-rouge">NodePort</code> service exposing the data store. This will be the script run by the Beam Jenkins continuous integration server.</li>
-      <li>The second script will define a <code class="highlighter-rouge">LoadBalancer</code> service, used for local development if the Kubernetes cluster is on another network. This file’s name is usually suffixed with ‘-for-local-dev’.</li>
+      <li>The second script will define an additional <code class="highlighter-rouge">LoadBalancer</code> service, used to expose an external IP address to the data store if the Kubernetes cluster is on another network. This file’s name is usually suffixed with ‘-for-local-dev’.</li>
     </ul>
   </li>
   <li><strong>You must ensure that pods are recreated after crashes.</strong>
