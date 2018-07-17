@@ -253,10 +253,10 @@ limitations under the License.
 <p>Before applying a SQL query to a <code class="highlighter-rouge">PCollection</code>, the data in the collection must
 be in <code class="highlighter-rouge">Row</code> format. A <code class="highlighter-rouge">Row</code> represents a single, immutable record in a Beam SQL
 <code class="highlighter-rouge">PCollection</code>. The names and types of the fields/columns in the row are defined
-by its associated <a href="/documentation/sdks/javadoc/2.5.0/index.html?org/apache/beam/sdk/values/RowType.html">RowType</a>.
-For SQL queries, you should use the <a href="/documentation/sdks/javadoc/2.5.0/index.html?org/apache/beam/sdk/extensions/sql/RowSqlType.html">RowSqlType.builder()</a> to create
-<code class="highlighter-rouge">RowTypes</code>, it allows creating schemas with all supported SQL types (see <a href="/documentation/dsls/sql/data-types">Data
-Types</a> for more details on supported primitive data types).</p>
+by its associated <a href="/documentation/sdks/javadoc/2.5.0/index.html?org/apache/beam/sdk/schemas/Schema.html">Schema</a>.
+You can use the <a href="/documentation/sdks/javadoc/2.5.0/index.html?org/apache/beam/sdk/schemas/Schema.html">Schema.builder()</a> to create
+<code class="highlighter-rouge">Schemas</code>. See <a href="/documentation/dsls/sql/data-types">Data
+Types</a> for more details on supported primitive data types.</p>
 
 <p>A <code class="highlighter-rouge">PCollection&lt;Row&gt;</code> can be obtained multiple ways, for example:</p>
 
@@ -267,18 +267,18 @@ Types</a> for more details on supported primitive data types).</p>
     <p><strong>Note:</strong> you have to explicitly specify the <code class="highlighter-rouge">Row</code> coder. In this example we’re doing it by calling <code class="highlighter-rouge">Create.of(..).withCoder()</code>:</p>
 
     <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Define the record type (i.e., schema).</span>
-<span class="n">RowType</span> <span class="n">appType</span> <span class="o">=</span> 
-    <span class="n">RowSqlType</span>
+<span class="n">Schema</span> <span class="n">appSchema</span> <span class="o">=</span> 
+    <span class="n">Schema</span>
       <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
-      <span class="o">.</span><span class="na">withIntegerField</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">withVarcharField</span><span class="o">(</span><span class="s">"description"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">withTimestampField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addStringField</span><span class="o">(</span><span class="s">"description"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addDateTimeField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
       <span class="o">.</span><span class="na">build</span><span class="o">();</span>
 
 <span class="c1">// Create a concrete row with that type.</span>
 <span class="n">Row</span> <span class="n">row</span> <span class="o">=</span> 
     <span class="n">Row</span>
-      <span class="o">.</span><span class="na">withRowType</span><span class="o">(</span><span class="n">appType</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">withSchema</span><span class="o">(</span><span class="n">appSchema</span><span class="o">)</span>
       <span class="o">.</span><span class="na">addValues</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"Some cool app"</span><span class="o">,</span> <span class="k">new</span> <span class="n">Date</span><span class="o">())</span>
       <span class="o">.</span><span class="na">build</span><span class="o">();</span>
 
@@ -288,14 +288,14 @@ Types</a> for more details on supported primitive data types).</p>
       <span class="o">.</span><span class="na">in</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
       <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">Create</span>
                 <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">row</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">withCoder</span><span class="o">(</span><span class="n">appType</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">()));</span>
+                <span class="o">.</span><span class="na">withCoder</span><span class="o">(</span><span class="n">appSchema</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">()));</span>
 </code></pre>
     </div>
   </li>
   <li>
     <p><strong>From a <code class="highlighter-rouge">PCollection&lt;T&gt;</code> of records of some other type</strong>  (i.e.  <code class="highlighter-rouge">T</code> is not already a <code class="highlighter-rouge">Row</code>), by applying a <code class="highlighter-rouge">ParDo</code> that converts input records to <code class="highlighter-rouge">Row</code> format.</p>
 
-    <p><strong>Note:</strong> you have to manually set the coder of the result by calling <code class="highlighter-rouge">setCoder(appType.getRowCoder())</code>:</p>
+    <p><strong>Note:</strong> you have to manually set the coder of the result by calling <code class="highlighter-rouge">setCoder(appSchema.getRowCoder())</code>:</p>
     <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// An example POJO class.</span>
 <span class="kd">class</span> <span class="nc">AppPojo</span> <span class="o">{</span>
   <span class="n">Integer</span> <span class="n">appId</span><span class="o">;</span>
@@ -315,11 +315,11 @@ Types</a> for more details on supported primitive data types).</p>
           <span class="c1">// Get the current POJO instance</span>
           <span class="n">AppPojo</span> <span class="n">pojo</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">();</span>
 
-          <span class="c1">// Create a Row with the appType schema </span>
+          <span class="c1">// Create a Row with the appSchema schema </span>
           <span class="c1">// and values from the current POJO</span>
           <span class="n">Row</span> <span class="n">appRow</span> <span class="o">=</span> 
                 <span class="n">Row</span>
-                  <span class="o">.</span><span class="na">withRowType</span><span class="o">(</span><span class="n">appType</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">withSchema</span><span class="o">(</span><span class="n">appSchema</span><span class="o">)</span>
                   <span class="o">.</span><span class="na">addValues</span><span class="o">(</span>
                     <span class="n">pojo</span><span class="o">.</span><span class="na">appId</span><span class="o">,</span> 
                     <span class="n">pojo</span><span class="o">.</span><span class="na">description</span><span class="o">,</span> 
@@ -330,7 +330,7 @@ Types</a> for more details on supported primitive data types).</p>
           <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">appRow</span><span class="o">);</span>
         <span class="o">}</span>
       <span class="o">}))</span>
-  <span class="o">.</span><span class="na">setCoder</span><span class="o">(</span><span class="n">appType</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">());</span>
+  <span class="o">.</span><span class="na">setCoder</span><span class="o">(</span><span class="n">appSchema</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">());</span>
 </code></pre>
     </div>
   </li>
@@ -363,12 +363,13 @@ to either a single <code class="highlighter-rouge">PCollection</code> or a <code
 
     <p>For example, you can join two <code class="highlighter-rouge">PCollections</code>:</p>
     <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Create the schema for reviews</span>
-<span class="n">RowType</span> <span class="n">reviewType</span> <span class="o">=</span> 
-    <span class="n">RowSqlType</span><span class="o">.</span>
-      <span class="o">.</span><span class="na">withIntegerField</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">withIntegerField</span><span class="o">(</span><span class="s">"reviewerId"</span><span class="o">)</span>
+<span class="n">Schema</span> <span class="n">reviewSchema</span> <span class="o">=</span> 
+    <span class="n">Schema</span><span class="o">.</span>
+      <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"reviewerId"</span><span class="o">)</span>
       <span class="o">.</span><span class="na">withFloatField</span><span class="o">(</span><span class="s">"rating"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">withTimestampField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">addDateTimeField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
       <span class="o">.</span><span class="na">build</span><span class="o">();</span>
     
 <span class="c1">// Obtain the reviews records with this schema</span>
