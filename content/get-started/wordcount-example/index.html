@@ -199,7 +199,7 @@
   </li>
   <li><a href="#windowedwordcount-example">WindowedWordCount example</a>
     <ul>
-      <li><a href="#unbounded-and-bounded-pipeline-input-modes">Unbounded and bounded pipeline input modes</a></li>
+      <li><a href="#unbounded-and-bounded-datasets">Unbounded and bounded datasets</a></li>
       <li><a href="#adding-timestamps-to-data">Adding timestamps to data</a></li>
       <li><a href="#windowing">Windowing</a></li>
       <li><a href="#reusing-ptransforms-over-windowed-pcollections">Reusing PTransforms over windowed PCollections</a></li>
@@ -207,7 +207,7 @@
   </li>
   <li><a href="#streamingwordcount-example">StreamingWordCount example</a>
     <ul>
-      <li><a href="#reading-an-unbounded-data-set">Reading an unbounded data set</a></li>
+      <li><a href="#reading-an-unbounded-dataset">Reading an unbounded dataset</a></li>
       <li><a href="#writing-unbounded-results">Writing unbounded results</a></li>
     </ul>
   </li>
@@ -259,14 +259,14 @@ limitations under the License.
     </ul>
   </li>
   <li><a href="#windowedwordcount-example" id="markdown-toc-windowedwordcount-example">WindowedWordCount example</a>    <ul>
-      <li><a href="#unbounded-and-bounded-pipeline-input-modes" id="markdown-toc-unbounded-and-bounded-pipeline-input-modes">Unbounded and bounded pipeline input modes</a></li>
+      <li><a href="#unbounded-and-bounded-datasets" id="markdown-toc-unbounded-and-bounded-datasets">Unbounded and bounded datasets</a></li>
       <li><a href="#adding-timestamps-to-data" id="markdown-toc-adding-timestamps-to-data">Adding timestamps to data</a></li>
       <li><a href="#windowing" id="markdown-toc-windowing">Windowing</a></li>
       <li><a href="#reusing-ptransforms-over-windowed-pcollections" id="markdown-toc-reusing-ptransforms-over-windowed-pcollections">Reusing PTransforms over windowed PCollections</a></li>
     </ul>
   </li>
   <li><a href="#streamingwordcount-example" id="markdown-toc-streamingwordcount-example">StreamingWordCount example</a>    <ul>
-      <li><a href="#reading-an-unbounded-data-set" id="markdown-toc-reading-an-unbounded-data-set">Reading an unbounded data set</a></li>
+      <li><a href="#reading-an-unbounded-dataset" id="markdown-toc-reading-an-unbounded-dataset">Reading an unbounded dataset</a></li>
       <li><a href="#writing-unbounded-results" id="markdown-toc-writing-unbounded-results">Writing unbounded results</a></li>
     </ul>
   </li>
@@ -414,7 +414,7 @@ nested transforms (which is a <a href="/documentation/programming-guide#composit
 <p>Each transform takes some kind of input data and produces some output data. The
 input and output data is often represented by the SDK class <code class="highlighter-rouge">PCollection</code>.
 <code class="highlighter-rouge">PCollection</code> is a special class, provided by the Beam SDK, that you can use to
-represent a data set of virtually any size, including unbounded data sets.</p>
+represent a dataset of virtually any size, including unbounded datasets.</p>
 
 <p><img src="/images/wordcount-pipeline.png" alt="The MinimalWordCount pipeline data flow." width="800px" /></p>
 
@@ -1173,12 +1173,11 @@ or DEBUG significantly increases the amount of logs output.</p>
 <p class="language-java language-py"><span class="language-java"><code class="highlighter-rouge">PAssert</code></span><span class="language-py"><code class="highlighter-rouge">assert_that</code></span>
 is a set of convenient PTransforms in the style of Hamcrest’s collection
 matchers that can be used when writing pipeline level tests to validate the
-contents of PCollections. Asserts are best used in unit tests with small data
-sets.</p>
+contents of PCollections. Asserts are best used in unit tests with small datasets.</p>
 
 <p class="language-go">The <code class="highlighter-rouge">passert</code> package contains convenient PTransforms that can be used when
 writing pipeline level tests to validate the contents of PCollections. Asserts
-are best used in unit tests with small data sets.</p>
+are best used in unit tests with small datasets.</p>
 
 <p class="language-java">The following example verifies that the set of filtered words matches our
 expected counts. The assert does not produce any output, and the pipeline only
@@ -1223,7 +1222,7 @@ examples did, but introduces several advanced concepts.</p>
 <p><strong>New Concepts:</strong></p>
 
 <ul>
-  <li>Unbounded and bounded pipeline input modes</li>
+  <li>Unbounded and bounded datasets</li>
   <li>Adding timestamps to data</li>
   <li>Windowing</li>
   <li>Reusing PTransforms over windowed PCollections</li>
@@ -1360,12 +1359,21 @@ $ windowed_wordcount --input gs://dataflow-samples/shakespeare/kinglear.txt \
 <p>To view the full code in Go, see
 <strong><a href="https://github.com/apache/beam/blob/master/sdks/go/examples/windowed_wordcount/windowed_wordcount.go">windowed_wordcount.go</a>.</strong></p>
 
-<h3 id="unbounded-and-bounded-pipeline-input-modes">Unbounded and bounded pipeline input modes</h3>
+<h3 id="unbounded-and-bounded-datasets">Unbounded and bounded datasets</h3>
 
 <p>Beam allows you to create a single pipeline that can handle both bounded and
-unbounded types of input. If your input has a fixed number of elements, it’s
-considered a ‘bounded’ data set. If your input is continuously updating, then
-it’s considered ‘unbounded’ and you must use a runner that supports streaming.</p>
+unbounded datasets. If your dataset has a fixed number of elements, it is a bounded
+dataset and all of the data can be processed together. For bounded datasets,
+the question to ask is “Do I have all of the data?” If data continuously
+arrives (such as an endless stream of game scores in the
+<a href="https://beam.apache.org/get-started/mobile-gaming-example/">Mobile gaming example</a>,
+it is an unbounded dataset. An unbounded dataset is never available for
+processing at any one time, so the data must be processed using a streaming
+pipeline that runs continuously. The dataset will only be complete up to a
+certain point, so the question to ask is “Up until what point do I have all of
+the data?” Beam uses <a href="/documentation/programming-guide/#windowing">windowing</a>
+to divide a continuously updating dataset into logical windows of finite size.
+If your input is unbounded, you must use a runner that supports streaming.</p>
 
 <p>If your pipeline’s input is bounded, then all downstream PCollections will also be
 bounded. Similarly, if the input is unbounded, then all downstream PCollections
@@ -1532,7 +1540,7 @@ frequency count of the words seen in each 15 second window.</p>
 <p><strong>New Concepts:</strong></p>
 
 <ul>
-  <li>Reading an unbounded data set</li>
+  <li>Reading an unbounded dataset</li>
   <li>Writing unbounded results</li>
 </ul>
 
@@ -1593,9 +1601,9 @@ python -m apache_beam.examples.streaming_wordcount \
 (<a href="https://issues.apache.org/jira/browse/BEAM-4292">BEAM-4292</a>).</p>
 </blockquote>
 
-<h3 id="reading-an-unbounded-data-set">Reading an unbounded data set</h3>
+<h3 id="reading-an-unbounded-dataset">Reading an unbounded dataset</h3>
 
-<p>This example uses an unbounded data set as input. The code reads Pub/Sub
+<p>This example uses an unbounded dataset as input. The code reads Pub/Sub
 messages from a Pub/Sub subscription or topic using
 <a href="/documentation/sdks/pydoc/2.5.0/apache_beam.io.gcp.pubsub.html#apache_beam.io.gcp.pubsub.ReadStringsFromPubSub"><code class="highlighter-rouge">beam.io.ReadStringsFromPubSub</code></a>.</p>
 
