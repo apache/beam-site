@@ -229,7 +229,7 @@ limitations under the License.
 
 <p>The easiest way to get a copy of the WordCount pipeline is to use the following command to generate a simple Maven project that contains Beam’s WordCount examples and builds against the most recent Beam release:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ mvn archetype:generate \
+<div class="shell-unix highlighter-rouge"><pre class="highlight"><code>$ mvn archetype:generate \
       -DarchetypeGroupId=org.apache.beam \
       -DarchetypeArtifactId=beam-sdks-java-maven-archetypes-examples \
       -DarchetypeVersion=2.5.0 \
@@ -241,9 +241,21 @@ limitations under the License.
 </code></pre>
 </div>
 
+<div class="shell-PowerShell highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn archetype:generate `
+ -D archetypeGroupId=org.apache.beam `
+ -D archetypeArtifactId=beam-sdks-java-maven-archetypes-examples `
+ -D archetypeVersion=2.5.0 `
+ -D groupId=org.example `
+ -D artifactId=word-count-beam `
+ -D version="0.1" `
+ -D package=org.apache.beam.examples `
+ -D interactiveMode=false
+</code></pre>
+</div>
+
 <p>This will create a directory <code class="highlighter-rouge">word-count-beam</code> that contains a simple <code class="highlighter-rouge">pom.xml</code> and a series of example pipelines that count words in text files.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ cd word-count-beam/
+<div class="shell-unix highlighter-rouge"><pre class="highlight"><code>$ cd word-count-beam/
 
 $ ls
 pom.xml	src
@@ -251,6 +263,32 @@ pom.xml	src
 $ ls src/main/java/org/apache/beam/examples/
 DebuggingWordCount.java	WindowedWordCount.java	common
 MinimalWordCount.java	WordCount.java
+</code></pre>
+</div>
+
+<div class="shell-PowerShell highlighter-rouge"><pre class="highlight"><code>PS&gt; cd .\word-count-beam
+
+PS&gt; dir
+
+... 
+ 
+Mode                LastWriteTime         Length Name                                                        
+----                -------------         ------ ----                                                        
+d-----        7/19/2018  11:00 PM                src                                                         
+-a----        7/19/2018  11:00 PM          16051 pom.xml
+
+PS&gt; dir .\src\main\java\org\apache\beam\examples
+
+...
+Mode                LastWriteTime         Length Name                                                        
+----                -------------         ------ ----                                                        
+d-----        7/19/2018  11:00 PM                common                                                      
+d-----        7/19/2018  11:00 PM                complete                                                    
+d-----        7/19/2018  11:00 PM                subprocess                                                  
+-a----        7/19/2018  11:00 PM           7073 DebuggingWordCount.java                                     
+-a----        7/19/2018  11:00 PM           5945 MinimalWordCount.java                                       
+-a----        7/19/2018  11:00 PM           9490 WindowedWordCount.java                                      
+-a----        7/19/2018  11:00 PM           7662 WordCount.java
 </code></pre>
 </div>
 
@@ -274,8 +312,15 @@ MinimalWordCount.java	WordCount.java
   <li>Run your first WordCount pipeline.</li>
 </ol>
 
+<p>For Unix shells:</p>
+
 <div class="runner-direct highlighter-rouge"><pre class="highlight"><code>$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
      -Dexec.args="--inputFile=pom.xml --output=counts" -Pdirect-runner
+</code></pre>
+</div>
+
+<div class="runner-direct-powershell highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--inputFile=pom.xml --output=counts" -P direct-runner
 </code></pre>
 </div>
 
@@ -314,6 +359,50 @@ $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 
 <div class="runner-samza-local highlighter-rouge"><pre class="highlight"><code>$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
      -Dexec.args="--inputFile=pom.xml --output=/tmp/counts --runner=SamzaRunner" -Psamza-runner
+</code></pre>
+</div>
+<p>For Windows PowerShell:</p>
+
+<div class="runner-direct highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--inputFile=pom.xml --output=counts" -P direct-runner
+</code></pre>
+</div>
+
+<div class="runner-apex highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--inputFile=pom.xml --output=counts --runner=ApexRunner" -P apex-runner
+</code></pre>
+</div>
+
+<div class="runner-flink-local highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=FlinkRunner --inputFile=pom.xml --output=counts" -P flink-runner
+</code></pre>
+</div>
+
+<div class="runner-flink-cluster highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn package exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=FlinkRunner --flinkMaster=&lt;flink master&gt; --filesToStage=.\target\word-count-beam-bundled-0.1.jar `
+               --inputFile=C:\path\to\quickstart\pom.xml --output=C:\tmp\counts" -P flink-runner
+
+You can monitor the running job by visiting the Flink dashboard at http://&lt;flink master&gt;:8081
+</code></pre>
+</div>
+
+<div class="runner-spark highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=SparkRunner --inputFile=pom.xml --output=counts" -P spark-runner
+</code></pre>
+</div>
+
+<div class="runner-dataflow highlighter-rouge"><pre class="highlight"><code>Make sure you complete the setup steps at https://beam.apache.org/documentation/runners/dataflow/#setup
+
+PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=DataflowRunner --project=&lt;your-gcp-project&gt; `
+               --gcpTempLocation=gs://&lt;your-gcs-bucket&gt;/tmp `
+               --inputFile=gs://apache-beam-samples/shakespeare/* --output=gs://&lt;your-gcs-bucket&gt;/counts" `
+ -P dataflow-runner
+</code></pre>
+</div>
+
+<div class="runner-samza-local highlighter-rouge"><pre class="highlight"><code>PS&gt; mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+     -D exec.args="--inputFile=pom.xml --output=/tmp/counts --runner=SamzaRunner" -P samza-runner
 </code></pre>
 </div>
 
