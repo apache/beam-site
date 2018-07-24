@@ -190,6 +190,7 @@
 
 <ul class="nav">
   <li><a href="#identifying-outdated-dependencies">Identifying outdated dependencies</a></li>
+  <li><a href="#jira-automation">JIRA Automation</a></li>
   <li><a href="#upgrading-identified-outdated-dependencies">Upgrading identified outdated dependencies</a></li>
   <li><a href="#dependency-updates-and-backwards-compatibility">Dependency updates and backwards compatibility</a></li>
 </ul>
@@ -238,7 +239,7 @@ limitations under the License.
 
 <p>A big part of keeping dependencies up to date involves identifying outdated dependencies of Beam that the community should try to upgrade.</p>
 
-<p>Beam currently executes a weekly Jenkins job that tries to identify outdated dependencies for various SDKs. This Jenkins job generates a weekly report that is shared in Beam dev list. In the future we hope to automatically create JIRAs based on this report.</p>
+<p>Beam currently executes a weekly Jenkins job that tries to identify outdated dependencies for various SDKs. This Jenkins job generates a weekly report that is shared in Beam dev list.</p>
 
 <p>In addition to this, Beam community members might identify other critical dependency updates that have to be manually performed. For example,</p>
 <ul>
@@ -247,6 +248,19 @@ limitations under the License.
 </ul>
 
 <p>These kind of urgently required upgrades might not get automatically picked up by the Jenkins job for few months. So Beam community has to act to identify such issues and perform upgrades early.</p>
+
+<h2 id="jira-automation">JIRA Automation</h2>
+
+<p>In order to track the dependency upgrade process, JIRA tickets will be created per significant outdated dependency based on the report. A bot named <em>Beam Jira Bot</em> was created for managing JIRA issues. Beam community agrees on the following policies that creates and updates issues.</p>
+<ul>
+  <li>Issues will be named as “Beam Dependency Update Request: <dep_name> <dep_newest_version>".</dep_newest_version></dep_name></li>
+  <li>Issues will be created under the component <em>“dependencies”</em></li>
+  <li>Issues will be assigned to the primary owner of the dependencies, who are mentioned in the dependency ownership files. (<a href="https://github.com/apache/beam/blob/master/ownership/JAVA_DEPENDENCY_OWNERS.yaml">Java Dependency Owners</a> and <a href="https://github.com/apache/beam/blob/master/ownership/PYTHON_DEPENDENCY_OWNERS.yaml">Python Dependency Owners</a>)</li>
+  <li>If more than one owners found for a dependency, the first owner will be picked as the primary owner, the others will be pinged in the issue’s description.</li>
+  <li>If no owners found, leave the assignee empty. The component lead is responsible for triaging the issue.</li>
+  <li>Avoid creating duplicate issues. Updating the descriptions of the open issues created by the previous dependency check.</li>
+  <li>The dependency sometimes is not able to be upgraded, the issue should be closed as <em>“won’t fix”</em>. And, the bot should avoid recreating issues with “won’t fix”.</li>
+</ul>
 
 <h2 id="upgrading-identified-outdated-dependencies">Upgrading identified outdated dependencies</h2>
 
@@ -268,7 +282,7 @@ limitations under the License.
 
 <p><strong>Dependency declarations may identify owners that are responsible for upgrading respective dependencies.</strong></p>
 
-<p>Owners can be mentioned in a comment. Blocking JIRAs will be initially assigned to these owners (if available). Release manager may choose to re-assign these JIRAs. A dependency may have more than one declared owner and in this case the JIRA will be assigned to one of the owners mentioned.</p>
+<p>Owners can be mentioned in the yaml files. Blocking JIRAs will be initially assigned to these owners (if available). Release manager may choose to re-assign these JIRAs. A dependency may have more than one declared owner and in this case the JIRA will be assigned to one of the owners mentioned.</p>
 
 <p><strong>Dependencies of Java SDK components that may cause issues to other components if leaked should be vendored.</strong></p>
 
