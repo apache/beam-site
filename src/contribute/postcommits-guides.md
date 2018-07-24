@@ -30,8 +30,6 @@ However there are some guidelines.
 
 1.  If you can do it -- go for it.
 1.  Check GitHub blame on files with problematic code.
-1.  [Owners file](https://github.com/apache/beam/blob/master/CODEOWNERS) once
-    it's available. ([PR](https://github.com/apache/beam/pull/5909)).
 1.  Reach out to
     [Slack chat](https://the-asf.slack.com/messages/C9H0YNP3P/apps/A0F7VRFKN/).
 1.  Reach out to dev@beam.apache.org.
