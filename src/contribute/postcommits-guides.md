@@ -1,7 +1,6 @@
 ---
 layout: section
 title: 'Post-commit tests processes guides'
-section_menu: section-menu/contribute.html
 permalink: /contribute/postcommits-guides/
 ---
 <!--

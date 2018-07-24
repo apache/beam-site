@@ -1,7 +1,6 @@
 ---
 layout: section
-title: 'Post-commit policy details'
-section_menu: section-menu/contribute.html
+title: 'Post-commit policies details'
 permalink: /contribute/postcommits-policies-details/
 ---
 <!--
@@ -18,7 +17,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-# Post-commit policy details
+# Post-commit policies details
 
 [TOC]
 
