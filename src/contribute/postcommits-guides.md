@@ -1,13 +1,7 @@
 # Post-commit tests processes guides
 
-go/g3doc-canonical-go-links
-
 [TOC]
 
-<!--*
-# Document freshness: For more information, see go/fresh-source.
-freshness: { owner: 'migryz' reviewed: '2018-07-16' }
-*-->
 
 ## Finding person to fix post-commit tests failures {#find_specialist}
 
@@ -21,6 +15,7 @@ However there are some guidelines.
 1.  Reach out to
     [Slack chat](https://the-asf.slack.com/messages/C9H0YNP3P/apps/A0F7VRFKN/).
 1.  Reach out to dev@beam.apache.org.
+
 
 ## Rolling back commit {#rollback}
 
@@ -42,6 +37,7 @@ feature back in line.
     *   dev@beam.apache.org
     *   Original PR author and committer of that PR.
 1.  Close test-failure Jira task. Your work is done here.
+
 
 ## Disabling failing test {#disabling}
 
