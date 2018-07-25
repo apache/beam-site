@@ -20,8 +20,6 @@ limitations under the License.
 
 # Post-commit policies details
 
-[TOC]
-
 A post-commit test failure means that there is a bug in the code. The longer the
 bug exists, the harder it is to fix it due to ongoing code contributions. As a
 result, we want to fix bugs quickly. The Beam community's post-commit test
