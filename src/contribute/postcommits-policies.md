@@ -36,11 +36,11 @@ to run, and it is often hard to triage test failures.
 To ensure that Beam's post-commit tests are reliable and healthy, the Beam
 community follows these post-commit test policies:
 
-*   [Rollback first]({{ site.baseurl }}/contribute/postcommits-policies-details/index.md#rollback_first)
-*   [A failing test is a critical bug](policies/index.md#failing_test_is_critical_bug)
-*   [A flaky test is a critical bug](policies/index.md#flake_is_failing)
-*   [Flaky tests must either be fixed or removed](policies/index.md#remove_flake)
-*   [Fixes for post-commit failures should include a corresponding new pre-commit test](policies/index.md#precommit_for_postcommit)
+*   [Rollback first]({{ site.baseurl }}/contribute/postcommits-policies-details/index.html#rollback_first)
+*   [A failing test is a critical bug]({{ site.baseurl }}/contribute/postcommits-policies-details/index.html#failing_test_is_critical_bug)
+*   [A flaky test is a critical bug]({{ site.baseurl }}/contribute/postcommits-policies-details/index.html#flake_is_failing)
+*   [Flaky tests must either be fixed or removed]({{ site.baseurl }}/contribute/postcommits-policies-details/index.html#remove_flake)
+*   [Fixes for post-commit failures should include a corresponding new pre-commit test]({{ site.baseurl }}/contribute/postcommits-policies-details/index.html#precommit_for_postcommit)
 
 
 ## Post-commit test failure scenarios
