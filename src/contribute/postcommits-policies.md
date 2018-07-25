@@ -56,9 +56,9 @@ When a post-commit test fails, follow the provided steps for your situation.
 
 ### I was assigned a JIRA issue for a test failure {#assigned-failing-test}
 
-1.  [Rollback the culprit change]({{ site.baseurl }}/contribute/postcommits-policies-guides/index.md#rollback).
+1.  [Rollback the culprit change]({{ site.baseurl }}/contribute/postcommits-guides/index.md#rollback).
 1.  If you determine that rollback will take longer than 8 hours, [disable the
-    test temporarily](guides/index.md#disabling) while you rollback or create a
+    test temporarily]({{ site.baseurl }}/contribute/postcommits-guides/index.md#disabling) while you rollback or create a
     fix.
 
 > Note: Rollback is always the first course of action. If a fix is trivial,
