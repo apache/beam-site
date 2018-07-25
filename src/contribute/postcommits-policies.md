@@ -52,11 +52,11 @@ When a post-commit test fails, follow the provided steps for your situation.
 1.  Create a [JIRA issue](https://issues.apache.org/jira/projects/BEAM)
     and assign it to yourself.
 1.  Do high level triage of the failure.
-1.  [Assign the JIRA issue to a relevant person](guides/index.md#find_specialist).
+1.  [Assign the JIRA issue to a relevant person]({{ site.baseurl }}/contribute/postcommits-guides/index.html#find_specialist).
 
 ### I was assigned a JIRA issue for a test failure {#assigned-failing-test}
 
-1.  [Rollback the culprit change](guides/index.md#rollback).
+1.  [Rollback the culprit change]({{ site.baseurl }}/contribute/postcommits-policies-guides/index.md#rollback).
 1.  If you determine that rollback will take longer than 8 hours, [disable the
     test temporarily](guides/index.md#disabling) while you rollback or create a
     fix.
@@ -74,7 +74,7 @@ When a post-commit test fails, follow the provided steps for your situation.
 
 ## Useful links
 
-*   [Best practices for writing tests](tests_best_practices.md)
+*   [Best practices for writing tests]({{ site.baseurl }}/contribute/testing/index.md#best_practices)
 
 ## References
 

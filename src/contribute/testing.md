@@ -562,7 +562,7 @@ classes which reside under `"org[.]apache[.]beam[.].*Test.*"`,
 of the packages: `org.apache.beam.x`, `org.apache.beam.y`, `org.apache.beam.z`,
 nor equal to `Other.class`.
 
-## Best practices for writing tests
+## Best practices for writing tests {#best_practices}
 
 The following best practices help you to write reliable and maintainable tests.
 
