@@ -28,7 +28,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Portability Framework</title>
+  <title>Post-commit tests processes guides</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -39,7 +39,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/contribute/portability/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/contribute/postcommits-guides/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -195,15 +195,9 @@
 
 
 <ul class="nav">
-  <li><a href="#overview">Overview</a></li>
-  <li><a href="#design">Design</a></li>
-  <li><a href="#development">Development</a>
-    <ul>
-      <li><a href="#roadmap">Roadmap</a></li>
-      <li><a href="#issues">Issues</a></li>
-      <li><a href="#status">Status</a></li>
-    </ul>
-  </li>
+  <li><a href="#find_specialist">Finding someone to triage a post-commit test failure</a></li>
+  <li><a href="#rollback">Rolling back a commit</a></li>
+  <li><a href="#disabling">Disabling a failing test</a></li>
 </ul>
 
 
@@ -224,220 +218,71 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<h1 id="portability-framework">Portability Framework</h1>
+<h1 id="post-commit-test-task-guides">Post-commit test task guides</h1>
 
-<ul id="markdown-toc">
-  <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
-  <li><a href="#design" id="markdown-toc-design">Design</a></li>
-  <li><a href="#development" id="markdown-toc-development">Development</a>    <ul>
-      <li><a href="#roadmap" id="markdown-toc-roadmap">Roadmap</a></li>
-      <li><a href="#issues" id="markdown-toc-issues">Issues</a></li>
-      <li><a href="#status" id="markdown-toc-status">Status</a>        <ul>
-          <li><a href="#running-python-wordcount-on-flink" id="markdown-toc-running-python-wordcount-on-flink">Running Python wordcount on Flink</a></li>
-        </ul>
-      </li>
+<p>These guides provide steps for common post-commit test failure tasks.</p>
+
+<h2 id="find_specialist">Finding someone to triage a post-commit test failure</h2>
+
+<p>To find the proper person to triage a test failure, you can use these
+suggestions:</p>
+
+<ol>
+  <li>If you can triage it yourself, go for it.</li>
+  <li>Look at the GitHub blame for the files with problematic code.</li>
+  <li>Ask in the <a href="https://the-asf.slack.com/messages/C9H0YNP3P/apps/A0F7VRFKN/">Beam Slack chat</a>.</li>
+  <li>Write to the dev list: dev@beam.apache.org</li>
+</ol>
+
+<h2 id="rollback">Rolling back a commit</h2>
+
+<p>Rolling back is usually the fastest way to fix a failing test.  However it is
+is often inconvenient for the original author. To help the author fix the
+issue, follow these steps when you rollback someone’s change.</p>
+
+<ol>
+  <li>Rollback the PR.</li>
+  <li>Create a JIRA issue that contains the following information:
+    <ul>
+      <li>the reason for the rollback</li>
+      <li>a link to the test failure’s JIRA issue</li>
+      <li>triage information</li>
+      <li>any other relevant details</li>
     </ul>
   </li>
-</ul>
-
-<h2 id="overview">Overview</h2>
-
-<p>Interoperability between SDKs and runners is a key aspect of Apache
-Beam. So far, however, the reality is that most runners support the
-Java SDK only, because each SDK-runner combination requires non-trivial
-work on both sides. All runners are also currently written in Java,
-which makes support of non-Java SDKs far more expensive. The
-<em>portability framework</em> aims to rectify this situation and provide
-full interoperability across the Beam ecosystem.</p>
-
-<p>The portability framework introduces well-defined, language-neutral
-data structures and protocols between the SDK and runner. This interop
-layer – called the <em>portability API</em> – ensures that SDKs and runners
-can work with each other uniformly, reducing the interoperability
-burden for both SDKs and runners to a constant effort.  It notably
-ensures that <em>new</em> SDKs automatically work with existing runners and
-vice versa.  The framework introduces a new runner, the <em>Universal
-Local Runner (ULR)</em>, as a practical reference implementation that
-complements the direct runners. Finally, it enables cross-language
-pipelines (sharing I/O or transformations across SDKs) and
-user-customized execution environments (“custom containers”).</p>
-
-<p>The portability API consists of a set of smaller contracts that
-isolate SDKs and runners for job submission, management and
-execution. These contracts use protobufs and gRPC for broad language
-support.</p>
-
-<ul>
-  <li>
-    <p><strong>Job submission and management</strong>: The <em>Runner API</em> defines a
-language-neutral pipeline representation with transformations
-specifying the execution environment as a docker container
-image. The latter both allows the execution side to set up the
-right environment as well as opens the door for custom containers
-and cross-environment pipelines. The <em>Job API</em> allows pipeline
-execution and configuration to be managed uniformly.</p>
+  <li>Assign the new JIRA issue to the original PR author.</li>
+  <li>Consider re-opening the JIRA issue associated with the original PR (if
+there is one).</li>
+  <li>Send a notification email with information about the rollback, links to the
+original PR and the rollback PR, and the reasons for the rollback to:
+    <ul>
+      <li>dev@beam.apache.org</li>
+      <li>the original PR author and the committer of the PR</li>
+    </ul>
   </li>
-  <li>
-    <p><strong>Job execution</strong>: The <em>SDK harness</em> is a SDK-provided
-program responsible for executing user code and is run separately
-from the runner.  The <em>Fn API</em> defines an execution-time binary
-contract between the SDK harness and the runner that describes how
-execution tasks are managed and how data is transferred. In
-addition, the runner needs to handle progress and monitoring in an
-efficient and language-neutral way. SDK harness initialization
-relies on the <em>Provision</em> and <em>Artifact APIs</em> for obtaining staged
-files, pipeline options and environment information. Docker
-provides isolation between the runner and SDK/user environments to
-the benefit of both as defined by the <em>container contract</em>. The
-containerization of the SDK gives it (and the user, unless the SDK
-is closed) full control over its own environment without risk of
-dependency conflicts. The runner has significant freedom regarding
-how it manages the SDK harness containers.</p>
-  </li>
-</ul>
-
-<p>The goal is that all (non-direct) runners and SDKs eventually support
-the portability API, perhaps exclusively.</p>
-
-<h2 id="design">Design</h2>
-
-<p>The <a href="https://github.com/apache/beam/tree/master/model">model protos</a>
-contain all aspects of the portability API and is the truth on the
-ground. The proto definitions supercede any design documents. The main
-design documents are the following:</p>
-
-<ul>
-  <li>
-    <p><a href="https://s.apache.org/beam-runner-api">Runner API</a>. Pipeline
-representation and discussion on primitive/composite transforms and
-optimizations.</p>
-  </li>
-  <li>
-    <p><a href="https://s.apache.org/beam-job-api">Job API</a>. Job submission and
-management protocol.</p>
-  </li>
-  <li>
-    <p><a href="https://s.apache.org/beam-fn-api">Fn API</a>. Execution-side control
-and data protocols and overview.</p>
-  </li>
-  <li>
-    <p><a href="https://s.apache.org/beam-fn-api-container-contract">Container
-contract</a>.
-Execution-side docker container invocation and provisioning
-protocols. See
-<a href="https://github.com/apache/beam/blob/master/sdks/CONTAINERS.md">CONTAINERS.md</a>
-for how to build container images.</p>
-  </li>
-</ul>
-
-<p>In discussion:</p>
-
-<ul>
-  <li><a href="https://s.apache.org/beam-mixed-language-pipelines">Cross
-language</a>. Options
-and tradeoffs for how to handle various kinds of
-multi-language/multi-SDK pipelines.</li>
-</ul>
-
-<h2 id="development">Development</h2>
-
-<p>The portability framework is a substantial effort that touches every
-Beam component. In addition to the sheer magnitude, a major challenge
-is engineering an interop layer that does not significantly compromise
-performance due to the additional serialization overhead of a
-language-neutral protocol.</p>
-
-<h3 id="roadmap">Roadmap</h3>
-
-<p>The proposed project phases are roughly as follows and are not
-strictly sequential, as various components will likely move at
-different speeds. Additionally, there have been (and continues to be)
-supporting refactorings that are not always tracked as part of the
-portability effort. Work already done is not tracked here either.</p>
-
-<ul>
-  <li>
-    <p><strong>P1 [MVP]</strong>: Implement the fundamental plumbing for portable SDKs
-and runners for batch and streaming, including containers and the
-ULR
-[<a href="https://issues.apache.org/jira/browse/BEAM-2899">BEAM-2899</a>]. Each
-SDK and runner should use the portability framework at least to the
-extent that wordcount
-[<a href="https://issues.apache.org/jira/browse/BEAM-2896">BEAM-2896</a>] and
-windowed wordcount
-[<a href="https://issues.apache.org/jira/browse/BEAM-2941">BEAM-2941</a>] run
-portably.</p>
-  </li>
-  <li>
-    <p><strong>P2 [Feature complete]</strong>: Design and implement portability support
-for remaining execution-side features, so that any pipeline from
-any SDK can run portably on any runner. These features include side
-inputs
-[<a href="https://issues.apache.org/jira/browse/BEAM-2863">BEAM-2863</a>], User state [<a href="https://issues.apache.org/jira/browse/BEAM-2862">BEAM-2862</a>], User
-timers
-[<a href="https://issues.apache.org/jira/browse/BEAM-2925">BEAM-2925</a>],
-Splittable DoFn
-[<a href="https://issues.apache.org/jira/browse/BEAM-2896">BEAM-2896</a>] and
-more.  Each SDK and runner should use the portability framework at
-least to the extent that the mobile gaming examples
-[<a href="https://issues.apache.org/jira/browse/BEAM-2940">BEAM-2940</a>] run
-portably.</p>
-  </li>
-  <li>
-    <p><strong>P3 [Performance]</strong>: Measure and tune performance of portable
-pipelines using benchmarks such as Nexmark. Features such as
-progress reporting
-[<a href="https://issues.apache.org/jira/browse/BEAM-2940">BEAM-2940</a>],
-combiner lifting
-[<a href="https://issues.apache.org/jira/browse/BEAM-2937">BEAM-2937</a>] and
-fusion are expected to be needed.</p>
-  </li>
-  <li>
-    <p><strong>P4 [Cross language]</strong>: Design and implement cross-language
-pipeline support, including how the ecosystem of shared transforms
-should work.</p>
-  </li>
-</ul>
-
-<h3 id="issues">Issues</h3>
-
-<p>The portability effort touches every component, so the “portability”
-label is used to identify all portability-related issues. Pure
-design or proto definitions should use the “beam-model” component. A
-common pattern for new portability features is that the overall
-feature is in “beam-model” with subtasks for each SDK and runner in
-their respective components.</p>
-
-<p><strong>JIRA:</strong> <a href="https://issues.apache.org/jira/issues/?filter=12341256">query</a></p>
-
-<h3 id="status">Status</h3>
-
-<p>MVP in progress (near completion for Flink runner). See the
-<a href="https://docs.google.com/spreadsheets/d/1KDa_FGn1ShjomGd-UUDOhuh2q73de2tPz6BqHpzqvNI/edit?usp=sharing">Portability support table</a>
-for details.</p>
-
-<h4 id="running-python-wordcount-on-flink">Running Python wordcount on Flink</h4>
-
-<p>The Flink runner is currently the only runner to support portable pipeline execution.
-To run a basic Python wordcount (in batch mode) with embedded Flink:</p>
-
-<ol>
-  <li>Run once to build the SDK harness container: <code class="highlighter-rouge">./gradlew -p sdks/python/container
-docker</code></li>
-  <li>Start the Flink portable JobService endpoint: <code class="highlighter-rouge">./gradlew :beam-runners-flink_2.11-job-server:runShadow</code></li>
-  <li>Submit the wordcount pipeline to above endpoint: <code class="highlighter-rouge">./gradlew :beam-sdks-python:portableWordCount</code></li>
+  <li>Close the test failure JIRA issue. Your work is done here!</li>
 </ol>
 
-<p>To run on a separate <a href="https://ci.apache.org/projects/flink/flink-docs-release-1.5/quickstart/setup_quickstart.html">Flink cluster</a>:</p>
+<h2 id="disabling">Disabling a failing test</h2>
 
-<ol>
-  <li>Start local Flink cluster</li>
-  <li>Create shaded JobService jar: <code class="highlighter-rouge">./gradlew :beam-runners-flink_2.11-job-server:installShadowDist</code></li>
-  <li>Start JobService with Flink web service endpoint: <code class="highlighter-rouge">java -jar ./runners/flink/job-server/build/install/beam-runners-flink_2.11-job-server-shadow/lib/beam-runners-flink_2.11-job-server-*.jar--job-host=localhost:8099" "--artifacts-dir=/tmp/flink-artifacts" "--flink-master-url=localhost:8081"</code></li>
-  <li>Submit the pipeline.</li>
-</ol>
+<p>If a test fails, our first priority is to rollback the problematic code and fix
+the issue. However, if both: rollback and fix will take awhile to implement, it
+is safer to temporarily disable the test until the fix is ready.</p>
 
-<p>Note: A subset of the functionality is also supported in streaming mode; use <code class="highlighter-rouge">--streaming</code> in the command line to enable it.</p>
+<p>Use caution when deciding to disable a test. When tests are disabled,
+contributors are no longer developing on top of fully tested code. If you decide
+to disable a test, use the following guidelines:</p>
+
+<ul>
+  <li>Notify the dev@beam.apache.org mailing list. Describe the problem and let
+everyone know which test you are disabling.</li>
+  <li>Implement the fix and get the test back online as soon as possible.</li>
+</ul>
+
+<p>While the test is disabled, contributors should not push code to the failing
+test’s coverage area. The code area is not properly tested until you fix the
+test.</p>
+
 
       </div>
     </div>
