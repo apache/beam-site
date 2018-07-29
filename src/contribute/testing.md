@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: 'Beam Testing Guide'
+section_menu: section-menu/contribute.html
 permalink: /contribute/testing/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 # Beam Testing Documentation
 
@@ -43,21 +57,6 @@ details on those testing types.
    <td><strong>Runs In</strong>
    </td>
   </tr>
-  <tr>
-   <td>DoFn
-   </td>
-   <td>Correctness on one/few bundles
-   </td>
-   <td>DoFnTester
-   </td>
-   <td><a href="https://github.com/apache/beam/blob/master/sdks/java/io/google-cloud-platform/src/test/java/org/apache/beam/sdk/io/gcp/bigquery/BigQueryIOTest.java#L1325">BigQueryIOTest</a>
-   </td>
-   <td>Unit
-   </td>
-   <td>Precommit, Postcommit
-   </td>
-  </tr>
-  <tr>
    <td>BoundedSource
    </td>
    <td>Correctly Reads Input
@@ -160,7 +159,7 @@ details on those testing types.
    </td>
    <td>Correctness
    </td>
-   <td>E2E Test, <a href="https://github.com/apache/beam/blob/master/runners/pom.xml#L47">@ValidatesRunner</a>
+   <td>E2E Test, @ValidatesRunner
    </td>
    <td><a href="https://github.com/apache/beam/blob/master/examples/java/src/test/java/org/apache/beam/examples/WordCountIT.java#L78">WordCountIT</a>, <a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/test/java/org/apache/beam/sdk/transforms/ParDoTest.java">ParDoTest</a>
    </td>
@@ -302,6 +301,45 @@ importance of testing, Beam has a robust set of unit tests, as well as testing
 coverage measurement tools, which protect the codebase from simple to moderate
 breakages. Beam Java unit tests are written in JUnit.
 
+#### How to run Python unit tests
+
+Python tests are written using the standard Python unittest library.
+To run all unit tests, execute the following command in the ``sdks/python``
+subdirectory
+
+```
+python setup.py test [-s apache_beam.package.module.TestClass.test_method]
+```
+
+We also provide a [tox](https://tox.readthedocs.io/en/latest/) configuration
+in that same directory to run all the tests, including lint, cleanly in all
+desired configurations.
+
+#### How to run Java NeedsRunner tests
+
+NeedsRunner is a category of tests that require a Beam runner. To run
+NeedsRunner tests:
+
+```
+$ ./gradlew :runners:direct-java:needsRunnerTests
+```
+
+To run a single NeedsRunner test use the `test` property, e.g.
+
+```
+$ ./gradlew :runners:direct-java:needsRunnerTests --tests org.apache.beam.sdk.transforms.MapElementsTest.testMapBasic
+```
+
+will run the `MapElementsTest.testMapBasic()` test.
+
+NeedsRunner tests in modules that are not required to build runners (e.g.
+`sdks/java/io/google-cloud-platform`) can be executed with the `gradle test`
+command:
+
+```
+$ ./gradlew sdks:java:io:google-cloud-platform:test --tests org.apache.beam.sdk.io.gcp.spanner.SpannerIOWriteTest
+```
+
 ### ValidatesRunner
 
 ValidatesRunner tests contain components of both component and end-to-end
@@ -334,14 +372,13 @@ from the Beam examples, or custom-built pipelines, the framework will provide
 hooks during several pipeline lifecycle events, e.g., pipeline creation,
 pipeline success, and pipeline failure, to allow verification of pipeline state.
 
-The E2E testing framework is currently built to hook into the [Maven Failsafe
-Integration Test
-plugin](http://maven.apache.org/surefire/maven-failsafe-plugin/), which means it
-is tightly integrated with the overall build process. Once it is determined how
-Python and other future languages will integrate into the overall build/test
-system (via Maven or otherwise) we will adjust this. The framework provides a
-wrapper around actual Beam pipelines, enabling those pipelines to be run in an
-environment which facilitates verification of pipeline results and details.
+The E2E testing framework is currently built to execute the tests in [PerfKit
+Benchmarker](https://github.com/GoogleCloudPlatform/PerfKitBenchmarker),
+invoked via Gradle tasks. Once it is determined how Python and other future
+languages will integrate into the overall build/test system (via Gradle or
+otherwise) we will adjust this. The framework provides a wrapper around actual
+Beam pipelines, enabling those pipelines to be run in an environment which
+facilitates verification of pipeline results and details.
 
 Verifiers include:
 
@@ -367,30 +404,30 @@ verify that the simple pipelines they run end in the correct state.
 
 ### Effective use of the TestPipeline JUnit rule
 
-`TestPipeline` is JUnit rule designed to facilitate testing pipelines. 
-In combination with `PAssert`, the two can be used for testing and 
-writing assertions over pipelines. However, in order for these assertions 
-to be effective, the constructed pipeline **must** be run by a pipeline 
-runner. If the pipeline is not run (i.e., executed) then the 
-constructed `PAssert` statements will not be triggered, and will thus 
-be ineffective. 
+`TestPipeline` is JUnit rule designed to facilitate testing pipelines.
+In combination with `PAssert`, the two can be used for testing and
+writing assertions over pipelines. However, in order for these assertions
+to be effective, the constructed pipeline **must** be run by a pipeline
+runner. If the pipeline is not run (i.e., executed) then the
+constructed `PAssert` statements will not be triggered, and will thus
+be ineffective.
 
 To prevent such cases, `TestPipeline` has some protection mechanisms in place.
 
 __Abandoned node detection (performed automatically)__
 
-Abandoned nodes are `PTransforms`, `PAsserts` included, that were not 
-executed by the pipeline runner. Abandoned nodes are most likely to occur 
+Abandoned nodes are `PTransforms`, `PAsserts` included, that were not
+executed by the pipeline runner. Abandoned nodes are most likely to occur
 due to the one of the following scenarios:
- 1. Lack of a `pipeline.run()` statement at the end of a test. 
+ 1. Lack of a `pipeline.run()` statement at the end of a test.
  2. Addition of `PTransform`s  after the pipeline has already run.
 
-Abandoned node detection is *automatically enabled* when a real pipeline 
-runner (i.e. not a `CrashingRunner`) and/or a 
-`@NeedsRunner` / `@ValidatesRunner` annotation are detected. 
+Abandoned node detection is *automatically enabled* when a real pipeline
+runner (i.e. not a `CrashingRunner`) and/or a
+`@NeedsRunner` / `@ValidatesRunner` annotation are detected.
 
 Consider the following test:
-  
+
 ```java
 // Note the @Rule annotation here
 @Rule
@@ -400,7 +437,7 @@ public final transient TestPipeline pipeline = TestPipeline.create();
 @Category(NeedsRunner.class)
 public void myPipelineTest() throws Exception {
 
-final PCollection<String> pCollection = 
+final PCollection<String> pCollection =
   pipeline
     .apply("Create", Create.of(WORDS).withCoder(StringUtf8Coder.of()))
     .apply(
@@ -413,7 +450,7 @@ final PCollection<String> pCollection =
                 return WHATEVER;
               }
             }));
-            
+
 PAssert.that(pCollection).containsInAnyOrder(WHATEVER);       
 
 /* ERROR: pipeline.run() is missing, PAsserts are ineffective */
@@ -421,19 +458,25 @@ PAssert.that(pCollection).containsInAnyOrder(WHATEVER);
 ```
 
 ```py
-# Unsupported in Beam's Python SDK.
+# The suggested pattern of using pipelines as targets of with statements
+# eliminates the possibility for this kind of error or a framework
+# to catch it.
+
+with beam.Pipeline(...) as p:
+    [...arbitrary construction...]
+    # p.run() is automatically called on successfully exiting the context
 ```
- 
-The `PAssert` at the end of this test method will not be executed, since 
-`pipeline` is never run, making this test ineffective. If this test method 
-is run using an actual pipeline runner, an exception will be thrown 
+
+The `PAssert` at the end of this test method will not be executed, since
+`pipeline` is never run, making this test ineffective. If this test method
+is run using an actual pipeline runner, an exception will be thrown
 indicating that there was no `run()` invocation in the test.
 
-Exceptions that are thrown prior to executing a pipeline, will fail 
+Exceptions that are thrown prior to executing a pipeline, will fail
 the test unless handled by an `ExpectedException` rule.
 
 Consider the following test:  
-  
+
 ```java
 // Note the @Rule annotation here
 @Rule
@@ -458,45 +501,45 @@ public void testReadingFailsTableDoesNotExist() throws Exception {
 ```
 
 ```py
-# Unsupported in Beam's Python SDK.
+# Unneeded in Beam's Python SDK.
 ```  
-  
-The application of the `read` transform throws an exception, which is then 
-handled by the `thrown` `ExpectedException` rule. 
-In light of this exception, the fact this test has abandoned nodes 
-(the `read` transform) does not play a role since the test fails before 
-the pipeline would have been executed (had there been a `run()` statement). 
-   
+
+The application of the `read` transform throws an exception, which is then
+handled by the `thrown` `ExpectedException` rule.
+In light of this exception, the fact this test has abandoned nodes
+(the `read` transform) does not play a role since the test fails before
+the pipeline would have been executed (had there been a `run()` statement).
+
 __Auto-add `pipeline.run()` (disabled by default)__
 
-A `TestPipeline` instance can be configured to auto-add a missing `run()` 
-statement by setting `testPipeline.enableAutoRunIfMissing(true/false)`. 
-If this feature is enabled, no exception will be thrown in case of a 
+A `TestPipeline` instance can be configured to auto-add a missing `run()`
+statement by setting `testPipeline.enableAutoRunIfMissing(true/false)`.
+If this feature is enabled, no exception will be thrown in case of a
 missing `run()` statement, instead, one will be added automatically.
 
 
 ### API Surface testing
 
-The surface of an API is the set of public classes that are exposed to the 
-outer world. In order to keep the API tight and avoid unnecessarily exposing 
-classes, Beam provides the `ApiSurface` utility class. 
-Using the `ApiSurface` class,  we can assert the API surface against an 
+The surface of an API is the set of public classes that are exposed to the
+outer world. In order to keep the API tight and avoid unnecessarily exposing
+classes, Beam provides the `ApiSurface` utility class.
+Using the `ApiSurface` class,  we can assert the API surface against an
 expected set of classes.
 
 Consider the following snippet:
 ```java
 @Test
 public void testMyApiSurface() throws Exception {
-  
+
     final Package thisPackage = getClass().getPackage();
     final ClassLoader thisClassLoader = getClass().getClassLoader();
-    
+
     final ApiSurface apiSurface =
         ApiSurface.ofPackage(thisPackage, thisClassLoader)
             .pruningPattern("org[.]apache[.]beam[.].*Test.*")
             .pruningPattern("org[.]apache[.]beam[.].*IT")
             .pruningPattern("java[.]lang.*");
-    
+
     @SuppressWarnings("unchecked")
     final Set<Matcher<Class<?>>> allowed =
         ImmutableSet.of(
@@ -504,7 +547,7 @@ public void testMyApiSurface() throws Exception {
             classesInPackage("org.apache.beam.y"),
             classesInPackage("org.apache.beam.z"),
             Matchers.<Class<?>>equalTo(Other.class));
-    
+
     assertThat(apiSurface, containsOnlyClassesMatching(allowed));
 }
 ```
@@ -513,8 +556,89 @@ public void testMyApiSurface() throws Exception {
 # Unsupported in Beam's Python SDK.
 ```
 
-This test will fail if the classes exposed by `getClass().getPackage()`, except 
+This test will fail if the classes exposed by `getClass().getPackage()`, except
 classes which reside under `"org[.]apache[.]beam[.].*Test.*"`,  
 `"org[.]apache[.]beam[.].*IT"` or `"java[.]lang.*"`, belong to neither
-of the packages: `org.apache.beam.x`, `org.apache.beam.y`, `org.apache.beam.z`, 
+of the packages: `org.apache.beam.x`, `org.apache.beam.y`, `org.apache.beam.z`,
 nor equal to `Other.class`.
+
+## Best practices for writing tests {#best_practices}
+
+The following best practices help you to write reliable and maintainable tests.
+
+### Aim for one failure path
+
+An ideal test has one failure path. When you create your tests, minimize the
+possible reasons for a test failure. A developer can debug a problem more
+easily when there are fewer failure paths.
+
+### Avoid non-deterministic code
+
+Reliable tests are predictable and deterministic. Tests that contain
+non-deterministic code are hard to debug and are often flaky. Non-deterministic
+code includes the use of randomness, time, and multithreading.
+
+To avoid non-deterministic code, mock the corresponding methods or classes.
+
+### Use descriptive test names
+
+Helpful test names contain details about your test, such as test parameters and
+the expected result. Ideally, a developer can read the test name and know where
+the buggy code is and how to reproduce the bug.
+
+An easy and effective way to name your methods is to use these three questions:
+
+*   What you are testing?
+*   What are the parameters of the test?
+*   What is the expected result of the test?
+
+For example, consider a scenario where you want to add a test for the
+`Divide` method:
+
+```java
+float Divide(float dividend, float divisor) {
+  return dividend / divisor;
+}
+
+...
+
+@Test
+void <--TestMethodName-->() {
+    assertThrows(Divide(10, 0))
+}
+```
+
+If you use a simple test name, such as `testDivide()`, you are missing important
+information such as the expected action, parameter information, and expected
+test result. As a result, triaging a test failure requires you to look at the
+test implementation to see what the test does.
+
+Instead, use a name such as `invokingDivideWithDivisorEqualToZeroThrowsException()`,
+which specifies:
+
+*   the expected action of the test (`invokingDivide`)
+*   details about important parameters (the divisor is zero)
+*   the expected result (the test throws an exception)
+
+If this test fails, you can look at the descriptive test name to find the most
+probable cause of the failure. In addition, test frameworks and test result
+dashboards use the test name when reporting test results. Descriptive names
+enable contributors to look at test suite results and easily see what
+features are failing.
+
+Long method names are not a problem for test code. Test names are rarely used
+(usually when you triage and debug), and when you do need to look at a
+test, it is helpful to have descriptive names.
+
+
+### Use a pre-commit test if possible
+
+Post-commit tests validate that Beam works correctly in broad variety of
+scenarios. The tests catch errors that are hard to predict in the design and
+implementation stages
+
+However, we often write a test to verify a specific scenario. In this situation,
+it is usually possible to implement the test as a unit test or a component test.
+You can add your unit tests or component tests to the pre-commit test suite, and
+the pre-commit test results give you faster code health feedback during the
+development stage, when a bug is cheap to fix.

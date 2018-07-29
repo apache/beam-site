@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Apache Gearpump (incubating) Runner"
+section_menu: section-menu/runners.html
 permalink: /documentation/runners/gearpump/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 # Using the Apache Gearpump Runner
 
 The Apache Gearpump Runner can be used to execute Beam pipelines using [Apache Gearpump (incubating)](https://gearpump.apache.org).
@@ -16,14 +30,6 @@ The Gearpump Runner and Gearpump are suitable for large scale, continuous jobs, 
 * Application hot re-deployment
 
 The [Beam Capability Matrix]({{ site.baseurl }}/documentation/runners/capability-matrix/) documents the currently supported capabilities of the Gearpump Runner.
-
-## Building Gearpump Runner
-Currently Gearpump Runner is on a [feature branch](https://github.com/apache/beam/tree/gearpump-runner) and in order to run your Beam pipeline with Gearpump runner, you should build out the corresponding artifacts first.
-```
-git checkout gearpump-runner
-mvn install
-```
-
 
 ## Writing Beam Pipeline with Gearpump Runner
 To use the Gearpump Runner in a distributed mode, you have to setup a Gearpump cluster first by following the Gearpump [setup quickstart](http://gearpump.apache.org/releases/latest/deployment/deployment-standalone/index.html).
@@ -134,8 +140,3 @@ When executing your pipeline with the Gearpump Runner, you should consider the f
   <td><code>beam_gearpump_app</code></td>
 </tr>
 </table>
-
-
-
-
-

@@ -7,6 +7,19 @@ categories: blog
 authors:
   - jkff
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 One of the most important parts of the Apache Beam ecosystem is its quickly
 growing set of connectors that allow Beam pipelines to read and write data to
@@ -441,17 +454,17 @@ class AvroReader(DoFn):
 This hypothetical `DoFn` reads records from a single Avro file. Notably missing
 is the code for expanding a filepattern: it no longer needs to be part of this
 `DoFn`! Instead, the SDK includes a
-[Match.filepatterns()](https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/Match.java)
+[FileIO.matchAll()](https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/FileIO.java)
 transform for expanding a filepattern into a `PCollection` of filenames, and
 different file format IOs can reuse the same transform, reading the files with
 different `DoFn`s.
 
 This example demonstrates the benefits of increased modularity allowed by SDF:
-`Match` supports continuous ingestion of new files in streaming pipelines using
-`.continuously()`, and this functionality becomes automatically available to
-various file format IOs. For example, `TextIO.read().watchForNewFiles()` [uses
-`Match` under the
-hood)](https://github.com/apache/beam/blob/f7e8f886c91ea9d0b51e00331eeb4484e2f6e000/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java#L480).
+`FileIO.matchAll()` supports continuous ingestion of new files in streaming
+pipelines using `.continuously()`, and this functionality becomes automatically
+available to various file format IOs. For example,
+`TextIO.read().watchForNewFiles()` [uses `FileIO.matchAll()` under the
+hood)](https://github.com/apache/beam/blob/3bd68ecfd7d576d78e02deb0476e549f11e1b5ef/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java#L486).
 
 ## Current status
 
@@ -471,9 +484,10 @@ Several SDF-based transforms and IO connectors are available for Beam users at
 HEAD and will be included in Beam 2.2.0. `TextIO` and `AvroIO` finally provide
 continuous ingestion of files (one of the most frequently requested features)
 via `.watchForNewFiles()` which is backed by the utility transforms
-`Match.filepatterns().continuously()` and the more general
+`FileIO.matchAll().continuously()` and the more general
 [`Watch.growthOf()`](https://github.com/apache/beam/blob/f7e8f886c91ea9d0b51e00331eeb4484e2f6e000/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/Watch.java).
-These utility transforms are also independently useful for "power user" use cases.
+These utility transforms are also independently useful for "power user" use
+cases.
 
 To enable more flexible use cases for IOs currently based on the Source API, we
 will change them to use SDF. This transition is [pioneered by

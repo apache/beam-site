@@ -1,3 +1,16 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# Welcome to Jekyll!
+
 columns:
   - class: model
     name: Beam Model
@@ -11,6 +24,14 @@ columns:
     name: Apache Apex
   - class: gearpump
     name: Apache Gearpump
+  - class: mapreduce
+    name: Apache Hadoop MapReduce
+  - class: jstorm
+    name: JStorm
+  - class: ibmstreams
+    name: IBM Streams
+  - class: samza
+    name: Apache Samza
 
 categories:
   - description: What is being computed?
@@ -46,6 +67,22 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: Gearpump wraps the per-element transformation function into processor execution.
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: Supported with per-element transformation.
       - name: GroupByKey
         values:
           - class: model
@@ -72,6 +109,22 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: "Use Gearpump's groupBy and window for key grouping and translate Beam's windowing and triggering to Gearpump's internal implementation."
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: "Uses Samza's partitionBy for key grouping and Beam's logic for window aggregation and triggering."
       - name: Flatten
         values:
           - class: model
@@ -95,6 +148,22 @@ categories:
             l2: fully supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''            
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: fully supported
             l3: ''
@@ -124,6 +193,22 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''            
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: Use combiner for efficient pre-aggregation.
       - name: Composite Transforms
         values:
           - class: model
@@ -147,6 +232,22 @@ categories:
             l2: supported via inlining
             l3: ''
           - class: gearpump
+            l1: 'Partially'
+            l2: supported via inlining
+            l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Partially'
+            l2: supported via inlining
+            l3: ''
+          - class: samza
             l1: 'Partially'
             l2: supported via inlining
             l3: ''
@@ -176,6 +277,22 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: Implemented by merging side input as a normal stream in Gearpump
+          - class: mapreduce
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: some size restrictions
+            l3: ''            
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: Uses Samza's broadcast operator to distribute the side inputs.
       - name: Source API
         values:
           - class: model
@@ -202,31 +319,63 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: ''
-      - name: Splittable DoFn
+          - class: mapreduce
+            l1: 'Partially'
+            l2: bounded source only
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+      - name: Splittable DoFn (SDF)
         values:
           - class: model
             l1: 'Partially'
             l2: DoFn where processing of each element can be split for parallelism, or suspended and resumed
             l3: Allows users to develop DoFn's that process a single element in portions ("restrictions"), executed in parallel or sequentially. This supersedes the unbounded and bounded `Source` APIs by supporting all of their features on a per-element basis. See http://s.apache.org/splittable-do-fn. Design is in progress on achieving parity with Source API regarding progress signals.
           - class: dataflow
-            l1: 'Partially'
-            l2: supported in streaming mode
-            l3: Supports checkpointing (sequentially processing an element over several, potentially infinitely many calls). Does not yet support autotuning features of the Source API.
+            l1: 'Yes'
+            l2:
+            l3: Does not yet support autotuning features of the Source API.
           - class: flink
-            l1: 'No'
-            l2: implementation in streaming mode coming soon
+            l1: 'Yes'
+            l2:
             l3:
           - class: spark
-            l1: 'No'
-            l2: not implemented
+            l1: 'Partially'
+            l2: supports bounded-per-element SDFs
             l3:
           - class: apex
-            l1: 'No'
-            l2: implementation in streaming mode coming soon
-            l3:
+            l1: 'Partially'
+            l2: supports bounded-per-element SDFs
+            l3: implementation in streaming mode coming soon
           - class: gearpump
+            l1: 'Partially'
+            l2: supports bounded-per-element SDFs
+            l3:
+          - class: mapreduce
             l1: 'No'
             l2: not implemented
+            l3:
+          - class: jstorm
+            l1: 'No'
+            l2: not implemented
+            l3:
+          - class: ibmstreams
+            l1: 'No'
+            l2: not implemented
+            l3:
+          - class: samza
+            l1: 'Partially'
+            l2: supports bounded-per-element SDFs
             l3:
       - name: Metrics
         values:
@@ -254,6 +403,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: not implemented
+          - class: mapreduce
+            l1: 'Partially'
+            l2: Only attempted counters are supported
+            l3: ''
+          - class: jstorm
+            l1: 'Partially'
+            l2: Metrics are only supported in local mode.
+            l3: ''
+          - class: ibmstreams
+            l1: 'Partially'
+            l2: All metrics types are supported.
+            l3: Only attempted values are supported. No committed values for metrics.
+          - class: samza
+            l1: 'Partially'
+            l2: Counter and Gauge are supported.
+            l3: Only attempted values are supported. No committed values for metrics.
       - name: Stateful Processing
         values:
           - class: model
@@ -273,13 +438,29 @@ categories:
             l2: not implemented
             l3: Spark supports per-key state with <tt>mapWithState()</tt> so support should be straightforward.
           - class: apex
-            l1: 'No'
-            l2: not implemented
-            l3: Apex supports per-key state, so adding support for this should be easy.
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: State is supported for non-merging windows. SetState and MapState are not yet supported.
           - class: gearpump
             l1: 'No'
             l2: not implemented
             l3: ''
+          - class: mapreduce
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: ''
+          - class: jstorm
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: ''
+          - class: ibmstreams
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: ''
+          - class: samza
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: 'States are backed up by either rocksDb KV store or in-memory hash map, and persist using changelog.'
   - description: Where in event time?
     anchor: where
     color-b: '37d'
@@ -313,6 +494,22 @@ categories:
             l1: 'Yes'
             l2: supported
             l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: supported
+            l3: ''
       - name: Fixed windows
         values:
           - class: model
@@ -336,6 +533,22 @@ categories:
             l2: supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: supported
             l3: ''
@@ -365,6 +578,22 @@ categories:
             l1: 'Yes'
             l2: supported
             l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: supported
+            l3: ''
       - name: Session windows
         values:
           - class: model
@@ -388,6 +617,22 @@ categories:
             l2: supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: supported
             l3: ''
@@ -417,6 +662,22 @@ categories:
             l1: 'Yes'
             l2: supported
             l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: supported
+            l3: ''
       - name: Custom merging windows
         values:
           - class: model
@@ -440,6 +701,22 @@ categories:
             l2: supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: supported
             l3: ''
@@ -469,7 +746,22 @@ categories:
             l1: 'Yes'
             l2: supported
             l3: ''
-
+          - class: mapreduce
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: supported
+            l3: ''
 
   - description: When in processing time?
     anchor: when
@@ -505,6 +797,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: batch-only runner
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: Event-time triggers
         values:
@@ -529,6 +837,22 @@ categories:
             l2: fully supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: fully supported
             l3: ''
@@ -559,6 +883,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: Count triggers
         values:
@@ -586,6 +926,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: '[Meta]data driven triggers'
         values:
@@ -611,6 +967,22 @@ categories:
             l2: pending model support
             l3:
           - class: gearpump
+            l1: 'No'
+            l2: pending model support
+            l3:
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3:
+          - class: jstorm
+            l1: 'No'
+            l2: pending model support
+            l3:
+          - class: ibmstreams
+            l1: 'No'
+            l2: pending model support
+            l3:
+          - class: samza
             l1: 'No'
             l2: pending model support
             l3:
@@ -641,6 +1013,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: Allowed lateness
         values:
@@ -665,6 +1053,22 @@ categories:
             l2: fully supported
             l3: ''
           - class: gearpump
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
             l1: 'Yes'
             l2: fully supported
             l3: ''
@@ -694,6 +1098,22 @@ categories:
           - class: gearpump
             l1: 'No'
             l2: not implemented
+            l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: ''
+          - class: ibmstreams
+            l1: 'Partially'
+            l2: non-merging windows
+            l3: ''
+          - class: samza
+            l1: 'No'
+            l2: ''
             l3: ''
 
   - description: How do refinements relate?
@@ -730,6 +1150,22 @@ categories:
             l1: 'Yes'
             l2: fully supported
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: batch-only runner
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: Accumulating
         values:
@@ -757,6 +1193,22 @@ categories:
             l1: 'No'
             l2: ''
             l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: ibmstreams
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
+          - class: samza
+            l1: 'Yes'
+            l2: fully supported
+            l3: ''
 
       - name: 'Accumulating &amp; Retracting'
         values:
@@ -782,6 +1234,22 @@ categories:
             l2: pending model support
             l3: ''
           - class: gearpump
+            l1: 'No'
+            l2: pending model support
+            l3: ''
+          - class: mapreduce
+            l1: 'No'
+            l2: ''
+            l3: ''
+          - class: jstorm
+            l1: 'No'
+            l2: pending model support
+            l3: ''
+          - class: ibmstreams
+            l1: 'No'
+            l2: pending model support
+            l3: ''
+          - class: samza
             l1: 'No'
             l2: pending model support
             l3: ''

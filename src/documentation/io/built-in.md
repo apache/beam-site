@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Built-in I/O Transforms"
+section_menu: section-menu/documentation.html
 permalink: /documentation/io/built-in/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 [Pipeline I/O Table of Contents]({{site.baseurl}}/documentation/io/io-toc/)
 
@@ -10,7 +24,7 @@ permalink: /documentation/io/built-in/
 
 This table contains the currently available I/O transforms.
 
-Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/programming-guide#io) for general usage instructions, and see the javadoc/pydoc for the particular I/O transforms.
+Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/programming-guide#pipeline-io) for general usage instructions, and see the javadoc/pydoc for the particular I/O transforms.
 
 
 <table class="table table-bordered">
@@ -23,16 +37,20 @@ Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/prog
 <tr>
   <td>Java</td>
   <td>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hadoop-file-system">Apache Hadoop File System</a></p>
+    <p>Beam Java supports Apache HDFS, Amazon S3, Google Cloud Storage, and local filesystems.</p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/FileIO.java">FileIO</a> (general-purpose reading, writing, and matching of files)</p>
     <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/AvroIO.java">AvroIO</a></p>
     <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java">TextIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/">XML</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TFRecordIO.java">TFRecordIO</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/xml/src/main/java/org/apache/beam/sdk/io/xml/XmlIO.java">XmlIO</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/tika/src/main/java/org/apache/beam/sdk/io/tika/TikaIO.java">TikaIO</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/parquet/src/main/java/org/apache/beam/sdk/io/parquet/ParquetIO.java">ParquetIO</a></p>
   </td>
   <td>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kinesis">Amazon Kinesis</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/amqp">AMQP</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kafka">Apache Kafka</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io">Google Cloud PubSub</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/pubsub">Google Cloud Pub/Sub</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jms">JMS</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mqtt">MQTT</a></p>
   </td>
@@ -42,21 +60,27 @@ Consult the [Programming Guide I/O section]({{site.baseurl }}/documentation/prog
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hbase">Apache HBase</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hcatalog">Apache Hive (HCatalog)</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/solr">Apache Solr</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/elasticsearch">Elasticsearch (v2.x)</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/elasticsearch">Elasticsearch (v2.x and v5.x)</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigtable">Google Cloud Bigtable</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/datastore">Google Cloud Datastore</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/spanner">Google Cloud Spanner</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
     <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
+    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/redis">Redis</a></p>
   </td>
 </tr>
 <tr>
   <td>Python</td>
   <td>
+    <p>Beam Python supports Google Cloud Storage and local filesystems.</p>
     <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/avroio.py">avroio</a></p>
     <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/textio.py">textio</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/tfrecordio.py">tfrecordio</a></p>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/vcfio.py">vcfio</a></p>
   </td>
   <td>
+    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/gcp/pubsub.py">Google Cloud Pub/Sub</a></p>
   </td>
   <td>
     <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/gcp/bigquery.py">Google BigQuery</a></p>
@@ -75,17 +99,21 @@ This table contains I/O transforms that are currently planned or in-progress. St
     <th>Name</th><th>Language</th><th>JIRA</th>
   </tr>
   <tr>
-    <td>Amazon S3 File System</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-2500">BEAM-2500</a></td>
+    <td>Apache HDFS support</td><td>Python</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-3099">BEAM-3099</a></td>
   </tr>
   <tr>
     <td>Apache DistributedLog</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-607">BEAM-607</a></td>
   </tr>
   <tr>
-    <td>Apache Parquet</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-214">BEAM-214</a></td>
+    <td>Apache Kafka</td><td>Python</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-3788">BEAM-3788</a></td>
   </tr>
+  <tr>
+    <td>Apache Kudu</td><td>Java</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-2661">BEAM-2661</a></td>
+  </tr>  
   <tr>
     <td>Apache Sqoop</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-67">BEAM-67</a></td>
@@ -95,20 +123,8 @@ This table contains I/O transforms that are currently planned or in-progress. St
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1893">BEAM-1893</a></td>
   </tr>
   <tr>
-    <td>Elasticsearch (v5.x)</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1637">BEAM-1637</a></td>
-  </tr>
-  <tr>
-    <td>Google Cloud Spanner</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1542">BEAM-1542</a></td>
-  </tr>
-  <tr>
     <td>InfluxDB</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-2546">BEAM-2546</a></td>
-  </tr>
-  <tr>
-    <td>JSON</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1581">BEAM-1581</a></td>
   </tr>
   <tr>
     <td>Memcached</td><td>Java</td>
@@ -123,15 +139,11 @@ This table contains I/O transforms that are currently planned or in-progress. St
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1240">BEAM-1240</a></td>
   </tr>
   <tr>
-    <td>Redis</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1017">BEAM-1017</a></td>
-  </tr>
-  <tr>
     <td>RestIO</td><td>Java</td>
     <td><a href="https://issues.apache.org/jira/browse/BEAM-1946">BEAM-1946</a></td>
   </tr>
   <tr>
-    <td>TikaIO</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-2328">BEAM-2328</a></td>
+    <td>Amazon SQS</td><td>Java</td>
+    <td><a href="https://issues.apache.org/jira/browse/BEAM-4828">BEAM-4828</a></td>
   </tr>
 </table>

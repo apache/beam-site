@@ -1,11 +1,25 @@
 ---
-layout: default
+layout: section
 title: "Use Beam"
 permalink: /get-started/
+section_menu: section-menu/get-started.html
 redirect_from:
   - /use/
   - /docs/use/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 # Get Started with Apache Beam
 Learn to use Beam to create data processing pipelines that run on supported processing back-ends:
@@ -14,7 +28,7 @@ Learn to use Beam to create data processing pipelines that run on supported proc
 
 Learn about the Beam model, the currently available Beam SDKs and Runners, and Beam's native I/O connectors.
 
-#### Quickstart for [Java]({{ site.baseurl }}/get-started/quickstart-java) or [Python]({{ site.baseurl }}/get-started/quickstart-py)
+#### Quickstart for [Java]({{ site.baseurl }}/get-started/quickstart-java), [Python]({{ site.baseurl }}/get-started/quickstart-py) or [Go]({{ site.baseurl }}/get-started/quickstart-go)
 
 Learn how to set up a Beam project and run a simple example Beam pipeline on your local machine.
 

@@ -1,12 +1,26 @@
 ---
-layout: default
+layout: section
 title: "Beam Quickstart for Java"
 permalink: /get-started/quickstart-java/
+section_menu: section-menu/get-started.html
 redirect_from:
   - /get-started/quickstart/
   - /use/quickstart/
   - /getting-started/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 # Apache Beam Java SDK Quickstart
 
@@ -18,7 +32,7 @@ This Quickstart will walk you through executing your first Beam pipeline to run 
 
 ## Set up your Development Environment
 
-1. Download and install the [Java Development Kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/index.html) version 1.7 or later. Verify that the [JAVA_HOME](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/envvars001.html) environment variable is set and points to your JDK installation.
+1. Download and install the [Java Development Kit (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/index.html) version 8. Verify that the [JAVA_HOME](https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/envvars001.html) environment variable is set and points to your JDK installation.
 
 1. Download and install [Apache Maven](http://maven.apache.org/download.cgi) by following Maven's [installation guide](http://maven.apache.org/install.html) for your specific operating system.
 
@@ -27,6 +41,7 @@ This Quickstart will walk you through executing your first Beam pipeline to run 
 
 The easiest way to get a copy of the WordCount pipeline is to use the following command to generate a simple Maven project that contains Beam's WordCount examples and builds against the most recent Beam release:
 
+{:.shell-unix}
 ```
 $ mvn archetype:generate \
       -DarchetypeGroupId=org.apache.beam \
@@ -39,8 +54,23 @@ $ mvn archetype:generate \
       -DinteractiveMode=false
 ```
 
+{:.shell-PowerShell}
+```
+PS> mvn archetype:generate `
+ -D archetypeGroupId=org.apache.beam `
+ -D archetypeArtifactId=beam-sdks-java-maven-archetypes-examples `
+ -D archetypeVersion={{ site.release_latest }} `
+ -D groupId=org.example `
+ -D artifactId=word-count-beam `
+ -D version="0.1" `
+ -D package=org.apache.beam.examples `
+ -D interactiveMode=false
+```
+
+
 This will create a directory `word-count-beam` that contains a simple `pom.xml` and a series of example pipelines that count words in text files.
 
+{:.shell-unix}
 ```
 $ cd word-count-beam/
 
@@ -50,6 +80,33 @@ pom.xml	src
 $ ls src/main/java/org/apache/beam/examples/
 DebuggingWordCount.java	WindowedWordCount.java	common
 MinimalWordCount.java	WordCount.java
+```
+
+{:.shell-PowerShell}
+```
+PS> cd .\word-count-beam
+
+PS> dir
+
+... 
+ 
+Mode                LastWriteTime         Length Name                                                        
+----                -------------         ------ ----                                                        
+d-----        7/19/2018  11:00 PM                src                                                         
+-a----        7/19/2018  11:00 PM          16051 pom.xml
+
+PS> dir .\src\main\java\org\apache\beam\examples
+
+...
+Mode                LastWriteTime         Length Name                                                        
+----                -------------         ------ ----                                                        
+d-----        7/19/2018  11:00 PM                common                                                      
+d-----        7/19/2018  11:00 PM                complete                                                    
+d-----        7/19/2018  11:00 PM                subprocess                                                  
+-a----        7/19/2018  11:00 PM           7073 DebuggingWordCount.java                                     
+-a----        7/19/2018  11:00 PM           5945 MinimalWordCount.java                                       
+-a----        7/19/2018  11:00 PM           9490 WindowedWordCount.java                                      
+-a----        7/19/2018  11:00 PM           7662 WordCount.java
 ```
 
 For a detailed introduction to the Beam concepts used in these examples, see the [WordCount Example Walkthrough]({{ site.baseurl }}/get-started/wordcount-example). Here, we'll just focus on executing `WordCount.java`.
@@ -67,6 +124,8 @@ After you've chosen which runner you'd like to use:
     1. Adding any runner-specific required options
     1. Choosing input files and an output location are accessible on the chosen runner. (For example, you can't access a local file if you are running the pipeline on an external cluster.)
 1.  Run your first WordCount pipeline.
+
+For Unix shells:
 
 {:.runner-direct}
 ```
@@ -103,6 +162,8 @@ $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
 
 {:.runner-dataflow}
 ```
+Make sure you complete the setup steps at https://beam.apache.org/documentation/runners/dataflow/#setup
+
 $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
      -Dexec.args="--runner=DataflowRunner --project=<your-gcp-project> \
                   --gcpTempLocation=gs://<your-gcs-bucket>/tmp \
@@ -110,6 +171,62 @@ $ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
      -Pdataflow-runner
 ```
 
+{:.runner-samza-local}
+```
+$ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount \
+     -Dexec.args="--inputFile=pom.xml --output=/tmp/counts --runner=SamzaRunner" -Psamza-runner
+```
+For Windows PowerShell:
+
+{:.runner-direct}
+```
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--inputFile=pom.xml --output=counts" -P direct-runner
+```
+
+{:.runner-apex}
+```
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--inputFile=pom.xml --output=counts --runner=ApexRunner" -P apex-runner
+```
+
+{:.runner-flink-local}
+```
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=FlinkRunner --inputFile=pom.xml --output=counts" -P flink-runner
+```
+
+{:.runner-flink-cluster}
+```
+PS> mvn package exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=FlinkRunner --flinkMaster=<flink master> --filesToStage=.\target\word-count-beam-bundled-0.1.jar `
+               --inputFile=C:\path\to\quickstart\pom.xml --output=C:\tmp\counts" -P flink-runner
+
+You can monitor the running job by visiting the Flink dashboard at http://<flink master>:8081
+```
+
+{:.runner-spark}
+```
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=SparkRunner --inputFile=pom.xml --output=counts" -P spark-runner
+```
+
+{:.runner-dataflow}
+```
+Make sure you complete the setup steps at https://beam.apache.org/documentation/runners/dataflow/#setup
+
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+ -D exec.args="--runner=DataflowRunner --project=<your-gcp-project> `
+               --gcpTempLocation=gs://<your-gcs-bucket>/tmp `
+               --inputFile=gs://apache-beam-samples/shakespeare/* --output=gs://<your-gcs-bucket>/counts" `
+ -P dataflow-runner
+```
+
+{:.runner-samza-local}
+```
+PS> mvn compile exec:java -D exec.mainClass=org.apache.beam.examples.WordCount `
+     -D exec.args="--inputFile=pom.xml --output=/tmp/counts --runner=SamzaRunner" -P samza-runner
+```
 
 ## Inspect the results
 
@@ -140,10 +257,14 @@ $ ls /tmp/counts*
 $ ls counts*
 ```
 
-
 {:.runner-dataflow}
 ```
 $ gsutil ls gs://<your-gcs-bucket>/counts*
+```
+
+{:.runner-samza-local}
+```
+$ ls /tmp/counts*
 ```
 
 When you look into the contents of the file, you'll see that they contain unique words and the number of occurrences of each word. The order of elements within the file may differ because the Beam model does not generally guarantee ordering, again to allow runners to optimize for efficiency.
@@ -226,11 +347,25 @@ barrenly: 1
 ...
 ```
 
+{:.runner-samza-local}
+```  
+$ more /tmp/counts*
+api: 7
+are: 2
+can: 2
+com: 14
+end: 14
+for: 14
+has: 2
+...
+```
+
 ## Next Steps
 
-* Learn more about these WordCount examples in the [WordCount Example Walkthrough]({{ site.baseurl }}/get-started/wordcount-example).
+* Learn more about the [Beam SDK for Java]({{ site.baseurl }}/documentation/sdks/java/)
+  and look through the [Java SDK API reference]({{ site.baseurl }}/documentation/sdks/javadoc).
+* Walk through these WordCount examples in the [WordCount Example Walkthrough]({{ site.baseurl }}/get-started/wordcount-example).
 * Dive in to some of our favorite [articles and presentations]({{ site.baseurl }}/documentation/resources).
-* Join the Beam [users@]({{ site.baseurl }}/get-started/support#mailing-lists) mailing list.
+* Join the Beam [users@]({{ site.baseurl }}/community/contact-us) mailing list.
 
-Please don't hesitate to [reach out]({{ site.baseurl }}/get-started/support) if you encounter any issues!
-
+Please don't hesitate to [reach out]({{ site.baseurl }}/community/contact-us) if you encounter any issues!

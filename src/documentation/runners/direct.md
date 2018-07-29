@@ -1,9 +1,23 @@
 ---
-layout: default
+layout: section
 title: "Direct Runner"
 permalink: /documentation/runners/direct/
+section_menu: section-menu/runners.html
 redirect_from: /learn/runners/direct/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 # Using the Direct Runner
 
 <nav class="language-switcher">
@@ -27,10 +41,10 @@ Here are some resources with information about how to test your pipelines.
 <ul>
   <!-- Java specific links -->
   <li class="language-java"><a href="{{ site.baseurl }}/blog/2016/10/20/test-stream.html">Testing Unbounded Pipelines in Apache Beam</a> talks about the use of Java classes <a href="{{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html">PAssert</a> and <a href="{{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/TestStream.html">TestStream</a> to test your pipelines.</li>
-  <li class="language-java">The <a href="{{ site.baseurl }}/get-started/wordcount-example/#testing-your-pipeline-via-passert">Apache Beam WordCount Example</a> contains an example of logging and testing a pipeline with <a href="{{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html"><code>PAssert</code></a>.</li>
+  <li class="language-java">The <a href="{{ site.baseurl }}/get-started/wordcount-example/#testing-your-pipeline-with-asserts">Apache Beam WordCount Walkthrough</a> contains an example of logging and testing a pipeline with <a href="{{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/testing/PAssert.html">PAssert</a>.</li>
 
   <!-- Python specific links -->
-  <li class="language-py">You can use <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/testing/util.py#L76">assert_that</a> to test your pipeline. The Python <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/examples/wordcount_debugging.py">WordCount Debugging Example</a> contains an example of logging and testing with <code>assert_that</code>.</li>
+  <li class="language-py">The <a href="{{ site.baseurl }}/get-started/wordcount-example/#testing-your-pipeline-with-asserts">Apache Beam WordCount Walkthrough</a> contains an example of logging and testing a pipeline with <a href="{{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.testing.util.html#apache_beam.testing.util.assert_that">assert_that</a>.</li>
 </ul>
 
 ## Direct Runner prerequisites and setup
@@ -55,10 +69,17 @@ When executing your pipeline from the command-line, set `runner` to `direct` or 
 
 See the reference documentation for the
 <span class="language-java">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/runners/direct/DirectOptions.html)</span>
-<span class="language-py">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.options.html#apache_beam.options.pipeline_options.DirectOptions)</span>
+<span class="language-py">[`DirectOptions`]({{ site.baseurl }}/documentation/sdks/pydoc/{{ site.release_latest }}/apache_beam.options.pipeline_options.html#apache_beam.options.pipeline_options.DirectOptions)</span>
 interface for defaults and additional pipeline configuration options.
 
 ## Additional information and caveats
 
+### Memory considerations
+
 Local execution is limited by the memory available in your local environment. It is highly recommended that you run your pipeline with data sets small enough to fit in local memory. You can create a small in-memory data set using a <span class="language-java">[`Create`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/transforms/Create.html)</span><span class="language-py">[`Create`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/core.py)</span> transform, or you can use a <span class="language-java">[`Read`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/io/Read.html)</span><span class="language-py">[`Read`](https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/iobase.py)</span> transform to work with small local or remote files.
+
+### Streaming execution
+
+If your pipeline uses an unbounded data source or sink, you must set the `streaming` option to `true`.
+
 

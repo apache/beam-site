@@ -1,43 +1,23 @@
 ---
-layout: default
+layout: section
 title: "Beam Team"
+section_menu: section-menu/contribute.html
 permalink: /contribute/team/
 redirect_from:
   - /project/team/
   - /team/
+redirect_to: https://home.apache.org/phonebook.html?pmc=beam
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-# Apache Beam Team
+http://www.apache.org/licenses/LICENSE-2.0
 
-A successful project requires many people to play many roles. Some members write code or documentation, while others are valuable as testers, submitting patches and suggestions.
-
-The team is comprised of Members and Contributors. Members have direct access to the source of a project and actively evolve the code-base. Contributors improve the project through submission of patches and suggestions to the Members. The number of Contributors to the project is unbounded. Get involved today. All contributions to the project are greatly appreciated.
-
-{% for team in site.beam_team %}
-  <h2>{{ team.group }}</h2>
-  <p>{{ team.description }}</p>
-  <table class="table table-hover">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Apache ID</th>
-        <th>Email</th>
-        <th>Organization</th>
-        <th>Roles</th>
-        <th>Time Zone</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for member in team.members %}
-        <tr>
-          <th scope="row">{{ member.name }}</th>
-          <td scope="row">{{ member.apache_id }}</td>
-          <td scope="row">{{ member.email }}</td>
-          <td scope="row">{{ member.organization }}</td>
-          <td scope="row">{{ member.roles }}</td>
-          <td scope="row">{{ member.time_zone }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-{% endfor %}
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->

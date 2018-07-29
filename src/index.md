@@ -15,6 +15,12 @@ logos:
 - title: Google Cloud Dataflow
   image_url: /images/logo_google_cloud.png
   url: https://cloud.google.com/dataflow/
+- title: Gearpump
+  image_url: /images/logo_gearpump.png
+  url: http://gearpump.apache.org/
+- title: Samza
+  image_url: /images/logo_samza.png
+  url: http://samza.apache.org/
 
 pillars:
 - title: Unified
@@ -27,11 +33,24 @@ pillars:
 cards:
 - quote: "A framework that delivers the flexibility and advanced functionality our customers need."
   name: –Talend
-- quote: "Apache Beam [has powerful semantics that solve real-world challenges of stream processing."
+- quote: "Apache Beam has powerful semantics that solve real-world challenges of stream processing."
   name: –PayPal
 - quote: "Apache Beam represents a principled approach for analyzing data streams."
   name: –data Artisans
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 <div class="hero-bg">
   <div class="hero section">
     <div class="hero__cols">
@@ -45,10 +64,12 @@ cards:
           </div>
           <div class="hero__ctas hero__ctas--first">
             <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseurl}}">Learn more</a>
+            <a class="button button--primary" href="{{'/get-started/downloads/'|prepend:site.baseurl}}">Download Beam SDK {{ site.release_latest }}</a>
           </div>
           <div class="hero__ctas">
             <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
             <a class="button" href="{{'/get-started/quickstart-py/'|prepend:site.baseurl}}">Python Quickstart</a>
+	    <a class="button" href="{{'/get-started/quickstart-go/'|prepend:site.baseurl}}">Go Quickstart</a>
           </div>
         </div>
       </div>
@@ -144,9 +165,11 @@ cards:
   </div>
   <div class="ctas__ctas ctas__ctas--top">
   <a class="button button--primary" href="{{'/get-started/beam-overview/'|prepend:site.baseurl}}">Learn more</a>
+  <a class="button button--primary" href="{{'/get-started/downloads/'|prepend:site.baseurl}}">Download Beam SDK {{ site.release_latest }}</a>
   </div>
   <div class="ctas__ctas">
   <a class="button" href="{{'/get-started/quickstart-java/'|prepend:site.baseurl}}">Java Quickstart</a>
   <a class="button" href="{{'/get-started/quickstart-py/'|prepend:site.baseurl}}">Python Quickstart</a>
+  <a class="button" href="{{'/get-started/quickstart-go/'|prepend:site.baseurl}}">Go Quickstart</a>
   </div>
 </div>

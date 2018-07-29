@@ -7,6 +7,19 @@ categories: blog
 authors:
 - tgroh
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 The Beam Programming Model unifies writing pipelines for Batch and Streaming
 pipelines. We’ve recently introduced a new PTransform to write tests for
@@ -45,8 +58,8 @@ from the Mobile Gaming example series.
 
 ## LeaderBoard and the Mobile Gaming Example
 
-[LeaderBoard](https://github.com/apache/beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/LeaderBoard.java#L177)
-is part of the [Beam mobile gaming examples](https://github.com/apache/beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game)
+[LeaderBoard](https://github.com/apache/beam/blob/master/examples/java/src/main/java/org/apache/beam/examples/complete/game/LeaderBoard.java#L177)
+is part of the [Beam mobile gaming examples](https://github.com/apache/beam/tree/master/examples/java/src/main/java/org/apache/beam/examples/complete/game)
 (and [walkthroughs]({{ site.baseurl }}/get-started/mobile-gaming-example/))
 which produces a continuous accounting of user and team scores. User scores are
 calculated over the lifetime of the program, while team scores are calculated

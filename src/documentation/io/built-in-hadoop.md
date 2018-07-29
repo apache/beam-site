@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Apache Hadoop InputFormat IO"
+section_menu: section-menu/documentation.html
 permalink: /documentation/io/built-in/hadoop/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 [Pipeline I/O Table of Contents]({{site.baseurl}}/documentation/io/io-toc/)
 
@@ -68,7 +82,7 @@ p.apply("read",
   # The Beam SDK for Python does not support Hadoop InputFormat IO.
 ```
 
-#### Read data with configuration and key translation 
+#### Read data with configuration and key translation
 
 For example, a Beam `Coder` is not available for `Key` class, so key translation is required.
 
@@ -98,7 +112,7 @@ p.apply("read",
   # The Beam SDK for Python does not support Hadoop InputFormat IO.
 ```
 
-#### Read data with configuration, value translation and key translation 
+#### Read data with configuration, value translation and key translation
 
 For example, Beam Coders are not available for both `Key` class and `Value` classes of `InputFormat`, so key and value translation are required.
 
@@ -164,9 +178,9 @@ SimpleFunction<Row, String> cassandraOutputValueType = SimpleFunction<Row, Strin
 ```py
   # The Beam SDK for Python does not support Hadoop InputFormat IO.
 ```
- 
+
 ### Elasticsearch - EsInputFormat
- 
+
 To read data from Elasticsearch, use `EsInputFormat`, which needs following properties to be set:
 
 ```java
@@ -230,7 +244,7 @@ PCollection<KV<Long, HCatRecord>> hcatData =
 ### Amazon DynamoDB - DynamoDBInputFormat
 
 To read data from Amazon DynamoDB, use `org.apache.hadoop.dynamodb.read.DynamoDBInputFormat`.
-DynamoDBInputFormat implements the older `org.apache.hadoop.mapred.InputFormat` interface and to make it compatible with HadoopInputFormatIO which uses the newer abstract class `org.apache.hadoop.mapreduce.InputFormat`, 
+DynamoDBInputFormat implements the older `org.apache.hadoop.mapred.InputFormat` interface and to make it compatible with HadoopInputFormatIO which uses the newer abstract class `org.apache.hadoop.mapreduce.InputFormat`,
 a wrapper API is required which acts as an adapter between HadoopInputFormatIO and DynamoDBInputFormat (or in general any InputFormat implementing `org.apache.hadoop.mapred.InputFormat`)
 The below example uses one such available wrapper API - <https://github.com/twitter/elephant-bird/blob/master/core/src/main/java/com/twitter/elephantbird/mapreduce/input/MapReduceInputFormatWrapper.java>
 
@@ -264,6 +278,73 @@ PCollection<Text, DynamoDBItemWritable> dynamoDBData =
   p.apply("read",
   HadoopInputFormatIO.<Text, DynamoDBItemWritable>read()
   .withConfiguration(dynamoDBConf);
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
+
+### Apache HBase - TableSnapshotInputFormat
+
+To read data from an HBase table snapshot, use `org.apache.hadoop.hbase.mapreduce.TableSnapshotInputFormat`.
+Reading from a table snapshot bypasses the HBase region servers, instead reading HBase data files directly from the filesystem.
+This is useful for cases such as reading historical data or offloading of work from the HBase cluster. 
+There are scenarios when this may prove faster than accessing content through the region servers using the `HBaseIO`.
+
+A table snapshot can be taken using the HBase shell or programmatically:
+```java
+try (
+    Connection connection = ConnectionFactory.createConnection(hbaseConf);
+    Admin admin = connection.getAdmin()
+  ) {
+  admin.snapshot(
+    "my_snaphshot",
+    TableName.valueOf("my_table"),
+    HBaseProtos.SnapshotDescription.Type.FLUSH);
+}  
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
+
+A `TableSnapshotInputFormat` is configured as follows:
+
+```java
+// Construct a typical HBase scan
+Scan scan = new Scan();
+scan.setCaching(1000);
+scan.setBatch(1000);
+scan.addColumn(Bytes.toBytes("CF"), Bytes.toBytes("col_1"));
+scan.addColumn(Bytes.toBytes("CF"), Bytes.toBytes("col_2"));
+
+Configuration hbaseConf = HBaseConfiguration.create();
+hbaseConf.set(HConstants.ZOOKEEPER_QUORUM, "zk1:2181");
+hbaseConf.set("hbase.rootdir", "/hbase");
+hbaseConf.setClass(
+    "mapreduce.job.inputformat.class", TableSnapshotInputFormat.class, InputFormat.class);
+hbaseConf.setClass("key.class", ImmutableBytesWritable.class, Writable.class);
+hbaseConf.setClass("value.class", Result.class, Writable.class);
+ClientProtos.Scan proto = ProtobufUtil.toScan(scan);
+hbaseConf.set(TableInputFormat.SCAN, Base64.encodeBytes(proto.toByteArray()));
+
+// Make use of existing utility methods
+Job job = Job.getInstance(hbaseConf); // creates internal clone of hbaseConf
+TableSnapshotInputFormat.setInput(job, "my_snapshot", new Path("/tmp/snapshot_restore"));
+hbaseConf = job.getConfiguration(); // extract the modified clone
+```
+
+```py
+  # The Beam SDK for Python does not support Hadoop InputFormat IO.
+```
+
+Call Read transform as follows:
+
+```java
+PCollection<ImmutableBytesWritable, Result> hbaseSnapshotData =
+  p.apply("read",
+  HadoopInputFormatIO.<ImmutableBytesWritable, Result>read()
+  .withConfiguration(hbaseConf);
 ```
 
 ```py

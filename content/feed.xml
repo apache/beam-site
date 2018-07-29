@@ -1,3 +1,14 @@
+<!--
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+   http://www.apache.org/licenses/LICENSE-2.0
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License. See accompanying LICENSE file.
+-->
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -9,8 +20,916 @@
     <generator>Jekyll v3.2.0</generator>
     
       <item>
+        <title>Apache Beam 2.5.0</title>
+        <description>&lt;p&gt;We are glad to present the new 2.5.0 release of Beam. This release includes
+multiple fixes and new functionalities. &lt;!--more--&gt; For more information
+please check the detailed release notes.&lt;/p&gt;
+
+&lt;h1 id=&quot;new-features--improvements&quot;&gt;New Features / Improvements&lt;/h1&gt;
+
+&lt;h2 id=&quot;go-sdk-support&quot;&gt;Go SDK support&lt;/h2&gt;
+&lt;p&gt;The Go SDK has been officially accepted into the project, after an incubation period and community effort. Go pipelines run on Dataflow runner. More details are &lt;a href=&quot;https://beam.apache.org/documentation/sdks/go/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;parquet-support&quot;&gt;Parquet support&lt;/h2&gt;
+&lt;p&gt;Support for Apache Parquet format was added. It uses Parquet 1.10 release which, thanks to AvroParquerWriter’s API changes, allows FileIO.Sink implementation.&lt;/p&gt;
+
+&lt;h2 id=&quot;performanceintegration-tests&quot;&gt;Performance/Integration Tests&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Added new integration tests - HCatalogIOIT (Hive), HBaseIOIT, ParquetIOIT (with the IO itself, local filesystem, HDFS)&lt;/li&gt;
+  &lt;li&gt;Multinode (3 data node) HDFS cluster is used for running tests on HDFS.&lt;/li&gt;
+  &lt;li&gt;Several improvements on performance tests running and results analysis.&lt;/li&gt;
+  &lt;li&gt;Scaled up Kubernetes cluster from 1 to 3 nodes.&lt;/li&gt;
+  &lt;li&gt;Added metrics in Spark streaming.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;internal-build-system-migrated-to-gradle&quot;&gt;Internal Build System: Migrated to Gradle&lt;/h2&gt;
+&lt;p&gt;After a months-long community effort, the internal Beam build has been migrated from Maven to Gradle. The new build system was chosen because of dependency-driven build support, incremental build/test, and support for non-Java languages.&lt;/p&gt;
+
+&lt;h2 id=&quot;nexmark-improvements&quot;&gt;Nexmark Improvements&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Kafka support as a source/sink for events and results.&lt;/li&gt;
+  &lt;li&gt;Translation of some queries to Beam SQL.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;beam-sql&quot;&gt;Beam SQL&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Support for MAP, ROW, ARRAY data types&lt;/li&gt;
+  &lt;li&gt;Support UNNEST on array fields&lt;/li&gt;
+  &lt;li&gt;Improved optimizations&lt;/li&gt;
+  &lt;li&gt;Upgrade Calcite to 1.16&lt;/li&gt;
+  &lt;li&gt;Support SQL on POJOs via automatic conversion&lt;/li&gt;
+  &lt;li&gt;Schema moved into core Beam&lt;/li&gt;
+  &lt;li&gt;UDAFs can be indirect suclasses of CombineFn&lt;/li&gt;
+  &lt;li&gt;Many other small bugfixes&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;portability&quot;&gt;Portability&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Common shared code related to supporting portable execution for runners.&lt;/li&gt;
+  &lt;li&gt;Python SDK supporting side inputs over the portability APIs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;extract-metrics-in-a-runner-agnostic-way&quot;&gt;Extract metrics in a runner agnostic way&lt;/h2&gt;
+&lt;p&gt;Metrics are pushed by the runners to configurable sinks (Http REST sink available). It is already enabled in Flink and Spark runner, work is in progress for Dataflow.&lt;/p&gt;
+
+&lt;h1 id=&quot;miscellaneous-fixes&quot;&gt;Miscellaneous Fixes&lt;/h1&gt;
+
+&lt;h2 id=&quot;sdks&quot;&gt;SDKs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Implemented HDFS FileSystem for Python SDK.&lt;/li&gt;
+  &lt;li&gt;Python SDK adds support for side inputs for streaming execution.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;runners&quot;&gt;Runners&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;Updated Spark runner to Spark version 2.3.1&lt;/li&gt;
+  &lt;li&gt;Fixed issue with late elements windowed into expired fixed windows get dropped in Directrunner.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ios&quot;&gt;IOs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CassandraIO gained a better split algorithm based on overlapping regions.&lt;/li&gt;
+  &lt;li&gt;ElasticsearchIO supports partial updates.&lt;/li&gt;
+  &lt;li&gt;ElasticsearchIO allows to pass id, type and index per document.&lt;/li&gt;
+  &lt;li&gt;SolrIO supports a more robust retry on write strategy.&lt;/li&gt;
+  &lt;li&gt;S3 FileSystem supports encryption (SSE-S3, SSE-C and SSE-KMS).&lt;/li&gt;
+  &lt;li&gt;Improved connection management in JdbcIO.&lt;/li&gt;
+  &lt;li&gt;Added support the element timestamps while publishing to Kafka.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;other&quot;&gt;Other&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Use Java ErrorProne for static analysis.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;list-of-contributors&quot;&gt;List of Contributors&lt;/h1&gt;
+
+&lt;p&gt;According to git shortlog, the following 84 people contributed to the 2.5.0 release. Thank you to all contributors!&lt;/p&gt;
+
+&lt;p&gt;Ahmet Altay, Alan Myrvold, Alex Amato, Alex Van Boxel, Alexander Dejanovski, Alexey Romanenko, Aljoscha Krettek, ananvay, Andreas Ehrencrona, Andrew Pilloud, Ankur Goenka, Anton Kedin, arkash, Austin Bennett, Axel Magnuson, Ben Chambers, Ben Sidhom, Bill Neubauer, Boyuan Zhang, Braden Bassingthwaite, Cade Markegard, cclauss, Chamikara Jayalath, Charles Chen, Chuan Yu Foo, Cody Schroeder, Colm O hEigeartaigh, Daniel Oliveira, Dariusz Aniszewski, David Cavazos, Dawid Wysakowicz, Eric Roshan-Eisner, Etienne Chauchot, Eugene Kirpichov, Flavio Fiszman, Geet Kumar, GlennAmmons, Grzegorz Kołakowski, Henning Rohde, Innocent Djiofack, Ismaël Mejía, Jack Hsueh, Jason Kuster, Javier Antonio Gonzalez Trejo, Jean-Baptiste Onofré, Kai Jiang, Kamil Szewczyk, Katarzyna Kucharczyk, Kenneth Jung, Kenneth Knowles, Kevin Peterson, Lukasz Cwik, Łukasz Gajowy, Mairbek Khadikov, Manu Zhang, Maria Garcia Herrero, Marian Dvorsky, Mark Liu, Matthias Feys, Matthias Wessendorf, mingmxu, Nathan Howell, Pablo Estrada, Paul Gerver, Raghu Angadi, rarokni, Reuven Lax, Rezan Achmad, Robbe Sneyders, Robert Bradshaw, Robert Burke, Romain Manni-Bucau, Sam Waggoner, Sam Whittle, Scott Wegner, Stephan Hoyer, Thomas Groh, Thomas Weise, Tim Robertson, Udi Meiri, Valentyn Tymofieiev, XuMingmin, Yifan Zou, Yunqing Zhou&lt;/p&gt;
+</description>
+        <pubDate>Tue, 26 Jun 2018 01:00:01 -0700</pubDate>
+        <link>https://beam.apache.org/blog/2018/06/26/beam-2.5.0.html</link>
+        <guid isPermaLink="true">https://beam.apache.org/blog/2018/06/26/beam-2.5.0.html</guid>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>Apache Beam 2.3.0</title>
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;We are glad to present the new 2.3.0 release of Beam. This release includes
+multiple fixes and new functionalities. &lt;!--more--&gt; For more information
+please check the detailed release notes.&lt;/p&gt;
+
+&lt;h1 id=&quot;new-features--improvements&quot;&gt;New Features / Improvements&lt;/h1&gt;
+
+&lt;h2 id=&quot;beam-moves-to-java-8&quot;&gt;Beam moves to Java 8&lt;/h2&gt;
+
+&lt;p&gt;The supported version of Java for Beam is now Java 8. The code and examples have
+been refactored to use multiple of the advantages of the language, e.g. lambdas,
+streams, improved type inference, etc.&lt;/p&gt;
+
+&lt;h2 id=&quot;spark-runner-is-now-based-on-spark-2x&quot;&gt;Spark runner is now based on Spark 2.x&lt;/h2&gt;
+
+&lt;p&gt;Spark runner moves forward into the Spark 2.x development line, this would allow
+to benefit of improved performance, as well as open the runner for future
+compatibility with the Structured Streaming APIs. Notice that support for Spark
+1.x is finished with this release.&lt;/p&gt;
+
+&lt;h2 id=&quot;amazon-web-services-s3-filesystem-support&quot;&gt;Amazon Web Services S3 Filesystem support&lt;/h2&gt;
+
+&lt;p&gt;Beam already supported AWS S3 via HadoopFileSystem, but this version brings a
+native implementation with the corresponding performance advantages of the S3
+filesystem.&lt;/p&gt;
+
+&lt;h2 id=&quot;general-purpose-writing-to-files&quot;&gt;General-purpose writing to files&lt;/h2&gt;
+
+&lt;p&gt;This release contains a new transform, FileIO.write() / writeDynamic() that
+implements a general-purpose fluent and Java8-friendly API for writing to files
+using a FileIO.Sink. This API has similar capabilities to DynamicDestinations
+APIs from Beam 2.2 but is much easier to use and extend. The DynamicDestinations
+APIs for writing to files are deprecated by it, as is FileBasedSink.&lt;/p&gt;
+
+&lt;h2 id=&quot;splittable-dofn-support-on-the-python-sdk&quot;&gt;Splittable DoFn support on the Python SDK&lt;/h2&gt;
+
+&lt;p&gt;This release adds the Splittable DoFn API for Python SDK and adds Splittable
+DoFn support for Python streaming DirectRunner.&lt;/p&gt;
+
+&lt;h2 id=&quot;portability&quot;&gt;Portability&lt;/h2&gt;
+
+&lt;p&gt;Progress continues to being able to execute Python on runners other then Google
+Cloud Dataflow and the Go SDK on any runner.&lt;/p&gt;
+
+&lt;h1 id=&quot;miscellaneous-fixes&quot;&gt;Miscellaneous Fixes&lt;/h1&gt;
+
+&lt;h2 id=&quot;sdks&quot;&gt;SDKs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;MapElements and FlatMapElements support using side inputs using the new
+interface Contextful.Fn. For library authors, this interface is the
+recommended choice for user-code callbacks that may use side inputs.&lt;/li&gt;
+  &lt;li&gt;Introduces the family of Reify transforms for converting between explicit and
+implicit representations of various Beam entities.&lt;/li&gt;
+  &lt;li&gt;Introduces two transforms for approximate sketching of data: Count-Min Sketch
+(approximate element frequency estimation) and HyperLogLog (approximate
+cardinality estimation).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;runners&quot;&gt;Runners&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Staging files on Dataflow shows progress&lt;/li&gt;
+  &lt;li&gt;Flink runner is based now on Flink version 1.4.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ios&quot;&gt;IOs&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;BigtableIO now supports ValueProvider configuration&lt;/li&gt;
+  &lt;li&gt;BigQueryIO supports writing bounded collections to tables with partition
+decorators&lt;/li&gt;
+  &lt;li&gt;KafkaIO moves to version 1.0 (it is still backwards compatible with versions &amp;gt;= 0.9.x.x)&lt;/li&gt;
+  &lt;li&gt;Added IO source for VCF files (Python)&lt;/li&gt;
+  &lt;li&gt;Added support for backoff on deadlocks in JdbcIO.write() and connection
+improvement&lt;/li&gt;
+  &lt;li&gt;Improved performance of KinesisIO.read()&lt;/li&gt;
+  &lt;li&gt;Many improvements to TikaIO&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;list-of-contributors&quot;&gt;List of Contributors&lt;/h1&gt;
+
+&lt;p&gt;According to git shortlog, the following 78 people contributed to the 2.3.0 release. Thank you to all contributors!&lt;/p&gt;
+
+&lt;p&gt;Ahmet Altay, Alan Myrvold, Alex Amato, Alexey Romanenko, Ankur Goenka, Anton Kedin, Arnaud Fournier, Asha Rostamianfar, Ben Chambers, Ben Sidhom, Bill Neubauer, Brian Foo, cclauss, Chamikara Jayalath, Charles Chen, Colm O hEigeartaigh, Daniel Oliveira, Dariusz Aniszewski, David Cavazos, David Sabater, David Sabater Dinter, Dawid Wysakowicz, Dmytro Ivanov, Etienne Chauchot, Eugene Kirpichov, Exprosed, Grzegorz Kołakowski, Henning Rohde, Holden Karau, Huygaa Batsaikhan, Ilya Figotin, Innocent Djiofack, Ismaël Mejía, Itamar Ostricher, Jacky, Jacob Marble, James Xu, Jean-Baptiste Onofré, Jeremie Lenfant-Engelmann, Kamil Szewczyk, Kenneth Knowles, Lukasz Cwik, Łukasz Gajowy, Luke Zhu, Mairbek Khadikov, María García Herrero, Marian Dvorsky, Mark Liu, melissa, Miles Saul, mingmxu, Motty Gruda, nerdynick, Neville Li, Nigel Kilmer, Pablo, Pawel Kaczmarczyk, Petr Shevtsov, Rafal Wojdyla, Raghu Angadi, Robert Bradshaw, Robert Burke, Romain Manni-Bucau, Ryan Niemocienski, Ryan Skraba, Sam Whittle, Scott Wegner, Shashank Prabhakara, Solomon Duskis, Thomas Groh, Thomas Weise, Udi Meiri, Valentyn Tymofieiev, wtanaka.com, XuMingmin, zhouhai02, Zohar Yahav, 琨瑜.&lt;/p&gt;
+
+</description>
+        <pubDate>Mon, 19 Feb 2018 00:00:01 -0800</pubDate>
+        <link>https://beam.apache.org/blog/2018/02/19/beam-2.3.0.html</link>
+        <guid isPermaLink="true">https://beam.apache.org/blog/2018/02/19/beam-2.3.0.html</guid>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>Apache Beam: A Look Back at 2017</title>
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;On January 10, 2017, Apache Beam got &lt;a href=&quot;/blog/2017/01/10/beam-graduates.html&quot;&gt;promoted&lt;/a&gt;
+as a Top-Level Apache Software Foundation project. It was an important milestone
+that validated the value of the project, legitimacy of its community, and
+heralded its growing adoption. In the past year, Apache Beam has been on a
+phenomenal growth trajectory, with significant growth in its community and
+feature set. Let us walk you through some of the notable achievements.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;use-cases&quot;&gt;Use cases&lt;/h2&gt;
+
+&lt;p&gt;First, lets take a glimpse at how Beam was used in 2017. Apache Beam being a
+unified framework for batch and stream processing, enables a very wide spectrum
+of diverse use cases. Here are some use cases that exemplify the versatility of
+Beam.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/2017-look-back/timeline.png&quot; alt=&quot;Use Cases&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;community-growth&quot;&gt;Community growth&lt;/h2&gt;
+
+&lt;p&gt;In 2017, Apache Beam had 174 contributors worldwide, from many different
+organizations. As an Apache project, we are proud to count 18 PMC members and
+31 committers. The community had 7 releases in 2017, each bringing a rich set of
+new features and fixes.&lt;/p&gt;
+
+&lt;p&gt;The most obvious and encouraging sign of the growth of Apache Beam’s community,
+and validation of its core value proposition of portability, is the addition of
+significant new &lt;a href=&quot;/documentation/runners/capability-matrix/&quot;&gt;runners&lt;/a&gt;
+(i.e. execution engines). We entered 2017 with Apache Flink, Apache Spark 1.x,
+Google Cloud Dataflow, Apache Apex, and Apache Gearpump. In 2017, the following
+new and updated runners were developed:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Apache Spark 2.x update&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.ibm.com/blogs/bluemix/2017/10/streaming-analytics-updates-ibm-streams-runner-apache-beam-2-0/&quot;&gt;IBM Streams runner&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;MapReduce runner&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jstorm.io/&quot;&gt;JStorm runner&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In addition to runners, Beam added new IO connectors, some notable ones being
+the Cassandra, MQTT, AMQP, HBase/HCatalog, JDBC, Solr, Tika, Redis, and
+ElasticSearch connectors. Beam’s IO connectors make it possible to read from or
+write to data sources/sinks even when they are not natively supported by the
+underlying execution engine. Beam also provides fully pluggable filesystem
+support, allowing us to support and extend our coverage to HDFS, S3, Azure
+Storage, and Google Storage. We continue to add new IO connectors and
+filesystems to extend the Beam use cases.&lt;/p&gt;
+
+&lt;p&gt;A particularly telling sign of the maturity of an open source community is when
+it is able to collaborate with multiple other open source communities, and
+mutually improve the state of the art. Over the past few months, the Beam,
+Calcite, and Flink communities have come together to define a robust &lt;a href=&quot;https://docs.google.com/document/d/1wrla8mF_mmq-NW9sdJHYVgMyZsgCmHumJJ5f5WUzTiM/edit&quot;&gt;spec&lt;/a&gt;
+for Streaming SQL, with engineers from over four organizations contributing to
+it. If, like us, you are excited by the prospect of improving the state of
+streaming SQL, please join us!&lt;/p&gt;
+
+&lt;p&gt;In addition to SQL, new XML and JSON based declarative DSLs are also in PoC.&lt;/p&gt;
+
+&lt;h2 id=&quot;continued-innovation&quot;&gt;Continued innovation&lt;/h2&gt;
+
+&lt;p&gt;Innovation is important to the success on any open source project, and Beam has
+a rich history of bringing innovative new ideas to the open source community.
+Apache Beam was the first to introduce some seminal concepts in the world of
+big-data processing:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Unified batch and streaming SDK that enables users to author big-data jobs
+without having to learn multiple disparate SDKs/APIs.&lt;/li&gt;
+  &lt;li&gt;Cross-Engine Portability: Giving enterprises the confidence that workloads
+authored today will not have to be re-written when open source engines become
+outdated and are supplanted by newer ones.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101&quot;&gt;Semantics&lt;/a&gt;
+essential for reasoning about unbounded unordered data, and achieving
+consistent and correct output from a streaming job.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In 2017, the pace of innovation continued. The following capabilities were
+introduced:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Cross-Language Portability framework, and a &lt;a href=&quot;https://golang.org/&quot;&gt;Go&lt;/a&gt; SDK
+developed with it.&lt;/li&gt;
+  &lt;li&gt;Dynamically Shardable IO (SplittableDoFn)&lt;/li&gt;
+  &lt;li&gt;Support for schemas in PCollection, allowing us to extend the runner
+capabilities.&lt;/li&gt;
+  &lt;li&gt;Extensions addressing new use cases such as machine learning, and new data
+formats.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;areas-of-improvement&quot;&gt;Areas of improvement&lt;/h2&gt;
+
+&lt;p&gt;Any retrospective view of a project is incomplete without an honest assessment
+of areas of improvement. Two aspects stand out:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Helping runners showcase their individual strengths. After all, portability
+does not imply homogeneity. Different runners have different areas in which
+they excel, and we need to do a better job of helping them highlight their
+strengths.&lt;/li&gt;
+  &lt;li&gt;Based on the previous point, helping customers make a more informed decision
+when they select a runner or migrate from one to another.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In 2018, we aim to take proactive steps to improve the above aspects.&lt;/p&gt;
+
+&lt;h2 id=&quot;ethos-of-the-project-and-its-community&quot;&gt;Ethos of the project and its community&lt;/h2&gt;
+
+&lt;p&gt;The world of batch and stream big-data processing today is reminiscent of the
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Tower_of_Babel&quot;&gt;Tower of Babel&lt;/a&gt; parable: a
+slowdown of progress because different communities spoke different languages.
+Similarly, today there are multiple disparate big-data SDKs/APIs, each with
+their own distinct terminology to describe similar concepts. The side effect is
+user confusion and slower adoption.&lt;/p&gt;
+
+&lt;p&gt;The Apache Beam project aims to provide an industry standard portable SDK that
+will:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Benefit users by providing &lt;strong&gt;&lt;em&gt;innovation with stability&lt;/em&gt;&lt;/strong&gt;: The separation of
+SDK and engine enables healthy competition between runners, without requiring
+users to constantly learn new SDKs/APIs and rewrite their workloads to
+benefit from new innovation.&lt;/li&gt;
+  &lt;li&gt;Benefit big-data engines by &lt;strong&gt;&lt;em&gt;growing the pie for everyone&lt;/em&gt;&lt;/strong&gt;: Making it
+easier for users to author, maintain, upgrade and migrate their big-data
+workloads will lead to significant growth in the number of production
+big-data deployments.&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+        <pubDate>Tue, 09 Jan 2018 00:00:01 -0800</pubDate>
+        <link>https://beam.apache.org/blog/2018/01/09/beam-a-look-back.html</link>
+        <guid isPermaLink="true">https://beam.apache.org/blog/2018/01/09/beam-a-look-back.html</guid>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>Timely (and Stateful) Processing with Apache Beam</title>
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;In a &lt;a href=&quot;/blog/2017/02/13/stateful-processing.html&quot;&gt;prior blog
+post&lt;/a&gt;, I
+introduced the basics of stateful processing in Apache Beam, focusing on the
+addition of state to per-element processing. So-called &lt;em&gt;timely&lt;/em&gt; processing
+complements stateful processing in Beam by letting you set timers to request a
+(stateful) callback at some point in the future.&lt;/p&gt;
+
+&lt;p&gt;What can you do with timers in Beam? Here are some examples:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;You can output data buffered in state after some amount of processing time.&lt;/li&gt;
+  &lt;li&gt;You can take special action when the watermark estimates that you have
+received all data up to a specified point in event time.&lt;/li&gt;
+  &lt;li&gt;You can author workflows with timeouts that alter state and emit output in
+response to the absence of additional input for some period of time.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These are just a few possibilities. State and timers together form a powerful
+programming paradigm for fine-grained control to express a huge variety of
+workflows.  Stateful and timely processing in Beam is portable across data
+processing engines and integrated with Beam’s unified model of event time
+windowing in both streaming and batch processing.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2 id=&quot;what-is-stateful-and-timely-processing&quot;&gt;What is stateful and timely processing?&lt;/h2&gt;
+
+&lt;p&gt;In my prior post, I developed an understanding of stateful processing largely
+by contrast with associative, commutative combiners. In this post, I’ll
+emphasize a perspective that I had mentioned only briefly: that elementwise
+processing with access to per-key-and-window state and timers represents a
+fundamental pattern for “embarrassingly parallel” computation, distinct from
+the others in Beam.&lt;/p&gt;
+
+&lt;p&gt;In fact, stateful and timely computation is the low-level computational pattern
+that underlies the others. Precisely because it is lower level, it allows you
+to really micromanage your computations to unlock new use cases and new
+efficiencies. This incurs the complexity of manually managing your state and
+timers - it isn’t magic! Let’s first look again at the two primary
+computational patterns in Beam.&lt;/p&gt;
+
+&lt;h3 id=&quot;element-wise-processing-pardo-map-etc&quot;&gt;Element-wise processing (ParDo, Map, etc)&lt;/h3&gt;
+
+&lt;p&gt;The most elementary embarrassingly parallel pattern is just using a bunch of
+computers to apply the same function to every input element of a massive
+collection. In Beam, per-element processing like this is expressed as a basic
+&lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo&lt;/code&gt; - analogous to “Map” from MapReduce - which is like an enhanced “map”,
+“flatMap”, etc, from functional programming.&lt;/p&gt;
+
+&lt;p&gt;The following diagram illustrates per-element processing. Input elements are
+squares, output elements are triangles. The colors of the elements represent
+their key, which will matter later. Each input element maps to the
+corresponding output element(s) completely independently. Processing may be
+distributed across computers in any way, yielding essentially limitless
+parallelism.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/ParDo.png&quot; alt=&quot;ParDo offers limitless parallelism&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This pattern is obvious, exists in all data-parallel paradigms, and has
+a simple stateless implementation. Every input element can be processed
+independently or in arbitrary bundles. Balancing the work between computers is
+actually the hard part, and can be addressed by splitting, progress estimation,
+work-stealing, etc.&lt;/p&gt;
+
+&lt;h3 id=&quot;per-key-and-window-aggregation-combine-reduce-groupbykey-etc&quot;&gt;Per-key (and window) aggregation (Combine, Reduce, GroupByKey, etc.)&lt;/h3&gt;
+
+&lt;p&gt;The other embarassingly parallel design pattern at the heart of Beam is per-key
+(and window) aggregation. Elements sharing a key are colocated and then
+combined using some associative and commutative operator. In Beam this is
+expressed as a &lt;code class=&quot;highlighter-rouge&quot;&gt;GroupByKey&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;Combine.perKey&lt;/code&gt;, and corresponds to the shuffle
+and “Reduce” from MapReduce.  It is sometimes helpful to think of per-key
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Combine&lt;/code&gt; as the fundamental operation, and raw &lt;code class=&quot;highlighter-rouge&quot;&gt;GroupByKey&lt;/code&gt; as a combiner that
+just concatenates input elements. The communication pattern for the input
+elements is the same, modulo some optimizations possible for &lt;code class=&quot;highlighter-rouge&quot;&gt;Combine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In the illustration here, recall that the color of each element represents the
+key. So all of the red squares are routed to the same location where they are
+aggregated and the red triangle is the output.  Likewise for the yellow and
+green squares, etc. In a real application, you may have millions of keys, so
+the parallelism is still massive.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/CombinePerKey.png&quot; alt=&quot;Gathering elements per key then combining them&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The underlying data processing engine will, at some level of abstraction, use
+state to perform this aggregation across all the elements arriving for a key.
+In particular, in a streaming execution, the aggregation process may need to
+wait for more data to arrive or for the watermark to estimate that all input
+for an event time window is complete. This requires some way to store the
+intermediate aggregation between input elements as well a way to a receive a
+callback when it is time to emit the result. As a result, the &lt;em&gt;execution&lt;/em&gt; of
+per key aggregation by a stream processing engine fundamentally involves state
+and timers.&lt;/p&gt;
+
+&lt;p&gt;However, &lt;em&gt;your&lt;/em&gt; code is just a declarative expression of the aggregation
+operator.  The runner can choose a variety of ways to execute your operator. 
+I went over this in detail in &lt;a href=&quot;/blog/2017/02/13/stateful-processing.html&quot;&gt;my prior post focused on state alone&lt;/a&gt;. Since you do not
+observe elements in any defined order, nor manipulate mutable state or timers
+directly, I call this neither stateful nor timely processing.&lt;/p&gt;
+
+&lt;h3 id=&quot;per-key-and-window-stateful-timely-processing&quot;&gt;Per-key-and-window stateful, timely processing&lt;/h3&gt;
+
+&lt;p&gt;Both &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Combine.perKey&lt;/code&gt; are standard patterns for parallelism that go
+back decades. When implementing these in a massive-scale distributed data
+processing engine, we can highlight a few characteristics that are particularly
+important.&lt;/p&gt;
+
+&lt;p&gt;Let us consider these characteristics of &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;You write single-threaded code to process one element.&lt;/li&gt;
+  &lt;li&gt;Elements are processed in arbitrary order with no dependencies
+or interaction between processing of elements.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And these characteristics for &lt;code class=&quot;highlighter-rouge&quot;&gt;Combine.perKey&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Elements for a common key and window are gathered together.&lt;/li&gt;
+  &lt;li&gt;A user-defined operator is applied to those elements.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Combining some of the characteristics of unrestricted parallel mapping and
+per-key-and-window combination, we can discern a megaprimitive from which we
+build stateful and timely processing:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Elements for a common key and window are gathered together.&lt;/li&gt;
+  &lt;li&gt;Elements are processed in arbitrary order.&lt;/li&gt;
+  &lt;li&gt;You write single-threaded code to process one element or timer, possibly
+accessing state or setting timers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the illustration below, the red squares are gathered and fed one by one to
+the stateful, timely, &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt;. As each element is processed, the &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; has
+access to state (the color-partitioned cylinder on the right) and can set
+timers to receive callbacks (the colorful clocks on the left).&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/StateAndTimers.png&quot; alt=&quot;Gathering elements per key then timely, stateful processing&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;So that is the abstract notion of per-key-and-window stateful, timely
+processing in Apache Beam. Now let’s see what it looks like to write code that
+accesses state, sets timers, and receives callbacks.&lt;/p&gt;
+
+&lt;h2 id=&quot;example-batched-rpc&quot;&gt;Example: Batched RPC&lt;/h2&gt;
+
+&lt;p&gt;To demonstrate stateful and timely processing, let’s work through a concrete
+example, with code.&lt;/p&gt;
+
+&lt;p&gt;Suppose you are writing a system to analyze events.  You have a ton of data
+coming in and you need to enrich each event by RPC to an external system. You
+can’t just issue an RPC per event.  Not only would this be terrible for
+performance, but it would also likely blow your quota with the external system.
+So you’d like to gather a number of events, make one RPC for them all, and then
+output all the enriched events.&lt;/p&gt;
+
+&lt;h3 id=&quot;state&quot;&gt;State&lt;/h3&gt;
+
+&lt;p&gt;Let’s set up the state we need to track batches of elements. As each element
+comes in, we will write the element to a buffer while tracking the number of
+elements we have buffered. Here are the state cells in code:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DoFn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferedEvents&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bag&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TBD&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; 
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# State and timers are not yet supported in Beam's Python SDK.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Follow https://issues.apache.org/jira/browse/BEAM-2687 for updates.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Walking through the code, we have:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The state cell &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;buffer&quot;&lt;/code&gt; is an unordered bag of buffered events.&lt;/li&gt;
+  &lt;li&gt;The state cell &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;count&quot;&lt;/code&gt; tracks how many events have been buffered.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Next, as a recap of reading and writing state, let’s write our &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt;
+method. We will choose a limit on the size of the buffer, &lt;code class=&quot;highlighter-rouge&quot;&gt;MAX_BUFFER_SIZE&lt;/code&gt;. If
+our buffer reaches this size, we will perform a single RPC to enrich all the
+events, and output.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DoFn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAX_BUFFER_SIZE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferedEvents&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;bag&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@ProcessElement&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;ProcessContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;firstNonNull&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;write&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;element&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAX_BUFFER_SIZE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TBD&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; 
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# State and timers are not yet supported in Beam's Python SDK.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Follow https://issues.apache.org/jira/browse/BEAM-2687 for updates.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Here is an illustration to accompany the code:&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/BatchedRpcState.png&quot; alt=&quot;Batching elements in state, then performing RPCs&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;The blue box is the &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt;.&lt;/li&gt;
+  &lt;li&gt;The yellow box within it is the &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt; method.&lt;/li&gt;
+  &lt;li&gt;Each input event is a red square - this diagram just shows the activity for
+a single key, represented by the color red. Your &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; will run the same
+workflow in parallel for all keys which are perhaps user IDs.&lt;/li&gt;
+  &lt;li&gt;Each input event is written to the buffer as a red triangle, representing
+the fact that you might actually buffer more than just the raw input, even
+though this code doesn’t.&lt;/li&gt;
+  &lt;li&gt;The external service is drawn as a cloud. When there are enough buffered
+events, the &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt; method reads the events from state and issues
+a single RPC.&lt;/li&gt;
+  &lt;li&gt;Each output enriched event is drawn as a red circle. To consumers of this
+output, it looks just like an element-wise operation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;So far, we have only used state, but not timers. You may have noticed that
+there is a problem - there will usually be data left in the buffer. If no more
+input arrives, that data will never be processed. In Beam, every window has
+some point in event time when any further input for the window is considered
+too late and is discarded. At this point, we say that the window has “expired”.
+Since no further input can arrive to access the state for that window, the
+state is also discarded. For our example, we need to ensure that all leftover
+events are output when the window expires.&lt;/p&gt;
+
+&lt;h3 id=&quot;event-time-timers&quot;&gt;Event Time Timers&lt;/h3&gt;
+
+&lt;p&gt;An event time timer requests a call back when the watermark for an input
+&lt;code class=&quot;highlighter-rouge&quot;&gt;PCollection&lt;/code&gt; reaches some threshold. In other words, you can use an event time
+timer to take action at a specific moment in event time - a particular point of
+completeness for a &lt;code class=&quot;highlighter-rouge&quot;&gt;PCollection&lt;/code&gt; - such as when a window expires.&lt;/p&gt;
+
+&lt;p&gt;For our example, let us add an event time timer so that when the window expires,
+any events remaining in the buffer are processed.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DoFn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@TimerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;expiry&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TimerSpec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expirySpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TimerSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TimeDomain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;EVENT_TIME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@ProcessElement&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;ProcessContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;BoundedWindow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@TimerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;expiry&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expiryTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;n&quot;&gt;expiryTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;maxTimestamp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allowedLateness&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+
+    &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;same&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;logic&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;above&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@OnTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;expiry&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onExpiry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;OnTimerContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEmpty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# State and timers are not yet supported in Beam's Python SDK.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Follow https://issues.apache.org/jira/browse/BEAM-2687 for updates.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Let’s unpack the pieces of this snippet:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;We declare an event time timer with &lt;code class=&quot;highlighter-rouge&quot;&gt;@TimerId(&quot;expiry&quot;)&lt;/code&gt;. We will use the
+identifier &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;expiry&quot;&lt;/code&gt; to identify the timer for setting the callback time as
+well as receiving the callback.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The variable &lt;code class=&quot;highlighter-rouge&quot;&gt;expiryTimer&lt;/code&gt;, annotated with &lt;code class=&quot;highlighter-rouge&quot;&gt;@TimerId&lt;/code&gt;, is set to the value
+&lt;code class=&quot;highlighter-rouge&quot;&gt;TimerSpecs.timer(TimeDomain.EVENT_TIME)&lt;/code&gt;, indicating that we want a
+callback according to the event time watermark of the input elements.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;In the &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt; element we annotate a parameter &lt;code class=&quot;highlighter-rouge&quot;&gt;@TimerId(&quot;expiry&quot;)
+Timer&lt;/code&gt;. The Beam runner automatically provides this &lt;code class=&quot;highlighter-rouge&quot;&gt;Timer&lt;/code&gt; parameter by which
+we can set (and reset) the timer. It is inexpensive to reset a timer
+repeatedly, so we simply set it on every element.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;We define the &lt;code class=&quot;highlighter-rouge&quot;&gt;onExpiry&lt;/code&gt; method, annotated with &lt;code class=&quot;highlighter-rouge&quot;&gt;@OnTimer(&quot;expiry&quot;)&lt;/code&gt;, that
+performs a final event enrichment RPC and outputs the result. The Beam runner
+delivers the callback to this method by matching its identifier.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Illustrating this logic, we have the diagram below:&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/BatchedRpcExpiry.png&quot; alt=&quot;Batched RPCs with window expiration&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Both the &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;@OnTimer(&quot;expiry&quot;)&lt;/code&gt; methods perform the same
+access to buffered state, perform the same batched RPC, and output enriched
+elements.&lt;/p&gt;
+
+&lt;p&gt;Now, if we are executing this in a streaming real-time manner, we might still
+have unbounded latency for particular buffered data. If the watermark is advancing
+very slowly, or event time windows are chosen to be quite large, then a lot of
+time might pass before output is emitted based either on enough elements or
+window expiration. We can also use timers to limit the amount of wall-clock
+time, aka processing time, before we process buffered elements. We can choose
+some reasonable amount of time so that even though we are issuing RPCs that are
+not as large as they might be, it is still few enough RPCs to avoid blowing our
+quota with the external service.&lt;/p&gt;
+
+&lt;h3 id=&quot;processing-time-timers&quot;&gt;Processing Time Timers&lt;/h3&gt;
+
+&lt;p&gt;A timer in processing time (time as it passes while your pipeline is executing)
+is intuitively simple: you want to wait a certain amount of time and then
+receive a call back.&lt;/p&gt;
+
+&lt;p&gt;To put the finishing touches on our example, we will set a processing time
+timer as soon as any data is buffered. We track whether or not the timer has
+been set so we don’t continually reset it. When an element arrives, if the
+timer has not been set, then we set it for the current moment plus
+&lt;code class=&quot;highlighter-rouge&quot;&gt;MAX_BUFFER_DURATION&lt;/code&gt;. After the allotted processing time has passed, a
+callback will fire and enrich and emit any buffered elements.&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DoFn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MAX_BUFFER_DURATION&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardSeconds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@TimerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;stale&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TimerSpec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;staleSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TimerSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;timer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TimeDomain&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;PROCESSING_TIME&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@ProcessElement&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;ProcessContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;BoundedWindow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@TimerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;stale&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;staleTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@TimerId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;expiry&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Timer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expiryTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;staleTimerSet&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;firstNonNull&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;staleSetState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;firstNonNull&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;staleTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MAX_BUFFER_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setRelative&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;same&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;processing&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;logic&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;above&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;nd&quot;&gt;@OnTimer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;stale&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onStale&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;OnTimerContext&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buffer&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BagState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;count&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEmpty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;EnrichedEvent&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;enrichEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;read&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;enrichedEvent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;bufferState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;countState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;clear&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;same&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;expiry&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;above&lt;/span&gt; &lt;span class=&quot;err&quot;&gt;…&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;language-py highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# State and timers are not yet supported in Beam's Python SDK.&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Follow https://issues.apache.org/jira/browse/BEAM-2687 for updates.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Here is an illustration of the final code:&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/BatchedRpcStale.png&quot; alt=&quot;Batching elements in state, then performing RPCs&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Recapping the entirety of the logic:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;As events arrive at &lt;code class=&quot;highlighter-rouge&quot;&gt;@ProcessElement&lt;/code&gt; they are buffered in state.&lt;/li&gt;
+  &lt;li&gt;If the size of the buffer exceeds a maximum, the events are enriched and output.&lt;/li&gt;
+  &lt;li&gt;If the buffer fills too slowly and the events get stale before the maximum is reached,
+a timer causes a callback which enriches the buffered events and outputs.&lt;/li&gt;
+  &lt;li&gt;Finally, as any window is expiring, any events buffered in that window are
+processed and output prior to the state for that window being discarded.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In the end, we have a full example that uses state and timers to explicitly
+manage the low-level details of a performance-sensitive transform in Beam. As
+we added more and more features, our &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; actually became pretty large. That
+is a normal characteristic of stateful, timely processing. You are really
+digging in and managing a lot of details that are handled automatically when
+you express your logic using Beam’s higher-level APIs. What you gain from this
+extra effort is an ability to tackle use cases and achieve efficiencies that
+may not have been possible otherwise.&lt;/p&gt;
+
+&lt;h2 id=&quot;state-and-timers-in-beams-unified-model&quot;&gt;State and Timers in Beam’s Unified Model&lt;/h2&gt;
+
+&lt;p&gt;Beam’s unified model for event time across streaming and batch processing has
+novel implications for state and timers. Usually, you don’t need to do anything
+for your stateful and timely &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; to work well in the Beam model. But it will
+help to be aware of the considerations below, especially if you have used
+similar features before outside of Beam.&lt;/p&gt;
+
+&lt;h3 id=&quot;event-time-windowing-just-works&quot;&gt;Event Time Windowing “Just Works”&lt;/h3&gt;
+
+&lt;p&gt;One of the raisons d’etre for Beam is correct processing of out-of-order event
+data, which is almost all event data. Beam’s solution to out-of-order data is
+event time windowing, where windows in event time yield correct results no
+matter what windowing a user chooses or what order the events come in.&lt;/p&gt;
+
+&lt;p&gt;If you write a stateful, timely transform, it should work no matter how the
+surrounding pipeline chooses to window event time. If the pipeline chooses
+fixed windows of one hour (sometimes called tumbling windows) or windows of 30
+minutes sliding by 10 minutes, the stateful, timely transform should
+transparently work correctly.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/WindowingChoices.png&quot; alt=&quot;Two windowing strategies for the same stateful and timely transform&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This works in Beam automatically, because state and timers are partitioned per
+key and window. Within each key and window, the stateful, timely processing is
+essentially independent.  As an added benefit, the passing of event time (aka
+advancement of the watermark) allows automatic release of unreachable state
+when a window expires, so you often don’t have to worry about evicting old
+state.&lt;/p&gt;
+
+&lt;h3 id=&quot;unified-real-time-and-historical-processing&quot;&gt;Unified real-time and historical processing&lt;/h3&gt;
+
+&lt;p&gt;A second tenet of Beam’s semantic model is that processing must be unified
+between batch and streaming. One important use case for this unification
+is the ability to apply the same logic to a stream of events in real time and
+to archived storage of the same events.&lt;/p&gt;
+
+&lt;p&gt;A common characteristic of archived data is that it may arrive radically out of
+order. The sharding of archived files often results in a totally different
+ordering for processing than events coming in near-real-time. The data will
+also all be all available and hence delivered instantaneously from the point of
+view of your pipeline. Whether running experiments on past data or reprocessing
+past results to fix a data processing bug, it is critically important that your
+processing logic be applicable to archived events just as easily as incoming
+near-real-time data.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/timely-processing/UnifiedModel.png&quot; alt=&quot;Unified stateful processing over streams and file archives&quot; width=&quot;600&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;It is (deliberately) possible to write a stateful and timely DoFn that delivers
+results that depend on ordering or delivery timing, so in this sense there is
+additional burden on you, the &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; author, to ensure that this nondeterminism
+falls within documented allowances.&lt;/p&gt;
+
+&lt;h2 id=&quot;go-use-it&quot;&gt;Go use it!&lt;/h2&gt;
+
+&lt;p&gt;I’ll end this post in the same way I ended the last. I hope you will go try out
+Beam with stateful, timely processing. If it opens up new possibilities for
+you, then great! If not, we want to hear about it. Since this is a new feature,
+please check the &lt;a href=&quot;/documentation/runners/capability-matrix/&quot;&gt;capability matrix&lt;/a&gt; to see the level of support for
+your preferred Beam backend(s).&lt;/p&gt;
+
+&lt;p&gt;And please do join the Beam community at
+&lt;a href=&quot;/get-started/support&quot;&gt;user@beam.apache.org&lt;/a&gt; and follow
+&lt;a href=&quot;https://twitter.com/ApacheBeam&quot;&gt;@ApacheBeam&lt;/a&gt; on Twitter.&lt;/p&gt;
+</description>
+        <pubDate>Mon, 28 Aug 2017 01:00:01 -0700</pubDate>
+        <link>https://beam.apache.org/blog/2017/08/28/timely-processing.html</link>
+        <guid isPermaLink="true">https://beam.apache.org/blog/2017/08/28/timely-processing.html</guid>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
         <title>Powerful and modular IO connectors with Splittable DoFn in Apache Beam</title>
-        <description>&lt;p&gt;One of the most important parts of the Apache Beam ecosystem is its quickly
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;One of the most important parts of the Apache Beam ecosystem is its quickly
 growing set of connectors that allow Beam pipelines to read and write data to
 various data storage systems (“IOs”). Currently, Beam ships &lt;a href=&quot;/documentation/io/built-in/&quot;&gt;over 20 IO
 connectors&lt;/a&gt; with many more in
@@ -75,22 +994,22 @@ has other limitations that make it insufficient for this task&lt;/em&gt;).&lt;/p
 &lt;h2 id=&quot;beam-source-api&quot;&gt;Beam Source API&lt;/h2&gt;
 
 &lt;p&gt;Apache Beam historically provides a Source API
-(&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/io/BoundedSource.html&quot;&gt;BoundedSource&lt;/a&gt;
+(&lt;a href=&quot;/documentation/sdks/javadoc/2.5.0/org/apache/beam/sdk/io/BoundedSource.html&quot;&gt;BoundedSource&lt;/a&gt;
 and
-&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/io/UnboundedSource.html&quot;&gt;UnboundedSource&lt;/a&gt;) which does
+&lt;a href=&quot;/documentation/sdks/javadoc/2.5.0/org/apache/beam/sdk/io/UnboundedSource.html&quot;&gt;UnboundedSource&lt;/a&gt;) which does
 not have these limitations and allows development of efficient data sources for
 batch and streaming systems. Pipelines use this API via the
-&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/io/Read.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Read.from(Source)&lt;/code&gt;&lt;/a&gt; built-in &lt;code class=&quot;highlighter-rouge&quot;&gt;PTransform&lt;/code&gt;.&lt;/p&gt;
+&lt;a href=&quot;/documentation/sdks/javadoc/2.5.0/org/apache/beam/sdk/io/Read.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Read.from(Source)&lt;/code&gt;&lt;/a&gt; built-in &lt;code class=&quot;highlighter-rouge&quot;&gt;PTransform&lt;/code&gt;.&lt;/p&gt;
 
 &lt;p&gt;The Source API is largely similar to that of most other data processing
 frameworks, and allows the system to read data in parallel using multiple
 workers, as well as checkpoint and resume reading from an unbounded data source.
 Additionally, the Beam
-&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/io/BoundedSource.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;BoundedSource&lt;/code&gt;&lt;/a&gt;
+&lt;a href=&quot;/documentation/sdks/javadoc/2.5.0/org/apache/beam/sdk/io/BoundedSource.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;BoundedSource&lt;/code&gt;&lt;/a&gt;
 API provides advanced features such as progress reporting and &lt;a href=&quot;/blog/2016/05/18/splitAtFraction-method.html&quot;&gt;dynamic
 rebalancing&lt;/a&gt;
 (which together enable autoscaling), and
-&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/io/UnboundedSource.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;UnboundedSource&lt;/code&gt;&lt;/a&gt; supports
+&lt;a href=&quot;/documentation/sdks/javadoc/2.5.0/org/apache/beam/sdk/io/UnboundedSource.html&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;UnboundedSource&lt;/code&gt;&lt;/a&gt; supports
 reporting the source’s watermark and backlog &lt;em&gt;(until SDF, we believed that
 “batch” and “streaming” data sources are fundamentally different and thus
 require fundamentally different APIs)&lt;/em&gt;.&lt;/p&gt;
@@ -461,16 +1380,16 @@ to illustrate the approach.&lt;/p&gt;
 &lt;p&gt;This hypothetical &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt; reads records from a single Avro file. Notably missing
 is the code for expanding a filepattern: it no longer needs to be part of this
 &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt;! Instead, the SDK includes a
-&lt;a href=&quot;https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/Match.java&quot;&gt;Match.filepatterns()&lt;/a&gt;
+&lt;a href=&quot;https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/FileIO.java&quot;&gt;FileIO.matchAll()&lt;/a&gt;
 transform for expanding a filepattern into a &lt;code class=&quot;highlighter-rouge&quot;&gt;PCollection&lt;/code&gt; of filenames, and
 different file format IOs can reuse the same transform, reading the files with
 different &lt;code class=&quot;highlighter-rouge&quot;&gt;DoFn&lt;/code&gt;s.&lt;/p&gt;
 
 &lt;p&gt;This example demonstrates the benefits of increased modularity allowed by SDF:
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Match&lt;/code&gt; supports continuous ingestion of new files in streaming pipelines using
-&lt;code class=&quot;highlighter-rouge&quot;&gt;.continuously()&lt;/code&gt;, and this functionality becomes automatically available to
-various file format IOs. For example, &lt;code class=&quot;highlighter-rouge&quot;&gt;TextIO.read().watchForNewFiles()&lt;/code&gt; &lt;a href=&quot;https://github.com/apache/beam/blob/f7e8f886c91ea9d0b51e00331eeb4484e2f6e000/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java#L480&quot;&gt;uses
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Match&lt;/code&gt; under the
+&lt;code class=&quot;highlighter-rouge&quot;&gt;FileIO.matchAll()&lt;/code&gt; supports continuous ingestion of new files in streaming
+pipelines using &lt;code class=&quot;highlighter-rouge&quot;&gt;.continuously()&lt;/code&gt;, and this functionality becomes automatically
+available to various file format IOs. For example,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;TextIO.read().watchForNewFiles()&lt;/code&gt; &lt;a href=&quot;https://github.com/apache/beam/blob/3bd68ecfd7d576d78e02deb0476e549f11e1b5ef/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java#L486&quot;&gt;uses &lt;code class=&quot;highlighter-rouge&quot;&gt;FileIO.matchAll()&lt;/code&gt; under the
 hood)&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h2 id=&quot;current-status&quot;&gt;Current status&lt;/h2&gt;
@@ -490,9 +1409,10 @@ development&lt;/a&gt;.&lt;/p&gt;
 HEAD and will be included in Beam 2.2.0. &lt;code class=&quot;highlighter-rouge&quot;&gt;TextIO&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;AvroIO&lt;/code&gt; finally provide
 continuous ingestion of files (one of the most frequently requested features)
 via &lt;code class=&quot;highlighter-rouge&quot;&gt;.watchForNewFiles()&lt;/code&gt; which is backed by the utility transforms
-&lt;code class=&quot;highlighter-rouge&quot;&gt;Match.filepatterns().continuously()&lt;/code&gt; and the more general
+&lt;code class=&quot;highlighter-rouge&quot;&gt;FileIO.matchAll().continuously()&lt;/code&gt; and the more general
 &lt;a href=&quot;https://github.com/apache/beam/blob/f7e8f886c91ea9d0b51e00331eeb4484e2f6e000/sdks/java/core/src/main/java/org/apache/beam/sdk/transforms/Watch.java&quot;&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Watch.growthOf()&lt;/code&gt;&lt;/a&gt;.
-These utility transforms are also independently useful for “power user” use cases.&lt;/p&gt;
+These utility transforms are also independently useful for “power user” use
+cases.&lt;/p&gt;
 
 &lt;p&gt;To enable more flexible use cases for IOs currently based on the Source API, we
 will change them to use SDF. This transition is &lt;a href=&quot;http://s.apache.org/textio-sdf&quot;&gt;pioneered by
@@ -566,7 +1486,21 @@ Beam developers)!&lt;/p&gt;
     
       <item>
         <title>Apache Beam publishes the first stable release</title>
-        <description>&lt;p&gt;The Apache Beam community is pleased to &lt;a href=&quot;https://blogs.apache.org/foundation/entry/the-apache-software-foundation-announces12&quot;&gt;announce the availability of version 2.0.0&lt;/a&gt;. This is the first stable release of Apache Beam, signifying a statement from the community that it intends to maintain API stability with all releases for the foreseeable future, and making Beam suitable for enterprise deployment.&lt;/p&gt;
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;The Apache Beam community is pleased to &lt;a href=&quot;https://blogs.apache.org/foundation/entry/the-apache-software-foundation-announces12&quot;&gt;announce the availability of version 2.0.0&lt;/a&gt;. This is the first stable release of Apache Beam, signifying a statement from the community that it intends to maintain API stability with all releases for the foreseeable future, and making Beam suitable for enterprise deployment.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -679,7 +1613,21 @@ Beam developers)!&lt;/p&gt;
     
       <item>
         <title>Python SDK released in Apache Beam 0.6.0</title>
-        <description>&lt;p&gt;Apache Beam’s latest release, version &lt;a href=&quot;/get-started/downloads/&quot;&gt;0.6.0&lt;/a&gt;, introduces a new SDK – this time, for the Python programming language. The Python SDK joins the Java SDK as the second implementation of the Beam programming model.&lt;/p&gt;
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;Apache Beam’s latest release, version &lt;a href=&quot;/get-started/downloads/&quot;&gt;0.6.0&lt;/a&gt;, introduces a new SDK – this time, for the Python programming language. The Python SDK joins the Java SDK as the second implementation of the Beam programming model.&lt;/p&gt;
 
 &lt;!--more--&gt;
 
@@ -753,7 +1701,21 @@ p.run()
     
       <item>
         <title>Stateful processing with Apache Beam</title>
-        <description>&lt;p&gt;Beam lets you process unbounded, out-of-order, global-scale data with portable
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;Beam lets you process unbounded, out-of-order, global-scale data with portable
 high-level pipelines. Stateful processing is a new feature of the Beam model
 that expands the capabilities of Beam, unlocking new use cases and new
 efficiencies. In this post, I will guide you through stateful processing in
@@ -1025,7 +1987,7 @@ on a per key-and-window basis:&lt;/p&gt;
 
   &lt;span class=&quot;c1&quot;&gt;// A state cell holding a single Integer per key+window&lt;/span&gt;
   &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;index&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;indexSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;indexSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 
       &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VarIntCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
 
   &lt;span class=&quot;nd&quot;&gt;@ProcessElement&lt;/span&gt;
@@ -1220,11 +2182,11 @@ only features I have already introduced:&lt;/p&gt;
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;DoFn&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UserId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Event&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UserId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Prediction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
 
   &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;model&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modelSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modelSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
       &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;coder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
 
   &lt;span class=&quot;nd&quot;&gt;@StateId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;previousPrediction&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Prediction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;previousPredictionSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;StateSpec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ValueState&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Prediction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;previousPredictionSpec&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
       &lt;span class=&quot;n&quot;&gt;StateSpecs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Prediction&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;coder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
 
   &lt;span class=&quot;nd&quot;&gt;@ProcessElement&lt;/span&gt;
@@ -1334,7 +2296,21 @@ hear from you.&lt;/p&gt;
     
       <item>
         <title>Media recap of the Apache Beam graduation</title>
-        <description>&lt;p&gt;One year ago today Apache Beam was accepted into incubation at the Apache
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;One year ago today Apache Beam was accepted into incubation at the Apache
 Software Foundation. The community’s work over the past year culminated, just
 over three weeks ago, with an &lt;a href=&quot;/blog/2017/01/10/beam-graduates.html&quot;&gt;announcement&lt;/a&gt;
 that Apache Beam has successfully graduated as a new Top-Level Project at the
@@ -1392,7 +2368,21 @@ tracker, pull requests, and events.&lt;/p&gt;
     
       <item>
         <title>Apache Beam established as a new top-level project</title>
-        <description>&lt;p&gt;Today, the Apache Software Foundation &lt;a href=&quot;https://blogs.apache.org/foundation/entry/the-apache-software-foundation-announces&quot;&gt;announced&lt;/a&gt;
+        <description>&lt;!--
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+--&gt;
+
+&lt;p&gt;Today, the Apache Software Foundation &lt;a href=&quot;https://blogs.apache.org/foundation/entry/the-apache-software-foundation-announces&quot;&gt;announced&lt;/a&gt;
 that Apache Beam has successfully graduated from incubation, becoming a new
 Top-Level Project at the foundation and signifying that its “community and
 products have been well-governed under the foundation’s meritocratic process
@@ -1451,447 +2441,6 @@ tracker, pull requests, and events.&lt;/p&gt;
         <pubDate>Tue, 10 Jan 2017 00:00:01 -0800</pubDate>
         <link>https://beam.apache.org/blog/2017/01/10/beam-graduates.html</link>
         <guid isPermaLink="true">https://beam.apache.org/blog/2017/01/10/beam-graduates.html</guid>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Release 0.4.0 adds a runner for Apache Apex</title>
-        <description>&lt;p&gt;The latest release 0.4.0 of &lt;a href=&quot;/&quot;&gt;Apache Beam&lt;/a&gt; adds a new runner for &lt;a href=&quot;http://apex.apache.org/&quot;&gt;Apache Apex&lt;/a&gt;. We are excited to reach this initial milestone and are looking forward to continued collaboration between the Beam and Apex communities to advance the runner.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;Beam evolved from the Google Dataflow SDK and as incubator project has quickly adapted the Apache way, grown the community and attracts increasing interest from users that hope to benefit from a conceptual strong unified programming model that is portable between different big data processing frameworks (see &lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101&quot;&gt;Streaming-101&lt;/a&gt; and &lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102&quot;&gt;Streaming-102&lt;/a&gt;). Multiple Apache projects already provide runners for Beam (see &lt;a href=&quot;/documentation/runners/capability-matrix/&quot;&gt;runners and capabilities matrix&lt;/a&gt;).&lt;/p&gt;
-
-&lt;p&gt;Apex is a stream processing framework for low-latency, high-throughput, stateful and reliable processing of complex analytics pipelines on clusters. Apex was developed since 2012 and is used in production by large companies for real-time and batch processing at scale.&lt;/p&gt;
-
-&lt;p&gt;The initial revision of the runner was focussed on broad coverage of the Beam model on a functional level. That means, there will be follow up work in several areas to take the runner from functional to scalable and high performance to match the capabilities of Apex and its native API. The runner capabilities matrix shows that the Apex capabilities are well aligned with the Beam model. Specifically, the ability to track computational state in a fault tolerant and efficient manner is needed to broadly support the windowing concepts, including event time based processing.&lt;/p&gt;
-
-&lt;h2 id=&quot;stateful-stream-processor&quot;&gt;Stateful Stream Processor&lt;/h2&gt;
-
-&lt;p&gt;Apex was built as stateful stream processor from the ground up. Operators &lt;a href=&quot;https://www.datatorrent.com/blog/blog-introduction-to-checkpoint/&quot;&gt;checkpoint&lt;/a&gt; state in a distributed and asynchronous manner that produces a consistent snapshot for the entire processing graph, which can be used for recovery. Apex also supports such recovery in an incremental, or fine grained, manner. This means only the portion of the DAG that is actually affected by a failure will be recovered while the remaining pipeline continues processing (this can be leveraged to implement use cases with special needs, such as speculative execution to achieve SLA on the processing latency). The state checkpointing along with idempotent processing guarantee is the basis for &lt;a href=&quot;https://www.datatorrent.com/blog/end-to-end-exactly-once-with-apache-apex/&quot;&gt;exactly-once results&lt;/a&gt; support in Apex.&lt;/p&gt;
-
-&lt;h2 id=&quot;translation-to-apex-dag&quot;&gt;Translation to Apex DAG&lt;/h2&gt;
-
-&lt;p&gt;A Beam runner needs to implement the translation from the Beam model to the underlying frameworks execution model. In the case of Apex, the runner will translate the pipeline into the &lt;a href=&quot;https://www.datatorrent.com/blog/tracing-dags-from-specification-to-execution/&quot;&gt;native (compositional, low level) DAG API&lt;/a&gt; (which is also the base for a number of other API that are available to specify applications that run on Apex). The DAG consists of operators (functional building blocks that are connected with streams. The runner provides the execution layer. In the case of Apex it is distributed stream processing, operators process data event by event. The minimum set of operators covers Beam’s primitive transforms: &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo.Bound&lt;/code&gt;,  &lt;code class=&quot;highlighter-rouge&quot;&gt;ParDo.BoundMulti&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Read.Unbounded&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Read.Bounded&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;GroupByKey&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;Flatten.FlattenPCollectionList&lt;/code&gt; etc.&lt;/p&gt;
-
-&lt;h2 id=&quot;execution-and-testing&quot;&gt;Execution and Testing&lt;/h2&gt;
-
-&lt;p&gt;In this release, the Apex runner executes the pipelines in embedded mode, where, similar to the direct runner, everything is executed in a single JVM. See &lt;a href=&quot;/get-started/quickstart/&quot;&gt;quickstart&lt;/a&gt; on how to run the Beam examples with the Apex runner.&lt;/p&gt;
-
-&lt;p&gt;Embedded mode is useful for development and debugging. Apex in production runs distributed on Apache Hadoop YARN clusters. An example how a Beam pipeline can be embedded into an Apex application package to run on YARN can be found &lt;a href=&quot;https://github.com/tweise/apex-samples/tree/master/beam-apex-wordcount&quot;&gt;here&lt;/a&gt; and support for direct launch in the runner is currently being worked on.&lt;/p&gt;
-
-&lt;p&gt;The Beam project has a strong focus on development process and tooling, including testing. For the runners, there is a comprehensive test suite with more than 200 integration tests that are executed against each runner to ensure they don’t break as changes are made. The tests cover the capabilities of the matrix and thus are a measure of completeness and correctness of the runner implementations. The suite was very helpful when developing the Apex runner.&lt;/p&gt;
-
-&lt;h2 id=&quot;outlook&quot;&gt;Outlook&lt;/h2&gt;
-
-&lt;p&gt;The next step is to take the Apex runner from functional to ready for real applications that run distributed, leveraging the scalability and performance features of Apex, similar to its native API. This includes chaining of ParDos, partitioning, optimizing combine operations etc. To get involved, please see &lt;a href=&quot;https://issues.apache.org/jira/issues/?jql=project%20%3D%20BEAM%20and%20component%20%3D%20runner-apex%20and%20resolution%20%3D%20unresolved&quot;&gt;JIRA&lt;/a&gt; and join the Beam community.&lt;/p&gt;
-</description>
-        <pubDate>Mon, 09 Jan 2017 09:00:01 -0800</pubDate>
-        <link>https://beam.apache.org/blog/2017/01/09/added-apex-runner.html</link>
-        <guid isPermaLink="true">https://beam.apache.org/blog/2017/01/09/added-apex-runner.html</guid>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Testing Unbounded Pipelines in Apache Beam</title>
-        <description>&lt;p&gt;The Beam Programming Model unifies writing pipelines for Batch and Streaming
-pipelines. We’ve recently introduced a new PTransform to write tests for
-pipelines that will be run over unbounded datasets and must handle out-of-order
-and delayed data.
-&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;Watermarks, Windows and Triggers form a core part of the Beam programming model
-– they respectively determine how your data are grouped, when your input is
-complete, and when to produce results. This is true for all pipelines,
-regardless of if they are processing bounded or unbounded inputs. If you’re not
-familiar with watermarks, windowing, and triggering in the Beam model,
-&lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-101&quot;&gt;Streaming 101&lt;/a&gt;
-and &lt;a href=&quot;https://www.oreilly.com/ideas/the-world-beyond-batch-streaming-102&quot;&gt;Streaming 102&lt;/a&gt;
-are an excellent place to get started. A key takeaway from
-these articles: in realistic streaming scenarios with intermittent failures and
-disconnected users, data can arrive out of order or be delayed. Beam’s
-primitives provide a way for users to perform useful, powerful, and correct
-computations in spite of these challenges.&lt;/p&gt;
-
-&lt;p&gt;As Beam pipeline authors, we need comprehensive tests that cover crucial
-failure scenarios and corner cases to gain real confidence that a pipeline is
-ready for production. The existing testing infrastructure within the Beam SDKs
-permits tests to be written which examine the contents of a Pipeline at
-execution time. However, writing unit tests for pipelines that may receive
-late data or trigger multiple times has historically ranged from complex to
-not possible, as pipelines that read from unbounded sources do not shut down
-without external intervention, while pipelines that read from bounded sources
-exclusively cannot test behavior with late data nor most speculative triggers.
-Without additional tools, pipelines that use custom triggers and handle
-out-of-order data could not be easily tested.&lt;/p&gt;
-
-&lt;p&gt;This blog post introduces our new framework for writing tests for pipelines that
-handle delayed and out-of-order data in the context of the LeaderBoard pipeline
-from the Mobile Gaming example series.&lt;/p&gt;
-
-&lt;h2 id=&quot;leaderboard-and-the-mobile-gaming-example&quot;&gt;LeaderBoard and the Mobile Gaming Example&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/apache/beam/blob/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game/LeaderBoard.java#L177&quot;&gt;LeaderBoard&lt;/a&gt;
-is part of the &lt;a href=&quot;https://github.com/apache/beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game&quot;&gt;Beam mobile gaming examples&lt;/a&gt;
-(and &lt;a href=&quot;/get-started/mobile-gaming-example/&quot;&gt;walkthroughs&lt;/a&gt;)
-which produces a continuous accounting of user and team scores. User scores are
-calculated over the lifetime of the program, while team scores are calculated
-within fixed windows with a default duration of one hour. The LeaderBoard
-pipeline produces speculative and late panes as appropriate, based on the
-configured triggering and allowed lateness of the pipeline. The expected outputs
-of the LeaderBoard pipeline vary depending on when elements arrive in relation
-to the watermark and the progress of processing time, which could not previously
-be controlled within a test.&lt;/p&gt;
-
-&lt;h2 id=&quot;writing-deterministic-tests-to-emulate-nondeterminism&quot;&gt;Writing Deterministic Tests to Emulate Nondeterminism&lt;/h2&gt;
-
-&lt;p&gt;The Beam testing infrastructure provides the
-&lt;a href=&quot;/documentation/sdks/javadoc/2.0.0/org/apache/beam/sdk/testing/PAssert.html&quot;&gt;PAssert&lt;/a&gt;
-methods, which assert properties about the contents of a PCollection from within
-a pipeline. We have expanded this infrastructure to include
-&lt;a href=&quot;https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/testing/TestStream.java&quot;&gt;TestStream&lt;/a&gt;,
-which is a PTransform that performs a series of events, consisting of adding
-additional elements to a pipeline, advancing the watermark of the TestStream,
-and advancing the pipeline processing time clock. TestStream permits tests which
-observe the effects of triggers on the output a pipeline produces.&lt;/p&gt;
-
-&lt;p&gt;While executing a pipeline that reads from a TestStream, the read waits for all
-of the consequences of each event to complete before continuing on to the next
-event, ensuring that when processing time advances, triggers that are based on
-processing time fire as appropriate. With this transform, the effect of
-triggering and allowed lateness can be observed on a pipeline, including
-reactions to speculative and late panes and dropped data.&lt;/p&gt;
-
-&lt;h2 id=&quot;element-timings&quot;&gt;Element Timings&lt;/h2&gt;
-
-&lt;p&gt;Elements arrive either before, with, or after the watermark, which categorizes
-them into the “early”, “on-time”, and “late” divisions. “Late” elements can be
-further subdivided into “unobservably”, “observably”, and “droppably” late,
-depending on the window to which they are assigned and the maximum allowed
-lateness, as specified by the windowing strategy. Elements that arrive with
-these timings are emitted into panes, which can be “EARLY”, “ON-TIME”, or
-“LATE”, depending on the position of the watermark when the pane was emitted.&lt;/p&gt;
-
-&lt;p&gt;Using TestStream, we can write tests that demonstrate that speculative panes are
-output after their trigger condition is met, that the advancing of the watermark
-causes the on-time pane to be produced, and that late-arriving data produces
-refinements when it arrives before the maximum allowed lateness, and is dropped
-after.&lt;/p&gt;
-
-&lt;p&gt;The following examples demonstrate how you can use TestStream to provide a
-sequence of events to the Pipeline, where the arrival of elements is interspersed
-with updates to the watermark and the advance of processing time. Each of these
-events runs to completion before additional events occur.&lt;/p&gt;
-
-&lt;p&gt;In the diagrams, the time at which events occurred in “real” (event) time
-progresses as the graph moves to the right. The time at which the pipeline
-receives them progresses as the graph goes upwards. The watermark is represented
-by the squiggly red line, and each starburst is the firing of a trigger and the
-associated pane.&lt;/p&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-all-on-time.png&quot; alt=&quot;Elements on the Event and Processing time axes, with the Watermark and produced panes&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;everything-arrives-on-time&quot;&gt;Everything arrives on-time&lt;/h3&gt;
-
-&lt;p&gt;For example, if we create a TestStream where all the data arrives before the
-watermark and provide the result PCollection as input to the CalculateTeamScores
-PTransform:&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AvroCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;                &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;navy&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;                &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;navy&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// Move the watermark past the end the end of the window&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;                               &lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkToInfinity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;PCollection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CalculateTeamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;we can then assert that the result PCollection contains elements that arrived:&lt;/p&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-all-on-time.png&quot; alt=&quot;Elements all arrive before the watermark, and are produced in the on-time pane&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Only one value is emitted for the blue team&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inWindow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;some-elements-are-late-but-arrive-before-the-end-of-the-window&quot;&gt;Some elements are late, but arrive before the end of the window&lt;/h3&gt;
-
-&lt;p&gt;We can also add data to the TestStream after the watermark, but before the end
-of the window (shown below to the left of the red watermark), which demonstrates
-“unobservably late” data - that is, data that arrives late, but is promoted by
-the system to be on time, as it arrives before the watermark passes the end of
-the window&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AvroCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;       &lt;/span&gt;         &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;navy&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// Move the watermark up to &quot;near&quot; the end of the window&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;               &lt;/span&gt;       &lt;span class=&quot;err&quot;&gt;                &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;minus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ZERO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkToInfinity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;PCollection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CalculateTeamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-unobservably-late.png&quot; alt=&quot;An element arrives late, but before the watermark passes the end of the window, and is produced in the on-time pane&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Only one value is emitted for the blue team&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inWindow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;elements-are-late-and-arrive-after-the-end-of-the-window&quot;&gt;Elements are late, and arrive after the end of the window&lt;/h3&gt;
-
-&lt;p&gt;By advancing the watermark farther in time before adding the late data, we can
-demonstrate the triggering behavior that causes the system to emit an on-time
-pane, and then after the late data arrives, a pane that refines the result.&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AvroCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
-       &lt;span class=&quot;err&quot;&gt;          &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;navy&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt; &lt;/span&gt; &lt;span class=&quot;err&quot;&gt;  &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// Move the watermark up to &quot;near&quot; the end of the window&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;                                &lt;/span&gt;       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;minus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ZERO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkToInfinity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;PCollection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CalculateTeamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-observably-late.png&quot; alt=&quot;Elements all arrive before the watermark, and are produced in the on-time pane&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// An on-time pane is emitted with the events that arrived before the window closed&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inOnTimePane&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;// The final pane contains the late refinement&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inFinalPane&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;18&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;elements-are-late-and-after-the-end-of-the-window-plus-the-allowed-lateness&quot;&gt;Elements are late, and after the end of the window plus the allowed lateness&lt;/h3&gt;
-
-&lt;p&gt;If we push the watermark even further into the future, beyond the maximum
-configured allowed lateness, we can demonstrate that the late element is dropped
-by the system.&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;infos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AvroCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ZERO&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
-        &lt;span class=&quot;err&quot;&gt;         &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;navy&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;c1&quot;&gt;// Move the watermark up to &quot;near&quot; the end of the window&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkTo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;                                        &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;                                        &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sky&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;err&quot;&gt;                     &lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;minus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkToInfinity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;PCollection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createEvents&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CalculateTeamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;TEAM_WINDOW_DURATION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-droppably-late.png&quot; alt=&quot;Elements all arrive before the watermark, and are produced in the on-time pane&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// An on-time pane is emitted with the events that arrived before the window closed&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teamScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inWindow&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;window&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;blue&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;6&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h3 id=&quot;elements-arrive-before-the-end-of-the-window-and-some-processing-time-passes&quot;&gt;Elements arrive before the end of the window, and some processing time passes&lt;/h3&gt;
-&lt;p&gt;Using additional methods, we can demonstrate the behavior of speculative
-triggers by advancing the processing time of the TestStream. If we add elements
-to an input PCollection, occasionally advancing the processing time clock, and
-apply &lt;code class=&quot;highlighter-rouge&quot;&gt;CalculateUserScores&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;TestStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AvroCoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;scarlet&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;              &lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;scarlet&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceProcessingTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;addElements&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;oxblood&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardSeconds&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;22&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)),&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;              &lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GameActionInfo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;scarlet&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Instant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0L&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;plus&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceProcessingTime&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;standardMinutes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;15&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;advanceWatermarkToInfinity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;PCollection&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;userScores&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
- &lt;span class=&quot;err&quot;&gt;   &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;infos&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;CalculateUserScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ALLOWED_LATENESS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;p&gt;&lt;img class=&quot;center-block&quot; src=&quot;/images/blog/test-stream/elements-processing-speculative.png&quot; alt=&quot;Elements all arrive before the watermark, and are produced in the on-time pane&quot; width=&quot;442&quot; /&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;PAssert&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;that&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;userScores&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;inEarlyGlobalWindowPanes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
-       &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;containsInAnyOrder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;scarlet&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
-   &lt;span class=&quot;err&quot;&gt;                        &lt;/span&gt;&lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;scarlet&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;9&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
-                           &lt;span class=&quot;n&quot;&gt;KV&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;oxblood&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-
-&lt;h2 id=&quot;teststream---under-the-hood&quot;&gt;TestStream - Under the Hood&lt;/h2&gt;
-
-&lt;p&gt;TestStream relies on a pipeline concept we’ve introduced, called quiescence, to
-utilize the existing runner infrastructure while providing guarantees about when
-a root transform will called by the runner. This consists of properties about
-pending elements and triggers, namely:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;No trigger is permitted to fire but has not fired&lt;/li&gt;
-  &lt;li&gt;All elements are either buffered in state or cannot progress until a side input becomes available&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Simplified, this means that, in the absence of an advancement in input
-watermarks or processing time, or additional elements being added to the
-pipeline, the pipeline will not make progress. Whenever the TestStream PTransform
-performs an action, the runner must not reinvoke the same instance until the
-pipeline has quiesced. This ensures that the events specified by TestStream
-happen “in-order”, which ensures that input watermarks and the system clock do
-not advance ahead of the elements they hoped to hold up.&lt;/p&gt;
-
-&lt;p&gt;The DirectRunner has been modified to use quiescence as the signal that it
-should add more work to the Pipeline, and the implementation of TestStream in
-that runner uses this fact to perform a single output per event. The DirectRunner
-implementation also directly controls the runner’s system clock, ensuring that
-tests will complete promptly even if there is a multi-minute processing time
-trigger located within the pipeline.&lt;/p&gt;
-
-&lt;p&gt;The TestStream transform is supported in the DirectRunner. For most users, tests
-written using TestPipeline and PAsserts will automatically function while using
-TestStream.&lt;/p&gt;
-
-&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
-
-&lt;p&gt;The addition of TestStream alongside window and pane-specific matchers in PAssert
-has enabled the testing of Pipelines which produce speculative and late panes.
-This permits tests for all styles of pipeline to be expressed directly within the
-Java SDK. If you have questions or comments, we’d love to hear them on the
-&lt;a href=&quot;/get-started/support/&quot;&gt;mailing lists&lt;/a&gt;.&lt;/p&gt;
-</description>
-        <pubDate>Thu, 20 Oct 2016 11:00:00 -0700</pubDate>
-        <link>https://beam.apache.org/blog/2016/10/20/test-stream.html</link>
-        <guid isPermaLink="true">https://beam.apache.org/blog/2016/10/20/test-stream.html</guid>
-        
-        
-        <category>blog</category>
-        
-      </item>
-    
-      <item>
-        <title>Strata+Hadoop World and Beam</title>
-        <description>&lt;p&gt;Tyler Akidau and I gave a &lt;a href=&quot;http://conferences.oreilly.com/strata/hadoop-big-data-ny/public/schedule/detail/52129&quot;&gt;three-hour tutorial&lt;/a&gt; on Apache Beam at Strata+Hadoop World 2016. We had a plethora of help from our TAs: Kenn Knowles, Reuven Lax, Felipe Hoffa, Slava Chernyak, and Jamie Grier. There were a total of 66 people that attended the session.&lt;!--more--&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/blog/IMG_20160927_170956.jpg&quot; alt=&quot;Exercise time&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If you want to take a look at the tutorial materials, we’ve put them up &lt;a href=&quot;https://github.com/eljefe6a/beamexample&quot;&gt;on GitHub&lt;/a&gt;. This includes the &lt;a href=&quot;https://github.com/eljefe6a/beamexample/blob/master/BeamTutorial/slides.pdf&quot;&gt;actual slides&lt;/a&gt; as well as the &lt;a href=&quot;https://github.com/eljefe6a/beamexample/tree/master/BeamTutorial/src/main/java/org/apache/beam/examples/tutorial/game&quot;&gt;exercises&lt;/a&gt; that we covered. If you’re looking to learn a little about Beam, this is a good way to start. The exercises are based on an imaginary mobile game where data needs processing and are based on code in the &lt;a href=&quot;https://github.com/apache/beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game&quot;&gt;Beam examples directory&lt;/a&gt;. The code has TODOs for where you need to fill in code or there are full sample solutions to look over our code. You can run these examples on your own machine or on a cluster using a runner that Beam supports.&lt;/p&gt;
-
-&lt;p&gt;I want to share some of takeaways I had about Beam during the conference.&lt;/p&gt;
-
-&lt;p&gt;The Data Engineers are looking to Beam as a way to &lt;a href=&quot;https://www.oreilly.com/ideas/future-proof-and-scale-proof-your-code&quot;&gt;future-proof&lt;/a&gt;, meaning that code is portable between the various Big Data frameworks. In fact, many of the attendees were still on Hadoop MapReduce and looking to transition to a new framework. They’re realizing that continually rewriting code isn’t the most productive approach.&lt;/p&gt;
-
-&lt;p&gt;Data Scientists are really interested in using Beam. They interested in having a single API for doing analysis instead of several different APIs. We talked about Beam’s progress on the Python API. If you want to take a peek, it’s being actively developed on a &lt;a href=&quot;https://github.com/apache/beam/tree/master/sdks/python&quot;&gt;feature branch&lt;/a&gt;. As Beam matures, we’re looking to add other supported languages.&lt;/p&gt;
-
-&lt;p&gt;We heard &lt;a href=&quot;https://twitter.com/jessetanderson/status/781124173108305920&quot;&gt;loud and clear&lt;/a&gt; from Beam users that great runner support is crucial to adoption. We have great Apache Flink support. During the conference we had some more volunteers offer their help on the Spark runner.&lt;/p&gt;
-
-&lt;p&gt;On management and thought leader side, Beam went from “what’s Beam?” at previous conferences to “I’m interested in Beam.” or “I’ve formed an informed opinion on Beam.” at this conference. This is one of the metrics I look for in early technology adoption.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;/images/blog/IMG_20160927_170455.jpg&quot; alt=&quot;So much brainpower answering questions&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;We rounded out the tutorial with live demonstrations of Beam running on Apache Spark, Apache Flink, the local runner, and DataFlow runner. Then, we brought in the big brainpower and had a Q and A session.&lt;/p&gt;
-
-&lt;p&gt;If you’re attending a conference, we encourage you to look for a Beam session. If you want to use these materials to give your own Beam talk or tutorial, we’re happy to help you. In addition to this tutorial, we have &lt;a href=&quot;/contribute/presentation-materials/&quot;&gt;other presentation materials&lt;/a&gt;. You can reach out to us on the &lt;a href=&quot;/get-started/support/&quot;&gt;user mailing list&lt;/a&gt;.&lt;/p&gt;
-
-</description>
-        <pubDate>Tue, 11 Oct 2016 10:00:00 -0700</pubDate>
-        <link>https://beam.apache.org/beam/update/2016/10/11/strata-hadoop-world-and-beam.html</link>
-        <guid isPermaLink="true">https://beam.apache.org/beam/update/2016/10/11/strata-hadoop-world-and-beam.html</guid>
-        
-        
-        <category>beam</category>
-        
-        <category>update</category>
-        
-      </item>
-    
-      <item>
-        <title>Apache Beam: Six Months in Incubation</title>
-        <description>&lt;p&gt;It’s been just over six months since Apache Beam was formally accepted into incubation with the &lt;a href=&quot;http://www.apache.org&quot;&gt;Apache Software Foundation&lt;/a&gt;. As a community, we’ve been hard at work getting Beam off the ground.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;Looking just at raw numbers for those first six months, that’s:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;48,238 lines of preexisting code donated by Cloudera, dataArtisans, and Google.&lt;/li&gt;
-  &lt;li&gt;761 pull requests from 45 contributors.&lt;/li&gt;
-  &lt;li&gt;498 Jira issues opened and 245 resolved.&lt;/li&gt;
-  &lt;li&gt;1 incubating release (and another 1 in progress).&lt;/li&gt;
-  &lt;li&gt;4,200 hours of automated tests.&lt;/li&gt;
-  &lt;li&gt;161 subscribers / 606 messages on user@.&lt;/li&gt;
-  &lt;li&gt;217 subscribers / 1205 messages on dev@.&lt;/li&gt;
-  &lt;li&gt;277 stars and 174 forks on GitHub.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;And behind those numbers, there’s been a ton of technical progress, including:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Refactoring of the entire codebase, examples, and tests to be truly runner-independent.&lt;/li&gt;
-  &lt;li&gt;New functionality in the Apache Flink runner for timestamps/windows in batch and bounded sources and side inputs in streaming mode.&lt;/li&gt;
-  &lt;li&gt;Work in progress to upgrade the Apache Spark runner to use Spark 2.0.&lt;/li&gt;
-  &lt;li&gt;Several new runners from the wider Apache community – Apache Gearpump has its own feature branch, Apache Apex has a PR, and conversations are starting on Apache Storm and others.&lt;/li&gt;
-  &lt;li&gt;New SDKs/DSLs for exposing the Beam model – the Python SDK from Google is in on a feature branch, and there are plans to add the Scio DSL from Spotify.&lt;/li&gt;
-  &lt;li&gt;Support for additional data sources and sinks – Apache Kafka and JMS are in, there are PRs for Amazon Kinesis, Apache Cassandra, and MongoDB, and more connectors are being planned.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;But perhaps most importantly, we’re committed to building an involved, welcoming community. So far, we’ve:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Started building a vibrant developer community, with detailed design discussions on features like DoFn reuse semantics, serialization technology, and an API for accessing state.&lt;/li&gt;
-  &lt;li&gt;Started building a user community with an active mailing list and improvements to the website and documentation.&lt;/li&gt;
-  &lt;li&gt;Had multiple talks on Beam at venues including ApacheCon, Hadoop Summit, Kafka Summit, JBCN Barcelona, and Strata.&lt;/li&gt;
-  &lt;li&gt;Presented at multiple existing meetups and are starting to organize some of our own.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;While it’s nice to reflect back on all we’ve done, we’re working full &lt;em&gt;stream&lt;/em&gt; ahead towards a stable release and graduation from incubator. And we’d love your help – join the &lt;a href=&quot;/get-started/support/&quot;&gt;mailing lists&lt;/a&gt;, check out the &lt;a href=&quot;/contribute/contribution-guide/&quot;&gt;contribution guide&lt;/a&gt;, and grab a &lt;a href=&quot;https://issues.apache.org/jira/browse/BEAM-520?jql=project%20%3D%20BEAM%20AND%20resolution%20%3D%20Unresolved%20AND%20labels%20in%20(newbie%2C%20starter)&quot;&gt;starter task&lt;/a&gt; from Jira!&lt;/p&gt;
-
-</description>
-        <pubDate>Wed, 03 Aug 2016 00:00:01 -0700</pubDate>
-        <link>https://beam.apache.org/blog/2016/08/03/six-months.html</link>
-        <guid isPermaLink="true">https://beam.apache.org/blog/2016/08/03/six-months.html</guid>
         
         
         <category>blog</category>

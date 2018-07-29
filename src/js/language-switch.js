@@ -1,3 +1,15 @@
+// Licensed under the Apache License, Version 2.0 (the 'License'); you may not
+// use this file except in compliance with the License. You may obtain a copy of
+// the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations under
+// the License.
+
 $(document).ready(function() {
     function Switcher(conf) {
         var id = conf["class-prefix"],
@@ -48,7 +60,7 @@ $(document).ready(function() {
                 var _self = this;
 
                 $("div"+_self.selector).each(function() {
-                    if ($(this).prev().is(_self.selector)) {
+                    if ($(this).prev().is("div"+_self.selector)) {
                         return;
                     }
                     $(this).before(_self.navHtml(_self.lookup($(this), [])));
@@ -80,12 +92,25 @@ $(document).ready(function() {
             },
             "toggle": function() {
                 var pref=localStorage.getItem(this.dbKey) || this.default;
+                var isPrefSelected = false;
+
                 // Adjusting active elements in navigation header.
                 $("." + this.wrapper + " li").removeClass("active").each(function() {
                     if ($(this).data("type") === pref) {
                         $(this).addClass("active");
+                        isPrefSelected = true;
                     }
                 });
+
+                if(!isPrefSelected) {
+                  pref = this.default;
+                  
+                  $("." + this.wrapper + " li").each(function() {
+                      if ($(this).data("type") === pref) {
+                          $(this).addClass("active");
+                      }
+                  });
+               }
 
                 // Swapping visibility of code blocks.
                 $(this.selector).hide();
@@ -102,4 +127,5 @@ $(document).ready(function() {
 
     Switcher({"class-prefix":"language","default":"java"}).render();
     Switcher({"class-prefix":"runner","default":"direct"}).render();
+    Switcher({"class-prefix":"shell","default":"unix"}).render();
 });

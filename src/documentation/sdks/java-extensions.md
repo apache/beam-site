@@ -1,11 +1,25 @@
 ---
-layout: default
+layout: section
 title: "Beam Java SDK Extensions"
+section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/java-extensions/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 # Apache Beam Java SDK Extensions
 
-## <a name="join-library"></a>Join-library
+## Join-library
 
 Join-library provides inner join, outer left join, and outer right join functions. The aim
 is to simplify the most common cases of join to a simple function call.
@@ -30,7 +44,7 @@ PCollection<KV<String, KV<String, Long>>> joinedPcollection =
 ```
 
 
-## <a name="sorter"></a>Sorter
+## Sorter
 
 This module provides the `SortValues` transform, which takes a `PCollection<KV<K, Iterable<KV<K2, V>>>>` and produces a `PCollection<KV<K, Iterable<KV<K2, V>>>>` where, for each primary key `K` the paired `Iterable<KV<K2, V>>` has been sorted by the byte encoding of secondary key (`K2`). It is an efficient and scalable sorter for iterables, even if they are large (do not fit in memory).
 

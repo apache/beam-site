@@ -7,6 +7,19 @@ categories: blog
 authors:
   - klk
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 Beam lets you process unbounded, out-of-order, global-scale data with portable
 high-level pipelines. Stateful processing is a new feature of the Beam model
@@ -265,7 +278,7 @@ new DoFn<KV<MyKey, MyValue>, KV<Integer, KV<MyKey, MyValue>>>() {
 
   // A state cell holding a single Integer per key+window
   @StateId("index")
-  private final StateSpec<Object, ValueState<Integer>> indexSpec = 
+  private final StateSpec<ValueState<Integer>> indexSpec = 
       StateSpecs.value(VarIntCoder.of());
 
   @ProcessElement
@@ -456,11 +469,11 @@ only features I have already introduced:
 new DoFn<KV<UserId, Event>, KV<UserId, Prediction>>() {
 
   @StateId("model")
-  private final StateSpec<Object, ValueState<Model>> modelSpec =
+  private final StateSpec<ValueState<Model>> modelSpec =
       StateSpecs.value(Model.coder());
 
   @StateId("previousPrediction")
-  private final StateSpec<Object, ValueState<Prediction>> previousPredictionSpec =
+  private final StateSpec<ValueState<Prediction>> previousPredictionSpec =
       StateSpecs.value(Prediction.coder());
 
   @ProcessElement

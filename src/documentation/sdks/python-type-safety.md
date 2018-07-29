@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Ensuring Python Type Safety"
+section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/python-type-safety/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 #  Ensuring Python Type Safety
 
 Python is a dynamically-typed language with no static type checking. Because of the way Python's type checking works, as well as the deferred nature of runner execution, developer productivity can easily become bottle-necked by time spent investigating type-related errors.
@@ -105,15 +119,17 @@ The following are special type hints that don't correspond to a class, but rathe
 
 In addition to using type hints for type checking at pipeline construction, you can enable runtime type checking to check that actual elements satisfy the declared type constraints during pipeline execution.
 
-For example, the following code would pass at both pipeline construction and runtime.
+For example, the following pipeline emits elements of the wrong type. Depending on the runner implementation, its execution may or may not fail at runtime.
 
 ```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_runtime_off %}```
 
-However, if you enable runtime type checking, the code passes at pipeline construction and fails at runtime. To enable runtime type checking, set the pipeline option `runtime_type_check` to `True`.
+However, if you enable runtime type checking, the code is guaranteed to fail at runtime. To enable runtime type checking, set the pipeline option `runtime_type_check` to `True`.
 
 ```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_runtime_on %}```
+
+Note that because runtime type checks are done for each `PCollection` element, enabling this feature may incur a significant performance penalty. It is therefore recommended that runtime type checks are disabled for production pipelines.
 
 ## Use of Type Hints in Coders
 
@@ -135,4 +151,3 @@ The following code shows the example `Player` class and how to define a `Coder` 
 
 ```
 {% github_sample /apache/beam/blob/master/sdks/python/apache_beam/examples/snippets/snippets_test.py tag:type_hints_deterministic_key %}```
-

@@ -1,11 +1,25 @@
 ---
-layout: default
+layout: section
 title: "Beam Overview"
 permalink: /get-started/beam-overview/
+section_menu: section-menu/get-started.html
 redirect_from:
   - /use/beam-overview/
   - /docs/use/beam-overview/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 # Apache Beam Overview
 
@@ -19,10 +33,11 @@ The Beam SDKs provide a unified programming model that can represent and transfo
 
 Beam currently supports the following language-specific SDKs:
 
-* Java <img src="{{ site.baseurl }}/images/logos/sdks/java.png"
-         alt="Java SDK">
-* Python <img src="{{ site.baseurl }}/images/logos/sdks/python.png"
-         alt="Python SDK ">
+* Java ![Java logo]({{ "/images/logos/sdks/java.png" | prepend: site.baseurl }})
+* Python ![Python logo]({{ "/images/logos/sdks/python.png" | prepend: site.baseurl }})
+* Go ![Go logo]({{ "/images/logos/sdks/go.png" | prepend: site.baseurl }}){: height="45px"}
+
+A Scala ![Scala logo]({{ "/images/logos/sdks/scala.png" | prepend: site.baseurl }}){: height="45px"} interface is also available as [Scio](https://github.com/spotify/scio).
 
 ## Apache Beam Pipeline Runners
 
@@ -30,28 +45,20 @@ The Beam Pipeline Runners translate the data processing pipeline you define with
 
 Beam currently supports Runners that work with the following distributed processing back-ends:
 
-* Apache Apex <img src="{{ site.baseurl }}/images/logos/runners/apex.png"
-         alt="Apache Apex">
-* Apache Flink <img src="{{ site.baseurl }}/images/logos/runners/flink.png"
-         alt="Apache Flink">
-* Apache Gearpump (incubating) <img src="{{ site.baseurl }}/images/logos/runners/gearpump.png"
-         alt="Apache Gearpump">
-* Apache Spark <img src="{{ site.baseurl }}/images/logos/runners/spark.png"
-         alt="Apache Spark">
-* Google Cloud Dataflow <img src="{{ site.baseurl }}/images/logos/runners/dataflow.png"
-         alt="Google Cloud Dataflow">
-    
-**Note:** 
+* Apache Apex  ![Apache Apex logo]({{ "/images/logos/runners/apex.png" | prepend: site.baseurl }})
+* Apache Flink ![Apache Flink logo]({{ "/images/logos/runners/flink.png" | prepend: site.baseurl }})
+* Apache Gearpump (incubating) ![Apache Gearpump logo]({{ "/images/logos/runners/gearpump.png" | prepend: site.baseurl }})
+* Apache Samza ![Apache Samza logo]({{ "/images/logos/runners/samza.png" | prepend: site.baseurl }}){:height="20px" width="50"}
+* Apache Spark ![Apache Spark logo]({{ "/images/logos/runners/spark.png" | prepend: site.baseurl }})
+* Google Cloud Dataflow ![Google Cloud Dataflow logo]({{ "/images/logos/runners/dataflow.png" | prepend: site.baseurl }})
 
-1. You can always execute your pipeline locally for testing and debugging purposes.
-
-2. Gearpump Runner is under development and for more details please refer to [Ongoing Projects]({{ site.baseurl }}/contribute/work-in-progress)         
+**Note:** You can always execute your pipeline locally for testing and debugging purposes.
 
 ## Get Started
 
 Get started using Beam for your data processing tasks.
 
-1. Follow the Quickstart for the [Java SDK]({{ site.baseurl }}/get-started/quickstart-java) or the [Python SDK]({{ site.baseurl }}/get-started/quickstart-py).
+1. Follow the Quickstart for the [Java SDK]({{ site.baseurl }}/get-started/quickstart-java), the [Python SDK]({{ site.baseurl }}/get-started/quickstart-py) or the [Go SDK]({{ site.baseurl }}/get-started/quickstart-go).
 
 2. See the [WordCount Examples Walkthrough]({{ site.baseurl }}/get-started/wordcount-example) for examples that introduce various features of the SDKs.
 

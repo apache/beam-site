@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Runner Authoring Guide"
+section_menu: section-menu/contribute.html
 permalink: /contribute/runner-guide/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 # Runner Authoring Guide
 
@@ -44,7 +58,7 @@ You need to know the core vocabulary:
  * _Runner_ - You are going to write a piece of software called a runner that
    takes a Beam pipeline and executes it using the capabilities of your data
    processing engine.
- 
+
 These concepts may be very similar to your processing engine's concepts. Since
 Beam's design is for cross-language operation and reusable libraries of
 transforms, there are some special features worth highlighting.
@@ -64,12 +78,12 @@ composite transform encapsulating a subgraph. The primitives are:
  * [_Read_](#implementing-the-read-primitive) - parallel connectors to external
    systems
  * [_ParDo_](#implementing-the-pardo-primitive) - per element processing
- * [_GroupByKey_](#implementing-the-groupbykey-and-window-primitive) - 
+ * [_GroupByKey_](#implementing-the-groupbykey-and-window-primitive) -
    aggregating elements per key and window
  * [_Flatten_](#implementing-the-flatten-primitive) - union of PCollections
  * [_Window_](#implementing-the-window-primitive) - set the windowing strategy
    for a PCollection
- 
+
 When implementing a runner, these are the operations you need to implement.
 Composite transforms may or may not be important to your runner. If you expose
 a UI, maintaining some of the composite structure will make the pipeline easier
@@ -253,7 +267,7 @@ Java-based.
 
 For correctness, a `DoFn` _should_ represent an element-wise function, but in
 fact is a long-lived object that processes elements in small groups called
-bundles. 
+bundles.
 
 Your runner decides how many elements, and which elements, to include in a
 bundle, and can even decide dynamically in the middle of processing that the
@@ -264,7 +278,7 @@ It will generally improve throughput to make the largest bundles possible, so
 that initialization and finalization costs are amortized over many elements.
 But if your data is arriving as a stream, then you will want to terminate a
 bundle in order to achieve appropriate latency, so bundles may be just a few
-elements. 
+elements.
 
 #### The DoFn Lifecycle
 
@@ -309,15 +323,15 @@ interface DoFnRunner<InputT, OutputT> {
 
 There are some implementations and variations of this for different scenarios:
 
- * [`SimpleDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/SimpleDoFnRunner.java) - 
+ * [`SimpleDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/SimpleDoFnRunner.java) -
    not actually simple at all; implements lots of the core functionality of
    `ParDo`. This is how most runners execute most `DoFns`.
- * [`LateDataDroppingDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/LateDataDroppingDoFnRunner.java) - 
+ * [`LateDataDroppingDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/LateDataDroppingDoFnRunner.java) -
    wraps a `DoFnRunner` and drops data from expired windows so the wrapped
    `DoFnRunner` doesn't get any unpleasant surprises
- * [`StatefulDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/StatefulDoFnRunner.java) - 
+ * [`StatefulDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/StatefulDoFnRunner.java) -
    handles collecting expired state
- * [`PushBackSideInputDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/PushbackSideInputDoFnRunner.java) - 
+ * [`PushBackSideInputDoFnRunner`](https://github.com/apache/beam/blob/master/runners/core-java/src/main/java/org/apache/beam/runners/core/PushbackSideInputDoFnRunner.java) -
    buffers input while waiting for side inputs to be ready
 
 These are all used heavily in implementations of Java runners. Invocations
@@ -336,7 +350,7 @@ _Main design document:
 A side input is a global view of a window of a `PCollection`. This distinguishes
 it from the main input, which is processed one element at a time. The SDK/user
 prepares a `PCollection` adequately, the runner materializes it, and then the
-runner feeds it to the `DoFn`. See the 
+runner feeds it to the `DoFn`. See the
 
 What you will need to implement is to inspect the materialization requested for
 the side input, and prepare it appropriately, and corresponding interactions
@@ -456,7 +470,7 @@ _Main design document:
 
 A window is expired in a `PCollection`  if the watermark of the input PCollection
 has exceeded the end of the window by at least the input `PCollection`'s
-allowed lateness. 
+allowed lateness.
 
 Data for an expired window can be dropped any time and should be dropped at a
 `GroupByKey`. If you are using `GroupAlsoByWindow`, then just before executing
@@ -636,37 +650,23 @@ matching a `ParDo` where the `DoFn` uses state or timers, etc.
 The Beam Java SDK and Python SDK have suites of runner validation tests. The
 configuration may evolve faster than this document, so check the configuration
 of other Beam runners. But be aware that we have tests and you can use them
-very easily!  To enable these tests in a Java-based runner using Maven, you
+very easily!  To enable these tests in a Java-based runner using Gradle, you
 scan the dependencies of the SDK for tests with the JUnit category
 `ValidatesRunner`.
 
 {:.no-toggle}
-```xml
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-surefire-plugin</artifactId>
-  <executions>
-    <execution>
-      <id>validates-runner-tests</id>
-      <phase>integration-test</phase>
-      <goals><goal>test</goal></goals>
-      <configuration>
-        <groups>org.apache.beam.sdk.testing.ValidatesRunner</groups>
-        <dependenciesToScan>
-          <dependency>org.apache.beam:beam-sdks-java-core</dependency>
-        </dependenciesToScan>
-        <systemPropertyVariables>
-          <beamTestPipelineOptions>
-            [
-              "--runner=MyRunner",
-              … misc test options … 
-            ]
-          </beamTestPipelineOptions>
-        </systemPropertyVariables>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
+```
+task validatesRunner(type: Test) {
+  group = "Verification"
+  description = "Validates the runner"
+  def pipelineOptions = JsonOutput.toJson(["--runner=MyRunner", ... misc test options ...])
+  systemProperty "beamTestPipelineOptions", pipelineOptions
+  classpath = configurations.validatesRunner
+  testClassesDirs = files(project(":sdks:java:core").sourceSets.test.output.classesDirs)
+  useJUnit {
+    includeCategories 'org.apache.beam.sdk.testing.ValidatesRunner'
+  }
+}
 ```
 
 Enable these tests in other languages is unexplored.
@@ -696,7 +696,7 @@ public interface MyRunnerOptions extends PipelineOptions {
   @Required
   public Foo getMyRequiredFoo();
   public void setMyRequiredFoo(Foo newValue);
- 
+
   @Description("Enable Baz; on by default")
   @Default.Boolean(true)
   public Boolean isBazEnabled();
@@ -737,11 +737,11 @@ public static class MyRunnerRegistrar implements PipelineRunnerRegistrar {
   }
 }
 ```
- 
+
 ### Integrating with the Python SDK
 
 In the Python SDK the registration of the code is not automatic. So there are
-few things to keep in mind when creating a new runner. 
+few things to keep in mind when creating a new runner.
 
 Any dependencies on packages for the new runner should be options so create a
 new target in `extra_requires` in `setup.py` that is needed for the new runner.
@@ -785,7 +785,7 @@ interfaces for launching a pipeline and checking the status of a job. The RPC
 interfaces are still in development so for now we focus on the SDK-agnostic
 representation of a pipeline. By examining a pipeline only through Runner API
 interfaces, you remove your runner's dependence on the SDK for its language for
-pipeline analysis and job translation. 
+pipeline analysis and job translation.
 
 To execute such an SDK-independent pipeline, you will need to support the Fn
 API. UDFs are embedded in the pipeline as a specification of the function
@@ -813,8 +813,8 @@ The utilities are named consistently, like so:
 
  * `PTransformTranslation` - registry of known transforms and standard URNs
  * `ParDoTranslation` - utilities for working with `ParDo` in a
-   language-independent manner 
- * `WindowIntoTranslation` - same for `Window` 
+   language-independent manner
+ * `WindowIntoTranslation` - same for `Window`
  * `FlattenTranslation` - same for `Flatten`
  * `WindowingStrategyTranslation` - same for windowing strategies
  * `CoderTranslation` - same for coders
@@ -825,8 +825,8 @@ depend on the particulars of the Java SDK.
 
 ## The Runner API protos
 
-[The Runner
-API](https://github.com/apache/beam/blob/master/sdks/common/runner-api/src/main/proto/beam_runner_api.proto)
+The [Runner
+API](https://github.com/apache/beam/blob/master/model/pipeline/src/main/proto/beam_runner_api.proto)
 refers to a specific manifestation of the concepts in the Beam model, as a
 protocol buffers schema.  Even though you should not manipulate these messages
 directly, it can be helpful to know the canonical data that makes up a
@@ -971,7 +971,7 @@ message CombinePayload {
   ...
 }
 ```
- 
+
 ### `PTransform` proto
 
 A `PTransform` is a function from `PCollection` to `PCollection`. This is
@@ -984,7 +984,7 @@ be passed back to an SDK harness; they do not represent a UDF.
 message PTransform {
   FunctionSpec spec;
   repeated string subtransforms;
- 
+
   // Maps from local string names to PCollection ids
   map<string, bytes> inputs;
   map<string, bytes> outputs;
@@ -1012,7 +1012,7 @@ message PCollection {
   string windowing_strategy_id;
   ...
 }
-``` 
+```
 
 ### `Coder` proto
 
@@ -1028,7 +1028,7 @@ message Coder {
   repeated string component_coder_ids;
 }
 ```
- 
+
 ## The Runner API RPCs
 
 While your language's SDK will probably insulate you from touching the Runner
@@ -1058,7 +1058,7 @@ message RunPipelineRequest {
   Struct pipeline_options;
 }
 ```
- 
+
 {:.no-toggle}
 ```proto
 message RunPipelineResponse {
@@ -1066,12 +1066,12 @@ message RunPipelineResponse {
 
   // TODO: protocol for rejecting pipelines that cannot be executed
   // by this runner. May just be REJECTED job state with error message.
- 
+
   // totally opaque to the SDK; for the shim to interpret
   Any contents;
 }
 ```
- 
+
 ### `PipelineResult` aka "Job API"
 
 The two core pieces of functionality in this API today are getting the state of
@@ -1086,19 +1086,18 @@ message CancelPipelineRequest {
   bytes pipeline_id;
   ...
 }
- 
+
 message GetStateRequest {
   bytes pipeline_id;
   ...
 }
- 
+
 message GetStateResponse {
   JobState state;
   ...
 }
- 
+
 enum JobState {
   ...
 }
 ```
- 

@@ -7,12 +7,25 @@ categories: beam update
 authors:
 - jesseanderson
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 
 Tyler Akidau and I gave a [three-hour tutorial](http://conferences.oreilly.com/strata/hadoop-big-data-ny/public/schedule/detail/52129) on Apache Beam at Strata+Hadoop World 2016. We had a plethora of help from our TAs: Kenn Knowles, Reuven Lax, Felipe Hoffa, Slava Chernyak, and Jamie Grier. There were a total of 66 people that attended the session.<!--more-->
 
 <img src="{{ "/images/blog/IMG_20160927_170956.jpg" | prepend: site.baseurl }}" alt="Exercise time">
 
-If you want to take a look at the tutorial materials, we’ve put them up [on GitHub](https://github.com/eljefe6a/beamexample). This includes the [actual slides](https://github.com/eljefe6a/beamexample/blob/master/BeamTutorial/slides.pdf) as well as the [exercises](https://github.com/eljefe6a/beamexample/tree/master/BeamTutorial/src/main/java/org/apache/beam/examples/tutorial/game) that we covered. If you’re looking to learn a little about Beam, this is a good way to start. The exercises are based on an imaginary mobile game where data needs processing and are based on code in the [Beam examples directory](https://github.com/apache/beam/tree/master/examples/java8/src/main/java/org/apache/beam/examples/complete/game). The code has TODOs for where you need to fill in code or there are full sample solutions to look over our code. You can run these examples on your own machine or on a cluster using a runner that Beam supports.
+If you want to take a look at the tutorial materials, we’ve put them up [on GitHub](https://github.com/eljefe6a/beamexample). This includes the [actual slides](https://github.com/eljefe6a/beamexample/blob/master/BeamTutorial/slides.pdf) as well as the [exercises](https://github.com/eljefe6a/beamexample/tree/master/BeamTutorial/src/main/java/org/apache/beam/examples/tutorial/game) that we covered. If you’re looking to learn a little about Beam, this is a good way to start. The exercises are based on an imaginary mobile game where data needs processing and are based on code in the [Beam examples directory](https://github.com/apache/beam/tree/master/examples/java/src/main/java/org/apache/beam/examples/complete/game). The code has TODOs for where you need to fill in code or there are full sample solutions to look over our code. You can run these examples on your own machine or on a cluster using a runner that Beam supports.
 
 I want to share some of takeaways I had about Beam during the conference.
 

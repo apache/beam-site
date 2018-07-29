@@ -1,8 +1,22 @@
 ---
-layout: default
+layout: section
 title: "Apache Apex Runner"
+section_menu: section-menu/runners.html
 permalink: /documentation/runners/apex/
 ---
+<!--
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
 # Using the Apache Apex Runner
 
 The Apex Runner executes Apache Beam pipelines using [Apache Apex](http://apex.apache.org/) as an underlying engine. The runner has broad support for the [Beam model and supports streaming and batch pipelines]({{ site.baseurl }}/documentation/runners/capability-matrix/).
@@ -61,4 +75,3 @@ Depending on your installation, you may be able to monitor the progress of your 
 
 * YARN : Using YARN web UI generally running on 8088 on the node running resource manager.
 * Apex command-line interface: [Using the Apex CLI to get running application information](http://apex.apache.org/docs/apex/apex_cli/#apex-cli-commands).
-
