@@ -28,7 +28,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Built-in I/O Transforms</title>
+  <title>Apache HCatalog InputFormat IO</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -39,7 +39,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/documentation/io/built-in/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/documentation/io/built-in/hcatalog/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -251,150 +251,156 @@
 
 
 
+<ul class="nav">
+  <li><a href="#reading-using-hcatalogio">Reading using HCatalogIO</a></li>
+  <li><a href="#writing-using-hcatalogio">Writing using HCatalogIO</a></li>
+  <li><a href="#using-older-versions-of-hcatalog-1x">Using older versions of HCatalog (1.x)</a></li>
+</ul>
 
 
       </nav>
 
       <div class="body__contained body__section-nav">
-        <!--
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+        <p><a href="/documentation/io/io-toc/">Pipeline I/O Table of Contents</a></p>
 
-http://www.apache.org/licenses/LICENSE-2.0
+<h1 id="hcatalog-io">HCatalog IO</h1>
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
+<p>An <code class="highlighter-rouge">HCatalogIO</code> is a transform for reading and writing data to an HCatalog managed source.</p>
 
-<p><a href="/documentation/io/io-toc/">Pipeline I/O Table of Contents</a></p>
+<h3 id="reading-using-hcatalogio">Reading using HCatalogIO</h3>
 
-<h1 id="built-in-io-transforms">Built-in I/O Transforms</h1>
+<p>To configure an HCatalog source, you must specify a metastore URI and a table name. Other optional parameters are database and filter.</p>
 
-<p>This table contains the currently available I/O transforms.</p>
+<p>For example:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">configProperties</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;();</span>
+<span class="n">configProperties</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"hive.metastore.uris"</span><span class="o">,</span><span class="s">"thrift://metastore-host:port"</span><span class="o">);</span> 
+<span class="n">pipeline</span>
+  <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">HCatalogIO</span><span class="o">.</span><span class="na">read</span><span class="o">()</span>
+  <span class="o">.</span><span class="na">withConfigProperties</span><span class="o">(</span><span class="n">configProperties</span><span class="o">)</span>
+  <span class="o">.</span><span class="na">withDatabase</span><span class="o">(</span><span class="s">"default"</span><span class="o">)</span> <span class="c1">//optional, assumes default if none specified</span>
+  <span class="o">.</span><span class="na">withTable</span><span class="o">(</span><span class="s">"employee"</span><span class="o">)</span>
+  <span class="o">.</span><span class="na">withFilter</span><span class="o">(</span><span class="n">filterString</span><span class="o">)</span> <span class="c1">//optional, may be specified if the table is partitioned</span>
+</code></pre>
+</div>
+<div class="language-py highlighter-rouge"><pre class="highlight"><code>  <span class="c"># The Beam SDK for Python does not support HCatalogIO.</span>
+</code></pre>
+</div>
 
-<p>Consult the <a href="/documentation/programming-guide#pipeline-io">Programming Guide I/O section</a> for general usage instructions, and see the javadoc/pydoc for the particular I/O transforms.</p>
+<h3 id="writing-using-hcatalogio">Writing using HCatalogIO</h3>
 
-<table class="table table-bordered">
-<tr>
-  <th>Language</th>
-  <th>File-based</th>
-  <th>Messaging</th>
-  <th>Database</th>
-</tr>
-<tr>
-  <td>Java</td>
-  <td>
-    <p>Beam Java supports Apache HDFS, Amazon S3, Google Cloud Storage, and local filesystems.</p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/FileIO.java">FileIO</a> (general-purpose reading, writing, and matching of files)</p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/AvroIO.java">AvroIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TextIO.java">TextIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/core/src/main/java/org/apache/beam/sdk/io/TFRecordIO.java">TFRecordIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/xml/src/main/java/org/apache/beam/sdk/io/xml/XmlIO.java">XmlIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/tika/src/main/java/org/apache/beam/sdk/io/tika/TikaIO.java">TikaIO</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/java/io/parquet/src/main/java/org/apache/beam/sdk/io/parquet/ParquetIO.java">ParquetIO</a></p>
-  </td>
-  <td>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kinesis">Amazon Kinesis</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/amqp">AMQP</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kafka">Apache Kafka</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/pubsub">Google Cloud Pub/Sub</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jms">JMS</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mqtt">MQTT</a></p>
-  </td>
-  <td>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/cassandra">Apache Cassandra</a></p>
-    <p><a href="/documentation/io/built-in/hadoop/">Apache Hadoop InputFormat</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/hbase">Apache HBase</a></p>
-    <p><a href="/documentation/io/built-in/hcatalog">Apache Hive (HCatalog)</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/kudu">Apache Kudu</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/solr">Apache Solr</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/elasticsearch">Elasticsearch (v2.x and v5.x)</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigquery">Google BigQuery</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/bigtable">Google Cloud Bigtable</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/datastore">Google Cloud Datastore</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/google-cloud-platform/src/main/java/org/apache/beam/sdk/io/gcp/spanner">Google Cloud Spanner</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/jdbc">JDBC</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/mongodb">MongoDB</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/java/io/redis">Redis</a></p>
-  </td>
-</tr>
-<tr>
-  <td>Python</td>
-  <td>
-    <p>Beam Python supports Google Cloud Storage and local filesystems.</p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/avroio.py">avroio</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/textio.py">textio</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/tfrecordio.py">tfrecordio</a></p>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/vcfio.py">vcfio</a></p>
-  </td>
-  <td>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/gcp/pubsub.py">Google Cloud Pub/Sub</a></p>
-  </td>
-  <td>
-    <p><a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/io/gcp/bigquery.py">Google BigQuery</a></p>
-    <p><a href="https://github.com/apache/beam/tree/master/sdks/python/apache_beam/io/gcp/datastore">Google Cloud Datastore</a></p>
-  </td>
+<p>To configure an <code class="highlighter-rouge">HCatalog</code> sink, you must specify a metastore URI and a table name. Other
+optional parameters are database, partition and batchsize.
+The destination table should exist beforehand as the transform will not create a new table if missing.</p>
 
-</tr>
-</table>
+<p>For example:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">configProperties</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;();</span>
+<span class="n">configProperties</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="s">"hive.metastore.uris"</span><span class="o">,</span><span class="s">"thrift://metastore-host:port"</span><span class="o">);</span>
 
-<h1 id="in-progress-io-transforms">In-Progress I/O Transforms</h1>
+<span class="n">pipeline</span>
+  <span class="o">.</span><span class="na">apply</span><span class="o">(...)</span>
+  <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">HCatalogIO</span><span class="o">.</span><span class="na">write</span><span class="o">()</span>
+    <span class="o">.</span><span class="na">withConfigProperties</span><span class="o">(</span><span class="n">configProperties</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">withDatabase</span><span class="o">(</span><span class="s">"default"</span><span class="o">)</span> <span class="c1">//optional, assumes default if none specified</span>
+    <span class="o">.</span><span class="na">withTable</span><span class="o">(</span><span class="s">"employee"</span><span class="o">)</span>
+    <span class="o">.</span><span class="na">withPartition</span><span class="o">(</span><span class="n">partitionValues</span><span class="o">)</span> <span class="c1">//optional, may be specified if the table is partitioned</span>
+    <span class="o">.</span><span class="na">withBatchSize</span><span class="o">(</span><span class="mi">1024L</span><span class="o">))</span> <span class="c1">//optional, assumes a default batch size of 1024 if none specified</span>
+</code></pre>
+</div>
+<div class="language-py highlighter-rouge"><pre class="highlight"><code>  <span class="c"># The Beam SDK for Python does not support HCatalogIO.</span>
+</code></pre>
+</div>
 
-<p>This table contains I/O transforms that are currently planned or in-progress. Status information can be found on the JIRA issue, or on the GitHub PR linked to by the JIRA issue (if there is one).</p>
+<h3 id="using-older-versions-of-hcatalog-1x">Using older versions of HCatalog (1.x)</h3>
 
-<table class="table table-bordered">
-  <tr>
-    <th>Name</th><th>Language</th><th>JIRA</th>
-  </tr>
-  <tr>
-    <td>Apache HDFS support</td><td>Python</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-3099">BEAM-3099</a></td>
-  </tr>
-  <tr>
-    <td>Apache DistributedLog</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-607">BEAM-607</a></td>
-  </tr>
-  <tr>
-    <td>Apache Kafka</td><td>Python</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-3788">BEAM-3788</a></td>
-  </tr>
-  <tr>
-    <td>Apache Sqoop</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-67">BEAM-67</a></td>
-  </tr>
-  <tr>
-    <td>Couchbase</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1893">BEAM-1893</a></td>
-  </tr>
-  <tr>
-    <td>InfluxDB</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-2546">BEAM-2546</a></td>
-  </tr>
-  <tr>
-    <td>Memcached</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1678">BEAM-1678</a></td>
-  </tr>
-  <tr>
-    <td>Neo4j</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1857">BEAM-1857</a></td>
-  </tr>
-  <tr>
-    <td>RabbitMQ</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1240">BEAM-1240</a></td>
-  </tr>
-  <tr>
-    <td>RestIO</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-1946">BEAM-1946</a></td>
-  </tr>
-  <tr>
-    <td>Amazon SQS</td><td>Java</td>
-    <td><a href="https://issues.apache.org/jira/browse/BEAM-4828">BEAM-4828</a></td>
-  </tr>
-</table>
+<p><code class="highlighter-rouge">HCatalogIO</code> is build for Apache HCatalog versions 2 and up and will not work out of the box for older versions of HCatalog. 
+The following illustrates a workaround to work with Hive 1.1.</p>
+
+<p>Include the following Hive 1.2 jars in the über jar you build. 
+The 1.2 jars provide the necessary methods for Beam while remain compatible with Hive 1.1.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.beam&lt;/groupId&gt;
+    &lt;artifactId&gt;beam-sdks-java-io-hcatalog&lt;/artifactId&gt;
+    &lt;version&gt;${beam.version}&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.hive.hcatalog&lt;/groupId&gt;
+    &lt;artifactId&gt;hive-hcatalog-core&lt;/artifactId&gt;
+    &lt;version&gt;1.2&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.hive&lt;/groupId&gt;
+    &lt;artifactId&gt;hive-metastore&lt;/artifactId&gt;
+    &lt;version&gt;1.2&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.hive&lt;/groupId&gt;
+    &lt;artifactId&gt;hive-exec&lt;/artifactId&gt;
+    &lt;version&gt;1.2&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.apache.hive&lt;/groupId&gt;
+    &lt;artifactId&gt;hive-common&lt;/artifactId&gt;
+    &lt;version&gt;1.2&lt;/version&gt;
+&lt;/dependency&gt;
+</code></pre>
+</div>
+
+<p>Relocate <em>only</em> the following hive packages:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+    &lt;version&gt;${maven-shade-plugin.version}&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;createDependencyReducedPom&gt;false&lt;/createDependencyReducedPom&gt;
+        &lt;filters&gt;
+            &lt;filter&gt;
+                &lt;artifact&gt;*:*&lt;/artifact&gt;
+                &lt;excludes&gt;
+                    &lt;exclude&gt;META-INF/*.SF&lt;/exclude&gt;
+                    &lt;exclude&gt;META-INF/*.DSA&lt;/exclude&gt;
+                    &lt;exclude&gt;META-INF/*.RSA&lt;/exclude&gt;
+                &lt;/excludes&gt;
+            &lt;/filter&gt;
+        &lt;/filters&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;shade&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+                &lt;shadedArtifactAttached&gt;true&lt;/shadedArtifactAttached&gt;
+                &lt;shadedClassifierName&gt;shaded&lt;/shadedClassifierName&gt;
+                &lt;transformers&gt;
+                    &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/&gt;
+                &lt;/transformers&gt;
+                &lt;relocations&gt;
+                    &lt;!-- Important: Do not relocate org.apache.hadoop.hive --&gt;
+                    &lt;relocation&gt;
+                        &lt;pattern&gt;org.apache.hadoop.hive.conf&lt;/pattern&gt;
+                        &lt;shadedPattern&gt;h12.org.apache.hadoop.hive.conf&lt;/shadedPattern&gt;
+                    &lt;/relocation&gt;
+                    &lt;relocation&gt;
+                        &lt;pattern&gt;org.apache.hadoop.hive.ql&lt;/pattern&gt;
+                        &lt;shadedPattern&gt;h12.org.apache.hadoop.hive.ql&lt;/shadedPattern&gt;
+                    &lt;/relocation&gt;
+                    &lt;relocation&gt;
+                        &lt;pattern&gt;org.apache.hadoop.hive.metastore&lt;/pattern&gt;
+                        &lt;shadedPattern&gt;h12.org.apache.hadoop.hive.metastore&lt;/shadedPattern&gt;
+                    &lt;/relocation&gt;
+                &lt;/relocations&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;
+</code></pre>
+</div>
+
+<p>This has been testing to read SequenceFile and ORCFile file backed tables running with 
+Beam 2.4.0 on Spark 2.3 / YARN in a Cloudera CDH 5.12.2 managed environment.</p>
 
       </div>
     </div>
