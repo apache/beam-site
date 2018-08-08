@@ -18,61 +18,74 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 # Euphoria Java 8 DSL
+<!--
+NOTE for future maintainer.
+There is `DocumentationExamplesTest` class in `beam-sdks-java-extensions-euphoria-core` project where all code examples are validated. Do to change code examples without reflecting it in `DocumentationExamplesTest` and vice versa.
+
+Following operators are unsupported. Include them in documentation when supported.
+
+### `TopPerKey`
+Emits top element for defined keys and windows.
+ - This is unsupported due RSBK!!
+
+Lower level transformations (if possible user should prefer above transformations):
+### `ReduceStateByKey`: assigns each input item to a set of windows and turns the item into a key/value pair.
+For each of the assigned windows the extracted value is accumulated using a user provided `StateFactory` state
+ implementation under the extracted key. I.e. the value is accumulated into a state identified by
+ a key/window pair.
+-->
 
 ## What is Euphoria
+Easy to use Java 8 API build on top of the Beam's Java SDK. Provides a [high-level abstractions](#operator-reference) of data transformations, with focus on Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. Allows for fast prototyping through use of default [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators. And can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing beam `Pipelines`.
 
-Easy to use Java 8 DSL for the Beam Java SDK. Provides a high-level abstraction of Beam transformations, which is both easy to read and write. Can be used as a complement to existing Beam pipelines (convertible back and forth).
+### Where did Euphoria came from ?
+[Euphoria](https://github.com/seznam/euphoria) was originally developed as an abstraction layer above big data processing engines such as Spark or Flink since 2014. [DataFlow whitepaper](http://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) in 2015 inspired Euphoria authors to create API based on ideas published there. The project was open-sourced 2016 and is still actively developed today.
 
-Integration of Euphoria API to Beam is in **progress** ([BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900)).
+Now the Euphoria API is being integrated into Apache Beam [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900) - still work in progress.
 
-## How to build
-
-Euphoria is located in `dsl-euphoria` branch. To build `euphoria` subprojects use command:
-
-```
-./gradlew :beam-sdks-java-extensions-euphoria-beam:build 
-```
-
-## WordCount example
-
+## Word Count Example
+Lets start with small example.
 ```java
 Pipeline pipeline = Pipeline.create(options);
 
 // Transform to euphoria's flow.
-BeamFlow flow = BeamFlow.create(pipeline);
+BeamFlow flow = BeamFlow.of(pipeline);
 
 // Source of data loaded from Beam IO.
 PCollection<String> input =
-    pipeline.apply(Create.of(inputs)).setTypeDescriptor(TypeDescriptor.of(String.class));
+  pipeline
+    .apply(Create.of(textLineByLine))
+    .setTypeDescriptor(TypeDescriptor.of(String.class));
 // Transform PCollection to euphoria's Dataset.
 Dataset<String> lines = flow.wrapped(input);
 
 // FlatMap processes one input element at a time and allows user code to emit
 // zero, one, or more output elements. From input lines we will get data set of words.
-Dataset<String> words = FlatMap.named("TOKENIZER")
+Dataset<String> words =
+  FlatMap.named("TOKENIZER")
     .of(lines)
-    .using((String line, Collector<String> context) -> {
-      for (String word : line.split("\\s+")) {
+    .using(
+      (String line, Collector<String> context) -> {
+        for (String word : Splitter.onPattern("\\s+").split(line)) {
         context.collect(word);
       }
-    })
+      })
     .output();
 
-// From each input element we extract a key (word) and value, which is the constant `1`.
-// Then, we reduce by the key - the operator ensures that all values for the same
-// key end up being processed together. It applies user defined function (summing word counts for each
-// unique word) and its emitted to output. 
-Dataset<Pair<String, Long>> counted = ReduceByKey.named("COUNT")
+// Now we can count input words - the operator ensures that all values for the same
+// key (word in this case) end up being processed together. Then it counts number of appearances
+// of the same key in 'words' dataset and emits it to output.
+Dataset<KV<String, Long>> counted =
+  CountByKey.named("COUNT")
     .of(words)
     .keyBy(w -> w)
-    .valueBy(w -> 1L)
-    .combineBy(Sums.ofLongs())
     .output();
 
 // Format output.
-Dataset<String> output = MapElements.named("FORMAT")
+Dataset<String> output =
+  MapElements.named("FORMAT")
     .of(counted)
-    .using(p -> p.getFirst() + ": " + p.getSecond())
+    .using(p -> p.getKey() + ": " + p.getValue())
     .output();
 
 // Transform Dataset back to PCollection. It can be done in any step of this flow.
@@ -80,10 +93,453 @@ PCollection<String> outputCollection = flow.unwrapped(output);
 
 // Now we can again use Beam transformation. In this case we save words and their count
 // into the text file.
-outputCollection.apply(TextIO.write().to(options.getOutput()));
+outputCollection.apply(TextIO.write().to("counted_words"));
 
 pipeline.run();
 ```
 
+## Euphoria Guide
+### `Flow` your data
+Euphoria API is composed as a flow of operators called `BeamFlow`. There is a set of operators which allows to construct `BeamFlow` according to your Big Data application needs. `BeamFlows` are easily created from Beam `Pipeline`.
+```java
+Pipeline pipeline = Pipeline.create(options);
 
+BeamFlow flow = BeamFlow.of(pipeline);
+```
+Or from `PCollection`. That is especially useful when some of many Beam's IO are utilized as data inputs.
+```java
+PCollection<T> inputPCollection = ...
 
+BeamFlow flow = BeamFlow.of(inputPCollection);
+```
+### Datasets
+Euphoria use concept of 'Datasets' to describe flows of data between operators. This concept is similar to Beam's `PCollection` and can be converted both ways through `BeamFlow`.
+```java
+PCollection<T> someCollection = ...
+
+// PCollection -> Dataset
+Dataset<T> dataset = flow.wrapped(someCollection);
+
+//And now back: Dataset -> PCollection
+PCollection<T> collection = flow.unwrapped(dataset);
+```
+One should not mix different instances of `BeamFlow` when wrapping/unwrapping `PCollections`.
+
+### Inputs and Outputs
+Input data can supplied through Beams IO into `PCollection`, the same way as in Beam, and latter wrapped by `BeamFlow` into `Dataset`.
+
+```java
+PCollection<String> input =
+  pipeline
+    .apply(Create.of("mouse", "rat", "elephant", "cat", "X", "duck"))
+    .setTypeDescriptor(TypeDescriptor.of(String.class));
+
+Dataset<String> dataset = flow.wrapped(input);
+```
+Output can be treated the same way as inputs, last `Dataset` is converted to `Pcollection` and dumped to appropriate IO.
+
+### Adding Operators
+Real power of Euphoria API is in its [operators suite](#operators-reference). Once we get our hand on `Dataset` we are able to create and connect operators. Each Operator consumes one or more input and produces one output
+`Dataset`. Lets look at simple `MapElements` example.
+
+```java
+Dataset<Integer> input = ...
+
+Dataset<String> mappedElements =
+  MapElements
+    .named("Int2Str")
+    .of(input)
+    .using(String::valueOf)
+    .output();
+```
+The operator consumes `input`, it applies given lambda expression (`String::valueOf`) on each element of `input` and returns mapped `Datatset`. Developer is guided through series of steps when creating operator so the declaration of an operator is straightforward. To start building operator just wrote its name and '.'. Your IDE will give you hits.
+
+First step to build any operator is to give it a name through `named()` method. This is optional but recommended step. The name is propagated through system and can latter used when debugging.
+
+### Coders and Types
+Beam's Java SDK requires developers to supply `Coder` for custom element type in order to have an way of materializing elements. Euphoria integrates [Kryo](https://github.com/EsotericSoftware/kryo) as default way of serialization. Recommended way of using [Kryo](https://github.com/EsotericSoftware/kryo) is to register all the types which will Kryo serialize with it. Sometimes it is also a good idea to register Kryo serialisers of its own too. Euphoria allows you to do that by implementing your own `KryoRegistrar` and using it as input to `RegisterCoders`. The `RegisterCoders` can also be used as convenient way of supplying Beam `Coder` for specified element types.
+```java
+RegisterCoders
+  .to(flow)
+  .setKryoClassRegistrar(
+    (kryo) -> {
+      kryo.register(KryoSerializedElementType.class); //other may follow
+    })
+  .registerCoder(AnotherElementType.class, beamCoder)
+  .registerCoder(new TypeDescriptor<ParametrizedTestDataType<String>>() {}, typeParametrizedCoder)
+  .done();
+```
+Furthermore when fast prototyping you may decide not to care much about coders and Euphoria will use Kryo for every element type which do not have registered `Coder`. Even for elements of types not registered with Kryo. That of course degrades performance, since Kryo is not able to serialize instances of unregistered types effectively. This behavior is enabled by default and can be disabled when creating `BeamFlow`.
+```java
+BeamFlow flow = BeamFlow.of(pipeline, false); // set `allowKryoCoderAsFallback` param to false
+```
+Euphoria resolves coder using types of elements. Trouble is that when element type is described by lambda implementation, then type information is not available at runtime (due to type erasure and dynamic nature of lambda expressions). So there is an optional way of supplying `TypeDescriptor` every time new type is introduced during Operator construction.
+```java
+Dataset<Integer> input = ...
+
+MapElements
+  .named("Int2Str")
+  .of(input)
+  .using(String::valueOf, TypeDescriptors.strings())
+  .output();
+```
+Supplying `TypeDescriptors` will become mandatory when using Kryo as fallback `Coder` is disabled.
+
+### Metrics and Accumulators
+Statistics about job's internals are very helpful during development of distributed jobs. Either for debugging or monitoring purposes. Euphoria calls them accumulators. They are accessible through environment `Context`, which can be obtained form  `Collector` whenever working wit it. It is usually present when zero-to-many output elements are expected from operator. For example in case of `FlatMap`.
+```java
+BeamFlow flow = ...
+Dataset<String> dataset = ..
+
+Dataset<String> mapped =
+FlatMap
+  .named("FlatMap1")
+  .of(dataset)
+  .using(
+    (String s, Collector<String> c) -> {
+      c.getCounter("my-counter").increment();
+        c.collect(s);
+    })
+  .output();
+```
+`MapElements` also allows for `Context` to be cessed by supplying implementations of `UnaryFunctionEnv` (add second context argument) instead of `UnaryFunctionEnv`.
+```java
+BeamFlow flow = ...
+Dataset<String> dataset = ...
+
+Dataset<String> mapped =
+  MapElements
+    .named("MapThem")
+    .of(dataset)
+    .using(
+      (input, context) -> {
+        // use simple counter
+        context.getCounter("my-counter").increment();
+
+        return input.toLowerCase();
+        })
+      .output();
+```
+Accumulators are translated into Beam Metrics in background so they can be viewed the same way. Namespace of translated metrics is set do defining operator's name.
+
+### Windowing
+Euphoria follows the same [widowing principles]({{ site.baseurl }}/documentation/programming-guide/#windowing) as Beam Java SDK. Every shuffle operator, that is every operator which needs to shuffle elements over network between executors, allows you to set it. The same parameters as in Beam are required. `WindowFn`, `Trigger` and `WindowingStrategy`. Users are guided to either set all three or none when building an operator. Windowing is propagated down through `BeamFlow` the same way as it works with `Pipeline`.
+```java
+CountByKey.of(input)
+  .keyBy(e -> e)
+  .windowBy(FixedWindows.of(Duration.standardSeconds(1)))
+  .triggeredBy(DefaultTrigger.of())
+  .discardingFiredPanes()
+  .output();
+```
+
+### Integration of Euphoria into existing pipelines
+`EuphoriaPTransform` allows to define composite `PTransform` so Euphoria can be seamlessly integrated to already existing Beam `Pipelines`. User only need to provide implementation of function which takes input `Dataset`  and outputs another `Datatset`. The input dataset is nothing else than mirror of a input `PCollection`. Output `Dataset` is transformed to `Pcollection` automatically.
+```java
+//suppose inputs PCollection contains: [ "a", "b", "c", "A", "a", "C", "x"]
+PCollection<KV<String, Long>> lettersWithCounts =
+  inputs.apply("count-uppercase-letters-in-Euphoria",
+    EuphoriaPTransform.of(
+      (Dataset<String> input) -> {
+        Dataset<String> upperCase =
+          MapElements.of(input)
+            .using((UnaryFunction<String, String>) String::toUpperCase)
+            .output();
+
+        return CountByKey.of(upperCase).keyBy(e -> e).output();
+    }));
+//now the 'lettersWithCounts' will conntain [ KV("A", 3L), KV("B", 1L), KV("C", 2L), KV("X", 1L) ]
+```
+
+## How to get Euphoria
+Euphoria is located in `dsl-euphoria` branch of Apache Beam project. To build `euphoria` subproject call:
+```
+./gradlew beam-sdks-java-extensions-euphoria-core:build
+```
+
+## Operator Reference
+Operators are higher level transformations of data which allows to build whole logic of data processing jobs. All the Euphoria operators are documented in this section including examples. There are no examples with [windowing](#windowing) applied for the sake of simplicity. Refer to the [windowing section](#windowing) for more details.
+
+### `CountByKey`
+Counting elements with same key. Requires input dataset to be mapped by given key extractor (`UnaryFunction`) to keys which are then counted. Output is emitted as `KV<K, Long>` (`K` is key type) where each `KV` contains key and number of element in input dataset for the key.
+```java
+// suppose input: [1, 2, 4, 1, 1, 3]
+Dataset<KV<Integer, Long>> output =
+  CountByKey.of(input)
+    .keyBy(e -> e)
+    .output();
+// Output will contain:  [KV(1, 3), KV(2, 1), KV(3, 1), (4, 1)]
+```
+
+### `Distinct`
+ Outputting distinct (based on equals method) elements. It takes optional `UnaryFunction` mapper parameter which maps elements to output type.
+ ```java
+// suppose input: [1, 2, 3, 3, 2, 1]
+Distinct.named("unique-integers-only")
+  .of(input)
+  .output();
+// Output will contain:  1, 2, 3
+ ```
+`Distinct` with mapper.
+```java
+// suppose keyValueInput: [KV(1, 100L), KV(3, 100_000L), KV(42, 10L), KV(1, 0L), KV(3, 0L)]
+Distinct.named("unique-keys-only")
+  .of(keyValueInput)
+  .mapped(KV::getKey)
+  .output();
+// Output will contain:  1, 3, 42
+```
+
+### `Join`
+Represents inner join of two (left and right) datasets on given key producing single new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes elements from both dataset sharing the sane key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
+```java
+// suppose that left contains: [1, 2, 3, 0, 4, 3, 1]
+// suppose that right contains: ["mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, String>> joined =
+  Join.named("join-length-to-words")
+    .of(left, right)
+    .by(le -> le, String::length) // key extractors
+    .using((Integer l, String r, Collector<String> c) -> c.collect(l + "+" + r))
+    .output();
+// joined will contain: [ KV(1, "1+X"), KV(3, "3+cat"), KV(3, "3+rat"), KV(4, "4+duck"),
+// KV(3, "3+cat"), KV(3, "3+rat"), KV(1, "1+X")]
+```
+
+### `LeftJoin`
+Represents left join of two (left and right) datasets on given key producing single new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes one element from both dataset, where right is present optionally, sharing the sane key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
+```java
+// suppose that left contains: [1, 2, 3, 0, 4, 3, 1]
+// suppose that right contains: ["mouse", "rat", "elephant", "cat", "X", "duck"]
+    Dataset<KV<Integer, String>> joined =
+        LeftJoin.named("left-join-length-to-words")
+            .of(left, right)
+            .by(le -> le, String::length) // key extractors
+            .using(
+                (Integer l, Optional<String> r, Collector<String> c) ->
+                    c.collect(l + "+" + r.orElse(null)))
+            .output();
+// joined will contain: [KV(1, "1+X"), KV(2, "2+null"), KV(3, "3+cat"),
+// KV(3, "3+rat"), KV(0, "0+null"), KV(4, "4+duck"), KV(3, "3+cat"),
+// KV(3, "3+rat"), KV(1, "1+X")]
+```
+Euphoria support performance optimization called 'BroadcastHashJoin' for the `LeftJoin`. User can indicate through previous operator's output hint `.output(SizeHint.FITS_IN_MEMORY)` that output `Dataset` of that operator fits in executors memory. And when the `Dataset` is used as right input, Euphoria will automatically translated `LeftJoin` as 'BroadcastHashJoin'. Broadcast join can be very efficient when joining between skewed datasets.
+
+### `RightJoin`
+Represents right join of two (left and right) datasets on given key producing single new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes one element from both dataset, where left is present optionally, sharing the sane key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
+```java
+// suppose that left contains: [1, 2, 3, 0, 4, 3, 1]
+// suppose that right contains: ["mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, String>> joined =
+  RightJoin.named("right-join-length-to-words")
+    .of(left, right)
+    .by(le -> le, String::length) // key extractors
+    .using(
+      (Optional<Integer> l, String r, Collector<String> c) ->
+        c.collect(l.orElse(null) + "+" + r))
+    .output();
+    // joined will contain: [ KV(1, "1+X"), KV(3, "3+cat"), KV(3, "3+rat"),
+    // KV(4, "4+duck"), KV(3, "3+cat"), KV(3, "3+rat"), KV(1, "1+X"),
+    // KV(8, "null+elephant"), KV(5, "null+mouse")]
+```
+Euphoria support performance optimization called 'Broadcast Hash Join' for the `RightJoin`. User can indicate through previous operator's output hint `.output(SizeHint.FITS_IN_MEMORY)` that output `Dataset` of that operator fits in executors memory. And when the `Dataset` is used as left input, Euphoria will automatically translated `RightJoin` as 'Broadcast Hash Join'. Broadcast join can be very efficient when joining between skewed datasets.
+
+### `FullJoin`
+Represents full outer join of two (left and right) datasets on given key producing single new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes one element from both dataset, where both are present only optionally, sharing the sane key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
+```java
+// suppose that left contains: [1, 2, 3, 0, 4, 3, 1]
+// suppose that right contains: ["mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, String>> joined =
+  FullJoin.named("join-length-to-words")
+    .of(left, right)
+    .by(le -> le, String::length) // key extractors
+    .using(
+      (Optional<Integer> l, Optional<String> r, Collector<String> c) ->
+        c.collect(l.orElse(null) + "+" + r.orElse(null)))
+    .output();
+// joined will contain: [ KV(1, "1+X"), KV(2, "2+null"), KV(3, "3+cat"), KV(3, "3+rat"),
+// KV(0, "0+null"), KV(4, "4+duck"), KV(3, "3+cat"), KV(3, "3+rat"),KV(1, "1+X"),
+//  KV(1, "null+elephant"), KV(5, "null+mouse")]
+```
+
+### `MapElements`
+Transforms one input element of input type `InputT` to one output element of another (potentially the same) `OutputT` type. Transformation is done through user specified `UnaryFunction`.
+```java
+// suppose inputs contains: [ 0, 1, 2, 3, 4, 5]
+Dataset<String> strings =
+  MapElements.named("int2str")
+    .of(input)
+    .using(i -> "#" + i)
+    .output();
+// strings will contain: [ "#0", "#1", "#2", "#3", "#4", "#5"]
+```
+
+### `FlatMap`
+Transforms one input element of input type `InputT` to zero or more output elements of another (potentially the same) `OutputT` type. Transformation is done through user specified `UnaryFunctor`, where `Collector<OutputT>` is utilized to emit output elements. Notice similarity with `MapElements` which can always emit only one element.
+```java
+// suppose words contain: ["Brown", "fox", ".", ""]
+Dataset<String> letters =
+  FlatMap.named("str2char")
+    .of(words)
+    .using(
+      (String s, Collector<String> collector) -> {
+        for (int i = 0; i < s.length(); i++) {
+          char c = s.charAt(i);
+          collector.collect(String.valueOf(c));
+        }
+      })
+    .output();
+// characters will contain: ["B", "r", "o", "w", "n",  "f", "o", "x", "."]
+```
+`FlatMap` may be used to determine time-stamp of elements. It is done by supplying implementation of `ExtractEventTime` time extractor when building it. There is specialized `AssignEventTime` operator to assign time-stamp to elements. Consider using it, you code may be more readable.
+```java
+// suppose events contain events of SomeEventObject, its 'getEventTimeInMillis()' methods returns time-stamp
+Dataset<SomeEventObject> timeStampedEvents =
+  FlatMap.named("extract-event-time")
+    .of(events)
+    .using( (SomeEventObject e, Collector<SomeEventObject> c) -> c.collect(e))
+    .eventTimeBy(SomeEventObject::getEventTimeInMillis)
+    .output();
+//Euphoria will now know event time for each event
+```
+
+### `Filter`
+`Filter` throws away all the elements which do not pass given condition. The condition is supplied by the user as implementation of `UnaryPredicate`. Input and output elements are of the same type.
+```java
+// suppose nums contains: [0,  1, 2, 3, 4, 5, 6, 7, 8, 9]
+Dataset<Integer> divisibleBythree =
+  Filter.named("divisibleByFive").of(nums).by(e -> e % 3 == 0).output();
+//divisibleBythree will contain: [ 0, 3, 6, 9]
+```
+
+### `ReduceByKey`
+Performs aggregation of `InputT` type elements with the same key through user-supplied reduce function. Key is extracted from each element through `UnaryFunction` which takes input element and outputs its key of type `K`. Elements can optionally be mapped to value of type `V`, it happens before elements shuffle, so it can have positive performance influence.
+
+Finally, elements with the same key are aggregated by user-defined `ReduceFunctor`, `ReduceFunction` or `CombinableReduceFunction`. They differs in number of arguments they take and in way output is interpreted. `ReduceFunction` is basically a function which takes `Stream` of elements as input and outputs one aggregation result. `ReduceFunctor` takes second `Collector` which allows for access to `Context`. When `CombinableReduceFunction` is provided, partial reduction is performed before shuffle so less data have to be transported through network.
+
+Following example shows basic usage of `ReduceByKey` operator including value extraction.
+```java
+//suppose animals contains : [ "mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, Long>> countOfAnimalNamesByLength =
+  ReduceByKey.named("to-letters-couts")
+    .of(animals)
+    .keyBy(String::length) // length of animal name will be used as groupping key
+    // we need to count each animal name once, so why not to optimize each string to 1
+    .valueBy(e -> 1)
+    .reduceBy(Stream::count)
+    .output();
+// countOfAnimalNamesByLength wil contain [ KV.of(1, 1L), KV.of(3, 2L), KV.of(4, 1L), KV.of(5, 1L), KV.of(8, 1L) ]
+```
+
+Now suppose that we want to track our `ReduceByKey` internals using counter.
+```java
+//suppose animals contains : [ "mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, Long>> countOfAnimalNamesByLenght =
+  ReduceByKey.named("to-letters-couts")
+    .of(animals)
+    .keyBy(String::length) // length of animal name will be used as grouping key
+    // we need to count each animal name once, so why not to optimize each string to 1
+    .valueBy(e -> 1)
+    .reduceBy(
+      (Stream<Integer> s, Collector<Long> collector) -> {
+        collector.collect(s.count());
+        collector.asContext().getCounter("num-of-keys").increment();
+      })
+      .output();
+// countOfAnimalNamesByLength wil contain [ KV.of(1, 1L), KV.of(3, 2L), KV.of(4, 1L), KV.of(5, 1L), KV.of(8, 1L) ]
+```
+
+Again the same example with optimized combinable output.
+```java
+//suppose animals contains : [ "mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, Long>> countOfAnimalNamesByLenght =
+  ReduceByKey.named("to-letters-couts")
+    .of(animals)
+    .keyBy(String::length) // length of animal name will e used as grouping key
+    // we need to count each animal name once, so why not to optimize each string to 1
+    .valueBy(e -> 1L)
+    .combineBy(s -> s.mapToLong(l -> l).sum()) //Stream::count will not be enough
+    .output();
+// countOfAnimalNamesByLength wil contain [ KV.of(1, 1L), KV.of(3, 2L), KV.of(4, 1L), KV.of(5, 1L), KV.of(8, 1L) ]
+```
+Note that the provided `CombinableReduceFunction` have to be associative and commutative to be truly combinable. So it can be used to compute partial results before shuffle. And then merge partial result to one. That is why simple `Stream::count` from previous example will not work correctly.
+
+Euphoria aims to make code easy to write and read. Therefore some support to write combinable reduce functions in form of `Fold` or folding function is already there. It allows user to supply only the reduction logic (`BinaryFunction`) and creates `CombinableReduceFunction` out of it. Supplied `BinaryFunction` still have to be associative.
+```java
+//suppose animals contains : [ "mouse", "rat", "elephant", "cat", "X", "duck"]
+Dataset<KV<Integer, Long>> countOfAnimalNamesByLenght =
+  ReduceByKey.named("to-letters-couts")
+    .of(animals)
+    .keyBy(String::length) // length of animal name will be used as grouping key
+    // we need to count each animal name once, so why not to optimize each string to 1
+    .valueBy(e -> 1L)
+    .combineBy(Fold.of((l1, l2) -> l1 + l2))
+    .output();
+// countOfAnimalNamesByLength will contain [ KV.of(1, 1L), KV.of(3, 2L), KV.of(4, 1L), KV.of(5, 1L), KV.of(8, 1L) ]
+```
+
+### `ReduceWindow`
+Reduces all elements in a [window](#windowing). The operator corresponds to `ReduceByKey` with the same key for all elements, so the actual key is defined only by window.
+```java
+//suppose input contains [ 1, 2, 3, 4, 5, 6, 7, 8 ]
+//lets assign time-stamp to each input element
+Dataset<Integer> withEventTime = AssignEventTime.of(input).using(i -> 1000L * i).output();
+
+Dataset<Integer> output =
+  ReduceWindow.of(withEventTime)
+    .combineBy(Fold.of((i1, i2) -> i1 + i2))
+    .windowBy(FixedWindows.of(Duration.millis(5000)))
+    .triggeredBy(DefaultTrigger.of())
+    .discardingFiredPanes()
+    .output();
+//output will contain: [ 10, 26 ]
+```
+
+### `SumByKey`
+Summing elements with same key. Requires input dataset to be mapped by given key extractor (`UnaryFunction`) to keys. By value extractor, also `UnaryFunction` which outputs to `Long`, to values. Those values are then grouped by key and summed. Output is emitted as `KV<K, Long>` (`K` is key type) where each `KV` contains key and number of element in input dataset for the key.
+```java
+//suppose input contains: [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ]
+Dataset<KV<Integer, Long>> output =
+  SumByKey.named("sum-odd-and-even")
+    .of(input)
+    .keyBy(e -> e % 2)
+    .valueBy(e -> (long) e)
+    .output();
+// output will contain: [ KV.of(0, 20L), KV.of(1, 25L)]
+```
+
+### `Union`
+Merge of at least two datasets of the same type without any guarantee about elements ordering.
+```java
+//suppose cats contains: [ "cheetah", "cat", "lynx", "jaguar" ]
+//suppose rodents conains: [ "squirrel", "mouse", "rat", "lemming", "beaver" ]
+Dataset<String> animals =
+  Union.named("to-animals")
+    .of(cats, rodents)
+    .output();
+// animal will contain: "cheetah", "cat", "lynx", "jaguar", "squirrel", "mouse", "rat", "lemming", "beaver"
+```
+
+### `AssignEventTime`
+Euphoria needs to know how to extract time-stamp from elements when [windowing](#windowing) is applied. `AssignEventTime` tels Euphoria how to do that through given implementation of `ExtractEventTime` function.
+```java
+// suppose events contain events of SomeEventObject, its 'getEventTimeInMillis()' methods returns time-stamp
+Dataset<SomeEventObject> timeStampedEvents =
+  AssignEventTime.named("extract-event-tyme")
+    .of(events)
+    .using(SomeEventObject::getEventTimeInMillis)
+    .output();
+//Euphoria will now know event time for each event
+```
+
+## Euphoria Beam Integration (advanced user section)
+Euphoria API is build on top of Beam Java SDK. The API is transparently translated into Beam in background. Most of the translation happens in `org.apache.beam.sdk.extensions.euphoria.core.translate` package. Where the most interesting classes are:
+* `OperatorTranslator` - Interface which defining inner API of Euphoria to Beam translation.
+* `FlowTranslator` - Registry of all known `OperatorTranslator` in their respective order.
+* `TranslationContext` - It together with `BeamFlow` holds state of the translation. Including euphoria coder provider (see `RegisterCoders`) and both-way mappings from `Datasets` to `PCollections`.
+
+The package also contains implementation of `OperatorTranslator` for each supported operator type (`JoinTranslator`, `FlatMapTranslator`, `ReduceByKeyTranslator`). Not every operator needs to have translator of its own. Some of them can be composed from other operators. That is why operators may implement `getBasicOps()` methods which returns DAG (directed acyclic graph) of primitive operators which realize given operator.
+
+### Unsupported Features
+[Original Euphoria](https://github.com/seznam/euphoria) contained some features and operators not jet supported in Beam port. List of unsupported features follows:
+* Translation of `ReduceStateByKey` operator to Beam is not supported. Therefore `TopPerKey` decomposable to RSBK is also not supported.
+* `ReduceByKey` in original euphoria allowed to sort output values (per key). This is also not yet translatable into Beam, therefore not supported.
