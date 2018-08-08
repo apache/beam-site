@@ -28,7 +28,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beam SQL: Walkthrough</title>
+  <title>Beam SQL: Shell</title>
   <meta name="description" content="Apache Beam is an open source, unified model and set of language-specific SDKs for defining and executing data processing workflows, and also data ingestion and integration flows, supporting Enterprise Integration Patterns (EIPs) and Domain Specific Languages (DSLs). Dataflow pipelines simplify the mechanics of large-scale batch and streaming data processing and can run on a number of runtimes like Apache Flink, Apache Spark, and Google Cloud Dataflow (a cloud service). Beam also brings DSL in different languages, allowing users to easily implement their data integration processes.
 ">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400" rel="stylesheet">
@@ -39,7 +39,7 @@
   <script src="/js/fix-menu.js"></script>
   <script src="/js/section-nav.js"></script>
   <script src="/js/page-nav.js"></script>
-  <link rel="canonical" href="https://beam.apache.org/documentation/dsls/sql/walkthrough/" data-proofer-ignore>
+  <link rel="canonical" href="https://beam.apache.org/documentation/dsls/sql/shell/" data-proofer-ignore>
   <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="alternate" type="application/rss+xml" title="Apache Beam" href="https://beam.apache.org/feed.xml">
   <script>
@@ -223,8 +223,14 @@
 
 
 <ul class="nav">
-  <li><a href="#row">Row</a></li>
-  <li><a href="#beamsql-transform">BeamSql transform</a></li>
+  <li><a href="#overview">Overview</a></li>
+  <li><a href="#quickstart">Quickstart</a></li>
+  <li><a href="#declaring-tables">Declaring Tables</a></li>
+  <li><a href="#reading-and-writing-data">Reading and Writing Data</a></li>
+  <li><a href="#developing-with-unbounded-sources">Developing with unbounded Sources</a></li>
+  <li><a href="#specifying-the-runner">Specifying the Runner</a></li>
+  <li><a href="#specifying-the-pipelineoptions">Specifying the PipelineOptions</a></li>
+  <li><a href="#packaging-the-sql-shell">Packaging the SQL Shell</a></li>
 </ul>
 
 
@@ -245,157 +251,145 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 
-<h1 id="beam-sql-walkthrough">Beam SQL Walkthrough</h1>
+<h1 id="beam-sql-shell">Beam SQL Shell</h1>
 
-<p>This page illustrates the usage of Beam SQL with example code.</p>
+<h2 id="overview">Overview</h2>
 
-<h2 id="row">Row</h2>
+<p>Starting with version 2.6.0, Beam SQL includes an interactive shell, called the Beam SQL shell. The shell allows you to write pipelines as SQL queries without needing the Java SDK. By default, Beam uses the <code class="highlighter-rouge">DirectRunner</code> to execute the queries as Beam pipelines.</p>
 
-<p>Before applying a SQL query to a <code class="highlighter-rouge">PCollection</code>, the data in the collection must
-be in <code class="highlighter-rouge">Row</code> format. A <code class="highlighter-rouge">Row</code> represents a single, immutable record in a Beam SQL
-<code class="highlighter-rouge">PCollection</code>. The names and types of the fields/columns in the row are defined
-by its associated <a href="/documentation/sdks/javadoc/2.6.0/index.html?org/apache/beam/sdk/schemas/Schema.html">Schema</a>.
-You can use the <a href="/documentation/sdks/javadoc/2.6.0/index.html?org/apache/beam/sdk/schemas/Schema.html">Schema.builder()</a> to create
-<code class="highlighter-rouge">Schemas</code>. See <a href="/documentation/dsls/sql/data-types">Data
-Types</a> for more details on supported primitive data types.</p>
+<p>This page describes how to work with the shell, but does not focus on specific features of Beam SQL. For a more thorough overview of the features used in the examples on this page, see the corresponding sections in the <a href="/documentation/dsls/sql/overview/">Beam SQL documentation</a>.</p>
 
-<p>A <code class="highlighter-rouge">PCollection&lt;Row&gt;</code> can be obtained multiple ways, for example:</p>
+<h2 id="quickstart">Quickstart</h2>
+
+<p>To use Beam SQL shell, you must first clone the <a href="https://github.com/apache/beam">Beam SDK repository</a>. Then, from the root of the repository clone, execute the following commands to run the shell:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew -p sdks/java/extensions/sql/shell -Pbeam.sql.shell.bundled=':beam-runners-flink_2.11,:beam-sdks-java-io-kafka' installDist
+
+./sdks/java/extensions/sql/shell/build/install/beam-sdks-java-extensions-sql-shell/bin/beam-sdks-java-extensions-sql-shell
+</code></pre>
+</div>
+
+<p>After you run the commands,  the SQL shell starts and you can type queries:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Welcome to Beam SQL 2.6.0-SNAPSHOT (based on sqlline version 1.4.0)
+0: BeamSQL&gt; 
+</code></pre>
+</div>
+
+<p><em>Note: If you haven’t built the project before running the Gradle command, the command will take a few minutes as Gradle must build all dependencies first.</em></p>
+
+<p>The shell converts the queries into Beam pipelines, runs them using <code class="highlighter-rouge">DirectRunner</code>, and returns the results as tables when the pipelines finish:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; SELECT 'foo' AS NAME, 'bar' AS TYPE, 'num' AS NUMBER;
++------+------+--------+
+| NAME | TYPE | NUMBER |
++------+------+--------+
+| foo  | bar  | num    |
++------+------+--------+
+1 row selected (0.826 seconds)
+</code></pre>
+</div>
+
+<h2 id="declaring-tables">Declaring Tables</h2>
+
+<p>Before reading data from a source or writing data to a destination, you must declare a virtual table using the <code class="highlighter-rouge">CREATE TABLE</code> statement. For example, if you have a local CSV file <code class="highlighter-rouge">"test-file.csv"</code> in the current folder, you can create a table with the following statement:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; CREATE TABLE csv_file (field1 VARCHAR, field2 INTEGER) TYPE text LOCATION 'test-file.csv';
+
+No rows affected (0.042 seconds)
+</code></pre>
+</div>
+
+<p>The <code class="highlighter-rouge">CREATE TABLE</code> statement registers the CSV file as a table in Beam SQL and specifies the table’s schema. This statement does not directly create a persistent physical table; it only describes the source/sink to Beam SQL so that you can use the table in the queries that read data and write data.</p>
+
+<p><em>For more information about <code class="highlighter-rouge">CREATE TABLE</code> syntax and supported table types, see the <a href="/documentation/dsls/sql/create-table/">CREATE TABLE reference page</a>.</em></p>
+
+<h2 id="reading-and-writing-data">Reading and Writing Data</h2>
+
+<p>To read data from the local CSV file that you declared in the previous section, execute the following query:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; SELECT field1 AS field FROM csv_file;
++--------+
+| field  |
++--------+
+| baz    |
+| foo    |
+| bar    |
+| bar    |
+| foo    |
++--------+
+</code></pre>
+</div>
+
+<p><em>For more information about <code class="highlighter-rouge">SELECT</code> syntax, see the <a href="/documentation/dsls/sql/select/">SELECT reference page</a>.</em></p>
+
+<p>To write data to the CSV file, use the <code class="highlighter-rouge">INSERT INTO … SELECT ...</code> statement:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; INSERT INTO csv_file SELECT 'foo', 'bar';
+</code></pre>
+</div>
+<p>Read and write behavior depends on the type of the table. For example:</p>
 
 <ul>
-  <li>
-    <p><strong>From in-memory data</strong> (typically for unit testing).</p>
-
-    <p><strong>Note:</strong> you have to explicitly specify the <code class="highlighter-rouge">Row</code> coder. In this example we’re doing it by calling <code class="highlighter-rouge">Create.of(..).withCoder()</code>:</p>
-
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Define the record type (i.e., schema).</span>
-<span class="n">Schema</span> <span class="n">appSchema</span> <span class="o">=</span> 
-    <span class="n">Schema</span>
-      <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
-      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">addStringField</span><span class="o">(</span><span class="s">"description"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">addDateTimeField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-
-<span class="c1">// Create a concrete row with that type.</span>
-<span class="n">Row</span> <span class="n">row</span> <span class="o">=</span> 
-    <span class="n">Row</span>
-      <span class="o">.</span><span class="na">withSchema</span><span class="o">(</span><span class="n">appSchema</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">addValues</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="s">"Some cool app"</span><span class="o">,</span> <span class="k">new</span> <span class="n">Date</span><span class="o">())</span>
-      <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-
-<span class="c1">// Create a source PCollection containing only that row</span>
-<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">testApps</span> <span class="o">=</span> 
-    <span class="n">PBegin</span>
-      <span class="o">.</span><span class="na">in</span><span class="o">(</span><span class="n">p</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">Create</span>
-                <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">row</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">withCoder</span><span class="o">(</span><span class="n">appSchema</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">()));</span>
-</code></pre>
-    </div>
-  </li>
-  <li>
-    <p><strong>From a <code class="highlighter-rouge">PCollection&lt;T&gt;</code> of records of some other type</strong>  (i.e.  <code class="highlighter-rouge">T</code> is not already a <code class="highlighter-rouge">Row</code>), by applying a <code class="highlighter-rouge">ParDo</code> that converts input records to <code class="highlighter-rouge">Row</code> format.</p>
-
-    <p><strong>Note:</strong> you have to manually set the coder of the result by calling <code class="highlighter-rouge">setCoder(appSchema.getRowCoder())</code>:</p>
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// An example POJO class.</span>
-<span class="kd">class</span> <span class="nc">AppPojo</span> <span class="o">{</span>
-  <span class="n">Integer</span> <span class="n">appId</span><span class="o">;</span>
-  <span class="n">String</span> <span class="n">description</span><span class="o">;</span>
-  <span class="n">Date</span> <span class="n">timestamp</span><span class="o">;</span>
-<span class="o">}</span>
-
-<span class="c1">// Acquire a collection of POJOs somehow.</span>
-<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">AppPojo</span><span class="o">&gt;</span> <span class="n">pojos</span> <span class="o">=</span> <span class="o">...</span>
-
-<span class="c1">// Convert them to Rows with the same schema as defined above via a DoFn.</span>
-<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">apps</span> <span class="o">=</span> <span class="n">pojos</span>
-  <span class="o">.</span><span class="na">apply</span><span class="o">(</span>
-      <span class="n">ParDo</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">AppPojo</span><span class="o">,</span> <span class="n">Row</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@ProcessElement</span>
-        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
-          <span class="c1">// Get the current POJO instance</span>
-          <span class="n">AppPojo</span> <span class="n">pojo</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">();</span>
-
-          <span class="c1">// Create a Row with the appSchema schema </span>
-          <span class="c1">// and values from the current POJO</span>
-          <span class="n">Row</span> <span class="n">appRow</span> <span class="o">=</span> 
-                <span class="n">Row</span>
-                  <span class="o">.</span><span class="na">withSchema</span><span class="o">(</span><span class="n">appSchema</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">addValues</span><span class="o">(</span>
-                    <span class="n">pojo</span><span class="o">.</span><span class="na">appId</span><span class="o">,</span> 
-                    <span class="n">pojo</span><span class="o">.</span><span class="na">description</span><span class="o">,</span> 
-                    <span class="n">pojo</span><span class="o">.</span><span class="na">timestamp</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-
-          <span class="c1">// Output the Row representing the current POJO</span>
-          <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">appRow</span><span class="o">);</span>
-        <span class="o">}</span>
-      <span class="o">}))</span>
-  <span class="o">.</span><span class="na">setCoder</span><span class="o">(</span><span class="n">appSchema</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">());</span>
-</code></pre>
-    </div>
-  </li>
-  <li>
-    <p><strong>As an output of another <code class="highlighter-rouge">BeamSql</code> query</strong>. Details in the next section.</p>
-  </li>
+  <li>The table type <code class="highlighter-rouge">text</code> is implemented using <code class="highlighter-rouge">TextIO</code>, so writing to a <code class="highlighter-rouge">text</code> table can produce multiple numbered files.</li>
+  <li>The table type <code class="highlighter-rouge">pubsub</code> is an unbounded source, so reading from a <code class="highlighter-rouge">pubsub</code> table never completes.</li>
 </ul>
 
-<p>Once you have a <code class="highlighter-rouge">PCollection&lt;Row&gt;</code> in hand, you may use the <code class="highlighter-rouge">BeamSql</code> APIs to apply SQL queries to it.</p>
+<h2 id="developing-with-unbounded-sources">Developing with unbounded Sources</h2>
 
-<h2 id="beamsql-transform">BeamSql transform</h2>
+<p>When you want to inspect the data from an unbounded source during development, you must specify the <code class="highlighter-rouge">LIMIT x</code> clause at the end of the <code class="highlighter-rouge">SELECT</code> statement to limit the output to <code class="highlighter-rouge">x</code> number of records. Otherwise, the pipeline will never finish.</p>
 
-<p><code class="highlighter-rouge">BeamSql.query(queryString)</code> method is the only API to create a <code class="highlighter-rouge">PTransform</code>
-from a string representation of the SQL query. You can apply this <code class="highlighter-rouge">PTransform</code>
-to either a single <code class="highlighter-rouge">PCollection</code> or a <code class="highlighter-rouge">PCollectionTuple</code> which holds multiple
-<code class="highlighter-rouge">PCollections</code>:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; SELECT field1 FROM unbounded_source LIMIT 10 ;
+</code></pre>
+</div>
 
-<ul>
-  <li>when applying to a single <code class="highlighter-rouge">PCollection</code> it can be referenced via the table name <code class="highlighter-rouge">PCOLLECTION</code> in the query:
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">filteredNames</span> <span class="o">=</span> <span class="n">testApps</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span>
-    <span class="n">BeamSql</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
-      <span class="s">"SELECT appId, description, rowtime "</span>
-        <span class="o">+</span> <span class="s">"FROM PCOLLECTION "</span>
-        <span class="o">+</span> <span class="s">"WHERE id=1"</span><span class="o">));</span>
+<p>The example queries shown so far are fast queries that execute locally. These queries are helpful when you are investigating the data and iteratively designing the pipeline. Ideally, you want the queries to finish quickly and return output when complete.</p>
+
+<p>When you’re satisfied with the logic of your SQL statements, you can submit the statements as long-running jobs by dropping the <code class="highlighter-rouge">LIMIT x</code> statement. Then, the pipeline can potentially run forever if one of the tables represents an unbounded source.</p>
+
+<h2 id="specifying-the-runner">Specifying the Runner</h2>
+
+<p>By default, Beam uses the <code class="highlighter-rouge">DirectRunner</code> to run the pipeline on the machine where you’re executing the commands. If you want to run the pipeline with a different runner, you must perform two steps:</p>
+
+<ol>
+  <li>
+    <p>Make sure the SQL shell includes the desired runner. Add the corresponding project id to the <code class="highlighter-rouge">-Pbeam.sql.shell.bundled</code> parameter of the Gradle invocation (<a href="https://github.com/apache/beam/blob/master/sdks/java/extensions/sql/shell/build.gradle">source code</a>, <a href="https://github.com/apache/beam/blob/master/settings.gradle">project ids</a>). For example, use the following command to include Flink runner and KafkaIO:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew -p sdks/java/extensions/sql/shell -Pbeam.sql.shell.bundled=':beam-runners-flink_2.11,:beam-sdks-java-io-kafka' installDist
 </code></pre>
     </div>
+
+    <p><em>Note: You can bundle multiple runners (using a comma-separated list) or other additional components in the same manner. For example, you can add support for more I/Os.</em></p>
   </li>
   <li>
-    <p>when applying to a <code class="highlighter-rouge">PCollectionTuple</code>, the tuple tag for each <code class="highlighter-rouge">PCollection</code> in the tuple defines the table name that may be used to query it. Note that table names are bound to the specific <code class="highlighter-rouge">PCollectionTuple</code>, and thus are only valid in the context of queries applied to it.</p>
+    <p>Then, specify the runner using the <code class="highlighter-rouge">SET</code> command (<a href="/documentation/dsls/sql/set/">reference page</a>):</p>
 
-    <p>For example, you can join two <code class="highlighter-rouge">PCollections</code>:</p>
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Create the schema for reviews</span>
-<span class="n">Schema</span> <span class="n">reviewSchema</span> <span class="o">=</span> 
-    <span class="n">Schema</span><span class="o">.</span>
-      <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
-      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"appId"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">addInt32Field</span><span class="o">(</span><span class="s">"reviewerId"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">withFloatField</span><span class="o">(</span><span class="s">"rating"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">addDateTimeField</span><span class="o">(</span><span class="s">"rowtime"</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">build</span><span class="o">();</span>
-    
-<span class="c1">// Obtain the reviews records with this schema</span>
-<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">reviewsRows</span> <span class="o">=</span> <span class="o">...</span>
-
-<span class="c1">// Create a PCollectionTuple containing both PCollections.</span>
-<span class="c1">// TupleTags IDs will be used as table names in the SQL query</span>
-<span class="n">PCollectionTuple</span> <span class="n">namesAndFoods</span> <span class="o">=</span> <span class="n">PCollectionTuple</span><span class="o">.</span><span class="na">of</span><span class="o">(</span>
-    <span class="k">new</span> <span class="n">TupleTag</span><span class="o">&lt;&gt;(</span><span class="s">"Apps"</span><span class="o">),</span> <span class="n">appsRows</span><span class="o">),</span> <span class="c1">// appsRows from the previous example</span>
-    <span class="k">new</span> <span class="n">TupleTag</span><span class="o">&lt;&gt;(</span><span class="s">"Reviews"</span><span class="o">),</span> <span class="n">reviewsRows</span><span class="o">));</span>
-
-<span class="c1">// Compute the total number of reviews </span>
-<span class="c1">// and average rating per app </span>
-<span class="c1">// by joining two PCollections</span>
-<span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">output</span> <span class="o">=</span> <span class="n">namesAndFoods</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span>
-    <span class="n">BeamSql</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
-        <span class="s">"SELECT Names.appId, COUNT(Reviews.rating), AVG(Reviews.rating)"</span>
-            <span class="o">+</span> <span class="s">"FROM Apps INNER JOIN Reviews ON Apps.appId == Reviews.appId"</span><span class="o">));</span>
+    <div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; SET runner='FlinkRunner';
 </code></pre>
     </div>
   </li>
-</ul>
+</ol>
 
-<p><a href="https://github.com/apache/beam/blob/master/sdks/java/extensions/sql/src/main/java/org/apache/beam/sdk/extensions/sql/example/BeamSqlExample.java">BeamSqlExample</a>
-in the code repository shows basic usage of both APIs.</p>
+<p>Beam will submit all future <code class="highlighter-rouge">INSERT</code> statements as pipelines to the specified runner. In this case, the Beam SQL shell does not display the query results. You must manage the submitted jobs through the corresponding runner’s UI (for example, using the Flink UI or command line).</p>
+
+<h2 id="specifying-the-pipelineoptions">Specifying the PipelineOptions</h2>
+
+<p>To configure the runner, you must specify <code class="highlighter-rouge">PipelineOptions</code> by using the <code class="highlighter-rouge">SET</code> command (<a href="/documentation/dsls/sql/set/">details</a>):</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>0: BeamSQL&gt; SET projectId='gcpProjectId';
+0: BeamSQL&gt; SET tempLocation='/tmp/tempDir';
+</code></pre>
+</div>
+<h2 id="packaging-the-sql-shell">Packaging the SQL Shell</h2>
+
+<p>You can also build your own standalone package for SQL shell using <code class="highlighter-rouge">distZip</code> or <code class="highlighter-rouge">distTar</code> tasks. For example:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>./gradlew -p sdks/java/extensions/sql/shell -Pbeam.sql.shell.bundled=':beam-runners-flink_2.11,:beam-sdks-java-io-kafka' distZip
+
+ls ./sdks/java/extensions/sql/shell/build/distributions/
+beam-sdks-java-extensions-sql-shell-2.6.0-SNAPSHOT.tar beam-sdks-java-extensions-sql-shell-2.6.0-SNAPSHOT.zip
+</code></pre>
+</div>
 
 
       </div>
