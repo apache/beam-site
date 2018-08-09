@@ -167,8 +167,7 @@
 
 <ul class="nav">
   <li><a href="#apex-runner-prerequisites">Apex Runner prerequisites</a></li>
-  <li><a href="#running-wordcount-using-apex-runner">Running wordcount using Apex Runner</a></li>
-  <li><a href="#checking-output">Checking output</a></li>
+  <li><a href="#running-wordcount-with-apex">Running wordcount with Apex</a></li>
   <li><a href="#montoring-progress-of-your-job">Montoring progress of your job</a></li>
 </ul>
 
@@ -195,6 +194,9 @@ limitations under the License.
 
 <p><a href="http://apex.apache.org/">Apache Apex</a> is a stream processing platform and framework for low-latency, high-throughput and fault-tolerant analytics applications on Apache Hadoop. Apex has a unified streaming architecture and can be used for real-time and batch processing.</p>
 
+<p>The following instructions are for running Beam pipelines with Apex on a YARN cluster.
+They are not required for Apex in embedded mode (see <a href="/get-started/quickstart-java/">quickstart</a>).</p>
+
 <h2 id="apex-runner-prerequisites">Apex Runner prerequisites</h2>
 
 <p>You may set up your own Hadoop cluster. Beam does not require anything extra to launch the pipelines on YARN.
@@ -203,21 +205,20 @@ The Apex CLI can be <a href="http://apex.apache.org/docs/apex/apex_development_s
 obtained as <a href="http://www.atrato.io/blog/2017/04/08/apache-apex-cli/">binary build</a>.
 For more download options see <a href="http://apex.apache.org/downloads.html">distribution information on the Apache Apex website</a>.</p>
 
-<h2 id="running-wordcount-using-apex-runner">Running wordcount using Apex Runner</h2>
+<h2 id="running-wordcount-with-apex">Running wordcount with Apex</h2>
 
-<p>Put data for processing into HDFS:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>hdfs dfs -mkdir -p /tmp/input/
-hdfs dfs -put pom.xml /tmp/input/
+<p>Typically the build environment is separate from the target YARN cluster. In such case, it is necessary to build a fat jar that will include all dependencies. Ensure that <code class="highlighter-rouge">hadoop.version</code> in <code class="highlighter-rouge">pom.xml</code> matches the version of your YARN cluster and then build the jar file:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>mvn package -Papex-runner
 </code></pre>
 </div>
 
-<p>The output directory should not exist on HDFS:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>hdfs dfs -rm -r -f /tmp/output/
+<p>Copy the resulting <code class="highlighter-rouge">target/word-count-beam-bundled-0.1.jar</code> to the cluster and submit the application using:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>java -cp word-count-beam-bundled-0.1.jar org.apache.beam.examples.WordCount --inputFile=/etc/profile --output=/tmp/counts --embeddedExecution=false --configFile=beam-runners-apex.properties --runner=ApexRunner
 </code></pre>
 </div>
 
-<p>Run the wordcount example (<em>example project needs to be modified to include HDFS file provider</em>)</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount -Dexec.args="--inputFile=/tmp/input/pom.xml --output=/tmp/output/ --runner=ApexRunner --embeddedExecution=false --configFile=beam-runners-apex.properties" -Papex-runner
+<p>If the build environment is setup as cluster client, it is possible to run the example directly:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.WordCount -Dexec.args="--inputFile=/etc/profile --output=/tmp/counts --runner=ApexRunner --embeddedExecution=false --configFile=beam-runners-apex.properties" -Papex-runner
 </code></pre>
 </div>
 
@@ -233,12 +234,8 @@ apex.application.*.operator.*.attr.TIMEOUT_WINDOW_COUNT=1200
 </code></pre>
 </div>
 
-<h2 id="checking-output">Checking output</h2>
-
-<p>Check the output of the pipeline in the HDFS location.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>hdfs dfs -ls /tmp/output/
-</code></pre>
-</div>
+<p>This example uses local files. To use a distributed file system (HDFS, S3 etc.),
+it is necessary to augment the build to include the respective file system provider.</p>
 
 <h2 id="montoring-progress-of-your-job">Montoring progress of your job</h2>
 
@@ -248,6 +245,11 @@ apex.application.*.operator.*.attr.TIMEOUT_WINDOW_COUNT=1200
   <li>YARN : Using YARN web UI generally running on 8088 on the node running resource manager.</li>
   <li>Apex command-line interface: <a href="http://apex.apache.org/docs/apex/apex_cli/#apex-cli-commands">Using the Apex CLI to get running application information</a>.</li>
 </ul>
+
+<p>Check the output of the pipeline:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>ls /tmp/counts*
+</code></pre>
+</div>
 
       </div>
     </div>
