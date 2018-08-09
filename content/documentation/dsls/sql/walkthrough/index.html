@@ -224,7 +224,7 @@
 
 <ul class="nav">
   <li><a href="#row">Row</a></li>
-  <li><a href="#beamsql-transform">BeamSql transform</a></li>
+  <li><a href="#sqltransform">SqlTransform</a></li>
 </ul>
 
 
@@ -265,9 +265,9 @@ Types</a> for more details on supported primitive data types.</p>
   <li>
     <p><strong>From in-memory data</strong> (typically for unit testing).</p>
 
-    <p><strong>Note:</strong> you have to explicitly specify the <code class="highlighter-rouge">Row</code> coder. In this example we’re doing it by calling <code class="highlighter-rouge">Create.of(..).withCoder()</code>:</p>
+    <p><strong>Note:</strong> you have to explicitly specify the <code class="highlighter-rouge">Row</code> coder. In this example we’re doing it by calling <code class="highlighter-rouge">Create.of(..)</code>:</p>
 
-    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Define the record type (i.e., schema).</span>
+    <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Define the schema for the records.</span>
 <span class="n">Schema</span> <span class="n">appSchema</span> <span class="o">=</span> 
     <span class="n">Schema</span>
       <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
@@ -293,10 +293,7 @@ Types</a> for more details on supported primitive data types.</p>
 </code></pre>
     </div>
   </li>
-  <li>
-    <p><strong>From a <code class="highlighter-rouge">PCollection&lt;T&gt;</code> of records of some other type</strong>  (i.e.  <code class="highlighter-rouge">T</code> is not already a <code class="highlighter-rouge">Row</code>), by applying a <code class="highlighter-rouge">ParDo</code> that converts input records to <code class="highlighter-rouge">Row</code> format.</p>
-
-    <p><strong>Note:</strong> you have to manually set the coder of the result by calling <code class="highlighter-rouge">setCoder(appSchema.getRowCoder())</code>:</p>
+  <li><strong>From a <code class="highlighter-rouge">PCollection&lt;T&gt;</code> of records of some other type</strong>  (i.e.  <code class="highlighter-rouge">T</code> is not already a <code class="highlighter-rouge">Row</code>), by applying a <code class="highlighter-rouge">ParDo</code> that converts input records to <code class="highlighter-rouge">Row</code> format:
     <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// An example POJO class.</span>
 <span class="kd">class</span> <span class="nc">AppPojo</span> <span class="o">{</span>
   <span class="n">Integer</span> <span class="n">appId</span><span class="o">;</span>
@@ -330,21 +327,18 @@ Types</a> for more details on supported primitive data types.</p>
           <span class="c1">// Output the Row representing the current POJO</span>
           <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">appRow</span><span class="o">);</span>
         <span class="o">}</span>
-      <span class="o">}))</span>
-  <span class="o">.</span><span class="na">setCoder</span><span class="o">(</span><span class="n">appSchema</span><span class="o">.</span><span class="na">getRowCoder</span><span class="o">());</span>
+      <span class="o">}));</span>
 </code></pre>
     </div>
   </li>
-  <li>
-    <p><strong>As an output of another <code class="highlighter-rouge">BeamSql</code> query</strong>. Details in the next section.</p>
-  </li>
+  <li><strong>As an output of another <code class="highlighter-rouge">SqlTransform</code></strong>. Details in the next section.</li>
 </ul>
 
-<p>Once you have a <code class="highlighter-rouge">PCollection&lt;Row&gt;</code> in hand, you may use the <code class="highlighter-rouge">BeamSql</code> APIs to apply SQL queries to it.</p>
+<p>Once you have a <code class="highlighter-rouge">PCollection&lt;Row&gt;</code> in hand, you may use <code class="highlighter-rouge">SqlTransform</code> to apply SQL queries to it.</p>
 
-<h2 id="beamsql-transform">BeamSql transform</h2>
+<h2 id="sqltransform">SqlTransform</h2>
 
-<p><code class="highlighter-rouge">BeamSql.query(queryString)</code> method is the only API to create a <code class="highlighter-rouge">PTransform</code>
+<p><a href="/documentation/sdks/javadoc/2.6.0/index.html?org/apache/beam/sdk/extensions/sql/SqlTransform.html"><code class="highlighter-rouge">SqlTransform.query(queryString)</code></a> method is the only API to create a <code class="highlighter-rouge">PTransform</code>
 from a string representation of the SQL query. You can apply this <code class="highlighter-rouge">PTransform</code>
 to either a single <code class="highlighter-rouge">PCollection</code> or a <code class="highlighter-rouge">PCollectionTuple</code> which holds multiple
 <code class="highlighter-rouge">PCollections</code>:</p>
@@ -352,7 +346,7 @@ to either a single <code class="highlighter-rouge">PCollection</code> or a <code
 <ul>
   <li>when applying to a single <code class="highlighter-rouge">PCollection</code> it can be referenced via the table name <code class="highlighter-rouge">PCOLLECTION</code> in the query:
     <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">filteredNames</span> <span class="o">=</span> <span class="n">testApps</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span>
-    <span class="n">BeamSql</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
+    <span class="n">SqlTransform</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
       <span class="s">"SELECT appId, description, rowtime "</span>
         <span class="o">+</span> <span class="s">"FROM PCOLLECTION "</span>
         <span class="o">+</span> <span class="s">"WHERE id=1"</span><span class="o">));</span>
@@ -386,7 +380,7 @@ to either a single <code class="highlighter-rouge">PCollection</code> or a <code
 <span class="c1">// and average rating per app </span>
 <span class="c1">// by joining two PCollections</span>
 <span class="n">PCollection</span><span class="o">&lt;</span><span class="n">Row</span><span class="o">&gt;</span> <span class="n">output</span> <span class="o">=</span> <span class="n">namesAndFoods</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span>
-    <span class="n">BeamSql</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
+    <span class="n">SqlTransform</span><span class="o">.</span><span class="na">query</span><span class="o">(</span>
         <span class="s">"SELECT Names.appId, COUNT(Reviews.rating), AVG(Reviews.rating)"</span>
             <span class="o">+</span> <span class="s">"FROM Apps INNER JOIN Reviews ON Apps.appId == Reviews.appId"</span><span class="o">));</span>
 </code></pre>
