@@ -1,14 +1,16 @@
 ---
 layout: default
 title: "Beam Releases"
-permalink: get-started/downloads/
+permalink: get-started/releases/
 redirect_from:
-  - /get-started/releases/
+  - /get-started/downloads/
   - /use/releases/
+  - /use/downloads/
   - /releases/
+  - /downloads/
 ---
 
-# Apache Beam&#8482; Downloads
+# Apache Beam&#8482; Releases
 
 The easiest way to use Apache Beam is via one of the released versions in a central repository.
 Java SDK is available on [Maven Central Repository](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.beam%22),
