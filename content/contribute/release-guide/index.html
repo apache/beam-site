@@ -208,23 +208,17 @@
       <li><a href="#create-a-new-version-in-jira">Create a new version in JIRA</a></li>
       <li><a href="#triage-release-blocking-issues-in-jira">Triage release-blocking issues in JIRA</a></li>
       <li><a href="#review-release-notes-in-jira">Review Release Notes in JIRA</a></li>
+      <li><a href="#create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</a></li>
+      <li><a href="#start-a-snapshot-build">Start a snapshot build</a></li>
       <li><a href="#verify-that-a-release-build-works">Verify that a Release Build Works</a></li>
       <li><a href="#update-and-verify-javadoc">Update and Verify Javadoc</a></li>
-      <li><a href="#create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</a></li>
-      <li><a href="#update-the-python-sdk-version">Update the Python SDK version</a></li>
-      <li><a href="#update-release-specific-configurations">Update release specific configurations</a></li>
-      <li><a href="#start-a-snapshot-build">Start a snapshot build</a></li>
       <li><a href="#checklist-to-proceed-to-the-next-step-1">Checklist to proceed to the next step</a></li>
     </ul>
   </li>
   <li><a href="#build-a-release-candidate">Build a release candidate</a>
     <ul>
-      <li><a href="#build-and-stage-java-artifacts-with-gradle">Build and stage Java artifacts with Gradle</a></li>
-      <li><a href="#stage-source-release-on-distapacheorg">Stage source release on dist.apache.org</a></li>
-      <li><a href="#stage-python-binaries-on-distapacheorg">Stage python binaries on dist.apache.org</a></li>
-      <li><a href="#build-the-pydoc-api-reference">Build the Pydoc API reference</a></li>
-      <li><a href="#propose-a-pull-request-for-website-updates">Propose a pull request for website updates</a></li>
-      <li><a href="#checklist-to-proceed-to-the-next-step-2">Checklist to proceed to the next step</a></li>
+      <li><a href="#run-build_release_candidatesh-to-create-rc">Run build_release_candidate.sh to create RC</a></li>
+      <li><a href="#run-all-steps-manually-1">Run all steps manually</a></li>
     </ul>
   </li>
   <li><a href="#vote-on-the-release-candidate">Vote on the release candidate</a>
@@ -289,7 +283,11 @@ limitations under the License.
   </li>
   <li><a href="#prepare-for-the-release" id="markdown-toc-prepare-for-the-release">Prepare for the release</a>    <ul>
       <li><a href="#one-time-setup-instructions" id="markdown-toc-one-time-setup-instructions">One-time setup instructions</a>        <ul>
-          <li><a href="#gpg-key" id="markdown-toc-gpg-key">GPG Key</a></li>
+          <li><a href="#gpg-key" id="markdown-toc-gpg-key">GPG Key</a>            <ul>
+              <li><a href="#use-preparation_before_releasesh-to-setup-gpg" id="markdown-toc-use-preparation_before_releasesh-to-setup-gpg">Use preparation_before_release.sh to setup GPG</a></li>
+              <li><a href="#run-all-commands-manually" id="markdown-toc-run-all-commands-manually">Run all commands manually</a></li>
+            </ul>
+          </li>
           <li><a href="#access-to-apache-nexus-repository" id="markdown-toc-access-to-apache-nexus-repository">Access to Apache Nexus repository</a></li>
           <li><a href="#website-development-setup" id="markdown-toc-website-development-setup">Website development setup</a></li>
           <li><a href="#register-to-pypi" id="markdown-toc-register-to-pypi">Register to PyPI</a></li>
@@ -298,29 +296,47 @@ limitations under the License.
       <li><a href="#create-a-new-version-in-jira" id="markdown-toc-create-a-new-version-in-jira">Create a new version in JIRA</a></li>
       <li><a href="#triage-release-blocking-issues-in-jira" id="markdown-toc-triage-release-blocking-issues-in-jira">Triage release-blocking issues in JIRA</a></li>
       <li><a href="#review-release-notes-in-jira" id="markdown-toc-review-release-notes-in-jira">Review Release Notes in JIRA</a></li>
-      <li><a href="#verify-that-a-release-build-works" id="markdown-toc-verify-that-a-release-build-works">Verify that a Release Build Works</a></li>
+      <li><a href="#create-a-release-branch-in-apachebeam-repository" id="markdown-toc-create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</a>        <ul>
+          <li><a href="#use-cut_release_branchsh-to-cut-a-release-branch" id="markdown-toc-use-cut_release_branchsh-to-cut-a-release-branch">Use cut_release_branch.sh to cut a release branch</a></li>
+          <li><a href="#run-all-steps-manually" id="markdown-toc-run-all-steps-manually">Run all steps manually</a></li>
+        </ul>
+      </li>
+      <li><a href="#start-a-snapshot-build" id="markdown-toc-start-a-snapshot-build">Start a snapshot build</a>        <ul>
+          <li><a href="#run-start_snapshot_buildsh-to-trigger-build" id="markdown-toc-run-start_snapshot_buildsh-to-trigger-build">Run start_snapshot_build.sh to trigger build</a></li>
+          <li><a href="#do-all-operations-manually" id="markdown-toc-do-all-operations-manually">Do all operations manually</a></li>
+        </ul>
+      </li>
+      <li><a href="#verify-that-a-release-build-works" id="markdown-toc-verify-that-a-release-build-works">Verify that a Release Build Works</a>        <ul>
+          <li><a href="#run-verify_release_buildsh-to-verity-a-release-build" id="markdown-toc-run-verify_release_buildsh-to-verity-a-release-build">Run verify_release_build.sh to verity a release build</a></li>
+          <li><a href="#run-all-commands-manually-1" id="markdown-toc-run-all-commands-manually-1">Run all commands manually</a></li>
+        </ul>
+      </li>
       <li><a href="#update-and-verify-javadoc" id="markdown-toc-update-and-verify-javadoc">Update and Verify Javadoc</a></li>
-      <li><a href="#create-a-release-branch-in-apachebeam-repository" id="markdown-toc-create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</a></li>
-      <li><a href="#update-the-python-sdk-version" id="markdown-toc-update-the-python-sdk-version">Update the Python SDK version</a></li>
-      <li><a href="#update-release-specific-configurations" id="markdown-toc-update-release-specific-configurations">Update release specific configurations</a></li>
-      <li><a href="#start-a-snapshot-build" id="markdown-toc-start-a-snapshot-build">Start a snapshot build</a></li>
       <li><a href="#checklist-to-proceed-to-the-next-step-1" id="markdown-toc-checklist-to-proceed-to-the-next-step-1">Checklist to proceed to the next step</a></li>
     </ul>
   </li>
   <li><a href="#build-a-release-candidate" id="markdown-toc-build-a-release-candidate">Build a release candidate</a>    <ul>
-      <li><a href="#build-and-stage-java-artifacts-with-gradle" id="markdown-toc-build-and-stage-java-artifacts-with-gradle">Build and stage Java artifacts with Gradle</a></li>
-      <li><a href="#stage-source-release-on-distapacheorg" id="markdown-toc-stage-source-release-on-distapacheorg">Stage source release on dist.apache.org</a></li>
-      <li><a href="#stage-python-binaries-on-distapacheorg" id="markdown-toc-stage-python-binaries-on-distapacheorg">Stage python binaries on dist.apache.org</a></li>
-      <li><a href="#build-the-pydoc-api-reference" id="markdown-toc-build-the-pydoc-api-reference">Build the Pydoc API reference</a></li>
-      <li><a href="#propose-a-pull-request-for-website-updates" id="markdown-toc-propose-a-pull-request-for-website-updates">Propose a pull request for website updates</a>        <ul>
-          <li><a href="#create-pydoc" id="markdown-toc-create-pydoc">Create Pydoc</a></li>
+      <li><a href="#run-build_release_candidatesh-to-create-rc" id="markdown-toc-run-build_release_candidatesh-to-create-rc">Run build_release_candidate.sh to create RC</a></li>
+      <li><a href="#run-all-steps-manually-1" id="markdown-toc-run-all-steps-manually-1">Run all steps manually</a>        <ul>
+          <li><a href="#build-and-stage-java-artifacts-with-gradle" id="markdown-toc-build-and-stage-java-artifacts-with-gradle">Build and stage Java artifacts with Gradle</a></li>
+          <li><a href="#stage-source-release-on-distapacheorg" id="markdown-toc-stage-source-release-on-distapacheorg">Stage source release on dist.apache.org</a></li>
+          <li><a href="#stage-python-binaries-on-distapacheorg" id="markdown-toc-stage-python-binaries-on-distapacheorg">Stage python binaries on dist.apache.org</a></li>
+          <li><a href="#build-the-pydoc-api-reference" id="markdown-toc-build-the-pydoc-api-reference">Build the Pydoc API reference</a></li>
+          <li><a href="#propose-a-pull-request-for-website-updates" id="markdown-toc-propose-a-pull-request-for-website-updates">Propose a pull request for website updates</a>            <ul>
+              <li><a href="#create-pydoc" id="markdown-toc-create-pydoc">Create Pydoc</a></li>
+            </ul>
+          </li>
+          <li><a href="#checklist-to-proceed-to-the-next-step-2" id="markdown-toc-checklist-to-proceed-to-the-next-step-2">Checklist to proceed to the next step</a></li>
         </ul>
       </li>
-      <li><a href="#checklist-to-proceed-to-the-next-step-2" id="markdown-toc-checklist-to-proceed-to-the-next-step-2">Checklist to proceed to the next step</a></li>
     </ul>
   </li>
   <li><a href="#vote-on-the-release-candidate" id="markdown-toc-vote-on-the-release-candidate">Vote on the release candidate</a>    <ul>
-      <li><a href="#run-validation-tests" id="markdown-toc-run-validation-tests">Run validation tests</a></li>
+      <li><a href="#run-validation-tests" id="markdown-toc-run-validation-tests">Run validation tests</a>        <ul>
+          <li><a href="#run-validations-using-run_rc_validationsh" id="markdown-toc-run-validations-using-run_rc_validationsh">Run validations using run_rc_validation.sh</a></li>
+          <li><a href="#run-validations-manually" id="markdown-toc-run-validations-manually">Run validations manually</a></li>
+        </ul>
+      </li>
       <li><a href="#checklist-to-proceed-to-the-finalization-step" id="markdown-toc-checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</a></li>
     </ul>
   </li>
@@ -409,53 +425,90 @@ limitations under the License.
 
 <p>You need to have a GPG key to sign the release artifacts. Please be aware of the ASF-wide <a href="https://www.apache.org/dev/release-signing.html">release signing guidelines</a>. If you don’t have a GPG key associated with your Apache account, please create one according to the guidelines.</p>
 
-<p>Get more entropy for creating a GPG key</p>
+<p>There are 2 ways to configure your GPG key for release, either using release automation script(which is recommended), 
+or running all commands manually.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install rng-tools
+<h5 id="use-preparation_before_releasesh-to-setup-gpg">Use preparation_before_release.sh to setup GPG</h5>
+<ul>
+  <li>
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/preparation_before_release.sh">preparation_before_release.sh</a></p>
+  </li>
+  <li>Usage
+    <div class="highlighter-rouge"><pre class="highlight"><code>./beam/release/src/main/scripts/preparation_before_release.sh
+</code></pre>
+    </div>
+  </li>
+  <li>Tasks included
+    <ol>
+      <li>Help you create a new GPG key if you want.</li>
+      <li>Configure <code class="highlighter-rouge">git user.signingkey</code> with chosen pubkey.</li>
+      <li>
+        <p>Add chosen pubkey into <a href="https://dist.apache.org/repos/dist/dev/beam/KEYS">dev KEYS</a>  and <a href="https://dist.apache.org/repos/dist/release/beam/KEYS">release KEYS</a></p>
+
+        <p><strong>NOTES</strong>: Only PMC can write into <a href="https://dist.apache.org/repos/dist/release/beam/">release repo</a>.</p>
+      </li>
+      <li>Start GPG agents.</li>
+    </ol>
+  </li>
+</ul>
+
+<h5 id="run-all-commands-manually">Run all commands manually</h5>
+
+<ul>
+  <li>
+    <p>Get more entropy for creating a GPG key</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install rng-tools
 sudo rngd -r /dev/urandom
 </code></pre>
-</div>
+    </div>
+  </li>
+  <li>
+    <p>Create a GPG key</p>
 
-<p>Create a GPG key</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>gpg --full-generate-key
+    <div class="highlighter-rouge"><pre class="highlight"><code>gpg --full-generate-key
 </code></pre>
-</div>
+    </div>
+  </li>
+  <li>
+    <p>Determine your Apache GPG Key and Key ID, as follows:</p>
 
-<p>Determine your Apache GPG Key and Key ID, as follows:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>gpg --list-keys
+    <div class="highlighter-rouge"><pre class="highlight"><code>gpg --list-keys
 </code></pre>
-</div>
+    </div>
 
-<p>This will list your GPG keys. One of these should reflect your Apache account, for example:</p>
+    <p>This will list your GPG keys. One of these should reflect your Apache account, for example:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>--------------------------------------------------
+    <div class="highlighter-rouge"><pre class="highlight"><code>--------------------------------------------------
 pub   2048R/845E6689 2016-02-23
 uid                  Nomen Nescio &lt;anonymous@apache.org&gt;
 sub   2048R/BA4D50BE 2016-02-23
 </code></pre>
-</div>
+    </div>
 
-<p>Here, the key ID is the 8-digit hex string in the <code class="highlighter-rouge">pub</code> line: <code class="highlighter-rouge">845E6689</code>.</p>
+    <p>Here, the key ID is the 8-digit hex string in the <code class="highlighter-rouge">pub</code> line: <code class="highlighter-rouge">845E6689</code>.</p>
 
-<p>Now, add your Apache GPG key to the Beam’s <code class="highlighter-rouge">KEYS</code> file both in <a href="https://dist.apache.org/repos/dist/dev/beam/KEYS"><code class="highlighter-rouge">dev</code></a> and <a href="https://dist.apache.org/repos/dist/release/beam/KEYS"><code class="highlighter-rouge">release</code></a> repositories at <code class="highlighter-rouge">dist.apache.org</code>. Follow the instructions listed at the top of these files. (Note: Only PMC members have write access to the release repository. If you end up getting 403 errors ask on the mailing list for assistance.)</p>
+    <p>Now, add your Apache GPG key to the Beam’s <code class="highlighter-rouge">KEYS</code> file both in <a href="https://dist.apache.org/repos/dist/dev/beam/KEYS"><code class="highlighter-rouge">dev</code></a> and <a href="https://dist.apache.org/repos/dist/release/beam/KEYS"><code class="highlighter-rouge">release</code></a> repositories at <code class="highlighter-rouge">dist.apache.org</code>. Follow the instructions listed at the top of these files. (Note: Only PMC members have write access to the release repository. If you end up getting 403 errors ask on the mailing list for assistance.)</p>
+  </li>
+  <li>
+    <p>Configure <code class="highlighter-rouge">git</code> to use this key when signing code by giving it your key ID, as follows:</p>
 
-<p>Configure <code class="highlighter-rouge">git</code> to use this key when signing code by giving it your key ID, as follows:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>git config --global user.signingkey 845E6689
+    <div class="highlighter-rouge"><pre class="highlight"><code>git config --global user.signingkey 845E6689
 </code></pre>
-</div>
+    </div>
 
-<p>You may drop the <code class="highlighter-rouge">--global</code> option if you’d prefer to use this key for the current repository only.</p>
+    <p>You may drop the <code class="highlighter-rouge">--global</code> option if you’d prefer to use this key for the current repository only.</p>
+  </li>
+  <li>
+    <p>Start GPG agent in order to unlock your GPG key</p>
 
-<p>You may wish to start <code class="highlighter-rouge">gpg-agent</code> to unlock your GPG key only once using your passphrase. Otherwise, you may need to enter this passphrase hundreds of times. The setup for <code class="highlighter-rouge">gpg-agent</code> varies based on operating system, but may be something like this:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>eval $(gpg-agent --daemon --no-grab --write-env-file $HOME/.gpg-agent-info)
+    <div class="highlighter-rouge"><pre class="highlight"><code>eval $(gpg-agent --daemon --no-grab --write-env-file $HOME/.gpg-agent-info)
 export GPG_TTY=$(tty)
 export GPG_AGENT_INFO
 </code></pre>
-</div>
+    </div>
+  </li>
+</ul>
 
 <h4 id="access-to-apache-nexus-repository">Access to Apache Nexus repository</h4>
 
@@ -537,62 +590,260 @@ instructions</a>.</p>
 
 <p>Adjust any of the above properties to the improve clarity and presentation of the Release Notes.</p>
 
-<h3 id="verify-that-a-release-build-works">Verify that a Release Build Works</h3>
+<h3 id="create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</h3>
 
-<p>Pre-installation for python build</p>
+<p>Attention: Only committer has permission to create release branch in apache/beam.</p>
+
+<p>Release candidates are built from a release branch. As a final step in preparation for the release, you should create the release branch, push it to the Apache code repository, and update version information on the original branch.</p>
+
+<p>There are 2 ways to cut a release branch: either running automation script(recommended), or running all commands manually.</p>
+
+<h4 id="use-cut_release_branchsh-to-cut-a-release-branch">Use cut_release_branch.sh to cut a release branch</h4>
 <ul>
   <li>
-    <p>Install pip</p>
-
-    <div class="highlighter-rouge"><pre class="highlight"><code>curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-python get-pip.py
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/cut_release_branch.sh">cut_release_branch.sh</a></p>
+  </li>
+  <li>Usage
+    <div class="highlighter-rouge"><pre class="highlight"><code># Cut a release branch
+./beam/release/src/main/scripts/cut_release_branch.sh 
+--release= ${RELEASE_VERSION}
+--next_release=${NEXT_VERSION}
+  
+# Show help page
+./beam/release/src/main/scripts/cut_release_branch.sh -h
 </code></pre>
     </div>
   </li>
-  <li>
-    <p>Install virtualenv</p>
+  <li>Tasks included
+    <ol>
+      <li>Create release-${RELEASE_VERSION} branch locally.</li>
+      <li>
+        <p>Change and commit dev versoin number in master branch:</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code>pip install --upgrade virtualenv
-</code></pre>
-    </div>
-  </li>
-  <li>
-    <p>Cython</p>
+        <p><a href="https://github.com/apache/beam/blob/e8abafe360e126818fe80ae0f6075e71f0fc227d/buildSrc/src/main/groovy/org/apache/beam/gradle/BeamModulePlugin.groovy#L209">BeamModulePlugin.groovy</a>,
+<a href="https://github.com/apache/beam/blob/e8abafe360e126818fe80ae0f6075e71f0fc227d/gradle.properties#L25">gradle.properties</a>,
+<a href="https://github.com/apache/beam/blob/e8abafe360e126818fe80ae0f6075e71f0fc227d/sdks/python/apache_beam/version.py#L21">version.py</a></p>
+      </li>
+      <li>
+        <p>Change and commit version number in release branch:</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code>sudo pip install cython
-sudo apt-get install gcc
-sudo apt-get install python-dev
-</code></pre>
-    </div>
-    <p>Make sure your <code class="highlighter-rouge">time</code> alias to <code class="highlighter-rouge">/usr/bin/time</code>, if not:</p>
+        <p><a href="https://github.com/apache/beam/blob/release-2.6.0/sdks/python/apache_beam/version.py#L21">version.py</a>, 
+<a href="https://github.com/apache/beam/blob/release-2.6.0/runners/google-cloud-dataflow-java/build.gradle#L39">build.gradle</a></p>
+      </li>
+    </ol>
   </li>
 </ul>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>sudo apt-get install time
-alias time='/usr/bin/time'
-</code></pre>
-</div>
-
-<p>Run gradle release build</p>
-
+<h4 id="run-all-steps-manually">Run all steps manually</h4>
 <ul>
   <li>
-    <p>Clean current workspace</p>
+    <p>Checkout working branch</p>
 
-    <div class="highlighter-rouge"><pre class="highlight"><code>git clean -fdx 
-./gradlew clean
+    <p>Check out the version of the codebase from which you start the release. For a new minor or major release, this may be <code class="highlighter-rouge">HEAD</code> of the <code class="highlighter-rouge">master</code> branch. To build a hotfix/incremental release, instead of the <code class="highlighter-rouge">master</code> branch, use the release tag of the release being patched. (Please make sure your cloned repository is up-to-date before starting.)</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>git checkout &lt;master branch OR release tag&gt;
+</code></pre>
+    </div>
+
+    <p><strong>NOTE</strong>: If you are doing an incremental/hotfix release (e.g. 2.5.1), please check out the previous release tag, rather than the master branch.</p>
+  </li>
+  <li>
+    <p>Set up environment variables</p>
+
+    <p>Set up a few environment variables to simplify Maven commands that follow. (We use <code class="highlighter-rouge">bash</code> Unix syntax in this guide.)</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>RELEASE=2.5.0
+NEXT_VERSION_IN_BASE_BRANCH=2.6.0
+BRANCH=release-${RELEASE}
+</code></pre>
+    </div>
+
+    <p>Version represents the release currently underway, while next version specifies the anticipated next version to be released from that branch. Normally, 1.2.0 is followed by 1.3.0, while 1.2.3 is followed by 1.2.4.</p>
+
+    <p><strong>NOTE</strong>: Only if you are doing an incremental/hotfix release (e.g. 2.5.1), please check out the previous release tag, before running the following instructions:</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>BASE_RELEASE=2.5.0
+RELEASE=2.5.1
+NEXT_VERSION_IN_BASE_BRANCH=2.6.0
+git checkout tags/${BASE_RELEASE}
 </code></pre>
     </div>
   </li>
-  <li>Unlock the secret key
-    <div class="highlighter-rouge"><pre class="highlight"><code>gpg --output ~/doc.sig --sign ~/.bashrc
+  <li>
+    <p>Create release branch locally</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>git branch ${BRANCH}
 </code></pre>
     </div>
   </li>
-  <li>Run build command
-    <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew build -PisRelease --no-parallel --scan --stacktrace
+  <li>
+    <p>Update version files in the master branch.</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code># Now change the version in existing gradle files, and Python files
+sed -i -e "s/'${RELEASE}'/'${NEXT_VERSION_IN_BASE_BRANCH}'/g" build_rules.gradle
+sed -i -e "s/${RELEASE}/${NEXT_VERSION_IN_BASE_BRANCH}/g" gradle.properties
+sed -i -e "s/${RELEASE}/${NEXT_VERSION_IN_BASE_BRANCH}/g" sdks/python/apache_beam/version.py
+  
+# Save changes in master branch
+git add gradle.properties build_rules.gradle sdks/python/apache_beam/version.py
+git commit -m "Moving to ${NEXT_VERSION_IN_BASE_BRANCH}-SNAPSHOT on master branch."
 </code></pre>
     </div>
+  </li>
+  <li>
+    <p>Check out the release branch.</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>git checkout ${BRANCH}
+</code></pre>
+    </div>
+  </li>
+  <li>
+    <p>Update version files in release branch</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>DEV=${RELEASE}.dev
+sed -i -e "s/${DEV}/${RELEASE}/g" sdks/python/apache_beam/version.py
+sed -i -e "s/'beam-master-.*'/'beam-${RELEASE}'/g" runners/google-cloud-dataflow-java/build.gradle
+</code></pre>
+    </div>
+  </li>
+</ul>
+
+<h3 id="start-a-snapshot-build">Start a snapshot build</h3>
+
+<p>Start a build of <a href="https://builds.apache.org/view/A-D/view/Beam/job/beam_Release_NightlySnapshot/">the nightly snapshot</a> against master branch.
+Some processes, including our archetype tests, rely on having a live SNAPSHOT of the current version
+from the <code class="highlighter-rouge">master</code> branch. Once the release branch is cut, these SNAPSHOT versions are no longer found,
+so builds will be broken until a new snapshot is available.</p>
+
+<p>There are 2 ways to trigger a nightly build, either using automation script(recommended), or perform all operations manually.</p>
+
+<h4 id="run-start_snapshot_buildsh-to-trigger-build">Run start_snapshot_build.sh to trigger build</h4>
+<ul>
+  <li>
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/start_snapshot_build.sh">start_snapshot_build.sh</a></p>
+  </li>
+  <li>
+    <p>Usage</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>./beam/release/src/main/scripts/start_snapshot_build.sh
+</code></pre>
+    </div>
+  </li>
+  <li>Tasks included
+    <ol>
+      <li>Install <a href="https://github.com/github/hub">hub</a> with your agreement.</li>
+      <li>Touch an empty txt file and commit changes into <code class="highlighter-rouge">${your remote beam repo}/snapshot_build</code></li>
+      <li>Use hub to create a PR against apache:master, which triggers a Jenkins job to build snapshot.</li>
+    </ol>
+  </li>
+  <li>Tasks you need to do manually
+    <ol>
+      <li>Check whether the Jenkins job gets triggered. If not, please comment <code class="highlighter-rouge">Run Gradle Publish</code> into the generated PR.</li>
+      <li>After verifying build succeeded, you need to close PR manually.</li>
+    </ol>
+  </li>
+</ul>
+
+<h4 id="do-all-operations-manually">Do all operations manually</h4>
+
+<ul>
+  <li>Find one PR against apache:master in beam.</li>
+  <li>Comment  <code class="highlighter-rouge">Run Gradle Publish</code> in this pull request to trigger build.</li>
+  <li>Verify that build successes.</li>
+</ul>
+
+<h3 id="verify-that-a-release-build-works">Verify that a Release Build Works</h3>
+
+<p>There are 2 ways to perform this verification, either running automation script(recommended), or running all commands manually.</p>
+
+<h4 id="run-verify_release_buildsh-to-verity-a-release-build">Run verify_release_build.sh to verity a release build</h4>
+<ul>
+  <li>
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/verify_release_build.sh">verify_release_build.sh</a></p>
+  </li>
+  <li>
+    <p>Usage</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>./beam/release/src/main/scripts/verify_release_build.sh
+</code></pre>
+    </div>
+  </li>
+  <li>Tasks included
+    <ol>
+      <li>Install <code class="highlighter-rouge">pip</code>, <code class="highlighter-rouge">virtualenv</code>, <code class="highlighter-rouge">cython</code> and <code class="highlighter-rouge">/usr/bin/time</code> with your agreements.</li>
+      <li>Run <code class="highlighter-rouge">gradle release build</code> against release branch.</li>
+    </ol>
+  </li>
+  <li>Tasks you need to do manually
+    <ol>
+      <li>Check the build result.</li>
+      <li>If build failed, scan log will contain all failures.</li>
+      <li>You should stabilize the release branch until release build succeeded.</li>
+    </ol>
+  </li>
+</ul>
+
+<h4 id="run-all-commands-manually-1">Run all commands manually</h4>
+<ul>
+  <li>Pre-installation for python build
+    <ol>
+      <li>
+        <p>Install pip</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code> curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+ python get-pip.py
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Install virtualenv</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code> pip install --upgrade virtualenv
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Cython</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code> sudo pip install cython
+ sudo apt-get install gcc
+ sudo apt-get install python-dev
+</code></pre>
+        </div>
+      </li>
+      <li>
+        <p>Make sure your <code class="highlighter-rouge">time</code> alias to <code class="highlighter-rouge">/usr/bin/time</code>, if not:</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code> sudo apt-get install time
+ alias time='/usr/bin/time'
+</code></pre>
+        </div>
+      </li>
+    </ol>
+  </li>
+  <li>
+    <p>Run gradle release build</p>
+
+    <ol>
+      <li>
+        <p>Clean current workspace</p>
+
+        <div class="highlighter-rouge"><pre class="highlight"><code> git clean -fdx 
+ ./gradlew clean
+</code></pre>
+        </div>
+      </li>
+      <li>Unlock the secret key
+        <div class="highlighter-rouge"><pre class="highlight"><code> gpg --output ~/doc.sig --sign ~/.bashrc
+</code></pre>
+        </div>
+      </li>
+      <li>Run build command
+        <div class="highlighter-rouge"><pre class="highlight"><code>./gradlew build -PisRelease --no-parallel --scan --stacktrace --continue
+</code></pre>
+        </div>
+      </li>
+    </ol>
   </li>
 </ul>
 
@@ -619,86 +870,6 @@ the version number has changed, download a new version of the corresponding
   </li>
 </ul>
 
-<h3 id="create-a-release-branch-in-apachebeam-repository">Create a release branch in apache/beam repository</h3>
-
-<p>Attention: Only committer has permission to create release branch in apache/beam.</p>
-
-<p>Release candidates are built from a release branch. As a final step in preparation for the release, you should create the release branch, push it to the Apache code repository, and update version information on the original branch.</p>
-
-<p>Check out the version of the codebase from which you start the release. For a new minor or major release, this may be <code class="highlighter-rouge">HEAD</code> of the <code class="highlighter-rouge">master</code> branch. To build a hotfix/incremental release, instead of the <code class="highlighter-rouge">master</code> branch, use the release tag of the release being patched. (Please make sure your cloned repository is up-to-date before starting.)</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>git checkout &lt;master branch OR release tag&gt;
-</code></pre>
-</div>
-
-<p><strong>NOTE</strong>: If you are doing an incremental/hotfix release (e.g. 2.5.1), please check out the previous release tag, rather than the master branch.</p>
-
-<p>Set up a few environment variables to simplify Maven commands that follow. (We use <code class="highlighter-rouge">bash</code> Unix syntax in this guide.)</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>RELEASE=2.5.0
-NEXT_VERSION_IN_BASE_BRANCH=2.6.0
-BRANCH=release-${RELEASE}
-</code></pre>
-</div>
-
-<p>Version represents the release currently underway, while next version specifies the anticipated next version to be released from that branch. Normally, 1.2.0 is followed by 1.3.0, while 1.2.3 is followed by 1.2.4.</p>
-
-<p><strong>NOTE</strong>: Only if you are doing an incremental/hotfix release (e.g. 2.5.1), please check out the previous release tag, before running the following instructions:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>BASE_RELEASE=2.5.0
-RELEASE=2.5.1
-NEXT_VERSION_IN_BASE_BRANCH=2.6.0
-git checkout tags/${BASE_RELEASE}
-</code></pre>
-</div>
-
-<p>Create a new branch, and update version files in the master branch.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>git branch ${BRANCH}
-
-# Now change the version in existing gradle files, and Python files
-sed -i -e "s/'${RELEASE}'/'${NEXT_VERSION_IN_BASE_BRANCH}'/g" build_rules.gradle
-sed -i -e "s/${RELEASE}/${NEXT_VERSION_IN_BASE_BRANCH}/g" gradle.properties
-sed -i -e "s/${RELEASE}/${NEXT_VERSION_IN_BASE_BRANCH}/g" sdks/python/apache_beam/version.py
-
-# Save changes in master branch
-git add gradle.properties build_rules.gradle sdks/python/apache_beam/version.py
-git commit -m "Moving to ${NEXT_VERSION_IN_BASE_BRANCH}-SNAPSHOT on master branch."
-</code></pre>
-</div>
-
-<p>Check out the release branch.</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>git checkout ${BRANCH}
-</code></pre>
-</div>
-
-<p>The rest of this guide assumes that commands are run in the root of a repository on <code class="highlighter-rouge">${BRANCH}</code> with the above environment variables set.</p>
-
-<h3 id="update-the-python-sdk-version">Update the Python SDK version</h3>
-
-<p>Update <a href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/version.py">sdks/python/apache_beam/version.py</a> in both master branch and release branch.</p>
-
-<ul>
-  <li>In the release branch, update the Python SDK version to the release version(e.g. <code class="highlighter-rouge">2.5.0-dev</code> to <code class="highlighter-rouge">2.5.0</code>).</li>
-</ul>
-
-<h3 id="update-release-specific-configurations">Update release specific configurations</h3>
-
-<p>Update Java runner specific configurations in release branch:</p>
-<ul>
-  <li><a href="https://github.com/apache/beam/blob/master/runners/google-cloud-dataflow-java/build.gradle">beam/runners/google-cloud-dataflow-java/build.gradle</a>: change value of ‘dataflow.container_version’ to ‘beam-release_version_number’(e.g, ‘beam-master-20180601’ to ‘beam-2.5.0’)</li>
-</ul>
-
-<h3 id="start-a-snapshot-build">Start a snapshot build</h3>
-
-<p>Start a build of <a href="https://builds.apache.org/view/A-D/view/Beam/job/beam_Release_NightlySnapshot/">the nightly snapshot</a> against master branch.
-Some processes, including our archetype tests, rely on having a live SNAPSHOT of the current version
-from the <code class="highlighter-rouge">master</code> branch. Once the release branch is cut, these SNAPSHOT versions are no longer found,
-so builds will be broken until a new snapshot is available.</p>
-
-<p>Comment  <code class="highlighter-rouge">Run Gradle Publish</code> in one pull request to trigger build.</p>
-
 <h3 id="checklist-to-proceed-to-the-next-step-1">Checklist to proceed to the next step</h3>
 
 <ol>
@@ -721,7 +892,47 @@ so builds will be broken until a new snapshot is available.</p>
 
 <p>The core of the release process is the build-vote-fix cycle. Each cycle produces one release candidate. The Release Manager repeats this cycle until the community approves one release candidate, which is then finalized.</p>
 
-<h3 id="build-and-stage-java-artifacts-with-gradle">Build and stage Java artifacts with Gradle</h3>
+<p>For this step, we recommend you using automation script to create a RC, but you still can perform all steps manually if you want.</p>
+
+<h3 id="run-build_release_candidatesh-to-create-rc">Run build_release_candidate.sh to create RC</h3>
+<ul>
+  <li>
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/build_release_candidate.sh">build_release_candidate.sh</a></p>
+  </li>
+  <li>
+    <p>Usage</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>./beam/release/src/main/scripts/build_release_candidate.sh
+</code></pre>
+    </div>
+  </li>
+  <li>Tasks included
+    <ol>
+      <li>Run gradle release to create rc tag and push source release into github repo.</li>
+      <li>Run gradle publish to push java artifacts into Maven staging repo.</li>
+      <li>Stage source release into dist.apache.org dev <a href="https://dist.apache.org/repos/dist/dev/beam/">repo</a>.</li>
+      <li>Stage,sign and hash python binaries into dist.apache.ord dev repo python dir</li>
+      <li>Create a PR to update beam-site, changes includes:
+        <ul>
+          <li>Copy python doc into beam-site</li>
+          <li>Copy java doc into beam-site</li>
+          <li>Update release version into <a href="https://github.com/apache/beam-site/blob/asf-site/_config.yml">_config.yml</a>.</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>Tasks you need to do manually
+    <ol>
+      <li>Add new release into src/get-started/downloads.md</li>
+      <li>Update last release download links in src/get-started/downloads.md</li>
+      <li>Update the Pydoc link on this page to point to the new version (in src/documentation/sdks/pydoc/current.md.</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="run-all-steps-manually-1">Run all steps manually</h3>
+
+<h4 id="build-and-stage-java-artifacts-with-gradle">Build and stage Java artifacts with Gradle</h4>
 
 <p>Set up a few environment variables to simplify the commands that follow. These identify the release candidate being built, and the branch where you will stage files. Start with <code class="highlighter-rouge">RC_NUM</code> equal to <code class="highlighter-rouge">1</code> and increment it for each candidate.</p>
 
@@ -754,7 +965,7 @@ release tag to the origin repository (this would be the Apache Beam repo):</p>
 
 <p>Close the staging repository on Apache Nexus. When prompted for a description, enter “Apache Beam, version X, release candidate Y”.</p>
 
-<h3 id="stage-source-release-on-distapacheorg">Stage source release on dist.apache.org</h3>
+<h4 id="stage-source-release-on-distapacheorg">Stage source release on dist.apache.org</h4>
 
 <p>Attention: Only committer has permissions to perform following steps.</p>
 
@@ -803,7 +1014,7 @@ release tag to the origin repository (this would be the Apache Beam repo):</p>
   </li>
 </ol>
 
-<h3 id="stage-python-binaries-on-distapacheorg">Stage python binaries on dist.apache.org</h3>
+<h4 id="stage-python-binaries-on-distapacheorg">Stage python binaries on dist.apache.org</h4>
 
 <p>Build python binaries in release branch in sdks/python dir.</p>
 
@@ -832,7 +1043,7 @@ svn commit
 
 <p>Verify that files are <a href="https://dist.apache.org/repos/dist/dev/beam">present</a>.</p>
 
-<h3 id="build-the-pydoc-api-reference">Build the Pydoc API reference</h3>
+<h4 id="build-the-pydoc-api-reference">Build the Pydoc API reference</h4>
 
 <p>Make sure you have <code class="highlighter-rouge">tox</code> installed:</p>
 
@@ -846,7 +1057,7 @@ svn commit
 </div>
 <p>By default the Pydoc is generated in <code class="highlighter-rouge">sdks/python/target/docs/_build</code>. Let <code class="highlighter-rouge">${PYDOC_ROOT}</code> be the absolute path to <code class="highlighter-rouge">_build</code>.</p>
 
-<h3 id="propose-a-pull-request-for-website-updates">Propose a pull request for website updates</h3>
+<h4 id="propose-a-pull-request-for-website-updates">Propose a pull request for website updates</h4>
 
 <p>The final step of building the candidate is to propose a website pull request.</p>
 
@@ -867,7 +1078,7 @@ candidate into the source tree of the website.</p>
   <li>Update the Javadoc link on this page to point to the new version (in <code class="highlighter-rouge">src/documentation/sdks/javadoc/current.md</code>).</li>
 </ul>
 
-<h4 id="create-pydoc">Create Pydoc</h4>
+<h5 id="create-pydoc">Create Pydoc</h5>
 <p>Add the new Pydoc to <a href="/documentation/sdks/pydoc/">SDK API Reference page</a> page, as follows:</p>
 
 <ul>
@@ -878,7 +1089,7 @@ candidate into the source tree of the website.</p>
 
 <p>Finally, propose a pull request with these changes. (Don’t merge before finalizing the release.)</p>
 
-<h3 id="checklist-to-proceed-to-the-next-step-2">Checklist to proceed to the next step</h3>
+<h4 id="checklist-to-proceed-to-the-next-step-2">Checklist to proceed to the next step</h4>
 
 <ol>
   <li>Maven artifacts deployed to the staging repository of <a href="https://repository.apache.org/content/repositories/">repository.apache.org</a></li>
@@ -961,6 +1172,53 @@ Thanks everyone!
 <h3 id="run-validation-tests">Run validation tests</h3>
 <p>All tests listed in this <a href="https://s.apache.org/beam-release-validation">spreadsheet</a></p>
 
+<p>Since there are a bunch of tests, we recommend you running validations using automation script. In case of script failure, you can still run all of them manually.</p>
+
+<h4 id="run-validations-using-run_rc_validationsh">Run validations using run_rc_validation.sh</h4>
+<ul>
+  <li>
+    <p>Script: <a href="https://github.com/apache/beam/blob/master/release/src/main/scripts/run_rc_validation.sh">run_rc_validation.sh</a></p>
+  </li>
+  <li>
+    <p>Usage</p>
+
+    <div class="highlighter-rouge"><pre class="highlight"><code>./beam/release/src/main/scripts/run_rc_validation.sh
+</code></pre>
+    </div>
+  </li>
+  <li>Tasks included
+    <ol>
+      <li>Run Java quickstart with Direct Runner, Apex local runner, Flink local runner, Spark local runner and Dataflow runner.</li>
+      <li>Run Java Mobile Games(UserScore, HourlyTeamScore, Leaderboard) with Dataflow runner.</li>
+      <li>Create a PR against apache:master to trigger python validation job, including
+        <ul>
+          <li>Python quickstart in batch and streaming mode with direct runner and Dataflow runner.</li>
+          <li>Python Mobile Games(UserScore, HourlyTeamScore) with direct runner and Dataflow runner.</li>
+        </ul>
+      </li>
+      <li>Run Python Streaming MobileGames, includes
+        <ul>
+          <li>Start a new terminal to run Java Pubsub injector.</li>
+          <li>Start a new terminal to run python LeaderBoard with Direct Runner.</li>
+          <li>Start a new terminal to run python LeaderBoard with Dataflow Runner.</li>
+          <li>Start a new terminal to run python GameStats with Direct Runner.</li>
+          <li>Start a new terminal to run python GameStats with Dataflow Runner.</li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>Tasks you need to do manually
+    <ol>
+      <li>Check whether validations succeed by following console output instructions.</li>
+      <li>Terminate streaming jobs and java injector.</li>
+      <li>Sign up <a href="https://s.apache.org/beam-release-validation">spreadsheet</a>.</li>
+      <li>Vote in the release thread.</li>
+    </ol>
+  </li>
+</ul>
+
+<h4 id="run-validations-manually">Run validations manually</h4>
+
 <p><em>Note</em>: -Prepourl and -Pver can be found in the RC vote email sent by Release Manager.</p>
 
 <ul>
@@ -1030,7 +1288,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=${PATH_TO_YOUR_KEY_JSON}
  -Prepourl=https://repository.apache.org/content/repositories/orgapachebeam-${KEY} \ 
  -Pver= ${RELEASE_VERSION}\
  -PgcpProject=${YOUR_GCP_PROJECT} \
- -PgcsBucket=gs://dataflow-samples/game/gaming_data1.csv \
+ -PgcsBucket=${YOUR_GCP_BUCKET} \
  -PbqDataset=${YOUR_DATASET} -PpubsubTopic=${YOUR_PROJECT_PUBSUB_TOPIC}
 </code></pre>
         </div>
@@ -1206,14 +1464,14 @@ mvn compile exec:java -Dexec.mainClass=org.apache.beam.examples.complete.game.in
           <li>Goto your Dataflow job console and check whether there is any error.</li>
           <li>Goto your BigQuery console and check whether your ${USER}_test has game_stats_teams and game_stats_sessions table.</li>
           <li>bq head -n 10 ${USER}_test.game_stats_teams</li>
-          <li>bq head -n 10 ${USER}_test.game_stats_sessions
-            <h3 id="checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</h3>
-          </li>
+          <li>bq head -n 10 ${USER}_test.game_stats_sessions</li>
         </ul>
       </li>
     </ul>
   </li>
 </ul>
+
+<h3 id="checklist-to-proceed-to-the-finalization-step">Checklist to proceed to the finalization step</h3>
 
 <ol>
   <li>Community votes to release the proposed candidate, with at least three approving PMC votes</li>
