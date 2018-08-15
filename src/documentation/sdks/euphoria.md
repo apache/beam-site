@@ -38,10 +38,12 @@ For each of the assigned windows the extracted value is accumulated using a user
 ## What is Euphoria
 Easy to use Java 8 API build on top of the Beam's Java SDK. Provides a [high-level abstractions](#operator-reference) of data transformations, with focus on Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. Allows for fast prototyping through use of default [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators. And can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing beam `Pipelines`.
 
-### Where did Euphoria came from ?
-[Euphoria](https://github.com/seznam/euphoria) was originally developed as an abstraction layer above big data processing engines such as Spark or Flink since 2014. [DataFlow whitepaper](http://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) in 2015 inspired Euphoria authors to create API based on ideas published there. The project was open-sourced 2016 and is still actively developed today.
+[Euphoria API](https://github.com/seznam/euphoria) project has been started in 2014, with a clear goal of providing the main building block for [Seznam.cz's](https://www.seznam.cz/) data infrastructure.
+In 2015, [DataFlow whitepaper](http://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) inspired original authors to go one step further and also provide the unified API for both stream and batch processing.
+The API has been open-sourced in 2016 and is still in active developemnt. As the Beam's community goal was very similar, we decided to contribute
+the API as a high level DSL over Beam Java SDK and share our effort with the community.
 
-Now the Euphoria API is being integrated into Apache Beam [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900) - still work in progress.
+Euphoria DSL integration is still work in progress and is tracked as part of [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900).
 
 ## Word Count Example
 Lets start with small example.
