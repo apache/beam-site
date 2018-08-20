@@ -456,8 +456,8 @@ potentially include information such as your project ID or a location for
 storing files.</p>
 
 <p>When you run the pipeline on a runner of your choice, a copy of the
-PipelineOptions will be available to your code. For example, you can read
-PipelineOptions from a DoFn’s Context.</p>
+PipelineOptions will be available to your code. For example, if you add a PipelineOptions parameter
+to a DoFn’s <code class="highlighter-rouge">@ProcessElement</code> method, it will be populated by the system.</p>
 
 <h4 id="pipeline-options-cli">2.1.1. Setting PipelineOptions from command-line arguments</h4>
 
@@ -971,9 +971,13 @@ look like this:</p>
 <p class="language-java">Inside your <code class="highlighter-rouge">DoFn</code> subclass, you’ll write a method annotated with
 <code class="highlighter-rouge">@ProcessElement</code> where you provide the actual processing logic. You don’t need
 to manually extract the elements from the input collection; the Beam SDKs handle
-that for you. Your <code class="highlighter-rouge">@ProcessElement</code> method should accept an object of type
-<code class="highlighter-rouge">ProcessContext</code>. The <code class="highlighter-rouge">ProcessContext</code> object gives you access to an input
-element and a method for emitting an output element:</p>
+that for you. Your <code class="highlighter-rouge">@ProcessElement</code> method should accept a parameter tagged with
+<code class="highlighter-rouge">@Element</code>, which will be populated with the input element. In order to output
+elements, the method can also take a parameter of type <code class="highlighter-rouge">OutputReceiver</code> which
+provides a method for emitting elements. The parameter types must match the input
+and output types of your <code class="highlighter-rouge">DoFn</code> or the framework will raise an error. Note: @Element and
+OutputReceiver were introduced in Beam 2.5.0; if using an earlier release of Beam, a
+ProcessContext parameter should be used instead.</p>
 
 <p class="language-py">Inside your <code class="highlighter-rouge">DoFn</code> subclass, you’ll write a method <code class="highlighter-rouge">process</code> where you provide
 the actual processing logic. You don’t need to manually extract the elements
@@ -984,11 +988,9 @@ method.</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">class</span> <span class="nc">ComputeWordLengthFn</span> <span class="kd">extends</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="nd">@ProcessElement</span>
-  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// Get the input element from ProcessContext.</span>
-    <span class="n">String</span> <span class="n">word</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">();</span>
-    <span class="c1">// Use ProcessContext.output to emit the output element.</span>
-    <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">());</span>
+  <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">OutputReceiver</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Use OutputReceiver.output to emit the output element.</span>
+    <span class="n">out</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">());</span>
   <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -1002,8 +1004,8 @@ method.</p>
 
 <blockquote class="language-java">
   <p><strong>Note:</strong> If the elements in your input <code class="highlighter-rouge">PCollection</code> are key/value pairs, you
-can access the key or value by using <code class="highlighter-rouge">ProcessContext.element().getKey()</code> or
-<code class="highlighter-rouge">ProcessContext.element().getValue()</code>, respectively.</p>
+can access the key or value by using <code class="highlighter-rouge">element.getKey()</code> or
+<code class="highlighter-rouge">element.getValue()</code>, respectively.</p>
 </blockquote>
 
 <p>A given <code class="highlighter-rouge">DoFn</code> instance generally gets invoked one or more times to process some
@@ -1020,10 +1022,10 @@ following requirements:</p>
 
 <ul class="language-java">
   <li>You should not in any way modify an element returned by
-<code class="highlighter-rouge">ProcessContext.element()</code> or <code class="highlighter-rouge">ProcessContext.sideInput()</code> (the incoming
+the <code class="highlighter-rouge">@Element</code> annotation or <code class="highlighter-rouge">ProcessContext.sideInput()</code> (the incoming
 elements from the input collection).</li>
-  <li>Once you output a value using <code class="highlighter-rouge">ProcessContext.output()</code> or
-<code class="highlighter-rouge">ProcessContext.sideOutput()</code>, you should not modify that value in any way.</li>
+  <li>Once you output a value using <code class="highlighter-rouge">OutputReceiver.output()</code> you should not modify
+that value in any way.</li>
 </ul>
 
 <h5 id="lightweight-dofns">4.2.1.3. Lightweight DoFns and other abstractions</h5>
@@ -1047,8 +1049,8 @@ elements from the input collection).</li>
   <span class="s">"ComputeWordLengths"</span><span class="o">,</span>                     <span class="c1">// the transform name</span>
   <span class="n">ParDo</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Integer</span><span class="o">&gt;()</span> <span class="o">{</span>    <span class="c1">// a DoFn as an anonymous inner class instance</span>
       <span class="nd">@ProcessElement</span>
-      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">().</span><span class="na">length</span><span class="o">());</span>
+      <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">OutputReceiver</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">&gt;</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">());</span>
       <span class="o">}</span>
     <span class="o">}));</span>
 </code></pre>
@@ -1756,7 +1758,9 @@ state dependency in your user code.</p>
 Beam SDKs are not thread-safe</em>.</li>
 </ul>
 
-<p>In addition, it’s recommended that you make your function object <strong>idempotent</strong>.</p>
+<p>In addition, it’s recommended that you make your function object <strong>idempotent</strong>.
+Non-idempotent functions are supported by Beam, but require additional
+thought to ensure correctness when there are external side effects.</p>
 
 <blockquote>
   <p><strong>Note:</strong> These requirements apply to subclasses of <code class="highlighter-rouge">DoFn</code> (a function object
@@ -1802,10 +1806,10 @@ function may be accessed from different threads.</p>
 
 <p>It’s recommended that you make your function object idempotent–that is, that it
 can be repeated or retried as often as necessary without causing unintended side
-effects. The Beam model provides no guarantees as to the number of times your
-user code might be invoked or retried; as such, keeping your function object
-idempotent keeps your pipeline’s output deterministic, and your transforms’
-behavior more predictable and easier to debug.</p>
+effects. Non-idempotent functions are supported, however the Beam model provides
+no guarantees as to the number of times your user code might be invoked or retried;
+as such, keeping your function object idempotent keeps your pipeline’s output
+deterministic, and your transforms’ behavior more predictable and easier to debug.</p>
 
 <h3 id="side-inputs">4.4. Side inputs</h3>
 
@@ -1841,12 +1845,11 @@ determined by the input data, or depend on a different branch of your pipeline.<
   <span class="n">PCollection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">wordsBelowCutOff</span> <span class="o">=</span>
   <span class="n">words</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">ParDo</span>
       <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-          <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
-            <span class="n">String</span> <span class="n">word</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">();</span>
+          <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">OutputReceiver</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">out</span><span class="o">,</span> <span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
             <span class="c1">// In our DoFn, access the side input.</span>
             <span class="kt">int</span> <span class="n">lengthCutOff</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">sideInput</span><span class="o">(</span><span class="n">maxWordLengthCutOffView</span><span class="o">);</span>
             <span class="k">if</span> <span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">lengthCutOff</span><span class="o">)</span> <span class="o">{</span>
-              <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
+              <span class="n">out</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
             <span class="o">}</span>
           <span class="o">}</span>
       <span class="o">}).</span><span class="na">withSideInputs</span><span class="o">(</span><span class="n">maxWordLengthCutOffView</span><span class="o">)</span>
@@ -2012,25 +2015,24 @@ together.</p>
 
 <h4 id="multiple-outputs-dofn">4.5.2. Emitting to multiple outputs in your DoFn</h4>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Inside your ParDo's DoFn, you can emit an element to a specific output PCollection by passing in the</span>
-<span class="c1">// appropriate TupleTag when you call ProcessContext.output.</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// Inside your ParDo's DoFn, you can emit an element to a specific output PCollection by providing a </span>
+<span class="c1">// MultiOutputReceiver to your process method, and passing in the appropriate TupleTag to obtain an OutputReceiver.</span>
 <span class="c1">// After your ParDo, extract the resulting output PCollections from the returned PCollectionTuple.</span>
 <span class="c1">// Based on the previous example, this shows the DoFn emitting to the main output and two additional outputs.</span>
 
   <span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
-     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
-       <span class="n">String</span> <span class="n">word</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">();</span>
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">MultiOutputReceiver</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
        <span class="k">if</span> <span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">&lt;=</span> <span class="n">wordLengthCutOff</span><span class="o">)</span> <span class="o">{</span>
          <span class="c1">// Emit short word to the main output.</span>
          <span class="c1">// In this example, it is the output with tag wordsBelowCutOffTag.</span>
-         <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
+         <span class="n">out</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">wordsBelowCutOffTag</span><span class="o">).</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
          <span class="c1">// Emit long word length to the output with tag wordLengthsAboveCutOffTag.</span>
-         <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">wordLengthsAboveCutOffTag</span><span class="o">,</span> <span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">());</span>
+         <span class="n">out</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">wordLengthsAboveCutOffTag</span><span class="o">).</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">length</span><span class="o">());</span>
        <span class="o">}</span>
        <span class="k">if</span> <span class="o">(</span><span class="n">word</span><span class="o">.</span><span class="na">startsWith</span><span class="o">(</span><span class="s">"MARKER"</span><span class="o">))</span> <span class="o">{</span>
          <span class="c1">// Emit word to the output with tag markedWordsTag.</span>
-         <span class="n">c</span><span class="o">.</span><span class="na">output</span><span class="o">(</span><span class="n">markedWordsTag</span><span class="o">,</span> <span class="n">word</span><span class="o">);</span>
+         <span class="n">out</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">markedWordsTag</span><span class="o">).</span><span class="na">output</span><span class="o">(</span><span class="n">word</span><span class="o">);</span>
        <span class="o">}</span>
      <span class="o">}}));</span>
 </code></pre>
@@ -2070,6 +2072,55 @@ together.</p>
 <span class="n">tens</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="bp">None</span><span class="p">]</span>  <span class="c"># the undeclared main output</span>
 </code></pre>
 </div>
+
+<h4 id="other-dofn-parameters" class="language-java">4.5.3. Accessing additional parameters in your DoFn</h4>
+
+<p class="language-java">In addition to the element and the <code class="highlighter-rouge">OutputReceiver</code>, Beam will populate other parameters to your DoFn’s <code class="highlighter-rouge">@ProcessElement</code> method.
+Any combination of these parameters can be added to your process method in any order.</p>
+
+<p class="language-java"><strong>Timestamp:</strong>
+To access the timestamp of an input element, add a parameter annotated with <code class="highlighter-rouge">@Timestamp</code> of type <code class="highlighter-rouge">Instant</code>. For example:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="nd">@Timestamp</span> <span class="n">Instant</span> <span class="n">timestamp</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}})</span>
+</code></pre>
+</div>
+
+<p class="language-java"><strong>Window:</strong>
+To access the window an input element falls into, add a parameter of the type of the window used for the input <code class="highlighter-rouge">PCollection</code>.
+If the parameter is a window type (a subclass of <code class="highlighter-rouge">BoundedWindow</code>) that does not match the input <code class="highlighter-rouge">PCollection</code>, then an error
+will be raised. If an element falls in multiple windows (for example, this will happen when using <code class="highlighter-rouge">SlidingWindows</code>), then the
+<code class="highlighter-rouge">@ProcessElement</code> method will be invoked multiple time for the element, once for each window. For example, when fixed windows
+are being used, the window is of type <code class="highlighter-rouge">IntervalWindow</code>.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">IntervalWindow</span> <span class="n">window</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}})</span>
+</code></pre>
+</div>
+
+<p class="language-java"><strong>PaneInfo:</strong>
+When triggers are used, Beam provides a <code class="highlighter-rouge">PaneInfo</code> object that contains information about the current firing. Using <code class="highlighter-rouge">PaneInfo</code>
+you can determine whether this is an early or a late firing, and how many times this window has already fired for this key.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">PaneInfo</span> <span class="n">paneInfo</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}})</span>
+</code></pre>
+</div>
+
+<p class="language-java"><strong>PipelineOptions:</strong>
+The <code class="highlighter-rouge">PipelineOptions</code> for the current pipeline can always be accessed in a process method by adding it as a parameter:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;()</span> <span class="o">{</span>
+     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">String</span> <span class="n">word</span><span class="o">,</span> <span class="n">PipelineOptions</span> <span class="n">options</span><span class="o">)</span> <span class="o">{</span>
+  <span class="o">}})</span>
+</code></pre>
+</div>
+
+<p class="language-java"><code class="highlighter-rouge">@OnTimer</code> methods can also access many of these parameters. Timestamp, window, <code class="highlighter-rouge">PipelineOptions</code>, <code class="highlighter-rouge">OutputReceiver</code>, and
+<code class="highlighter-rouge">MultiOutputReceiver</code> parameters can all be accessed in an <code class="highlighter-rouge">@OnTimer</code> method. In addition, an <code class="highlighter-rouge">@OnTimer</code> method can take
+a parameter of type <code class="highlighter-rouge">TimeDomain</code> which tells whether the timer is based on event time or processing time.</p>
 
 <h3 id="composite-transforms">4.6. Composite transforms</h3>
 
@@ -2963,12 +3014,12 @@ with a <code class="highlighter-rouge">DoFn</code> to attach the timestamps to e
 <div class="language-java highlighter-rouge"><pre class="highlight"><code>      <span class="n">PCollection</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">unstampedLogs</span> <span class="o">=</span> <span class="o">...;</span>
       <span class="n">PCollection</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">stampedLogs</span> <span class="o">=</span>
           <span class="n">unstampedLogs</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">ParDo</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">DoFn</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">,</span> <span class="n">LogEntry</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="n">ProcessContext</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">processElement</span><span class="o">(</span><span class="nd">@Element</span> <span class="n">LogEntry</span> <span class="n">element</span><span class="o">,</span> <span class="n">OutputReceiver</span><span class="o">&lt;</span><span class="n">LogEntry</span><span class="o">&gt;</span> <span class="n">out</span><span class="o">)</span> <span class="o">{</span>
               <span class="c1">// Extract the timestamp from log entry we're currently processing.</span>
-              <span class="n">Instant</span> <span class="n">logTimeStamp</span> <span class="o">=</span> <span class="n">extractTimeStampFromLogEntry</span><span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">());</span>
-              <span class="c1">// Use ProcessContext.outputWithTimestamp (rather than</span>
-              <span class="c1">// ProcessContext.output) to emit the entry with timestamp attached.</span>
-              <span class="n">c</span><span class="o">.</span><span class="na">outputWithTimestamp</span><span class="o">(</span><span class="n">c</span><span class="o">.</span><span class="na">element</span><span class="o">(),</span> <span class="n">logTimeStamp</span><span class="o">);</span>
+              <span class="n">Instant</span> <span class="n">logTimeStamp</span> <span class="o">=</span> <span class="n">extractTimeStampFromLogEntry</span><span class="o">(</span><span class="n">element</span><span class="o">);</span>
+              <span class="c1">// Use OutputReceiver.outputWithTimestamp (rather than</span>
+              <span class="c1">// OutputReceiver.output) to emit the entry with timestamp attached.</span>
+              <span class="n">out</span><span class="o">.</span><span class="na">outputWithTimestamp</span><span class="o">(</span><span class="n">element</span><span class="o">,</span> <span class="n">logTimeStamp</span><span class="o">);</span>
             <span class="o">}</span>
           <span class="o">}));</span>
 </code></pre>
