@@ -151,6 +151,9 @@
 
   <ul class="section-nav-list">
     <li><a href="/contribute/testing/">Testing guide</a></li>
+    <ul>
+      <li><a href="/contribute/precommit-triage-guide/">Pre-commit Slowness Triage Guide</a></li>
+    </ul>
     <li><a href="/contribute/ptransform-style-guide/">PTransform style guide</a></li>
     <li><a href="/contribute/runner-guide/">Runner authoring guide</a></li>
     <li><a href="/contribute/portability/">Portability Framework</a></li>
@@ -162,7 +165,8 @@
 <li>
   <span class="section-nav-list-title">Policies</span>
   <ul class="section-nav-list">
-    <li><a href="/contribute/postcommits-policies/">Post-commit tests policies</a></li>
+    <li><a href="/contribute/precommit-policies/">Pre-commit test policies</a></li>
+    <li><a href="/contribute/postcommits-policies/">Post-commit test policies</a></li>
   </ul>
 </li>
 <li>
@@ -197,8 +201,8 @@
 <ul class="nav">
   <li><a href="#testing-scenarios">Testing Scenarios</a>
     <ul>
-      <li><a href="#precommit">Precommit</a></li>
-      <li><a href="#postcommit">Postcommit</a></li>
+      <li><a href="#pre-commit">Pre-commit</a></li>
+      <li><a href="#post-commit">Post-commit</a></li>
     </ul>
   </li>
   <li><a href="#testing-types">Testing Types</a>
@@ -252,48 +256,55 @@ systems at the bottom.</p>
 
 <h2 id="testing-scenarios">Testing Scenarios</h2>
 
-<p>With the tools at our disposal, we have a good set of utilities which we can use
-to verify Beam correctness. To ensure an ongoing high quality of code, we use
-precommit and postcommit testing.</p>
+<p>Ideally, all available tests should be run against a pull request (PR) before
+it’s allowed to be committed to Beam’s <a href="https://github.com/apache/beam">Github</a>
+repo. This is not possible, however, due to a combination of time and resource
+constraints. Running all tests for each PR would take hours or even days using
+available resources, which would slow down development considerably.</p>
 
-<h3 id="precommit">Precommit</h3>
+<p>Thus tests are split into <em>pre-commit</em> and <em>post-commit</em> suites. Pre-commit is
+fast, while post-commit is comprehensive. As their names imply, pre-commit tests
+are run on each PR before it is committed, while post-commits run periodically
+against the master branch (i.e. on already committed PRs).</p>
 
-<p>For precommit testing, Beam uses
-<a href="https://builds.apache.org/view/A-D/view/Beam/">Jenkins</a> and a code coverage tool
-called <a href="https://coveralls.io/github/apache/beam">Coveralls</a>, hooked up
-to <a href="https://github.com/apache/beam">Github</a>, to ensure that pull
-requests meet a certain quality bar. These precommits verify correctness via two
-of the below testing tools: unit tests (with coverage monitored by Coveralls)
-and E2E tests. We run the full slate of unit tests in precommit, ensuring
-correctness at a basic level, and then run the WordCount E2E test in both batch
-and streaming (coming soon!) against each supported SDK / runner combination as
-a smoke test, to verify that a basic level of functionality exists. We think
-that this hits the appropriate tradeoff between a desire for short (ideally
-&lt;30m) precommit times and a desire to verify that pull requests going into Beam
-function in the way in which they are intended.</p>
+<p>Beam uses <a href="https://builds.apache.org/view/A-D/view/Beam/">Jenkins</a> to run
+pre-commit and post-commit tests.</p>
 
-<p>Precommit tests are kicked off when a user makes a Pull Request against the
-<code class="highlighter-rouge">apache/beam</code> repository and the Jenkins and Coveralls statuses are displayed at
-the bottom of the pull request page. Clicking on “Details” will open the status
-page in the selected tool; there, test status and output can be viewed.</p>
+<h3 id="pre-commit">Pre-commit</h3>
 
-<h3 id="postcommit">Postcommit</h3>
+<p>The pre-commit test suite verifies correctness via two testing tools: unit tests
+and end-to-end (E2E) tests. Unit tests ensure correctness at a basic level,
+while WordCount E2E tests are run againsts each supported SDK / runner
+combination as a smoke test, to verify that a basic level of functionality
+exists.</p>
 
-<p>Running in postcommit removes as stringent of a time constraint, which gives us
-the ability to do some more comprehensive testing. In postcommit we have a test
+<p>This combination of tests hits the appropriate tradeoff between a desire for
+short (ideally &lt;30m) pre-commit times and a desire to verify that PRs going
+into Beam function in the way in which they are intended.</p>
+
+<p>Pre-commit jobs are kicked off when a contributor makes a PR against the
+<code class="highlighter-rouge">apache/beam</code> repository. Job statuses are displayed at the bottom of the PR
+page. Clicking on “Details” will open the status page in the selected tool;
+there, you can view test status and output.</p>
+
+<h3 id="post-commit">Post-commit</h3>
+
+<p>Running in post-commit removes as stringent of a time constraint, which gives us
+the ability to do some more comprehensive testing. In post-commit we have a test
 suite running the ValidatesRunner tests against each supported runner, and
 another for running the full set of E2E tests against each runner.
 Currently-supported runners are Dataflow, Flink, Spark, and Gearpump, with
 others soon to follow. Work is ongoing to enable Flink, Spark, and Gearpump in
-the E2E framework, with full support targeted for end of August 2016. Postcommit
-tests run periodically, with timing defined in their Jenkins configurations.</p>
+the E2E framework, with full support targeted for end of August 2016.
+Post-commit tests run periodically, with timing defined in their Jenkins
+configurations.</p>
 
-<p>Adding new postcommit E2E tests is generally as easy as adding a *IT.java file
+<p>Adding new post-commit E2E tests is generally as easy as adding a *IT.java file
 to the repository - Failsafe will notice it and run it - but if you want to do
 more interesting things, take a look at
 <a href="https://github.com/apache/beam/blob/master/examples/java/src/test/java/org/apache/beam/examples/WordCountIT.java">WordCountIT.java</a>.</p>
 
-<p>Postcommit test results can be found in
+<p>Post-commit test results can be found in
 <a href="https://builds.apache.org/view/A-D/view/Beam/">Jenkins</a>.</p>
 
 <h2 id="testing-types">Testing Types</h2>
@@ -312,7 +323,7 @@ breakages. Beam Java unit tests are written in JUnit.</p>
 To run all unit tests, execute the following command in the <code class="highlighter-rouge">sdks/python</code>
 subdirectory</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>python setup.py test [-s apache_beam.package.module.TestClass.test_method]
+<div class="highlighter-rouge"><pre class="highlight"><code>$ python setup.py test [-s apache_beam.package.module.TestClass.test_method]
 </code></pre>
 </div>
 
