@@ -20,13 +20,13 @@ limitations under the License.
 # Euphoria Java 8 DSL
 <!--
 NOTE for future maintainer.
-There is [`DocumentationExamplesTest`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/extensions/euphoria/core/docs/DocumentationExamplesTest.html) in `beam-sdks-java-extensions-euphoria-core` project where all code examples are validated. Do not change code examples without reflecting it in `DocumentationExamplesTest` and vice versa.
+There is [`DocumentationExamplesTest`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/extensions/euphoria/core/docs/DocumentationExamplesTest.html) in `beam-sdks-java-extensions-euphoria-core` project where all code examples are validated. Do not change the code examples without reflecting it in the `DocumentationExamplesTest` and vice versa.
 
 Following operators are unsupported. Include them in documentation when supported.
 
 ### `TopPerKey`
 Emits top element for defined keys and windows.
- - This is unsupported due to `ReduceStateByKey`.
+ - This is unsupported due to decomposition to `ReduceStateByKey`.
 
 Lower level transformations (if possible user should prefer above transformations):
 ### `ReduceStateByKey`: assigns each input item to a set of windows and turns the item into a key/value pair.
@@ -36,7 +36,7 @@ For each of the assigned windows the extracted value is accumulated using a user
 -->
 
 ## What is Euphoria
-Easy to use Java 8 API build on top of the Beam's Java SDK. Provides a [high-level abstractions](#operator-reference) of data transformations, with focus on Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. Allows fast prototyping through use of default [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators. And can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing beam `Pipelines`.
+Easy to use Java 8 API build on top of the Beam's Java SDK. API provides a [high-level abstraction](#operator-reference) of data transformations, with focus on the Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. It allows fast prototyping through use of default [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators and can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing Beam `Pipelines`.
 
 [Euphoria API](https://github.com/seznam/euphoria) project has been started in 2014, with a clear goal of providing the main building block for [Seznam.cz's](https://www.seznam.cz/) data infrastructure.
 In 2015, [DataFlow whitepaper](http://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) inspired original authors to go one step further and also provide the unified API for both stream and batch processing.
@@ -46,7 +46,7 @@ the API as a high level DSL over Beam Java SDK and share our effort with the com
 Euphoria DSL integration is still work in progress and is tracked as part of [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900).
 
 ## Word Count Example
-Lets start with small example.
+Lets start with the small example.
 ```java
 Pipeline pipeline = Pipeline.create(options);
 
@@ -102,20 +102,20 @@ pipeline.run();
 
 ## Euphoria Guide
 ### `Flow` your data
-Euphoria API is composed as a flow of operators called `BeamFlow`. There is a set of operators which allows to construct `BeamFlow` according to your Big Data application needs. `BeamFlows` are easily created from Beam `Pipeline`.
+Euphoria API is composed as a flow of operators called `BeamFlow`. There is a set of operators which allows you to construct BeamFlow according to your application needs. `BeamFlow` can be easily created from Beam `Pipeline`.
 ```java
 Pipeline pipeline = Pipeline.create(options);
 
 BeamFlow flow = BeamFlow.of(pipeline);
 ```
-Or from `PCollection`. That is especially useful when some of many Beam's IO are utilized as data inputs.
+Or from `PCollection`, which is especially useful when some of many Beam's IO are utilized as data inputs.
 ```java
 PCollection<T> inputPCollection = ...
 
 BeamFlow flow = BeamFlow.of(inputPCollection);
 ```
 ### Datasets
-Euphoria use concept of 'Datasets' to describe flows of data between operators. This concept is similar to Beam's `PCollection` and can be converted both ways through `BeamFlow`.
+Euphoria uses the concept of 'Datasets' to describe data flow between `Operators`. This concept is similar to Beam's `PCollection` and can be converted back and forth through `BeamFlow`.
 ```java
 PCollection<T> someCollection = ...
 
@@ -128,7 +128,7 @@ PCollection<T> collection = flow.unwrapped(dataset);
 One should not mix different instances of `BeamFlow` when wrapping/unwrapping `PCollections`.
 
 ### Inputs and Outputs
-Input data can supplied through Beams IO into `PCollection`, the same way as in Beam, and latter wrapped by `BeamFlow` into `Dataset`.
+Input data can supplied through Beams IO into `PCollection`, the same way as in Beam, and and wrapped by `BeamFlow` into `Dataset` later on.
 
 ```java
 PCollection<String> input =
@@ -138,11 +138,11 @@ PCollection<String> input =
 
 Dataset<String> dataset = flow.wrapped(input);
 ```
-Output can be treated the same way as inputs, last `Dataset` is converted to `Pcollection` and dumped to appropriate IO.
+Outputs can be treated the same way as inputs, last `Dataset` is converted to `Pcollection` and dumped into appropriate IO.
 
 ### Adding Operators
-Real power of Euphoria API is in its [operators suite](#operators-reference). Once we get our hand on `Dataset` we are able to create and connect operators. Each Operator consumes one or more input and produces one output
-`Dataset`. Lets look at simple `MapElements` example.
+Real power of Euphoria API is in its [operators suite](#operators-reference). Once we get our hands on `Dataset` we are able to create and connect operators. Each Operator consumes one or more input and produces one output
+`Dataset`. Lets take a look at simple `MapElements` example.
 
 ```java
 Dataset<Integer> input = ...
@@ -154,12 +154,12 @@ Dataset<String> mappedElements =
     .using(String::valueOf)
     .output();
 ```
-The operator consumes `input`, it applies given lambda expression (`String::valueOf`) on each element of `input` and returns mapped `Datatset`. Developer is guided through series of steps when creating operator so the declaration of an operator is straightforward. To start building operator just wrote its name and '.'. Your IDE will give you hits.
+The operator consumes `input`, it applies given lambda expression (`String::valueOf`) on each element of `input` and returns mapped `Dataset`. Developer is guided through series of steps when creating operator so the declaration of an operator is straightforward. To start building operator just wrote its name and '.'. Your IDE will give you hints.
 
 First step to build any operator is to give it a name through `named()` method. This is optional but recommended step. The name is propagated through system and can latter be used when debugging.
 
 ### Coders and Types
-Beam's Java SDK requires developers to supply `Coder` for custom element type in order to have a way of materializing elements. Euphoria integrates [Kryo](https://github.com/EsotericSoftware/kryo) as default way of serialization. Recommended way of using [Kryo](https://github.com/EsotericSoftware/kryo) is to register all the types which will Kryo serialize. Sometimes it is also a good idea to register Kryo serialisers of its own too. Euphoria allows you to do that by implementing your own `KryoRegistrar` and using it as input to `RegisterCoders`. The `RegisterCoders` can also be used as convenient way of supplying Beam `Coder` for specified element types.
+Beam's Java SDK requires developers to supply `Coder` for custom element type in order to have a way of materializing elements. Euphoria integrates [Kryo](https://github.com/EsotericSoftware/kryo) as default way of serialization. Recommended way of using [Kryo](https://github.com/EsotericSoftware/kryo) is to register all the types which will Kryo serialize. Sometimes it is also a good idea to register Kryo serializers of its own too. Euphoria allows you to do that by implementing your own `KryoRegistrar` and using it as an input for `RegisterCoders`. The `RegisterCoders` can also be used as convenient way of supplying Beam `Coder` for specified element types.
 ```java
 RegisterCoders
   .to(flow)
@@ -171,7 +171,7 @@ RegisterCoders
   .registerCoder(new TypeDescriptor<ParametrizedTestDataType<String>>() {}, typeParametrizedCoder)
   .done();
 ```
-When fast prototyping you may decide not to care much about coders and Euphoria will use Kryo for every element type which do not have registered `Coder`. Even for elements of types not registered with Kryo. That of course degrades performance, since Kryo is not able to serialize instances of unregistered types effectively. This behavior is enabled by default and can be disabled when creating `BeamFlow`.
+When fast prototyping you may decide not to care much about coders and Euphoria will use Kryo for every element type which do not have registered `Coder`. Even for elements of types not registered with Kryo. That of course degrades performance, since Kryo is not able to serialize instance of unknown types effectively. This behavior is enabled by default and can be disabled when creating `BeamFlow`.
 ```java
 BeamFlow flow = BeamFlow.of(pipeline, false); // set `allowKryoCoderAsFallback` param to false
 ```
@@ -185,10 +185,10 @@ MapElements
   .using(String::valueOf, TypeDescriptors.strings())
   .output();
 ```
-Supplying `TypeDescriptors` will become mandatory when using Kryo as fallback `Coder` is disabled.
+Supplying `TypeDescriptors` becomes mandatory when using Kryo as fallback `Coder` is disabled.
 
 ### Metrics and Accumulators
-Statistics about job's internals are very helpful during development of distributed jobs. Euphoria calls them accumulators. They are accessible through environment `Context`, which can be obtained from `Collector` whenever working with it. It is usually present when zero-to-many output elements are expected from operator. For example in case of `FlatMap`.
+Statistics about job's internals are very helpful during development of distributed jobs. Euphoria calls them accumulators. They are accessible through environment `Context`, which can be obtained from `Collector`, whenever working with it. It is usually present when zero-to-many output elements are expected from operator. For example in case of `FlatMap`.
 ```java
 BeamFlow flow = ...
 Dataset<String> dataset = ..
@@ -204,7 +204,7 @@ FlatMap
     })
   .output();
 ```
-`MapElements` also allows for `Context` to be accessed by supplying implementations of `UnaryFunctionEnv` (add second context argument) instead of `UnaryFunctionEnv`.
+`MapElements` also allows for `Context` to be accessed by supplying implementations of `UnaryFunctionEnv` (add second context argument) instead of `UnaryFunctor`.
 ```java
 BeamFlow flow = ...
 Dataset<String> dataset = ...
@@ -225,7 +225,7 @@ Dataset<String> mapped =
 Accumulators are translated into Beam Metrics in background so they can be viewed the same way. Namespace of translated metrics is set to operator's name.
 
 ### Windowing
-Euphoria follows the same [windowing principles]({{ site.baseurl }}/documentation/programming-guide/#windowing) as Beam Java SDK. Every shuffle operator, that is every operator which needs to shuffle elements over network between executors, allows you to set it. The same parameters as in Beam are required. `WindowFn`, `Trigger` and `WindowingStrategy`. Users are guided to either set all three or none when building an operator. Windowing is propagated down through `BeamFlow` the same way as it works with `Pipeline`.
+Euphoria follows the same [windowing principles]({{ site.baseurl }}/documentation/programming-guide/#windowing) as Beam Java SDK. Every shuffle operator (operator which needs to shuffle data over the network) allows you to set it. The same parameters as in Beam are required. `WindowFn`, `Trigger` and `WindowingStrategy`. Users are guided to either set all three or none when building an operator. Windowing is propagated down through `BeamFlow` the same way as it works with `Pipeline`.
 ```java
 CountByKey.of(input)
   .keyBy(e -> e)
@@ -254,16 +254,16 @@ PCollection<KV<String, Long>> lettersWithCounts =
 ```
 
 ## How to get Euphoria
-Euphoria is located in `dsl-euphoria` branch of Apache Beam project. To build `euphoria` subproject call:
+Euphoria is located in `dsl-euphoria` branch of The Apache Beam project. To build `euphoria` subproject call:
 ```
 ./gradlew beam-sdks-java-extensions-euphoria-core:build
 ```
 
 ## Operator Reference
-Operators are higher level transformations of data which allows to build whole logic of data processing jobs. All the Euphoria operators are documented in this section including examples. There are no examples with [windowing](#windowing) applied for the sake of simplicity. Refer to the [windowing section](#windowing) for more details.
+Operators are basically higher level data transformations, which allows you to build business logic of your data processing job in a simple way. All the Euphoria operators are documented in this section including examples. There are no examples with [windowing](#windowing) applied for the sake of simplicity. Refer to the [windowing section](#windowing) for more details.
 
 ### `CountByKey`
-Counting elements with same key. Requires input dataset to be mapped by given key extractor (`UnaryFunction`) to keys which are then counted. Output is emitted as `KV<K, Long>` (`K` is key type) where each `KV` contains key and number of element in input dataset for the key.
+Counting elements with the same key. Requires input dataset to be mapped by given key extractor (`UnaryFunction`) to keys which are then counted. Output is emitted as `KV<K, Long>` (`K` is key type) where each `KV` contains key and number of element in input dataset for the key.
 ```java
 // suppose input: [1, 2, 4, 1, 1, 3]
 Dataset<KV<Integer, Long>> output =
@@ -293,7 +293,7 @@ Distinct.named("unique-keys-only")
 ```
 
 ### `Join`
-Represents inner join of two (left and right) datasets on given key producing single new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes elements from both dataset sharing the same key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
+Represents inner join of two (left and right) datasets on given key producing a new dataset. Key is extracted from both datasets by separate extractors so elements in left and right can have different types denoted as `LeftT` and `RightT`. The join itself is performed by user-supplied `BinaryFunctor` which consumes elements from both dataset sharing the same key. And outputs result of the join (`OutputT`). The operator emits output dataset of `KV<K, OutputT>` type.
 ```java
 // suppose that left contains: [1, 2, 3, 0, 4, 3, 1]
 // suppose that right contains: ["mouse", "rat", "elephant", "cat", "X", "duck"]
