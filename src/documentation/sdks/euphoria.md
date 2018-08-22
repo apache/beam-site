@@ -45,7 +45,7 @@ the API as a high level DSL over Beam Java SDK and share our effort with the com
 
 Euphoria DSL integration is still work in progress and is tracked as part of [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900).
 
-## Word Count Example
+## WordCount Example
 Lets start with the small example.
 ```java
 Pipeline pipeline = Pipeline.create(options);
@@ -141,7 +141,7 @@ Dataset<String> dataset = flow.wrapped(input);
 Outputs can be treated the same way as inputs, last `Dataset` is converted to `Pcollection` and dumped into appropriate IO.
 
 ### Adding Operators
-Real power of Euphoria API is in its [operators suite](#operators-reference). Once we get our hands on `Dataset` we are able to create and connect operators. Each Operator consumes one or more input and produces one output
+Real power of Euphoria API is in its [operators suite](#operator-reference). Once we get our hands on `Dataset` we are able to create and connect operators. Each Operator consumes one or more input and produces one output
 `Dataset`. Lets take a look at simple `MapElements` example.
 
 ```java
