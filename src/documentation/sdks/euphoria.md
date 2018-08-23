@@ -22,11 +22,7 @@ limitations under the License.
 NOTE for future maintainer.
 There is [`DocumentationExamplesTest`]({{ site.baseurl }}/documentation/sdks/javadoc/{{ site.release_latest }}/index.html?org/apache/beam/sdk/extensions/euphoria/core/docs/DocumentationExamplesTest.html) in `beam-sdks-java-extensions-euphoria-core` project where all code examples are validated. Do not change the code examples without reflecting it in the `DocumentationExamplesTest` and vice versa.
 
-Following operators are unsupported. Include them in documentation when supported.
-
-### `TopPerKey`
-Emits top element for defined keys and windows.
- - This is unsupported due to decomposition to `ReduceStateByKey`.
+Following operator is unsupported. Include it in documentation when supported.
 
 Lower level transformations (if possible user should prefer above transformations):
 ### `ReduceStateByKey`: assigns each input item to a set of windows and turns the item into a key/value pair.
@@ -520,6 +516,21 @@ Dataset<String> animals =
     .output();
 // animal will contain: "cheetah", "cat", "lynx", "jaguar", "squirrel", "mouse", "rat", "lemming", "beaver"
 ```
+
+### `TopPerKey`
+Emits one top-rated element per key. Key of type `K` is extracted by given `UnaryFunction`. Another `UnaryFunction` extractor allows for conversion input elements to values of type `V`. Selection of top element is based on _score_, which is obtained from each element by user supplied `UnaryFunction` called score calculator. Score type is denoted as `ScoreT` and it is required to extend `Comparable<ScoreT>` so scores of two elements can be compared directly. Output dataset elements are of type `Triple<K, V, ScoreT>`.
+```java
+// suppose 'animals contain: [ "mouse", "elk", "rat", "mule", "elephant", "dinosaur", "cat", "duck", "caterpillar" ]
+Dataset<Triple<Character, String, Integer>> longestNamesByLetter =
+  TopPerKey.named("longest-animal-names")
+    .of(animals)
+    .keyBy(name -> name.charAt(0)) // first character is the key
+    .valueBy(UnaryFunction.identity()) // value type is the same as input element type
+    .scoreBy(String::length) // length defines score, note that Integer implements Comparable<Integer>
+    .output();
+//longestNamesByLetter wil contain: [ ('m', "mouse", 5), ('r', "rat", 3), ('e', "elephant", 8), ('d', "dinosaur", 8), ('c', "caterpillar", 11) ]
+```
+`TopPerKey` is a shuffle operator so it allows for widowing to be defined.
 
 ### `AssignEventTime`
 Euphoria needs to know how to extract time-stamp from elements when [windowing](#windowing) is applied. `AssignEventTime` tells Euphoria how to do that through given implementation of `ExtractEventTime` function.
