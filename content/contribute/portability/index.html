@@ -417,7 +417,7 @@ their respective components.</p>
 <h3 id="status">Status</h3>
 
 <p>MVP in progress (near completion for Flink runner). See the
-<a href="https://docs.google.com/spreadsheets/d/1KDa_FGn1ShjomGd-UUDOhuh2q73de2tPz6BqHpzqvNI/edit?usp=sharing">Portability support table</a>
+<a href="https://s.apache.org/apache-beam-portability-support-table">Portability support table</a>
 for details.</p>
 
 <h4 id="running-python-wordcount-on-flink">Running Python wordcount on Flink</h4>
@@ -437,7 +437,8 @@ docker</code></li>
 <ol>
   <li>Start local Flink cluster</li>
   <li>Create shaded JobService jar: <code class="highlighter-rouge">./gradlew :beam-runners-flink_2.11-job-server:installShadowDist</code></li>
-  <li>Start JobService with Flink web service endpoint: <code class="highlighter-rouge">java -jar ./runners/flink/job-server/build/install/beam-runners-flink_2.11-job-server-shadow/lib/beam-runners-flink_2.11-job-server-*.jar "--job-host=localhost:8099" "--artifacts-dir=/tmp/flink-artifacts" "--flink-master-url=localhost:8081"</code></li>
+  <li>Optional optimization step: Place the generated JobServer Jar <code class="highlighter-rouge">beam/runners/flink/job-server/build/libs/beam-runners-flink_2.11-job-server-2.7.0-SNAPSHOT.jar</code> in <code class="highlighter-rouge">flink/lib</code> and change class loading order for Flink by adding <code class="highlighter-rouge">classloader.resolve-order: parent-first</code> to <code class="highlighter-rouge">conf/flink-conf.yaml</code>.</li>
+  <li>Start JobService with Flink web service endpoint: <code class="highlighter-rouge">./gradlew :beam-runners-flink_2.11-job-server:runShadow -PflinkMasterUrl=localhost:8081</code></li>
   <li>Submit the pipeline.</li>
 </ol>
 
