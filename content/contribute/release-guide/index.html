@@ -293,6 +293,7 @@ limitations under the License.
             </ul>
           </li>
           <li><a href="#access-to-apache-nexus-repository" id="markdown-toc-access-to-apache-nexus-repository">Access to Apache Nexus repository</a></li>
+          <li><a href="#submit-your-gpg-public-key-into-mit-pgp-public-key-server" id="markdown-toc-submit-your-gpg-public-key-into-mit-pgp-public-key-server">Submit your GPG public key into MIT PGP Public Key Server</a></li>
           <li><a href="#website-development-setup" id="markdown-toc-website-development-setup">Website development setup</a></li>
           <li><a href="#register-to-pypi" id="markdown-toc-register-to-pypi">Register to PyPI</a></li>
         </ul>
@@ -424,6 +425,9 @@ limitations under the License.
 
 <p>To prepare for each release, you should audit the project status in the JIRA issue tracker, and do necessary bookkeeping. Finally, you should create a release branch from which individual release candidates will be built.</p>
 
+<p><strong>NOTE</strong>: If you are using <a href="https://help.github.com/articles/securing-your-account-with-two-factor-authentication-2fa/">GitHub two-factor authentication</a> and haven’t configure HTTPS access, 
+please follow <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">the guide</a> to configure command line access.</p>
+
 <h3 id="one-time-setup-instructions">One-time setup instructions</h3>
 
 <h4 id="gpg-key">GPG Key</h4>
@@ -546,6 +550,10 @@ export GPG_AGENT_INFO
   </li>
 </ol>
 
+<h4 id="submit-your-gpg-public-key-into-mit-pgp-public-key-server">Submit your GPG public key into MIT PGP Public Key Server</h4>
+<p>In order to make yourself have right permission to stage java artifacts in Apache Nexus staging repository, 
+please submit your GPG public key into <a href="http://pgp.mit.edu:11371/">MIT PGP Public Key Server</a>.</p>
+
 <h4 id="website-development-setup">Website development setup</h4>
 
 <p>Prepare to update the Beam website by following the <a href="/contribute/website-contributions/">website development
@@ -559,7 +567,7 @@ instructions</a>.</p>
 
 <p>When contributors resolve an issue in JIRA, they are tagging it with a release that will contain their changes. With the release currently underway, new issues should be resolved against a subsequent future release. Therefore, you should create a release item for this subsequent release, as follows:</p>
 
-<p>Attention: Only committer has permission to perform this.</p>
+<p><strong>Attention</strong>: Only PMC has permission to perform this. If you are not a PMC, please ask for help in dev@ mailing list.</p>
 
 <ol>
   <li>In JIRA, navigate to the <a href="https://issues.apache.org/jira/plugins/servlet/project-config/BEAM/versions"><code class="highlighter-rouge">Beam &gt; Administration &gt; Versions</code></a>.</li>
@@ -916,7 +924,12 @@ the version number has changed, download a new version of the corresponding
   <li>Tasks included
     <ol>
       <li>Run gradle release to create rc tag and push source release into github repo.</li>
-      <li>Run gradle publish to push java artifacts into Maven staging repo.</li>
+      <li>
+        <p>Run gradle publish to push java artifacts into Maven staging repo.</p>
+
+        <p><strong>NOTE</strong>: In order to public staging artifacts, you need to goto the staging repo to close the staging repository on Apache Nexus. 
+When prompted for a description, enter “Apache Beam, version X, release candidate Y”.</p>
+      </li>
       <li>Stage source release into dist.apache.org dev <a href="https://dist.apache.org/repos/dist/dev/beam/">repo</a>.</li>
       <li>Stage,sign and hash python binaries into dist.apache.ord dev repo python dir</li>
       <li>Create a PR to update beam-site, changes includes:
