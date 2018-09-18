@@ -203,7 +203,6 @@
   <li><a href="#contributing-code">Contributing code</a>
     <ul>
       <li><a href="#building--testing">Building &amp; Testing</a></li>
-      <li><a href="#developing-with-an-ide">Developing with an IDE</a></li>
       <li><a href="#pull-requests">Pull requests</a></li>
       <li><a href="#developing-with-the-python-sdk">Developing with the Python SDK</a></li>
     </ul>
@@ -372,11 +371,15 @@ $ ./gradlew -p runners/flink check
 
 <p>We run <strong>integration and performance test</strong> using <a href="https://jenkins.io/">Jenkins</a>. The job definitions are available in the <a href="https://github.com/apache/beam/tree/master/.test-infra/jenkins">Beam GitHub repository</a>.</p>
 
-<h3 id="developing-with-an-ide">Developing with an IDE</h3>
+<h4 id="troubleshooting">Troubleshooting</h4>
 
-<p>Generate an IDEA project .ipr file with:</p>
+<p>You might get an OutOfMemoryException during the Gradle build. If you have more memory
+available, you can try to increase the memory allocation of the Gradle JVM. Otherwise,
+disabling parallel test execution reduces memory consumption. In the root of the Beam
+source, edit the <code class="highlighter-rouge">gradle.properties</code> file and add/modify the following lines:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>$ ./gradlew idea
+<div class="highlighter-rouge"><pre class="highlight"><code>org.gradle.parallel=false
+org.gradle.jvmargs=-Xmx2g -XX:MaxPermSize=512m
 </code></pre>
 </div>
 
