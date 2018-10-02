@@ -3,7 +3,7 @@ layout: section
 title: "Apache Beam Pydoc"
 section_menu: section-menu/sdks.html
 permalink: /documentation/sdks/pydoc/current/
-redirect_to: /documentation/sdks/pydoc/2.6.0/
+redirect_to: /documentation/sdks/pydoc/2.7.0/
 ---
 <!--
 Licensed under the Apache License, Version 2.0 (the "License");
