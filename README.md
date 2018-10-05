@@ -17,5 +17,5 @@
     under the License.
 -->
 
-Apache Beam website sources have been moved [here](https://github.com/apache/beam/blob/master/website).
-
+Apache Beam website sources have been moved to the 
+[apache/beam](https://github.com/apache/beam/blob/master/website) repository.
