@@ -32,11 +32,11 @@ For each of the assigned windows the extracted value is accumulated using a user
 -->
 
 ## What is Euphoria
-Easy to use Java 8 API build on top of the Beam's Java SDK. API provides a [high-level abstraction](#operator-reference) of data transformations, with focus on the Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. It allows fast prototyping through use of default [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators and can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing Beam `Pipelines`.
+Easy to use Java 8 API build on top of the Beam's Java SDK. API provides a [high-level abstraction](#operator-reference) of data transformations, with focus on the Java 8 language features (e.g. lambdas and streams). It is fully inter-operable with existing Beam SDK and convertible back and forth. It allows fast prototyping through use of (optional) [Kryo](https://github.com/EsotericSoftware/kryo) based coders, lambdas and high level operators and can be [seamlessly integrated](#integration-of-euphoria-into-existing-pipelines) into existing Beam `Pipelines`.
 
 [Euphoria API](https://github.com/seznam/euphoria) project has been started in 2014, with a clear goal of providing the main building block for [Seznam.cz's](https://www.seznam.cz/) data infrastructure.
 In 2015, [DataFlow whitepaper](http://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf) inspired original authors to go one step further and also provide the unified API for both stream and batch processing.
-The API has been open-sourced in 2016 and is still in active developemnt. As the Beam's community goal was very similar, we decided to contribute
+The API has been open-sourced in 2016 and is still in active development. As the Beam's community goal was very similar, we decided to contribute
 the API as a high level DSL over Beam Java SDK and share our effort with the community.
 
 Euphoria DSL integration is still work in progress and is tracked as part of [BEAM-3900](https://issues.apache.org/jira/browse/BEAM-3900).
@@ -75,7 +75,7 @@ Dataset<String> words =
 // Now we can count input words - the operator ensures that all values for the same
 // key (word in this case) end up being processed together. Then it counts number of appearances
 // of the same key in 'words' dataset and emits it to output.
-Dataset<KV<String, Long>> counted = 
+Dataset<KV<String, Long>> counted =
     CountByKey.named("COUNT")
         .of(words)
         .keyBy(w -> w)
@@ -88,7 +88,7 @@ Dataset<String> output =
         .using(p -> p.getKey() + ": " + p.getValue())
         .output();
 
-// Transform Dataset back to PCollection. It can be done in any step of this flow.
+// Transform Dataset back to PCollection. It can be done anytime.
 PCollection<String> outputCollection = output.getPCollection();
 
 // Now we can again use Beam transformation. In this case we save words and their count
@@ -117,7 +117,7 @@ PCollection<T> collection = dataset.getPCollection();
 ```
 
 ### Inputs and Outputs
-Input data can supplied through Beams IO into `PCollection`, the same way as in Beam, and and wrapped by `Dataset.of(PCollection<T> pCollection)` into `Dataset` later on.
+Input data can be supplied through Beams IO into `PCollection`, the same way as in Beam, and wrapped by `Dataset.of(PCollection<T> pCollection)` into `Dataset` later on.
 
 ```java
 PCollection<String> input =
@@ -143,44 +143,54 @@ Dataset<String> mappedElements =
     .using(String::valueOf)
     .output();
 ```
-The operator consumes `input`, it applies given lambda expression (`String::valueOf`) on each e````lement of `input` and returns mapped `Dataset`. Developer is guided through series of steps when creating operator so the declaration of an operator is straightforward. To start building operator just wrote its name and '.'. Your IDE will give you hints.
+The operator consumes `input`, it applies given lambda expression (`String::valueOf`) on each element of `input` and returns mapped `Dataset`. Developer is guided through series of steps when creating operator so the declaration of an operator is straightforward. To start building operator just wrote its name and '.' (dot). Your IDE will give you hints.
 
-First step to build any operator is to give it a name through `named()` method. This is optional but recommended step. The name is propagated through system and can latter be used when debugging.
+First step to build any operator is to give it a name through `named()` method. The name is propagated through system and can latter be used when debugging.
 
-### Coders and Types 
-//TODO
-Beam's Java SDK requires developers to supply `Coder` for custom element type in order to have a way of materializing elements. Euphoria integrates [Kryo](https://github.com/EsotericSoftware/kryo) as default way of serialization, which is located in `:beam-sdks-java-extensions-kryo` module. Recommended way of using [Kryo](https://github.com/EsotericSoftware/kryo) is to register all the types which will Kryo serialize. Sometimes it is also a good idea to register Kryo serializers of its own too. Euphoria allows you to do that by implementing your own `KryoRegistrar` and using it as an input for `RegisterCoders`. The `RegisterCoders` can also be used as convenient way of supplying Beam `Coder` for specified element types.
+### Coders and Types
+Beam's Java SDK requires developers to supply `Coder` for custom element type in order to have a way of materializing elements. Euphoria allows to use [Kryo](https://github.com/EsotericSoftware/kryo) as a way of serialization. The [Kryo](https://github.com/EsotericSoftware/kryo) is located in `:beam-sdks-java-extensions-kryo` module.
 
-First add dependency:
-```
+```groovy
 //gradle
 dependencies {
     compile "org.apache.beam:beam-sdks-java-extensions-kryo:${beam.version}"
 }
+```
+```xml
 //maven
 <dependency>
   <groupId>org.apache.beam</groupId>
   <artifactId>beam-sdks-java-extensions-kryo</artifactId>
   <version>${beam.version}</version>
 </dependency>
-
 ```
-Then register your classes:
+
+All you need is to create `KryoCoderProvider` and register it to your
+`Pipeline`. There are two ways of doing that.
+
+When prototyping you may decide not to care much about coders, then create `KryoCoderProvider` without any class registrations to [Kryo](https://github.com/EsotericSoftware/kryo).
 ```java
-Pipeline pipeline = Pipeline.create(options);
-
-KryoCoderProvider.of()
-    .withRegistrar(kryo -> {
-      kryo.register(KryoSerializedElementType.class); //other may follow
-    })
-    .registerTo(pipeline);
+//Register `KryoCoderProvider` which attempt to use `KryoCoder` to every non-primitive type
+KryoCoderProvider.of().registerTo(pipeline);
 ```
-When fast prototyping you may decide not to care much about coders and Euphoria will use Kryo for every element type which do not have registered `Coder`. Even for elements of types not registered with Kryo. That of course degrades performance, since Kryo is not able to serialize instance of unknown types effectively. This behavior is enabled by default and can be disabled when creating `Pipeline`.
+Such a `KryoCoderProvider` will return `KryoCoder` for every non-primitive element type. That of course degrades performance, since Kryo is not able to serialize instance of unknown types effectively. But it boost speed of pipeline development. This behavior is enabled by default and can be disabled when creating `Pipeline` through `KryoOptions`.
 ```java
 PipelineOptions options = PipelineOptionsFactory.create();
 options.as(KryoOptions.class).setKryoRegistrationRequired(true);
 ```
-Euphoria resolves coder using types of elements. Type information is not available at runtime when element type is described by lambda implementation. It is due to type erasure and dynamic nature of lambda expressions. So there is an optional way of supplying `TypeDescriptor` every time new type is introduced during Operator construction.
+
+Second more performance friendly way is to register all the types which will Kryo serialize. Sometimes it is also a good idea to register Kryo serializers of its own too. Euphoria allows you to do that by implementing your own `KryoRegistrar` and using it when creating `KryoCoderProvider`.
+```java
+//Do not allow `KryoCoderProvider` to return `KryoCoder` for unregistered types
+options.as(KryoOptions.class).setKryoRegistrationRequired(true);
+
+KryoCoderProvider.of(
+        (kryo) -> { //KryoRegistrar of your uwn
+          kryo.register(KryoSerializedElementType.class); //other may follow
+        })
+    .registerTo(pipeline);
+```
+Beam resolves coders using types of elements. Type information is not available at runtime when element type is described by lambda implementation. It is due to type erasure and dynamic nature of lambda expressions. So there is an optional way of supplying `TypeDescriptor` every time new type is introduced during Operator construction.
 ```java
 Dataset<Integer> input = ...
 
@@ -190,7 +200,7 @@ MapElements
   .using(String::valueOf, TypeDescriptors.strings())
   .output();
 ```
-Supplying `TypeDescriptors` becomes mandatory when using `.setKryoRegistrationRequired(true)`
+Euphoria operator's will use `TypeDescriptor<Object>`, when `TypeDescriptors` is not supplied by user. So `KryoCoderProvider` may return `KryoCOder<Object>` for every element with unknown type, if allowed by `KryoOptions`. Supplying `TypeDescriptors` becomes mandatory when using `.setKryoRegistrationRequired(true)`.
 
 ### Metrics and Accumulators
 Statistics about job's internals are very helpful during development of distributed jobs. Euphoria calls them accumulators. They are accessible through environment `Context`, which can be obtained from `Collector`, whenever working with it. It is usually present when zero-to-many output elements are expected from operator. For example in case of `FlatMap`.
@@ -230,14 +240,18 @@ Dataset<String> mapped =
 Accumulators are translated into Beam Metrics in background so they can be viewed the same way. Namespace of translated metrics is set to operator's name.
 
 ### Windowing
-Euphoria follows the same [windowing principles]({{ site.baseurl }}/documentation/programming-guide/#windowing) as Beam Java SDK. Every shuffle operator (operator which needs to shuffle data over the network) allows you to set it. The same parameters as in Beam are required. `WindowFn`, `Trigger` and `WindowingStrategy`. Users are guided to either set all three or none when building an operator. Windowing is propagated down through `BeamFlow` the same way as it works with `Pipeline`.
+Euphoria follows the same [windowing principles]({{ site.baseurl }}/documentation/programming-guide/#windowing) as Beam Java SDK. Every shuffle operator (operator which needs to shuffle data over the network) allows you to set it. The same parameters as in Beam are required. `WindowFn`, `Trigger`, `WindowingStrategy` and other. Users are guided to either set all mandatory and several optional parameters  or none when building an operator. Windowing is propagated down through the `Pipeline`.
 ```java
+Dtaset<KV<Integer, Long>> countedElements =
 CountByKey.of(input)
-  .keyBy(e -> e)
-  .windowBy(FixedWindows.of(Duration.standardSeconds(1)))
-  .triggeredBy(DefaultTrigger.of())
-  .discardingFiredPanes()
-  .output();
+    .keyBy(e -> e)
+    .windowBy(FixedWindows.of(Duration.standardSeconds(1)))
+    .triggeredBy(DefaultTrigger.of())
+    .discardingFiredPanes()
+    .withAllowedLateness(Duration.standardSeconds(5))
+    .withOnTimeBehavior(OnTimeBehavior.FIRE_IF_NON_EMPTY)
+    .withTimestampCombiner(TimestampCombiner.EARLIEST)
+    .output();
 ```
 
 ### Integration of Euphoria into existing pipelines
@@ -259,7 +273,7 @@ PCollection<KV<String, Long>> lettersWithCounts =
 ```
 
 ## How to get Euphoria
-Euphoria is located in `dsl-euphoria` branch of The Apache Beam project. To build `euphoria` subproject call:
+Euphoria is located in `dsl-euphoria` branch, `beam-sdks-java-extensions-euphoria` module of The Apache Beam project. To build `euphoria` subproject call:
 ```
 ./gradlew beam-sdks-java-extensions-euphoria:build
 ```
@@ -552,14 +566,17 @@ Dataset<SomeEventObject> timeStampedEvents =
     .output();
 //Euphoria will now know event time for each event
 ```
-//TODO predelat sekci
-## Euphoria Beam Integration (advanced user section)
-Euphoria API is build on top of Beam Java SDK. The API is transparently translated into Beam in background. Most of the translation happens in `org.apache.beam.sdk.extensions.euphoria.core.translate` package. Where the most interesting classes are:
-* `OperatorTranslator` - Interface which defining inner API of Euphoria to Beam translation.
-* `OperatorTransform` - Expand Euphoria's operators to Beam's `PTransform`
-//TODO dopsat myslenku kam to bude smerovat a jak se to preklada
 
-The package also contains implementation of `OperatorTranslator` for each supported operator type (`JoinTranslator`, `FlatMapTranslator`, `ReduceByKeyTranslator`). Not every operator needs to have translator of its own. Some of them can be composed from other operators. That is why operators may implement `getBasicOps()` methods which returns DAG (directed acyclic graph) of primitive operators which realize given operator.
+## Euphoria To Beam Translation (advanced user section)
+Euphoria API is build on top of Beam Java SDK. The API is transparently translated into Beam's `PTransforms` in background. Most of the translation happens in `org.apache.beam.sdk.extensions.euphoria.core.translate` package. Where the most interesting classes are:
+* `OperatorTranslator` - Interface which defining inner API of Euphoria to Beam translation.
+* `TranslatorProvider` - Way of supplying custom translators.
+* `OperatorTransform` - Which is governing actual translation and/or expansion Euphoria's operators to Beam's `PTransform`
+* `EuphoriaOptions` - A `PipelineOptions`, allows for setting custom `TranslatorProvider`.
+
+The package also contains implementation of `OperatorTranslator` for each supported operator type (`JoinTranslator`, `FlatMapTranslator`, `ReduceByKeyTranslator`). Not every operator needs to have translator of its own. Some of them can be composed from other operators. That is why operators may implement `CompositeOperator` which give them option to be exanded to set of other Euphoria operators.
+
+The translation process was designed with flexibility in mind. We wanted to allow different ways of translating higher-level Euphoria operators to Beam's SDK's primitives. It allows for further performance optimizations based on user choices or some knowledge about data obtained automatically.  
 
 ### Unsupported Features
 [Original Euphoria](https://github.com/seznam/euphoria) contained some features and operators not jet supported in Beam port. List of not yet supported features follows:
