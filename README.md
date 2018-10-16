@@ -17,5 +17,11 @@
     under the License.
 -->
 
-Apache Beam website sources have been moved to the 
+Apache Beam website sources have been moved to the
 [apache/beam](https://github.com/apache/beam/blob/master/website) repository.
+
+This repository hosts generated HTML release documentation (Javadocs, pydocs)
+on the [release-docs](https://github.com/apache/beam-site/tree/release-docs)
+branch. Please see the Apache Beam
+[Release guide](https://beam.apache.org/contribute/release-guide/) for details
+on how to publish documentation for a new release.
