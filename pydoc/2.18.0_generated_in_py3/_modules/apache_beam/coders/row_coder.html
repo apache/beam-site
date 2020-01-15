@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.coders.row_coder &mdash; Apache Beam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Apache Beam  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.internal.html">apache_beam.internal package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.tools.html">apache_beam.tools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.version.html">apache_beam.version module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.coders.row_coder</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.coders.row_coder</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">array</span> <span class="kn">import</span> <span class="n">array</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coder_impl</span> <span class="kn">import</span> <span class="n">StreamCoderImpl</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">BytesCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">Coder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">FastCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">FloatCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">IterableCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">StrUtf8Coder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">TupleCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders.coders</span> <span class="kn">import</span> <span class="n">VarIntCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability</span> <span class="kn">import</span> <span class="n">common_urns</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api</span> <span class="kn">import</span> <span class="n">schema_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.schemas</span> <span class="kn">import</span> <span class="n">named_tuple_from_schema</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.schemas</span> <span class="kn">import</span> <span class="n">named_tuple_to_schema</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RowCoder&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="RowCoder"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder">[docs]</a><span class="k">class</span> <span class="nc">RowCoder</span><span class="p">(</span><span class="n">FastCoder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot; Coder for `typing.NamedTuple` instances.</span>
+
+<span class="sd">  Implements the beam:coder:row:v1 standard coder spec.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initializes a :class:`RowCoder`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      schema (apache_beam.portability.api.schema_pb2.Schema): The protobuf</span>
+<span class="sd">        representation of the schema of the data that the RowCoder will be used</span>
+<span class="sd">        to encode/decode.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">RowCoder</span><span class="o">.</span><span class="n">coder_from_type</span><span class="p">(</span><span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="p">)</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">fields</span>
+    <span class="p">]</span>
+
+  <span class="k">def</span> <span class="nf">_create_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RowCoderImpl</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RowCoder.is_deterministic"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.is_deterministic">[docs]</a>  <span class="k">def</span> <span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">is_deterministic</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RowCoder.to_type_hint"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.to_type_hint">[docs]</a>  <span class="k">def</span> <span class="nf">to_type_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">named_tuple_from_schema</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RowCoder.as_cloud_object"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.as_cloud_object">[docs]</a>  <span class="k">def</span> <span class="nf">as_cloud_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coders_context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;as_cloud_object not supported for RowCoder&quot;</span><span class="p">)</span></div>
+
+  <span class="fm">__hash__</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">schema</span>
+
+<div class="viewcode-block" id="RowCoder.to_runner_api_parameter"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.to_runner_api_parameter">[docs]</a>  <span class="k">def</span> <span class="nf">to_runner_api_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_context</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">common_urns</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">ROW</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">,</span> <span class="p">[])</span></div>
+
+<div class="viewcode-block" id="RowCoder.from_runner_api_parameter"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.from_runner_api_parameter">[docs]</a>  <span class="nd">@Coder</span><span class="o">.</span><span class="n">register_urn</span><span class="p">(</span><span class="n">common_urns</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">ROW</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">from_runner_api_parameter</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">components</span><span class="p">,</span> <span class="n">unused_context</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RowCoder</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="RowCoder.from_type_hint"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.from_type_hint">[docs]</a>  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">from_type_hint</span><span class="p">(</span><span class="n">named_tuple_type</span><span class="p">,</span> <span class="n">registry</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">RowCoder</span><span class="p">(</span><span class="n">named_tuple_to_schema</span><span class="p">(</span><span class="n">named_tuple_type</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RowCoder.coder_from_type"><a class="viewcode-back" href="../../../apache_beam.coders.row_coder.html#apache_beam.coders.row_coder.RowCoder.coder_from_type">[docs]</a>  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">coder_from_type</span><span class="p">(</span><span class="n">field_type</span><span class="p">):</span>
+    <span class="n">type_info</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="n">WhichOneof</span><span class="p">(</span><span class="s2">&quot;type_info&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">type_info</span> <span class="o">==</span> <span class="s2">&quot;atomic_type&quot;</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">field_type</span><span class="o">.</span><span class="n">atomic_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">schema_pb2</span><span class="o">.</span><span class="n">INT32</span><span class="p">,</span>
+                                    <span class="n">schema_pb2</span><span class="o">.</span><span class="n">INT64</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">VarIntCoder</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">field_type</span><span class="o">.</span><span class="n">atomic_type</span> <span class="o">==</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">DOUBLE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">FloatCoder</span><span class="p">()</span>
+      <span class="k">elif</span> <span class="n">field_type</span><span class="o">.</span><span class="n">atomic_type</span> <span class="o">==</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">STRING</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">StrUtf8Coder</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">type_info</span> <span class="o">==</span> <span class="s2">&quot;array_type&quot;</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">IterableCoder</span><span class="p">(</span>
+          <span class="n">RowCoder</span><span class="o">.</span><span class="n">coder_from_type</span><span class="p">(</span><span class="n">field_type</span><span class="o">.</span><span class="n">array_type</span><span class="o">.</span><span class="n">element_type</span><span class="p">))</span>
+
+    <span class="c1"># The Java SDK supports several more types, but the coders are not yet</span>
+    <span class="c1"># standard, and are not implemented in Python.</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;Encountered a type that is not currently supported by RowCoder: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+        <span class="n">field_type</span><span class="p">)</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">RowCoderImpl</span><span class="p">(</span><span class="n">StreamCoderImpl</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;For internal use only; no backwards-compatibility guarantees.&quot;&quot;&quot;</span>
+  <span class="n">SIZE_CODER</span> <span class="o">=</span> <span class="n">VarIntCoder</span><span class="p">()</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span>
+  <span class="n">NULL_MARKER_CODER</span> <span class="o">=</span> <span class="n">BytesCoder</span><span class="p">()</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">components</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="n">schema</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span> <span class="o">=</span> <span class="n">named_tuple_from_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">components</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">components</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">has_nullable_fields</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">nullable</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">encode_to_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">nested</span><span class="p">):</span>
+    <span class="n">nvals</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">SIZE_CODER</span><span class="o">.</span><span class="n">encode_to_stream</span><span class="p">(</span><span class="n">nvals</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">fields</span><span class="p">]</span>
+
+    <span class="n">words</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_nullable_fields</span><span class="p">:</span>
+      <span class="n">nulls</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">attr</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">nulls</span><span class="p">):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">nvals</span><span class="o">+</span><span class="mi">7</span><span class="p">)</span><span class="o">//</span><span class="mi">8</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">is_null</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nulls</span><span class="p">):</span>
+          <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="o">//</span><span class="mi">8</span><span class="p">]</span> <span class="o">|=</span> <span class="n">is_null</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">8</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">NULL_MARKER_CODER</span><span class="o">.</span><span class="n">encode_to_stream</span><span class="p">(</span><span class="n">words</span><span class="o">.</span><span class="n">tostring</span><span class="p">(),</span> <span class="n">out</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">fields</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">nullable</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+              <span class="s2">&quot;Attempted to encode null for non-nullable field </span><span class="se">\&quot;</span><span class="si">{}</span><span class="se">\&quot;</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                  <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">continue</span>
+      <span class="n">c</span><span class="o">.</span><span class="n">encode_to_stream</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">decode_from_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_stream</span><span class="p">,</span> <span class="n">nested</span><span class="p">):</span>
+    <span class="n">nvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SIZE_CODER</span><span class="o">.</span><span class="n">decode_from_stream</span><span class="p">(</span><span class="n">in_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">words</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span><span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="n">words</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">NULL_MARKER_CODER</span><span class="o">.</span><span class="n">decode_from_stream</span><span class="p">(</span><span class="n">in_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">words</span><span class="p">:</span>
+      <span class="n">nulls</span> <span class="o">=</span> <span class="p">((</span><span class="n">words</span><span class="p">[</span><span class="n">i</span> <span class="o">//</span> <span class="mi">8</span><span class="p">]</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">8</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0x01</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nvals</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">nulls</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">nvals</span><span class="p">)</span>
+
+    <span class="c1"># If this coder&#39;s schema has more attributes than the encoded value, then</span>
+    <span class="c1"># the schema must have changed. Populate the unencoded fields with nulls.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">nvals</span><span class="p">:</span>
+      <span class="n">nulls</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+          <span class="n">nulls</span><span class="p">,</span>
+          <span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">)</span> <span class="o">-</span> <span class="n">nvals</span><span class="p">))</span>
+
+    <span class="c1"># Note that if this coder&#39;s schema has *fewer* attributes than the encoded</span>
+    <span class="c1"># value, we just need to ignore the additional values, which will occur</span>
+    <span class="c1"># here because we only decode as many values as we have coders for.</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span><span class="p">(</span><span class="o">*</span><span class="p">(</span>
+        <span class="kc">None</span> <span class="k">if</span> <span class="n">is_null</span> <span class="k">else</span> <span class="n">c</span><span class="o">.</span><span class="n">decode_from_stream</span><span class="p">(</span><span class="n">in_stream</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">is_null</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">nulls</span><span class="p">)))</span>
+
+  <span class="k">def</span> <span class="nf">_make_value_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nulls</span><span class="o">=</span><span class="n">itertools</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="kc">False</span><span class="p">)):</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">component</span> <span class="k">for</span> <span class="n">component</span><span class="p">,</span> <span class="n">is_null</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">nulls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_null</span>
+    <span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_nullable_fields</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span>
+    <span class="k">return</span> <span class="n">TupleCoder</span><span class="p">(</span><span class="n">components</span><span class="p">)</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
