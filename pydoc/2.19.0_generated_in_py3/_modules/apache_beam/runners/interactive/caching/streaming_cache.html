@@ -1,0 +1,409 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.runners.interactive.caching.streaming_cache &mdash; Apache Beam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../../search.html"/>
+    <link rel="top" title="Apache Beam  documentation" href="../../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../../index.html"/> 
+
+  
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.internal.html">apache_beam.internal package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.tools.html">apache_beam.tools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.version.html">apache_beam.version module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.runners.interactive.caching.streaming_cache</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.runners.interactive.caching.streaming_cache</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api.beam_runner_api_pb2</span> <span class="kn">import</span> <span class="n">TestStreamPayload</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="kn">import</span> <span class="n">timestamp</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="kn">import</span> <span class="n">Timestamp</span>
+
+
+<div class="viewcode-block" id="StreamingCache"><a class="viewcode-back" href="../../../../../apache_beam.runners.interactive.caching.streaming_cache.html#apache_beam.runners.interactive.caching.streaming_cache.StreamingCache">[docs]</a><span class="k">class</span> <span class="nc">StreamingCache</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Abstraction that holds the logic for reading and writing to cache.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_readers</span> <span class="o">=</span> <span class="n">readers</span>
+
+<div class="viewcode-block" id="StreamingCache.Reader"><a class="viewcode-back" href="../../../../../apache_beam.runners.interactive.caching.streaming_cache.html#apache_beam.runners.interactive.caching.streaming_cache.StreamingCache.Reader">[docs]</a>  <span class="k">class</span> <span class="nc">Reader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstraction that reads from PCollection readers.</span>
+
+<span class="sd">    This class is an Abstraction layer over multiple PCollection readers to be</span>
+<span class="sd">    used for supplying a TestStream service with events.</span>
+
+<span class="sd">    This class is also responsible for holding the state of the clock, injecting</span>
+<span class="sd">    clock advancement events, and watermark advancement events.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">):</span>
+      <span class="c1"># This timestamp is used as the monotonic clock to order events in the</span>
+      <span class="c1"># replay.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_monotonic_clock</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+      <span class="c1"># The PCollection cache readers.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_readers</span> <span class="o">=</span> <span class="p">{}</span>
+
+      <span class="c1"># The file headers that are metadata for that particular PCollection.</span>
+      <span class="c1"># The header allows for metadata about an entire stream, so that the data</span>
+      <span class="c1"># isn&#39;t copied per record.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="o">.</span><span class="n">header</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span> <span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">header</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">readers</span><span class="p">}</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_readers</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="o">.</span><span class="n">header</span><span class="p">()</span><span class="o">.</span><span class="n">tag</span> <span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">readers</span><span class="p">}</span>
+
+      <span class="c1"># The watermarks per tag. Useful for introspection in the stream.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_watermarks</span> <span class="o">=</span> <span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">MIN_TIMESTAMP</span> <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">}</span>
+
+      <span class="c1"># The most recently read timestamp per tag.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_stream_times</span> <span class="o">=</span> <span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">MIN_TIMESTAMP</span>
+                            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_headers</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">_test_stream_events_before_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_timestamp</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Reads the next iteration of elements from each stream.</span>
+
+<span class="sd">      Retrieves an element from each stream iff the most recently read timestamp</span>
+<span class="sd">      from that stream is less than the target_timestamp. Since the amount of</span>
+<span class="sd">      events may not fit into memory, this StreamingCache reads at most one</span>
+<span class="sd">      element from each stream at a time.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">records</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_readers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># The target_timestamp is the maximum timestamp that was read from the</span>
+        <span class="c1"># stream. Some readers may have elements that are less than this. Thus,</span>
+        <span class="c1"># we skip all readers that already have elements that are at this</span>
+        <span class="c1"># timestamp so that we don&#39;t read everything into memory.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream_times</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">target_timestamp</span><span class="p">:</span>
+          <span class="k">continue</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">record</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+          <span class="n">records</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tag</span><span class="p">,</span> <span class="n">record</span><span class="p">))</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_stream_times</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_proto</span><span class="p">(</span><span class="n">record</span><span class="o">.</span><span class="n">processing_time</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+          <span class="k">pass</span>
+      <span class="k">return</span> <span class="n">records</span>
+
+    <span class="k">def</span> <span class="nf">_merge_sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">previous_events</span><span class="p">,</span> <span class="n">new_events</span><span class="p">):</span>
+      <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">previous_events</span> <span class="o">+</span> <span class="n">new_events</span><span class="p">,</span>
+                    <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_proto</span><span class="p">(</span>
+                        <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">processing_time</span><span class="p">),</span>
+                    <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_min_timestamp_of</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">):</span>
+      <span class="k">return</span> <span class="p">(</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">from_proto</span><span class="p">(</span><span class="n">events</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">processing_time</span><span class="p">)</span>
+              <span class="k">if</span> <span class="n">events</span> <span class="k">else</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">MAX_TIMESTAMP</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_event_stream_caught_up_to_target</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">target_timestamp</span><span class="p">):</span>
+      <span class="n">empty_events</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">events</span>
+      <span class="n">stream_is_past_target</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_timestamp_of</span><span class="p">(</span><span class="n">events</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">target_timestamp</span>
+      <span class="k">return</span> <span class="n">empty_events</span> <span class="ow">or</span> <span class="n">stream_is_past_target</span>
+
+<div class="viewcode-block" id="StreamingCache.Reader.read"><a class="viewcode-back" href="../../../../../apache_beam.runners.interactive.caching.streaming_cache.html#apache_beam.runners.interactive.caching.streaming_cache.StreamingCache.Reader.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Reads records from PCollection readers.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+
+      <span class="c1"># The largest timestamp read from the different streams.</span>
+      <span class="n">target_timestamp</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+      <span class="c1"># The events from last iteration that are past the target timestamp.</span>
+      <span class="n">unsent_events</span> <span class="o">=</span> <span class="p">[]</span>
+
+      <span class="c1"># Emit events until all events have been read.</span>
+      <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># Read the next set of events. The read events will most likely be</span>
+        <span class="c1"># out of order if there are multiple readers. Here we sort them into</span>
+        <span class="c1"># a more manageable state.</span>
+        <span class="n">new_events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_stream_events_before_target</span><span class="p">(</span><span class="n">target_timestamp</span><span class="p">)</span>
+        <span class="n">events_to_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_sort</span><span class="p">(</span><span class="n">unsent_events</span><span class="p">,</span> <span class="n">new_events</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">events_to_send</span><span class="p">:</span>
+          <span class="k">break</span>
+
+        <span class="c1"># Get the next largest timestamp in the stream. This is used as the</span>
+        <span class="c1"># timestamp for readers to &quot;catch-up&quot; to. This will only read from</span>
+        <span class="c1"># readers with a timestamp less than this.</span>
+        <span class="n">target_timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_timestamp_of</span><span class="p">(</span><span class="n">events_to_send</span><span class="p">)</span>
+
+        <span class="c1"># Loop through the elements with the correct timestamp.</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_event_stream_caught_up_to_target</span><span class="p">(</span><span class="n">events_to_send</span><span class="p">,</span>
+                                                         <span class="n">target_timestamp</span><span class="p">):</span>
+          <span class="n">tag</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">events_to_send</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+          <span class="c1"># First advance the clock to match the time of the stream. This has</span>
+          <span class="c1"># a side-effect of also advancing this cache&#39;s clock.</span>
+          <span class="n">curr_timestamp</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_proto</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">processing_time</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">curr_timestamp</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monotonic_clock</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_advance_processing_time</span><span class="p">(</span><span class="n">curr_timestamp</span><span class="p">)</span>
+
+          <span class="c1"># Then, send either a new element or watermark.</span>
+          <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;element&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_element</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">element</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s1">&#39;watermark&#39;</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_advance_watermark</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">watermark</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="n">unsent_events</span> <span class="o">=</span> <span class="n">events_to_send</span>
+        <span class="n">target_timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_timestamp_of</span><span class="p">(</span><span class="n">unsent_events</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Constructs an AddElement event for the specified element and tag.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="k">return</span> <span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span>
+          <span class="n">element_event</span><span class="o">=</span><span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">AddElements</span><span class="p">(</span>
+              <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="n">element</span><span class="p">],</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_advance_processing_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_timestamp</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Advances the internal clock and returns an AdvanceProcessingTime event.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">advancy_by</span> <span class="o">=</span> <span class="n">new_timestamp</span><span class="o">.</span><span class="n">micros</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monotonic_clock</span><span class="o">.</span><span class="n">micros</span>
+      <span class="n">e</span> <span class="o">=</span> <span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span>
+          <span class="n">processing_time_event</span><span class="o">=</span><span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">AdvanceProcessingTime</span><span class="p">(</span>
+              <span class="n">advance_duration</span><span class="o">=</span><span class="n">advancy_by</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_monotonic_clock</span> <span class="o">=</span> <span class="n">new_timestamp</span>
+      <span class="k">return</span> <span class="n">e</span>
+
+    <span class="k">def</span> <span class="nf">_advance_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+      <span class="sd">&quot;&quot;&quot;Advances the watermark for tag and returns AdvanceWatermark event.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_watermarks</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_proto</span><span class="p">(</span><span class="n">watermark</span><span class="p">)</span>
+      <span class="n">e</span> <span class="o">=</span> <span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="p">(</span>
+          <span class="n">watermark_event</span><span class="o">=</span><span class="n">TestStreamPayload</span><span class="o">.</span><span class="n">Event</span><span class="o">.</span><span class="n">AdvanceWatermark</span><span class="p">(</span>
+              <span class="n">new_watermark</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_watermarks</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">micros</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">e</span></div>
+
+<div class="viewcode-block" id="StreamingCache.reader"><a class="viewcode-back" href="../../../../../apache_beam.runners.interactive.caching.streaming_cache.html#apache_beam.runners.interactive.caching.streaming_cache.StreamingCache.reader">[docs]</a>  <span class="k">def</span> <span class="nf">reader</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">StreamingCache</span><span class="o">.</span><span class="n">Reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_readers</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

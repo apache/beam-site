@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.runners.interactive.background_caching_job &mdash; Apache Beam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../../search.html"/>
+    <link rel="top" title="Apache Beam  documentation" href="../../../../index.html"/>
+        <link rel="up" title="Module code" href="../../../index.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.internal.html">apache_beam.internal package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.tools.html">apache_beam.tools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.version.html">apache_beam.version module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.runners.interactive.background_caching_job</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.runners.interactive.background_caching_job</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Module to build and run background caching job.</span>
+
+<span class="sd">For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">A background caching job is a job that caches events for all unbounded sources</span>
+<span class="sd">of a given pipeline. With Interactive Beam, one such job is started when a</span>
+<span class="sd">pipeline run happens (which produces a main job in contrast to the background</span>
+<span class="sd">caching job) and meets the following conditions:</span>
+
+<span class="sd">  #. The pipeline contains unbounded sources.</span>
+<span class="sd">  #. No such background job is running.</span>
+<span class="sd">  #. No such background job has completed successfully and the cached events are</span>
+<span class="sd">     still valid (invalidated when unbounded sources change in the pipeline).</span>
+
+<span class="sd">Once started, the background caching job runs asynchronously until it hits some</span>
+<span class="sd">cache size limit. Meanwhile, the main job and future main jobs from the pipeline</span>
+<span class="sd">will run using the deterministic replay-able cached events until they are</span>
+<span class="sd">invalidated.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">runners</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners.interactive</span> <span class="kn">import</span> <span class="n">interactive_environment</span> <span class="k">as</span> <span class="n">ie</span>
+
+
+<div class="viewcode-block" id="attempt_to_run_background_caching_job"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.attempt_to_run_background_caching_job">[docs]</a><span class="k">def</span> <span class="nf">attempt_to_run_background_caching_job</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">user_pipeline</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Attempts to run a background caching job for a user-defined pipeline.</span>
+
+<span class="sd">  The pipeline result is automatically tracked by Interactive Beam in case</span>
+<span class="sd">  future cancellation/cleanup is needed.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">is_background_caching_job_needed</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+    <span class="c1"># Cancel non-terminal jobs if there is any before starting a new one.</span>
+    <span class="n">attempt_to_cancel_background_caching_job</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">)</span>
+    <span class="c1"># Evict all caches if there is any.</span>
+    <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span>
+    <span class="c1"># TODO(BEAM-8335): refactor background caching job logic from</span>
+    <span class="c1"># pipeline_instrument module to this module and aggregate tests.</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.runners.interactive</span> <span class="kn">import</span> <span class="n">pipeline_instrument</span> <span class="k">as</span> <span class="n">instr</span>
+    <span class="n">runner_pipeline</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">Pipeline</span><span class="o">.</span><span class="n">from_runner_api</span><span class="p">(</span>
+        <span class="n">user_pipeline</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">use_fake_coders</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="n">runner</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">)</span>
+    <span class="n">background_caching_job_result</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">Pipeline</span><span class="o">.</span><span class="n">from_runner_api</span><span class="p">(</span>
+        <span class="n">instr</span><span class="o">.</span><span class="n">pin</span><span class="p">(</span><span class="n">runner_pipeline</span><span class="p">)</span><span class="o">.</span><span class="n">background_caching_pipeline_proto</span><span class="p">(),</span>
+        <span class="n">runner</span><span class="p">,</span>
+        <span class="n">options</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">set_pipeline_result</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">,</span>
+                                         <span class="n">background_caching_job_result</span><span class="p">,</span>
+                                         <span class="n">is_main_job</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_background_caching_job_needed"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.is_background_caching_job_needed">[docs]</a><span class="k">def</span> <span class="nf">is_background_caching_job_needed</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Determines if a background caching job needs to be started.&quot;&quot;&quot;</span>
+  <span class="n">background_caching_job_result</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">pipeline_result</span><span class="p">(</span>
+      <span class="n">user_pipeline</span><span class="p">,</span> <span class="n">is_main_job</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+  <span class="c1"># Checks if the pipeline contains any source that needs to be cached.</span>
+  <span class="k">return</span> <span class="p">(</span><span class="n">has_source_to_cache</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">)</span> <span class="ow">and</span>
+          <span class="c1"># Checks if it&#39;s the first time running a job from the pipeline.</span>
+          <span class="p">(</span><span class="ow">not</span> <span class="n">background_caching_job_result</span> <span class="ow">or</span>
+           <span class="c1"># Or checks if there is no previous job.</span>
+           <span class="n">background_caching_job_result</span><span class="o">.</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
+               <span class="c1"># DONE means a previous job has completed successfully and the</span>
+               <span class="c1"># cached events are still valid.</span>
+               <span class="n">runners</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">PipelineState</span><span class="o">.</span><span class="n">DONE</span><span class="p">,</span>
+               <span class="c1"># RUNNING means a previous job has been started and is still</span>
+               <span class="c1"># running.</span>
+               <span class="n">runners</span><span class="o">.</span><span class="n">runner</span><span class="o">.</span><span class="n">PipelineState</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">)</span> <span class="ow">or</span>
+           <span class="c1"># Or checks if we can invalidate the previous job.</span>
+           <span class="n">is_source_to_cache_changed</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="has_source_to_cache"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.has_source_to_cache">[docs]</a><span class="k">def</span> <span class="nf">has_source_to_cache</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Determines if a user-defined pipeline contains any source that need to be</span>
+<span class="sd">  cached.&quot;&quot;&quot;</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.runners.interactive</span> <span class="kn">import</span> <span class="n">pipeline_instrument</span> <span class="k">as</span> <span class="n">instr</span>
+  <span class="c1"># TODO(BEAM-8335): we temporarily only cache replaceable unbounded sources.</span>
+  <span class="c1"># Add logic for other cacheable sources here when they are available.</span>
+  <span class="k">return</span> <span class="n">instr</span><span class="o">.</span><span class="n">has_unbounded_sources</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="attempt_to_cancel_background_caching_job"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.attempt_to_cancel_background_caching_job">[docs]</a><span class="k">def</span> <span class="nf">attempt_to_cancel_background_caching_job</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Attempts to cancel background caching job for a user-defined pipeline.</span>
+
+<span class="sd">  If no background caching job needs to be cancelled, NOOP. Otherwise, cancel</span>
+<span class="sd">  such job.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">background_caching_job_result</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">pipeline_result</span><span class="p">(</span>
+      <span class="n">user_pipeline</span><span class="p">,</span> <span class="n">is_main_job</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">background_caching_job_result</span> <span class="ow">and</span>
+      <span class="ow">not</span> <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">is_terminated</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">,</span> <span class="n">is_main_job</span><span class="o">=</span><span class="kc">False</span><span class="p">)):</span>
+    <span class="n">background_caching_job_result</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="is_source_to_cache_changed"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.is_source_to_cache_changed">[docs]</a><span class="k">def</span> <span class="nf">is_source_to_cache_changed</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Determines if there is any change in the sources that need to be cached</span>
+<span class="sd">  used by the user-defined pipeline.</span>
+
+<span class="sd">  Due to the expensiveness of computations and for the simplicity of usage, this</span>
+<span class="sd">  function is not idempotent because Interactive Beam automatically discards</span>
+<span class="sd">  previously tracked signature of transforms and tracks the current signature of</span>
+<span class="sd">  transforms for the user-defined pipeline if there is any change.</span>
+
+<span class="sd">  When it&#39;s True, there is addition/deletion/mutation of source transforms that</span>
+<span class="sd">  requires a new background caching job.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># By default gets empty set if the user_pipeline is first time seen because</span>
+  <span class="c1"># we can treat it as adding transforms.</span>
+  <span class="n">recorded_signature</span> <span class="o">=</span> <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">get_cached_source_signature</span><span class="p">(</span>
+      <span class="n">user_pipeline</span><span class="p">)</span>
+  <span class="n">current_signature</span> <span class="o">=</span> <span class="n">extract_source_to_cache_signature</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">)</span>
+  <span class="n">is_changed</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">current_signature</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">recorded_signature</span><span class="p">)</span>
+  <span class="c1"># The computation of extract_unbounded_source_signature is expensive, track on</span>
+  <span class="c1"># change by default.</span>
+  <span class="k">if</span> <span class="n">is_changed</span><span class="p">:</span>
+    <span class="n">ie</span><span class="o">.</span><span class="n">current_env</span><span class="p">()</span><span class="o">.</span><span class="n">set_cached_source_signature</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">,</span>
+                                                 <span class="n">current_signature</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">is_changed</span></div>
+
+
+<div class="viewcode-block" id="extract_source_to_cache_signature"><a class="viewcode-back" href="../../../../apache_beam.runners.interactive.background_caching_job.html#apache_beam.runners.interactive.background_caching_job.extract_source_to_cache_signature">[docs]</a><span class="k">def</span> <span class="nf">extract_source_to_cache_signature</span><span class="p">(</span><span class="n">user_pipeline</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Extracts a set of signature for sources that need to be cached in the</span>
+<span class="sd">  user-defined pipeline.</span>
+
+<span class="sd">  A signature is a str representation of urn and payload of a source.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.runners.interactive</span> <span class="kn">import</span> <span class="n">pipeline_instrument</span> <span class="k">as</span> <span class="n">instr</span>
+  <span class="c1"># TODO(BEAM-8335): we temporarily only cache replaceable unbounded sources.</span>
+  <span class="c1"># Add logic for other cacheable sources here when they are available.</span>
+  <span class="n">unbounded_sources_as_applied_transforms</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">unbounded_sources</span><span class="p">(</span>
+      <span class="n">user_pipeline</span><span class="p">)</span>
+  <span class="n">unbounded_sources_as_ptransforms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+      <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">unbounded_sources_as_applied_transforms</span><span class="p">))</span>
+  <span class="n">context</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">user_pipeline</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span>
+      <span class="n">return_context</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">use_fake_coders</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="n">signature</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">transform</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">(</span><span class="n">context</span><span class="p">)),</span>
+                      <span class="n">unbounded_sources_as_ptransforms</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">signature</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
