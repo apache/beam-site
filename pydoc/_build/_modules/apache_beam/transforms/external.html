@@ -1,0 +1,708 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.transforms.external &mdash; Apache Beam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="Apache Beam  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.internal.html">apache_beam.internal package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.tools.html">apache_beam.tools package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.version.html">apache_beam.version module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.transforms.external</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.transforms.external</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Defines Transform whose expansion is implemented elsewhere.</span>
+
+<span class="sd">No backward compatibility guarantees. Everything in this module is experimental.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">pvalue</span>
+<span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability</span> <span class="kn">import</span> <span class="n">common_urns</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api</span> <span class="kn">import</span> <span class="n">beam_expansion_api_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api</span> <span class="kn">import</span> <span class="n">beam_runner_api_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api.external_transforms_pb2</span> <span class="kn">import</span> <span class="n">ConfigValue</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api.external_transforms_pb2</span> <span class="kn">import</span> <span class="n">ExternalConfigurationPayload</span>
+<span class="kn">from</span> <span class="nn">apache_beam.runners</span> <span class="kn">import</span> <span class="n">pipeline_context</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">ptransform</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.native_type_compatibility</span> <span class="kn">import</span> <span class="n">convert_to_beam_type</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.trivial_inference</span> <span class="kn">import</span> <span class="n">instance_to_type</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.typehints</span> <span class="kn">import</span> <span class="n">UnionConstraint</span>
+
+<span class="c1"># Protect against environments where grpc is not available.</span>
+<span class="c1"># pylint: disable=wrong-import-order, wrong-import-position, ungrouped-imports</span>
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span> <span class="nn">grpc</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.portability.api</span> <span class="kn">import</span> <span class="n">beam_expansion_api_pb2_grpc</span>
+  <span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="kn">import</span> <span class="n">subprocess_server</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">grpc</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="c1"># pylint: enable=wrong-import-order, wrong-import-position, ungrouped-imports</span>
+
+<span class="n">DEFAULT_EXPANSION_SERVICE</span> <span class="o">=</span> <span class="s1">&#39;localhost:8097&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">_is_optional_or_none</span><span class="p">(</span><span class="n">typehint</span><span class="p">):</span>
+  <span class="k">return</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="ow">in</span> <span class="n">typehint</span><span class="o">.</span><span class="n">union_types</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">typehint</span><span class="p">,</span> <span class="n">UnionConstraint</span><span class="p">)</span> <span class="k">else</span> <span class="n">typehint</span> <span class="ow">is</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_strip_optional</span><span class="p">(</span><span class="n">typehint</span><span class="p">):</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_optional_or_none</span><span class="p">(</span><span class="n">typehint</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">typehint</span>
+  <span class="n">new_types</span> <span class="o">=</span> <span class="n">typehint</span><span class="o">.</span><span class="n">union_types</span><span class="o">.</span><span class="n">difference</span><span class="p">({</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)})</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_types</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">Union</span><span class="p">[</span><span class="n">new_types</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="iter_urns"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.iter_urns">[docs]</a><span class="k">def</span> <span class="nf">iter_urns</span><span class="p">(</span><span class="n">coder</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">yield</span> <span class="n">coder</span><span class="o">.</span><span class="n">to_runner_api_parameter</span><span class="p">(</span><span class="n">context</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">coder</span><span class="o">.</span><span class="n">_get_component_coders</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">urn</span> <span class="ow">in</span> <span class="n">iter_urns</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+      <span class="k">yield</span> <span class="n">urn</span></div>
+
+
+<div class="viewcode-block" id="PayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.PayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">PayloadBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Abstract base class for building payloads to pass to ExternalTransform.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">_config_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">typehint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper to create a ConfigValue with an encoded value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">coder</span> <span class="o">=</span> <span class="n">registry</span><span class="o">.</span><span class="n">get_coder</span><span class="p">(</span><span class="n">typehint</span><span class="p">)</span>
+    <span class="n">urns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iter_urns</span><span class="p">(</span><span class="n">coder</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s1">&#39;beam:coder:pickled_python:v1&#39;</span> <span class="ow">in</span> <span class="n">urns</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Found non-portable coder for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">typehint</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">ConfigValue</span><span class="p">(</span>
+        <span class="n">coder_urn</span><span class="o">=</span><span class="n">urns</span><span class="p">,</span>
+        <span class="n">payload</span><span class="o">=</span><span class="n">coder</span><span class="o">.</span><span class="n">get_impl</span><span class="p">()</span><span class="o">.</span><span class="n">encode_nested</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span>
+
+<div class="viewcode-block" id="PayloadBuilder.build"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.PayloadBuilder.build">[docs]</a>  <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :return: ExternalConfigurationPayload</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="PayloadBuilder.payload"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.PayloadBuilder.payload">[docs]</a>  <span class="k">def</span> <span class="nf">payload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The serialized ExternalConfigurationPayload</span>
+
+<span class="sd">    :return: bytes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">()</span><span class="o">.</span><span class="n">SerializeToString</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="SchemaBasedPayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.SchemaBasedPayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">SchemaBasedPayloadBuilder</span><span class="p">(</span><span class="n">PayloadBuilder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Base class for building payloads based on a schema that provides</span>
+<span class="sd">  type information for each configuration value to encode.</span>
+
+<span class="sd">  Note that if the schema defines a type as Optional, the corresponding value</span>
+<span class="sd">  will be omitted from the encoded payload, and thus the native transform</span>
+<span class="sd">  will determine the default.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param values: mapping of config names to values</span>
+<span class="sd">    :param schema: mapping of config names to types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_values</span> <span class="o">=</span> <span class="n">values</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="n">schema</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">_encode_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">typehint</span> <span class="o">=</span> <span class="n">schema</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+      <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;No typehint provided for key </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">key</span><span class="p">)</span>
+
+      <span class="n">typehint</span> <span class="o">=</span> <span class="n">convert_to_beam_type</span><span class="p">(</span><span class="n">typehint</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_is_optional_or_none</span><span class="p">(</span><span class="n">typehint</span><span class="p">):</span>
+          <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;If value is None, typehint should be &quot;</span>
+                             <span class="s2">&quot;optional. Got </span><span class="si">%r</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">typehint</span><span class="p">)</span>
+        <span class="c1"># make it easy for user to filter None by default</span>
+        <span class="k">continue</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># strip Optional from typehint so that pickled_python coder is not used</span>
+        <span class="c1"># for known types.</span>
+        <span class="n">typehint</span> <span class="o">=</span> <span class="n">_strip_optional</span><span class="p">(</span><span class="n">typehint</span><span class="p">)</span>
+      <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_config_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">typehint</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="SchemaBasedPayloadBuilder.build"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.SchemaBasedPayloadBuilder.build">[docs]</a>  <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :return: ExternalConfigurationPayload</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_encode_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ExternalConfigurationPayload</span><span class="p">(</span><span class="n">configuration</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="ImplicitSchemaPayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ImplicitSchemaPayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">ImplicitSchemaPayloadBuilder</span><span class="p">(</span><span class="n">SchemaBasedPayloadBuilder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Build a payload that generates a schema from the provided values.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">instance_to_type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">ImplicitSchemaPayloadBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="NamedTupleBasedPayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.NamedTupleBasedPayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">NamedTupleBasedPayloadBuilder</span><span class="p">(</span><span class="n">SchemaBasedPayloadBuilder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Build a payload based on a NamedTuple schema.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tuple_instance</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param tuple_instance: an instance of a typing.NamedTuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">NamedTupleBasedPayloadBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">values</span><span class="o">=</span><span class="n">tuple_instance</span><span class="o">.</span><span class="n">_asdict</span><span class="p">(),</span> <span class="n">schema</span><span class="o">=</span><span class="n">tuple_instance</span><span class="o">.</span><span class="n">_field_types</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AnnotationBasedPayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.AnnotationBasedPayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">AnnotationBasedPayloadBuilder</span><span class="p">(</span><span class="n">SchemaBasedPayloadBuilder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Build a payload based on an external transform&#39;s type annotations.</span>
+
+<span class="sd">  Supported in python 3 only.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="o">**</span><span class="n">values</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param transform: a PTransform instance or class. type annotations will</span>
+<span class="sd">                      be gathered from its __init__ method</span>
+<span class="sd">    :param values: values to encode</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span>
+              <span class="n">transform</span><span class="o">.</span><span class="fm">__init__</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+              <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">values</span><span class="p">}</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">AnnotationBasedPayloadBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataclassBasedPayloadBuilder"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.DataclassBasedPayloadBuilder">[docs]</a><span class="k">class</span> <span class="nc">DataclassBasedPayloadBuilder</span><span class="p">(</span><span class="n">SchemaBasedPayloadBuilder</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Build a payload based on an external transform that uses dataclasses.</span>
+
+<span class="sd">  Supported in python 3 only.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :param transform: a dataclass-decorated PTransform instance from which to</span>
+<span class="sd">                      gather type annotations and values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">dataclasses</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="p">{</span><span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">field</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span>
+              <span class="n">dataclasses</span><span class="o">.</span><span class="n">fields</span><span class="p">(</span><span class="n">transform</span><span class="p">)}</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">DataclassBasedPayloadBuilder</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="n">transform</span><span class="p">),</span> <span class="n">schema</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ExternalTransform"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform">[docs]</a><span class="k">class</span> <span class="nc">ExternalTransform</span><span class="p">(</span><span class="n">ptransform</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    External provides a cross-language transform via expansion services in</span>
+<span class="sd">    foreign SDKs.</span>
+
+<span class="sd">    Experimental; no backwards compatibility guarantees.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">_namespace_counter</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">_namespace</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+  <span class="n">_IMPULSE_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;impulse&#39;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">urn</span><span class="p">,</span> <span class="n">payload</span><span class="p">,</span> <span class="n">expansion_service</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper for an external transform with the given urn and payload.</span>
+
+<span class="sd">    :param urn: the unique beam identifier for this transform</span>
+<span class="sd">    :param payload: the payload, either as a byte string or a PayloadBuilder</span>
+<span class="sd">    :param expansion_service: an expansion service implementing the beam</span>
+<span class="sd">        ExpansionService protocol, either as an object with an Expand method</span>
+<span class="sd">        or an address (as a str) to a grpc server that provides this method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">expansion_service</span> <span class="o">=</span> <span class="n">expansion_service</span> <span class="ow">or</span> <span class="n">DEFAULT_EXPANSION_SERVICE</span>
+    <span class="k">if</span> <span class="n">grpc</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expansion_service</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Grpc required for external transforms.&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_urn</span> <span class="o">=</span> <span class="n">urn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_payload</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">payload</span><span class="o">.</span><span class="n">payload</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">PayloadBuilder</span><span class="p">)</span>
+        <span class="k">else</span> <span class="n">payload</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span> <span class="o">=</span> <span class="n">expansion_service</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fresh_namespace</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, pvalue.PCollection]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: Dict[str, pvalue.PCollection]</span>
+
+  <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expansion_service</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This will only be invoked if ExternalTransform is used as a base class</span>
+<span class="sd">    for a class decorated with dataclasses.dataclass</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ExternalTransform</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">URN</span><span class="p">,</span>
+        <span class="n">DataclassBasedPayloadBuilder</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+        <span class="n">expansion_service</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExternalTransform.default_label"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform.default_label">[docs]</a>  <span class="k">def</span> <span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_urn</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExternalTransform.get_local_namespace"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform.get_local_namespace">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">get_local_namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_namespace</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="s1">&#39;external&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExternalTransform.outer_namespace"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform.outer_namespace">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+  <span class="k">def</span> <span class="nf">outer_namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_local_namespace</span><span class="p">()</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">_namespace</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">namespace</span>
+    <span class="k">yield</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">_namespace</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">prev</span></div>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">_fresh_namespace</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; str</span>
+    <span class="n">ExternalTransform</span><span class="o">.</span><span class="n">_namespace_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">get_local_namespace</span><span class="p">(),</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_namespace_counter</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExternalTransform.expand"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvalueish</span><span class="p">):</span>
+    <span class="c1"># type: (pvalue.PCollection) -&gt; pvalue.PCollection</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PBegin</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">ix</span><span class="p">):</span> <span class="n">pvalue</span> <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">pvalue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">)}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">pvalueish</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">pvalueish</span><span class="p">}</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">pipeline</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span>
+        <span class="k">else</span> <span class="n">pvalueish</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="n">pipeline_context</span><span class="o">.</span><span class="n">PipelineContext</span><span class="p">()</span>
+    <span class="n">transform_proto</span> <span class="o">=</span> <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">PTransform</span><span class="p">(</span>
+        <span class="n">unique_name</span><span class="o">=</span><span class="n">pipeline</span><span class="o">.</span><span class="n">_current_transform</span><span class="p">()</span><span class="o">.</span><span class="n">full_label</span><span class="p">,</span>
+        <span class="n">spec</span><span class="o">=</span><span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">FunctionSpec</span><span class="p">(</span>
+            <span class="n">urn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_urn</span><span class="p">,</span> <span class="n">payload</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_payload</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">transform_proto</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">pcoll</span><span class="p">)</span>
+      <span class="c1"># Conversion to/from proto assumes producers.</span>
+      <span class="c1"># TODO: Possibly loosen this.</span>
+      <span class="n">context</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span>
+          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_IMPULSE_PREFIX</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
+          <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">PTransform</span><span class="p">(</span>
+              <span class="n">unique_name</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_IMPULSE_PREFIX</span><span class="p">,</span> <span class="n">tag</span><span class="p">),</span>
+              <span class="n">spec</span><span class="o">=</span><span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">FunctionSpec</span><span class="p">(</span>
+                  <span class="n">urn</span><span class="o">=</span><span class="n">common_urns</span><span class="o">.</span><span class="n">primitives</span><span class="o">.</span><span class="n">IMPULSE</span><span class="o">.</span><span class="n">urn</span><span class="p">),</span>
+              <span class="n">outputs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="n">transform_proto</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="n">tag</span><span class="p">]}))</span>
+    <span class="n">components</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">to_runner_api</span><span class="p">()</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">beam_expansion_api_pb2</span><span class="o">.</span><span class="n">ExpansionRequest</span><span class="p">(</span>
+        <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span>
+        <span class="n">namespace</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">,</span>  <span class="c1"># type: ignore  # mypy thinks self._namespace is threading.local</span>
+        <span class="n">transform</span><span class="o">=</span><span class="n">transform_proto</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">with</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span><span class="p">)</span> <span class="k">as</span> <span class="n">channel</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">beam_expansion_api_pb2_grpc</span><span class="o">.</span><span class="n">ExpansionServiceStub</span><span class="p">(</span>
+            <span class="n">channel</span><span class="p">)</span><span class="o">.</span><span class="n">Expand</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span><span class="o">.</span><span class="n">Expand</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">components</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">transform</span>
+    <span class="n">result_context</span> <span class="o">=</span> <span class="n">pipeline_context</span><span class="o">.</span><span class="n">PipelineContext</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fix_output</span><span class="p">(</span><span class="n">pcoll</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+      <span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">pipeline</span>
+      <span class="n">pcoll</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
+      <span class="k">return</span> <span class="n">pcoll</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="n">fix_output</span><span class="p">(</span><span class="n">result_context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="n">pcoll_id</span><span class="p">),</span> <span class="n">tag</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_to_pvalueish</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">_output_to_pvalueish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">output_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">output_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">output_dict</span>
+
+<div class="viewcode-block" id="ExternalTransform.to_runner_api_transform"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform.to_runner_api_transform">[docs]</a>  <span class="k">def</span> <span class="nf">to_runner_api_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">full_label</span><span class="p">):</span>
+    <span class="n">pcoll_renames</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">renamed_tag_seen</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">inputs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">renamed_tag_seen</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+              <span class="s1">&#39;Ambiguity due to non-preserved tags: </span><span class="si">%s</span><span class="s1"> vs </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                  <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+                  <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">renamed_tag_seen</span> <span class="o">=</span> <span class="kc">True</span>
+          <span class="n">tag</span><span class="p">,</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+      <span class="n">pcoll_renames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">inputs</span><span class="p">[</span><span class="n">tag</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">pcoll</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outputs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">pcoll_renames</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="n">tag</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">pcoll</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_equivalent</span><span class="p">(</span><span class="n">coder1</span><span class="p">,</span> <span class="n">coder2</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">coder1</span> <span class="o">==</span> <span class="n">coder2</span> <span class="ow">or</span> <span class="n">_normalize</span><span class="p">(</span><span class="n">coder1</span><span class="p">)</span> <span class="o">==</span> <span class="n">_normalize</span><span class="p">(</span><span class="n">coder2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_normalize</span><span class="p">(</span><span class="n">coder_proto</span><span class="p">):</span>
+      <span class="n">normalized</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">coder_proto</span><span class="p">)</span>
+      <span class="n">normalized</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">environment_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+      <span class="c1"># TODO(robertwb): Normalize components as well.</span>
+      <span class="k">return</span> <span class="n">normalized</span>
+
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">proto</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">):</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">id</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">coders</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_equivalent</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">_id_to_proto</span><span class="p">[</span><span class="nb">id</span><span class="p">],</span> <span class="n">proto</span><span class="p">):</span>
+          <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Re-used coder id: </span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+              <span class="nb">id</span><span class="p">,</span> <span class="n">context</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">_id_to_proto</span><span class="p">[</span><span class="nb">id</span><span class="p">],</span> <span class="n">proto</span><span class="p">))</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">coders</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">proto</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span><span class="o">.</span><span class="n">windowing_strategies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">):</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">windowing_strategies</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">proto</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">):</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">environments</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">proto</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="n">pcoll_renames</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="nb">id</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">_id_to_obj</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">pcollections</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">proto</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">proto</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_components</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_IMPULSE_PREFIX</span><span class="p">):</span>
+        <span class="c1"># Our fake inputs.</span>
+        <span class="k">continue</span>
+      <span class="k">assert</span> <span class="nb">id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">),</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_namespace</span><span class="p">)</span>
+      <span class="n">new_proto</span> <span class="o">=</span> <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">PTransform</span><span class="p">(</span>
+          <span class="n">unique_name</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">unique_name</span><span class="p">,</span>
+          <span class="n">spec</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+          <span class="n">subtransforms</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">subtransforms</span><span class="p">,</span>
+          <span class="n">inputs</span><span class="o">=</span><span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">pcoll_renames</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pcoll</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">)</span>
+                  <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+          <span class="n">outputs</span><span class="o">=</span><span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">pcoll_renames</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pcoll</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="n">proto</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+          <span class="n">environment_id</span><span class="o">=</span><span class="n">proto</span><span class="o">.</span><span class="n">environment_id</span><span class="p">)</span>
+      <span class="n">context</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">put_proto</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">new_proto</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">beam_runner_api_pb2</span><span class="o">.</span><span class="n">PTransform</span><span class="p">(</span>
+        <span class="n">unique_name</span><span class="o">=</span><span class="n">full_label</span><span class="p">,</span>
+        <span class="n">spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+        <span class="n">subtransforms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">subtransforms</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">inputs</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="n">pcoll_renames</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pcoll</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+        <span class="n">environment_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expanded_transform</span><span class="o">.</span><span class="n">environment_id</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="JavaJarExpansionService"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.JavaJarExpansionService">[docs]</a><span class="k">class</span> <span class="nc">JavaJarExpansionService</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;An expansion service based on an Java Jar file.</span>
+
+<span class="sd">  This can be passed into an ExternalTransform as the expansion_service</span>
+<span class="sd">  argument which will spawn a subprocess using this jar to expand the</span>
+<span class="sd">  transform.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_to_jar</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">extra_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;{{PORT}}&#39;</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_path_to_jar</span> <span class="o">=</span> <span class="n">path_to_jar</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_extra_args</span> <span class="o">=</span> <span class="n">extra_args</span>
+
+<div class="viewcode-block" id="JavaJarExpansionService.Expand"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.JavaJarExpansionService.Expand">[docs]</a>  <span class="k">def</span> <span class="nf">Expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_path_to_jar</span> <span class="o">=</span> <span class="n">subprocess_server</span><span class="o">.</span><span class="n">JavaJarServer</span><span class="o">.</span><span class="n">local_jar</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path_to_jar</span><span class="p">)</span>
+    <span class="c1"># Consider memoizing these servers (with some timeout).</span>
+    <span class="k">with</span> <span class="n">subprocess_server</span><span class="o">.</span><span class="n">JavaJarServer</span><span class="p">(</span>
+        <span class="n">beam_expansion_api_pb2_grpc</span><span class="o">.</span><span class="n">ExpansionServiceStub</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path_to_jar</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_args</span><span class="p">)</span> <span class="k">as</span> <span class="n">service</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">service</span><span class="o">.</span><span class="n">Expand</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BeamJarExpansionService"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.BeamJarExpansionService">[docs]</a><span class="k">class</span> <span class="nc">BeamJarExpansionService</span><span class="p">(</span><span class="n">JavaJarExpansionService</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;An expansion service based on an Beam Java Jar file.</span>
+
+<span class="sd">  Attempts to use a locally-build copy of the jar based on the gradle target,</span>
+<span class="sd">  if it exists, otherwise attempts to download it (with caching) from the</span>
+<span class="sd">  apache maven repository.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gradle_target</span><span class="p">,</span> <span class="n">extra_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gradle_appendix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">path_to_jar</span> <span class="o">=</span> <span class="n">subprocess_server</span><span class="o">.</span><span class="n">JavaJarServer</span><span class="o">.</span><span class="n">path_to_beam_jar</span><span class="p">(</span>
+        <span class="n">gradle_target</span><span class="p">,</span>
+        <span class="n">gradle_appendix</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">BeamJarExpansionService</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path_to_jar</span><span class="p">,</span> <span class="n">extra_args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="memoize"><a class="viewcode-back" href="../../../apache_beam.transforms.external.html#apache_beam.transforms.external.memoize">[docs]</a><span class="k">def</span> <span class="nf">memoize</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+  <span class="n">cache</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cache</span><span class="p">:</span>
+      <span class="n">cache</span><span class="p">[</span><span class="n">args</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cache</span><span class="p">[</span><span class="n">args</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">wrapper</span></div>
+</pre></div>
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright .
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
