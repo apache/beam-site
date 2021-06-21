@@ -1,0 +1,810 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.io.mongodbio &mdash; Apache Beam  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.io.mongodbio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.io.mongodbio</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;This module implements IO classes to read and write data on MongoDB.</span>
+
+
+<span class="sd">Read from MongoDB</span>
+<span class="sd">-----------------</span>
+<span class="sd">:class:`ReadFromMongoDB` is a ``PTransform`` that reads from a configured</span>
+<span class="sd">MongoDB source and returns a ``PCollection`` of dict representing MongoDB</span>
+<span class="sd">documents.</span>
+<span class="sd">To configure MongoDB source, the URI to connect to MongoDB server, database</span>
+<span class="sd">name, collection name needs to be provided.</span>
+
+<span class="sd">Example usage::</span>
+
+<span class="sd">  pipeline | ReadFromMongoDB(uri=&#39;mongodb://localhost:27017&#39;,</span>
+<span class="sd">                             db=&#39;testdb&#39;,</span>
+<span class="sd">                             coll=&#39;input&#39;)</span>
+
+<span class="sd">To read from MongoDB Atlas, use ``bucket_auto`` option to enable</span>
+<span class="sd">``@bucketAuto`` MongoDB aggregation instead of ``splitVector``</span>
+<span class="sd">command which is a high-privilege function that cannot be assigned</span>
+<span class="sd">to any user in Atlas.</span>
+
+<span class="sd">Example usage::</span>
+
+<span class="sd">  pipeline | ReadFromMongoDB(uri=&#39;mongodb+srv://user:pwd@cluster0.mongodb.net&#39;,</span>
+<span class="sd">                             db=&#39;testdb&#39;,</span>
+<span class="sd">                             coll=&#39;input&#39;,</span>
+<span class="sd">                             bucket_auto=True)</span>
+
+
+<span class="sd">Write to MongoDB:</span>
+<span class="sd">-----------------</span>
+<span class="sd">:class:`WriteToMongoDB` is a ``PTransform`` that writes MongoDB documents to</span>
+<span class="sd">configured sink, and the write is conducted through a mongodb bulk_write of</span>
+<span class="sd">``ReplaceOne`` operations. If the document&#39;s _id field already existed in the</span>
+<span class="sd">MongoDB collection, it results in an overwrite, otherwise, a new document</span>
+<span class="sd">will be inserted.</span>
+
+<span class="sd">Example usage::</span>
+
+<span class="sd">  pipeline | WriteToMongoDB(uri=&#39;mongodb://localhost:27017&#39;,</span>
+<span class="sd">                            db=&#39;testdb&#39;,</span>
+<span class="sd">                            coll=&#39;output&#39;,</span>
+<span class="sd">                            batch_size=10)</span>
+
+
+<span class="sd">No backward compatibility guarantees. Everything in this module is experimental.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">struct</span>
+
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">iobase</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io.range_trackers</span> <span class="kn">import</span> <span class="n">OrderedPositionRangeTracker</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">DoFn</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">PTransform</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">Reshuffle</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.annotations</span> <span class="kn">import</span> <span class="n">experimental</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="c1"># Mongodb has its own bundled bson, which is not compatible with bson pakcage.</span>
+  <span class="c1"># (https://github.com/py-bson/bson/issues/82). Try to import objectid and if</span>
+  <span class="c1"># it fails because bson package is installed, MongoDB IO will not work but at</span>
+  <span class="c1"># least rest of the SDK will work.</span>
+  <span class="kn">from</span> <span class="nn">bson</span> <span class="kn">import</span> <span class="n">objectid</span>
+
+  <span class="c1"># pymongo also internally depends on bson.</span>
+  <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">ASCENDING</span>
+  <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">DESCENDING</span>
+  <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">MongoClient</span>
+  <span class="kn">from</span> <span class="nn">pymongo</span> <span class="kn">import</span> <span class="n">ReplaceOne</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">objectid</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not find a compatible bson package.&quot;</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ReadFromMongoDB&#39;</span><span class="p">,</span> <span class="s1">&#39;WriteToMongoDB&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ReadFromMongoDB"><a class="viewcode-back" href="../../../apache_beam.io.mongodbio.html#apache_beam.io.mongodbio.ReadFromMongoDB">[docs]</a><span class="nd">@experimental</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">ReadFromMongoDB</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransform`` to read MongoDB documents into a ``PCollection``.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">uri</span><span class="o">=</span><span class="s1">&#39;mongodb://localhost:27017&#39;</span><span class="p">,</span>
+      <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">coll</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">projection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">extra_client_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">bucket_auto</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Initialize a :class:`ReadFromMongoDB`</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      uri (str): The MongoDB connection string following the URI format.</span>
+<span class="sd">      db (str): The MongoDB database name.</span>
+<span class="sd">      coll (str): The MongoDB collection name.</span>
+<span class="sd">      filter: A `bson.SON</span>
+<span class="sd">        &lt;https://api.mongodb.com/python/current/api/bson/son.html&gt;`_ object</span>
+<span class="sd">        specifying elements which must be present for a document to be included</span>
+<span class="sd">        in the result set.</span>
+<span class="sd">      projection: A list of field names that should be returned in the result</span>
+<span class="sd">        set or a dict specifying the fields to include or exclude.</span>
+<span class="sd">      extra_client_params(dict): Optional `MongoClient</span>
+<span class="sd">        &lt;https://api.mongodb.com/python/current/api/pymongo/mongo_client.html&gt;`_</span>
+<span class="sd">        parameters.</span>
+<span class="sd">      bucket_auto (bool): If :data:`True`, use MongoDB `$bucketAuto` aggregation</span>
+<span class="sd">        to split collection into bundles instead of `splitVector` command,</span>
+<span class="sd">        which does not work with MongoDB Atlas.</span>
+<span class="sd">        If :data:`False` (the default), use `splitVector` command for bundling.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      :class:`~apache_beam.transforms.ptransform.PTransform`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">extra_client_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_client_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;ReadFromMongDB db param must be specified as a string&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;ReadFromMongDB coll param must be specified as a &#39;</span>
+          <span class="s1">&#39;string&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mongo_source</span> <span class="o">=</span> <span class="n">_BoundedMongoSource</span><span class="p">(</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">,</span>
+        <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">,</span>
+        <span class="n">coll</span><span class="o">=</span><span class="n">coll</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="o">=</span><span class="nb">filter</span><span class="p">,</span>
+        <span class="n">projection</span><span class="o">=</span><span class="n">projection</span><span class="p">,</span>
+        <span class="n">extra_client_params</span><span class="o">=</span><span class="n">extra_client_params</span><span class="p">,</span>
+        <span class="n">bucket_auto</span><span class="o">=</span><span class="n">bucket_auto</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ReadFromMongoDB.expand"><a class="viewcode-back" href="../../../apache_beam.io.mongodbio.html#apache_beam.io.mongodbio.ReadFromMongoDB.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">iobase</span><span class="o">.</span><span class="n">Read</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mongo_source</span><span class="p">)</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_BoundedMongoSource</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">BoundedSource</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">uri</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">coll</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">projection</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">extra_client_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">bucket_auto</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">extra_client_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_client_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="nb">filter</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="n">coll</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">filter</span> <span class="o">=</span> <span class="nb">filter</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">projection</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">extra_client_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">bucket_auto</span> <span class="o">=</span> <span class="n">bucket_auto</span>
+
+  <span class="k">def</span> <span class="nf">estimate_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;collstats&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;size&#39;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_estimate_average_document_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;collstats&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;avgObjSize&#39;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_bundle_size</span><span class="p">,</span> <span class="n">start_position</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stop_position</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">desired_bundle_size_in_mb</span> <span class="o">=</span> <span class="n">desired_bundle_size</span> <span class="o">//</span> <span class="mi">1024</span> <span class="o">//</span> <span class="mi">1024</span>
+
+    <span class="c1"># for desired bundle size, if desired chunk size smaller than 1mb, use</span>
+    <span class="c1"># MongoDB default split size of 1mb.</span>
+    <span class="k">if</span> <span class="n">desired_bundle_size_in_mb</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">desired_bundle_size_in_mb</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">is_initial_split</span> <span class="o">=</span> <span class="n">start_position</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">stop_position</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replace_none_positions</span><span class="p">(</span>
+      <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bucket_auto</span><span class="p">:</span>
+      <span class="c1"># Use $bucketAuto for bundling</span>
+      <span class="n">split_keys</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">weights</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_auto_buckets</span><span class="p">(</span><span class="n">desired_bundle_size_in_mb</span><span class="p">,</span>
+                                           <span class="n">start_position</span><span class="p">,</span>
+                                           <span class="n">stop_position</span><span class="p">,</span>
+                                           <span class="n">is_initial_split</span><span class="p">):</span>
+        <span class="n">split_keys</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">bucket</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">][</span><span class="s1">&#39;max&#39;</span><span class="p">]})</span>
+        <span class="n">weights</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bucket</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Use splitVector for bundling</span>
+      <span class="n">split_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_split_keys</span><span class="p">(</span>
+          <span class="n">desired_bundle_size_in_mb</span><span class="p">,</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">)</span>
+      <span class="n">weights</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">cycle</span><span class="p">((</span><span class="n">desired_bundle_size_in_mb</span><span class="p">,</span> <span class="p">))</span>
+
+    <span class="n">bundle_start</span> <span class="o">=</span> <span class="n">start_position</span>
+    <span class="k">for</span> <span class="n">split_key_id</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">split_keys</span><span class="p">,</span> <span class="n">weights</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">bundle_start</span> <span class="o">&gt;=</span> <span class="n">stop_position</span><span class="p">:</span>
+        <span class="k">break</span>
+      <span class="n">bundle_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">stop_position</span><span class="p">,</span> <span class="n">split_key_id</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">])</span>
+      <span class="k">yield</span> <span class="n">iobase</span><span class="o">.</span><span class="n">SourceBundle</span><span class="p">(</span>
+          <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span>
+          <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+          <span class="n">start_position</span><span class="o">=</span><span class="n">bundle_start</span><span class="p">,</span>
+          <span class="n">stop_position</span><span class="o">=</span><span class="n">bundle_end</span><span class="p">)</span>
+      <span class="n">bundle_start</span> <span class="o">=</span> <span class="n">bundle_end</span>
+    <span class="c1"># add range of last split_key to stop_position</span>
+    <span class="k">if</span> <span class="n">bundle_start</span> <span class="o">&lt;</span> <span class="n">stop_position</span><span class="p">:</span>
+      <span class="c1"># bucket_auto mode can come here if not split due to single document</span>
+      <span class="n">weight</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bucket_auto</span> <span class="k">else</span> <span class="n">desired_bundle_size_in_mb</span>
+      <span class="k">yield</span> <span class="n">iobase</span><span class="o">.</span><span class="n">SourceBundle</span><span class="p">(</span>
+          <span class="n">weight</span><span class="o">=</span><span class="n">weight</span><span class="p">,</span>
+          <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+          <span class="n">start_position</span><span class="o">=</span><span class="n">bundle_start</span><span class="p">,</span>
+          <span class="n">stop_position</span><span class="o">=</span><span class="n">stop_position</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">get_range_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">):</span>
+    <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_replace_none_positions</span><span class="p">(</span>
+        <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_ObjectIdRangeTracker</span><span class="p">(</span><span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">range_tracker</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="n">all_filters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_id_filter</span><span class="p">(</span>
+          <span class="n">range_tracker</span><span class="o">.</span><span class="n">start_position</span><span class="p">(),</span> <span class="n">range_tracker</span><span class="o">.</span><span class="n">stop_position</span><span class="p">())</span>
+      <span class="n">docs_cursor</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+          <span class="nb">filter</span><span class="o">=</span><span class="n">all_filters</span><span class="p">,</span>
+          <span class="n">projection</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span> <span class="n">ASCENDING</span><span class="p">)])</span>
+      <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">docs_cursor</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">range_tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">doc</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]):</span>
+          <span class="k">return</span>
+        <span class="k">yield</span> <span class="n">doc</span>
+
+  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_BoundedMongoSource</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">display_data</span><span class="p">()</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39;not_serializable(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;projection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">)</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;bucket_auto&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bucket_auto</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+  <span class="k">def</span> <span class="nf">_get_split_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_chunk_size_in_mb</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">):</span>
+    <span class="c1"># calls mongodb splitVector command to get document ids at split position</span>
+    <span class="k">if</span> <span class="n">start_pos</span> <span class="o">&gt;=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">increment_id</span><span class="p">(</span><span class="n">end_pos</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+      <span class="c1"># single document not splittable</span>
+      <span class="k">return</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="n">name_space</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">)</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">]</span><span class="o">.</span><span class="n">command</span><span class="p">(</span>
+              <span class="s1">&#39;splitVector&#39;</span><span class="p">,</span>
+              <span class="n">name_space</span><span class="p">,</span>
+              <span class="n">keyPattern</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>  <span class="c1"># Ascending index</span>
+              <span class="nb">min</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">start_pos</span><span class="p">},</span>
+              <span class="nb">max</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">end_pos</span><span class="p">},</span>
+              <span class="n">maxChunkSize</span><span class="o">=</span><span class="n">desired_chunk_size_in_mb</span><span class="p">)[</span><span class="s1">&#39;splitKeys&#39;</span><span class="p">])</span>
+
+  <span class="k">def</span> <span class="nf">_get_auto_buckets</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">desired_chunk_size_in_mb</span><span class="p">,</span> <span class="n">start_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">,</span> <span class="n">is_initial_split</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">start_pos</span> <span class="o">&gt;=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">increment_id</span><span class="p">(</span><span class="n">end_pos</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+      <span class="c1"># single document not splittable</span>
+      <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">is_initial_split</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+      <span class="c1"># total collection size</span>
+      <span class="n">size_in_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">()</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># size of documents within start/end id range and possibly filtered</span>
+      <span class="n">documents_count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_id_range</span><span class="p">(</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">)</span>
+      <span class="n">avg_document_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimate_average_document_size</span><span class="p">()</span>
+      <span class="n">size_in_mb</span> <span class="o">=</span> <span class="n">documents_count</span> <span class="o">*</span> <span class="n">avg_document_size</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">size_in_mb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="c1"># no documents not splittable (maybe a result of filtering)</span>
+      <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">bucket_count</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">size_in_mb</span> <span class="o">/</span> <span class="n">desired_chunk_size_in_mb</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">mongodbio</span><span class="o">.</span><span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="n">pipeline</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="p">{</span>
+              <span class="c1"># filter by positions and by the custom filter if any</span>
+              <span class="s1">&#39;$match&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_id_filter</span><span class="p">(</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">end_pos</span><span class="p">)</span>
+          <span class="p">},</span>
+          <span class="p">{</span>
+              <span class="s1">&#39;$bucketAuto&#39;</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="s1">&#39;groupBy&#39;</span><span class="p">:</span> <span class="s1">&#39;$_id&#39;</span><span class="p">,</span> <span class="s1">&#39;buckets&#39;</span><span class="p">:</span> <span class="n">bucket_count</span>
+              <span class="p">}</span>
+          <span class="p">}</span>
+      <span class="p">]</span>
+      <span class="n">buckets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span><span class="o">.</span><span class="n">aggregate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">buckets</span><span class="p">:</span>
+        <span class="n">buckets</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">][</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">end_pos</span>
+
+      <span class="k">return</span> <span class="n">buckets</span>
+
+  <span class="k">def</span> <span class="nf">_merge_id_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">):</span>
+    <span class="c1"># Merge the default filter (if any) with refined _id field range</span>
+    <span class="c1"># of range_tracker.</span>
+    <span class="c1"># $gte specifies start position (inclusive)</span>
+    <span class="c1"># and $lt specifies the end position (exclusive),</span>
+    <span class="c1"># see more at</span>
+    <span class="c1"># https://docs.mongodb.com/manual/reference/operator/query/gte/ and</span>
+    <span class="c1"># https://docs.mongodb.com/manual/reference/operator/query/lt/</span>
+    <span class="n">id_filter</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$gte&#39;</span><span class="p">:</span> <span class="n">start_position</span><span class="p">,</span> <span class="s1">&#39;$lt&#39;</span><span class="p">:</span> <span class="n">stop_position</span><span class="p">}}</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">:</span>
+      <span class="n">all_filters</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="c1"># see more at</span>
+          <span class="c1"># https://docs.mongodb.com/manual/reference/operator/query/and/</span>
+          <span class="s1">&#39;$and&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">id_filter</span><span class="p">]</span>
+      <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">all_filters</span> <span class="o">=</span> <span class="n">id_filter</span>
+
+    <span class="k">return</span> <span class="n">all_filters</span>
+
+  <span class="k">def</span> <span class="nf">_get_head_document_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_order</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="n">cursor</span> <span class="o">=</span> <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span>
+          <span class="nb">filter</span><span class="o">=</span><span class="p">{},</span> <span class="n">projection</span><span class="o">=</span><span class="p">[])</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span> <span class="n">sort_order</span><span class="p">)])</span><span class="o">.</span><span class="n">limit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cursor</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span>
+      <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Empty Mongodb collection&#39;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_replace_none_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">start_position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">start_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_head_document_id</span><span class="p">(</span><span class="n">ASCENDING</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stop_position</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">last_doc_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_head_document_id</span><span class="p">(</span><span class="n">DESCENDING</span><span class="p">)</span>
+      <span class="c1"># increment last doc id binary value by 1 to make sure the last document</span>
+      <span class="c1"># is not excluded</span>
+      <span class="n">stop_position</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">increment_id</span><span class="p">(</span><span class="n">last_doc_id</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span>
+
+  <span class="k">def</span> <span class="nf">_count_id_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">):</span>
+    <span class="c1"># Number of documents between start_position (inclusive)</span>
+    <span class="c1"># and stop_position (exclusive), respecting the custom filter if any.</span>
+    <span class="k">with</span> <span class="n">MongoClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span><span class="o">.</span><span class="n">count_documents</span><span class="p">(</span>
+          <span class="nb">filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_merge_id_filter</span><span class="p">(</span><span class="n">start_position</span><span class="p">,</span> <span class="n">stop_position</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">_ObjectIdHelper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A Utility class to manipulate bson object ids.&quot;&quot;&quot;</span>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">id_to_int</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      id: ObjectId required for each MongoDB document _id field.</span>
+
+<span class="sd">    Returns: Converted integer value of ObjectId&#39;s 12 bytes binary value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># converts object id binary to integer</span>
+    <span class="c1"># id object is bytes type with size of 12</span>
+    <span class="n">ints</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;III&#39;</span><span class="p">,</span> <span class="nb">id</span><span class="o">.</span><span class="n">binary</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">ints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">64</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">ints</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">+</span> <span class="n">ints</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">int_to_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      number(int): The integer value to be used to convert to ObjectId.</span>
+
+<span class="sd">    Returns: The ObjectId that has the 12 bytes binary converted from the</span>
+<span class="sd">      integer value.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># converts integer value to object id. Int value should be less than</span>
+    <span class="c1"># (2 ^ 96) so it can be convert to 12 bytes required by object id.</span>
+    <span class="k">if</span> <span class="n">number</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">number</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">96</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;number value must be within [0, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">96</span><span class="p">))</span>
+    <span class="n">ints</span> <span class="o">=</span> <span class="p">[(</span><span class="n">number</span> <span class="o">&amp;</span> <span class="mh">0xffffffff0000000000000000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">64</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">number</span> <span class="o">&amp;</span> <span class="mh">0x00000000ffffffff00000000</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="n">number</span> <span class="o">&amp;</span> <span class="mh">0x0000000000000000ffffffff</span><span class="p">]</span>
+
+    <span class="nb">bytes</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s1">&#39;&gt;III&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">ints</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">objectid</span><span class="o">.</span><span class="n">ObjectId</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">increment_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">object_id</span><span class="p">,</span> <span class="n">inc</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">      object_id: The ObjectId to change.</span>
+<span class="sd">      inc(int): The incremental int value to be added to ObjectId.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># increment object_id binary value by inc value and return new object id.</span>
+    <span class="n">id_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">object_id</span><span class="p">)</span>
+    <span class="n">new_number</span> <span class="o">=</span> <span class="n">id_number</span> <span class="o">+</span> <span class="n">inc</span>
+    <span class="k">if</span> <span class="n">new_number</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">new_number</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">96</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;invalid incremental, inc value must be within [&#39;</span>
+          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">0</span> <span class="o">-</span> <span class="n">id_number</span><span class="p">,</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">96</span> <span class="o">-</span> <span class="n">id_number</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">int_to_id</span><span class="p">(</span><span class="n">new_number</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_ObjectIdRangeTracker</span><span class="p">(</span><span class="n">OrderedPositionRangeTracker</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;RangeTracker for tracking mongodb _id of bson ObjectId type.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="nf">position_to_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="n">pos_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">start_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">end_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">pos_number</span> <span class="o">-</span> <span class="n">start_number</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">end_number</span> <span class="o">-</span> <span class="n">start_number</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">fraction_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fraction</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+    <span class="n">start_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">end_number</span> <span class="o">=</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">id_to_int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">end_number</span> <span class="o">-</span> <span class="n">start_number</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">total</span> <span class="o">*</span> <span class="n">fraction</span> <span class="o">+</span> <span class="n">start_number</span><span class="p">)</span>
+    <span class="c1"># make sure split position is larger than start position and smaller than</span>
+    <span class="c1"># end position.</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;=</span> <span class="n">start_number</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">increment_id</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">end_number</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">increment_id</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_ObjectIdHelper</span><span class="o">.</span><span class="n">int_to_id</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="WriteToMongoDB"><a class="viewcode-back" href="../../../apache_beam.io.mongodbio.html#apache_beam.io.mongodbio.WriteToMongoDB">[docs]</a><span class="nd">@experimental</span><span class="p">()</span>
+<span class="k">class</span> <span class="nc">WriteToMongoDB</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;WriteToMongoDB is a ``PTransform`` that writes a ``PCollection`` of</span>
+<span class="sd">  mongodb document to the configured MongoDB server.</span>
+
+<span class="sd">  In order to make the document writes idempotent so that the bundles are</span>
+<span class="sd">  retry-able without creating duplicates, the PTransform added 2 transformations</span>
+<span class="sd">  before final write stage:</span>
+<span class="sd">  a ``GenerateId`` transform and a ``Reshuffle`` transform.::</span>
+
+<span class="sd">                  -----------------------------------------------</span>
+<span class="sd">    Pipeline --&gt;  |GenerateId --&gt; Reshuffle --&gt; WriteToMongoSink|</span>
+<span class="sd">                  -----------------------------------------------</span>
+<span class="sd">                                  (WriteToMongoDB)</span>
+
+<span class="sd">  The ``GenerateId`` transform adds a random and unique*_id* field to the</span>
+<span class="sd">  documents if they don&#39;t already have one, it uses the same format as MongoDB</span>
+<span class="sd">  default. The ``Reshuffle`` transform makes sure that no fusion happens between</span>
+<span class="sd">  ``GenerateId`` and the final write stage transform,so that the set of</span>
+<span class="sd">  documents and their unique IDs are not regenerated if final write step is</span>
+<span class="sd">  retried due to a failure. This prevents duplicate writes of the same document</span>
+<span class="sd">  with different unique IDs.</span>
+
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">uri</span><span class="o">=</span><span class="s1">&#39;mongodb://localhost:27017&#39;</span><span class="p">,</span>
+      <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">coll</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+      <span class="n">extra_client_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      uri (str): The MongoDB connection string following the URI format</span>
+<span class="sd">      db (str): The MongoDB database name</span>
+<span class="sd">      coll (str): The MongoDB collection name</span>
+<span class="sd">      batch_size(int): Number of documents per bulk_write to  MongoDB,</span>
+<span class="sd">        default to 100</span>
+<span class="sd">      extra_client_params(dict): Optional `MongoClient</span>
+<span class="sd">       &lt;https://api.mongodb.com/python/current/api/pymongo/mongo_client.html&gt;`_</span>
+<span class="sd">       parameters as keyword arguments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      :class:`~apache_beam.transforms.ptransform.PTransform`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">extra_client_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_client_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;WriteToMongoDB db param must be specified as a string&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;WriteToMongoDB coll param must be specified as a &#39;</span>
+          <span class="s1">&#39;string&#39;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_uri</span> <span class="o">=</span> <span class="n">uri</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_db</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_coll</span> <span class="o">=</span> <span class="n">coll</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">extra_client_params</span>
+
+<div class="viewcode-block" id="WriteToMongoDB.expand"><a class="viewcode-back" href="../../../apache_beam.io.mongodbio.html#apache_beam.io.mongodbio.WriteToMongoDB.expand">[docs]</a>  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pcoll</span> \
+           <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_GenerateObjectIdFn</span><span class="p">())</span> \
+           <span class="o">|</span> <span class="n">Reshuffle</span><span class="p">()</span> \
+           <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_WriteMongoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_uri</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coll</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">))</span></div></div>
+
+
+<span class="k">class</span> <span class="nc">_GenerateObjectIdFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="c1"># if _id field already exist we keep it as it is, otherwise the ptransform</span>
+    <span class="c1"># generates a new _id field to achieve idempotent write to mongodb.</span>
+    <span class="k">if</span> <span class="s1">&#39;_id&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">element</span><span class="p">:</span>
+      <span class="c1"># object.ObjectId() generates a unique identifier that follows mongodb</span>
+      <span class="c1"># default format, if _id is not present in document, mongodb server</span>
+      <span class="c1"># generates it with this same function upon write. However the</span>
+      <span class="c1"># uniqueness of generated id may not be guaranteed if the work load are</span>
+      <span class="c1"># distributed across too many processes. See more on the ObjectId format</span>
+      <span class="c1"># https://docs.mongodb.com/manual/reference/bson-types/#objectid.</span>
+      <span class="n">element</span><span class="p">[</span><span class="s1">&#39;_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">objectid</span><span class="o">.</span><span class="n">ObjectId</span><span class="p">()</span>
+
+    <span class="k">yield</span> <span class="n">element</span>
+
+
+<span class="k">class</span> <span class="nc">_WriteMongoFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coll</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">extra_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">extra_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="n">coll</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">extra_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">_flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">with</span> <span class="n">_MongoSink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">:</span>
+      <span class="n">sink</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_WriteMongoFn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">display_data</span><span class="p">()</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;database&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;collection&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">coll</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">class</span> <span class="nc">_MongoSink</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">coll</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">extra_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">extra_params</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">db</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">coll</span> <span class="o">=</span> <span class="n">coll</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">extra_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">requests</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">documents</span><span class="p">:</span>
+      <span class="c1"># match document based on _id field, if not found in current collection,</span>
+      <span class="c1"># insert new one, otherwise overwrite it.</span>
+      <span class="n">requests</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+          <span class="n">ReplaceOne</span><span class="p">(</span>
+              <span class="nb">filter</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;_id&#39;</span><span class="p">:</span> <span class="n">doc</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_id&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)},</span>
+              <span class="n">replacement</span><span class="o">=</span><span class="n">doc</span><span class="p">,</span>
+              <span class="n">upsert</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">coll</span><span class="p">]</span><span class="o">.</span><span class="n">bulk_write</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s1">&#39;BulkWrite to MongoDB result in nModified:</span><span class="si">%d</span><span class="s1">, nUpserted:</span><span class="si">%d</span><span class="s1">, &#39;</span>
+        <span class="s1">&#39;nMatched:</span><span class="si">%d</span><span class="s1">, Errors:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">modified_count</span><span class="p">,</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">upserted_count</span><span class="p">,</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">matched_count</span><span class="p">,</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">bulk_api_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;writeErrors&#39;</span><span class="p">)))</span>
+
+  <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">MongoClient</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
