@@ -1,0 +1,586 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.runners.dataflow.ptransform_overrides &mdash; Apache Beam 2.38.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.38.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.runners.dataflow.ptransform_overrides</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.runners.dataflow.ptransform_overrides</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Ptransform overrides for DataflowRunner.&quot;&quot;&quot;</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="kn">import</span> <span class="n">DebugOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="kn">import</span> <span class="n">GoogleCloudOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="kn">import</span> <span class="n">StandardOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.pipeline</span> <span class="kn">import</span> <span class="n">PTransformOverride</span>
+
+
+<div class="viewcode-block" id="CreatePTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CreatePTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">CreatePTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``Create`` in streaming mode.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CreatePTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CreatePTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">Create</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.internal</span> <span class="kn">import</span> <span class="n">apiclient</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">Create</span><span class="p">):</span>
+      <span class="k">return</span> <span class="ow">not</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">_use_fnapi</span><span class="p">(</span>
+          <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">_options</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CreatePTransformOverride.get_replacement_transform_for_applied_ptransform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CreatePTransformOverride.get_replacement_transform_for_applied_ptransform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform_for_applied_ptransform</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">PTransform</span>
+
+    <span class="n">ptransform</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span>
+
+    <span class="c1"># Return a wrapper rather than ptransform.as_read() directly to</span>
+    <span class="c1"># ensure backwards compatibility of the pipeline structure.</span>
+    <span class="k">class</span> <span class="nc">LegacyCreate</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pbegin</span> <span class="o">|</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">as_read</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">LegacyCreate</span><span class="p">()</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="n">ptransform</span><span class="o">.</span><span class="n">get_output_type</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="ReadPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.ReadPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">ReadPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``Read(BoundedSource)``&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ReadPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.ReadPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">Read</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io.iobase</span> <span class="kn">import</span> <span class="n">BoundedSource</span>
+    <span class="c1"># Only overrides Read(BoundedSource) transform</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">Read</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="s1">&#39;override&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">BoundedSource</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="ReadPTransformOverride.get_replacement_transform_for_applied_ptransform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.ReadPTransformOverride.get_replacement_transform_for_applied_ptransform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform_for_applied_ptransform</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">pvalue</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">iobase</span>
+
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span>
+
+    <span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">Read</span><span class="p">):</span>
+      <span class="n">override</span> <span class="o">=</span> <span class="kc">True</span>
+
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">is_bounded</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">is_bounded</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">Read</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span>
+        <span class="n">transform</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">()</span><span class="o">.</span><span class="n">simple_output_type</span><span class="p">(</span><span class="s1">&#39;Read&#39;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="JrhReadPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.JrhReadPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">JrhReadPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``Read(BoundedSource)``&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="JrhReadPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.JrhReadPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">Read</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io.iobase</span> <span class="kn">import</span> <span class="n">BoundedSource</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">Read</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="n">BoundedSource</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="JrhReadPTransformOverride.get_replacement_transform_for_applied_ptransform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.JrhReadPTransformOverride.get_replacement_transform_for_applied_ptransform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform_for_applied_ptransform</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">Read</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">core</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">util</span>
+    <span class="c1"># Make this a local to narrow what&#39;s captured in the closure.</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">source</span>
+
+    <span class="k">class</span> <span class="nc">JrhRead</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">pbegin</span>
+            <span class="o">|</span> <span class="n">core</span><span class="o">.</span><span class="n">Impulse</span><span class="p">()</span>
+            <span class="o">|</span> <span class="s1">&#39;Split&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span>
+                    <span class="n">Read</span><span class="o">.</span><span class="n">get_desired_chunk_size</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">estimate_size</span><span class="p">())))</span>
+            <span class="o">|</span> <span class="n">util</span><span class="o">.</span><span class="n">Reshuffle</span><span class="p">()</span>
+            <span class="o">|</span> <span class="s1">&#39;ReadSplits&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">split</span><span class="p">:</span> <span class="n">split</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">(</span>
+                    <span class="n">split</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_range_tracker</span><span class="p">(</span>
+                        <span class="n">split</span><span class="o">.</span><span class="n">start_position</span><span class="p">,</span> <span class="n">split</span><span class="o">.</span><span class="n">stop_position</span><span class="p">))))</span>
+
+    <span class="k">return</span> <span class="n">JrhRead</span><span class="p">()</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span>
+        <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">()</span><span class="o">.</span><span class="n">simple_output_type</span><span class="p">(</span>
+            <span class="s1">&#39;Read&#39;</span><span class="p">))</span></div></div>
+
+
+<div class="viewcode-block" id="CombineValuesPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CombineValuesPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">CombineValuesPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``CombineValues``.</span>
+
+<span class="sd">  The DataflowRunner expects that the CombineValues PTransform acts as a</span>
+<span class="sd">  primitive. So this override replaces the CombineValues with a primitive.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="CombineValuesPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CombineValuesPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">CombineValues</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">CombineValues</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span>
+      <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="CombineValuesPTransformOverride.get_replacement_transform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.CombineValuesPTransformOverride.get_replacement_transform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">PTransform</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.pvalue</span> <span class="kn">import</span> <span class="n">PCollection</span>
+
+    <span class="c1"># The DataflowRunner still needs access to the CombineValues members to</span>
+    <span class="c1"># generate a V1B3 proto representation, so we remember the transform from</span>
+    <span class="c1"># the matches method and forward it here.</span>
+    <span class="k">class</span> <span class="nc">CombineValuesReplacement</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+      <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">PCollection</span><span class="o">.</span><span class="n">from_</span><span class="p">(</span><span class="n">pcoll</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">CombineValuesReplacement</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="NativeReadPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.NativeReadPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">NativeReadPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``Read`` using native sources.</span>
+
+<span class="sd">  The DataflowRunner expects that the Read PTransform using native sources act</span>
+<span class="sd">  as a primitive. So this override replaces the Read with a primitive.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NativeReadPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.NativeReadPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">Read</span>
+
+    <span class="c1"># Consider the native Read to be a primitive for Dataflow by replacing.</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">Read</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="s1">&#39;override&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="nb">hasattr</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;format&#39;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NativeReadPTransformOverride.get_replacement_transform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.NativeReadPTransformOverride.get_replacement_transform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">pvalue</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">iobase</span>
+
+    <span class="c1"># This is purposely subclassed from the Read transform to take advantage of</span>
+    <span class="c1"># the existing windowing, typing, and display data.</span>
+    <span class="k">class</span> <span class="nc">Read</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">Read</span><span class="p">):</span>
+      <span class="n">override</span> <span class="o">=</span> <span class="kc">True</span>
+
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="o">.</span><span class="n">from_</span><span class="p">(</span><span class="n">pbegin</span><span class="p">)</span>
+
+    <span class="c1"># Use the source&#39;s coder type hint as this replacement&#39;s output. Otherwise,</span>
+    <span class="c1"># the typing information is not properly forwarded to the DataflowRunner and</span>
+    <span class="c1"># will choose the incorrect coder for this transform.</span>
+    <span class="k">return</span> <span class="n">Read</span><span class="p">(</span><span class="n">ptransform</span><span class="o">.</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span>
+        <span class="n">ptransform</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">coder</span><span class="o">.</span><span class="n">to_type_hint</span><span class="p">())</span></div></div>
+
+
+<div class="viewcode-block" id="WriteToBigQueryPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.WriteToBigQueryPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">WriteToBigQueryPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_check_bq_outputs</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_check_bq_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeline</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks that there are no consumers if the transform will be replaced.</span>
+
+<span class="sd">    The WriteToBigQuery replacement is the native BigQuerySink which has an</span>
+<span class="sd">    output of a PDone. The original transform, however, returns a dict. The user</span>
+<span class="sd">    may be inadvertantly using the dict output which will have no side-effects</span>
+<span class="sd">    or fail pipeline construction esoterically. This checks the outputs and</span>
+<span class="sd">    gives a user-friendsly error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position, unused-import</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.pipeline</span> <span class="kn">import</span> <span class="n">PipelineVisitor</span>
+    <span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">WriteToBigQuery</span>
+
+    <span class="c1"># First, retrieve all the outpts from all the WriteToBigQuery transforms</span>
+    <span class="c1"># that will be replaced. Later, we will use these to make sure no one</span>
+    <span class="c1"># consumes these.</span>
+    <span class="k">class</span> <span class="nc">GetWriteToBqOutputsVisitor</span><span class="p">(</span><span class="n">PipelineVisitor</span><span class="p">):</span>
+      <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matches</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+      <span class="k">def</span> <span class="nf">enter_composite_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_node</span><span class="p">):</span>
+        <span class="c1"># Only add outputs that are going to be replaced.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">(</span><span class="n">transform_node</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">transform_node</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="n">outputs_visitor</span> <span class="o">=</span> <span class="n">GetWriteToBqOutputsVisitor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matches</span><span class="p">)</span>
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">outputs_visitor</span><span class="p">)</span>
+
+    <span class="c1"># Finally, verify that there are no consumers to the previously found</span>
+    <span class="c1"># outputs.</span>
+    <span class="k">class</span> <span class="nc">VerifyWriteToBqOutputsVisitor</span><span class="p">(</span><span class="n">PipelineVisitor</span><span class="p">):</span>
+      <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span>
+
+      <span class="k">def</span> <span class="nf">enter_composite_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit_transform</span><span class="p">(</span><span class="n">transform_node</span><span class="p">)</span>
+
+      <span class="k">def</span> <span class="nf">visit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_node</span><span class="p">):</span>
+        <span class="c1"># Internal consumers of the outputs we&#39;re overriding are expected.</span>
+        <span class="c1"># We only error out on non-internal consumers.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;BigQueryBatchFileLoads&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">transform_node</span><span class="o">.</span><span class="n">full_label</span> <span class="ow">and</span>
+            <span class="p">[</span><span class="n">o</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="k">if</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">transform_node</span><span class="o">.</span><span class="n">inputs</span><span class="p">]):</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+              <span class="s1">&#39;WriteToBigQuery was being replaced with the native &#39;</span>
+              <span class="s1">&#39;BigQuerySink, but the transform &quot;</span><span class="si">{}</span><span class="s1">&quot; has an input which will be &#39;</span>
+              <span class="s1">&#39;replaced with a PDone. To fix, please remove all transforms &#39;</span>
+              <span class="s1">&#39;that read from any WriteToBigQuery transforms.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                  <span class="n">transform_node</span><span class="o">.</span><span class="n">full_label</span><span class="p">))</span>
+
+    <span class="n">pipeline</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">VerifyWriteToBqOutputsVisitor</span><span class="p">(</span><span class="n">outputs_visitor</span><span class="o">.</span><span class="n">outputs</span><span class="p">))</span>
+
+<div class="viewcode-block" id="WriteToBigQueryPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.WriteToBigQueryPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">io</span>
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">WriteToBigQuery</span><span class="p">)</span> <span class="ow">or</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="s1">&#39;override&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="n">experiments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">DebugOptions</span><span class="p">)</span><span class="o">.</span><span class="n">experiments</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="s1">&#39;use_legacy_bq_sink&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">schema</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">gcp</span><span class="o">.</span><span class="n">bigquery</span><span class="o">.</span><span class="n">SCHEMA_AUTODETECT</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="s1">&#39;Schema auto-detection is not supported on the native sink&#39;</span><span class="p">)</span>
+
+    <span class="c1"># The replacement is only valid for Batch.</span>
+    <span class="n">standard_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">StandardOptions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">standard_options</span><span class="o">.</span><span class="n">streaming</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">transform</span><span class="o">.</span><span class="n">write_disposition</span> <span class="o">==</span> <span class="n">io</span><span class="o">.</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_TRUNCATE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Can not use write truncation mode in streaming&#39;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="o">.</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="WriteToBigQueryPTransformOverride.get_replacement_transform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.WriteToBigQueryPTransformOverride.get_replacement_transform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">io</span>
+
+    <span class="k">class</span> <span class="nc">WriteToBigQuery</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToBigQuery</span><span class="p">):</span>
+      <span class="n">override</span> <span class="o">=</span> <span class="kc">True</span>
+
+      <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span>
+
+      <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the given attribute from the parent.</span>
+
+<span class="sd">        This allows this transform to act like a WriteToBigQuery transform</span>
+<span class="sd">        without having to construct a new WriteToBigQuery transform.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+      <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">apache_beam.io.gcp.bigquery_tools</span> <span class="kn">import</span> <span class="n">parse_table_schema_from_json</span>
+        <span class="kn">import</span> <span class="nn">json</span>
+
+        <span class="n">schema</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">:</span>
+          <span class="n">schema</span> <span class="o">=</span> <span class="n">parse_table_schema_from_json</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">))</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">io</span><span class="o">.</span><span class="n">Write</span><span class="p">(</span>
+            <span class="n">io</span><span class="o">.</span><span class="n">BigQuerySink</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table_reference</span><span class="o">.</span><span class="n">tableId</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table_reference</span><span class="o">.</span><span class="n">datasetId</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table_reference</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span>
+                <span class="n">schema</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_disposition</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">write_disposition</span><span class="p">,</span>
+                <span class="n">kms_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">kms_key</span><span class="p">))</span>
+
+        <span class="c1"># The WriteToBigQuery can have different outputs depending on if it&#39;s</span>
+        <span class="c1"># Batch or Streaming. This retrieved the output keys from the node and</span>
+        <span class="c1"># is replacing them here to be consistent.</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">out</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">WriteToBigQuery</span><span class="p">(</span><span class="n">ptransform</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GroupIntoBatchesWithShardedKeyPTransformOverride"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.GroupIntoBatchesWithShardedKeyPTransformOverride">[docs]</a><span class="k">class</span> <span class="nc">GroupIntoBatchesWithShardedKeyPTransformOverride</span><span class="p">(</span><span class="n">PTransformOverride</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;A ``PTransformOverride`` for ``GroupIntoBatches.WithShardedKey``.</span>
+
+<span class="sd">  This override simply returns the original transform but additionally records</span>
+<span class="sd">  the output PCollection in order to append required step properties during</span>
+<span class="sd">  graph translation.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataflow_runner</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dataflow_runner</span> <span class="o">=</span> <span class="n">dataflow_runner</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">options</span> <span class="o">=</span> <span class="n">options</span>
+
+<div class="viewcode-block" id="GroupIntoBatchesWithShardedKeyPTransformOverride.matches"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.GroupIntoBatchesWithShardedKeyPTransformOverride.matches">[docs]</a>  <span class="k">def</span> <span class="nf">matches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">applied_ptransform</span><span class="p">):</span>
+    <span class="c1"># Imported here to avoid circular dependencies.</span>
+    <span class="c1"># pylint: disable=wrong-import-order, wrong-import-position</span>
+    <span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">util</span>
+
+    <span class="n">transform</span> <span class="o">=</span> <span class="n">applied_ptransform</span><span class="o">.</span><span class="n">transform</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">util</span><span class="o">.</span><span class="n">GroupIntoBatches</span><span class="o">.</span><span class="n">WithShardedKey</span><span class="p">):</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># The replacement is only valid for portable Streaming Engine jobs with</span>
+    <span class="c1"># runner v2.</span>
+    <span class="n">standard_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">StandardOptions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">standard_options</span><span class="o">.</span><span class="n">streaming</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">google_cloud_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">GoogleCloudOptions</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">google_cloud_options</span><span class="o">.</span><span class="n">enable_streaming_engine</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;Runner determined sharding not available in Dataflow for &#39;</span>
+          <span class="s1">&#39;GroupIntoBatches for non-Streaming-Engine jobs. In order to use &#39;</span>
+          <span class="s1">&#39;runner determined sharding, please use &#39;</span>
+          <span class="s1">&#39;--streaming --enable_streaming_engine --experiments=use_runner_v2&#39;</span><span class="p">)</span>
+
+    <span class="kn">from</span> <span class="nn">apache_beam.runners.dataflow.internal</span> <span class="kn">import</span> <span class="n">apiclient</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">apiclient</span><span class="o">.</span><span class="n">_use_unified_worker</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;Runner determined sharding not available in Dataflow for &#39;</span>
+          <span class="s1">&#39;GroupIntoBatches for jobs not using Runner V2. In order to use &#39;</span>
+          <span class="s1">&#39;runner determined sharding, please use &#39;</span>
+          <span class="s1">&#39;--streaming --enable_streaming_engine --experiments=use_runner_v2&#39;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">dataflow_runner</span><span class="o">.</span><span class="n">add_pcoll_with_auto_sharding</span><span class="p">(</span><span class="n">applied_ptransform</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="GroupIntoBatchesWithShardedKeyPTransformOverride.get_replacement_transform_for_applied_ptransform"><a class="viewcode-back" href="../../../../apache_beam.runners.dataflow.ptransform_overrides.html#apache_beam.runners.dataflow.dataflow_runner.GroupIntoBatchesWithShardedKeyPTransformOverride.get_replacement_transform_for_applied_ptransform">[docs]</a>  <span class="k">def</span> <span class="nf">get_replacement_transform_for_applied_ptransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">transform</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
