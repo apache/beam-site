@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.runners.direct.direct_userstate &mdash; Apache Beam 2.39.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.39.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.runners.direct.direct_userstate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.runners.direct.direct_userstate</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Support for user state in the BundleBasedDirectRunner.&quot;&quot;&quot;</span>
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.transforms</span> <span class="kn">import</span> <span class="n">userstate</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.trigger</span> <span class="kn">import</span> <span class="n">_ListStateTag</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.trigger</span> <span class="kn">import</span> <span class="n">_ReadModifyWriteStateTag</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.trigger</span> <span class="kn">import</span> <span class="n">_SetStateTag</span>
+
+
+<div class="viewcode-block" id="DirectRuntimeState"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectRuntimeState">[docs]</a><span class="k">class</span> <span class="nc">DirectRuntimeState</span><span class="p">(</span><span class="n">userstate</span><span class="o">.</span><span class="n">RuntimeState</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state_spec</span> <span class="o">=</span> <span class="n">state_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_state_tag</span> <span class="o">=</span> <span class="n">state_tag</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_value_accessor</span> <span class="o">=</span> <span class="n">current_value_accessor</span>
+
+<div class="viewcode-block" id="DirectRuntimeState.for_spec"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectRuntimeState.for_spec">[docs]</a>  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">for_spec</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">ReadModifyWriteStateSpec</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">ReadModifyWriteRuntimeState</span><span class="p">(</span>
+          <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">BagStateSpec</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">BagRuntimeState</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">CombiningValueStateSpec</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">CombiningValueRuntimeState</span><span class="p">(</span>
+          <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">SetStateSpec</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">SetRuntimeState</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid state spec: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">state_spec</span><span class="p">)</span></div>
+
+  <span class="k">def</span> <span class="nf">_encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_spec</span><span class="o">.</span><span class="n">coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_spec</span><span class="o">.</span><span class="n">coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+
+<span class="c1"># Sentinel designating an unread value.</span>
+<span class="n">UNREAD_VALUE</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState">[docs]</a><span class="k">class</span> <span class="nc">ReadModifyWriteRuntimeState</span><span class="p">(</span><span class="n">DirectRuntimeState</span><span class="p">,</span>
+                                  <span class="n">userstate</span><span class="o">.</span><span class="n">ReadModifyWriteRuntimeState</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">UNREAD_VALUE</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState.read"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState.read">[docs]</a>  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="ow">is</span> <span class="n">UNREAD_VALUE</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value_accessor</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState.write"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState.write">[docs]</a>  <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode</span><span class="p">(</span><span class="n">value</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState.clear"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState.clear">[docs]</a>  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState.is_cleared"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState.is_cleared">[docs]</a>  <span class="k">def</span> <span class="nf">is_cleared</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span></div>
+
+<div class="viewcode-block" id="ReadModifyWriteRuntimeState.is_modified"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.ReadModifyWriteRuntimeState.is_modified">[docs]</a>  <span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span></div></div>
+
+
+<div class="viewcode-block" id="BagRuntimeState"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.BagRuntimeState">[docs]</a><span class="k">class</span> <span class="nc">BagRuntimeState</span><span class="p">(</span><span class="n">DirectRuntimeState</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">BagRuntimeState</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_value</span> <span class="o">=</span> <span class="n">UNREAD_VALUE</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_new_values</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="BagRuntimeState.read"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.BagRuntimeState.read">[docs]</a>  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cached_value</span> <span class="ow">is</span> <span class="n">UNREAD_VALUE</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cached_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value_accessor</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span><span class="p">:</span>
+      <span class="n">encoded_values</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cached_value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_values</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">encoded_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_values</span>
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">encoded_values</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BagRuntimeState.add"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.BagRuntimeState.add">[docs]</a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_new_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_encode</span><span class="p">(</span><span class="n">value</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BagRuntimeState.clear"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.BagRuntimeState.clear">[docs]</a>  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cleared</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cached_value</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_new_values</span> <span class="o">=</span> <span class="p">[]</span></div></div>
+
+
+<div class="viewcode-block" id="SetRuntimeState"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.SetRuntimeState">[docs]</a><span class="k">class</span> <span class="nc">SetRuntimeState</span><span class="p">(</span><span class="n">DirectRuntimeState</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">SetRuntimeState</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="n">UNREAD_VALUE</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="nf">_read_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="ow">is</span> <span class="n">UNREAD_VALUE</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value_accessor</span><span class="p">()</span>
+      <span class="p">}</span>
+
+<div class="viewcode-block" id="SetRuntimeState.read"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.SetRuntimeState.read">[docs]</a>  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_initial_value</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span></div>
+
+<div class="viewcode-block" id="SetRuntimeState.add"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.SetRuntimeState.add">[docs]</a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_initial_value</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SetRuntimeState.clear"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.SetRuntimeState.clear">[docs]</a>  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="SetRuntimeState.is_modified"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.SetRuntimeState.is_modified">[docs]</a>  <span class="k">def</span> <span class="nf">is_modified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span></div></div>
+
+
+<div class="viewcode-block" id="CombiningValueRuntimeState"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.CombiningValueRuntimeState">[docs]</a><span class="k">class</span> <span class="nc">CombiningValueRuntimeState</span><span class="p">(</span><span class="n">DirectRuntimeState</span><span class="p">,</span>
+                                 <span class="n">userstate</span><span class="o">.</span><span class="n">CombiningValueRuntimeState</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;Combining value state interface object passed to user code.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">current_value_accessor</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="n">UNREAD_VALUE</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state_spec</span><span class="o">.</span><span class="n">combine_fn</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="nf">_read_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="ow">is</span> <span class="n">UNREAD_VALUE</span><span class="p">:</span>
+      <span class="n">existing_accumulators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_decode</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_value_accessor</span><span class="p">())</span>
+      <span class="k">if</span> <span class="n">existing_accumulators</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">merge_accumulators</span><span class="p">(</span>
+            <span class="n">existing_accumulators</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">create_accumulator</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CombiningValueRuntimeState.read"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.CombiningValueRuntimeState.read">[docs]</a>  <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_initial_value</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">extract_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CombiningValueRuntimeState.add"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.CombiningValueRuntimeState.add">[docs]</a>  <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_read_initial_value</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">add_input</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CombiningValueRuntimeState.clear"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.CombiningValueRuntimeState.clear">[docs]</a>  <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_accumulator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">create_accumulator</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="CombiningValueRuntimeState.finalize"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.CombiningValueRuntimeState.finalize">[docs]</a>  <span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_combine_fn</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+
+
+<div class="viewcode-block" id="DirectUserStateContext"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectUserStateContext">[docs]</a><span class="k">class</span> <span class="nc">DirectUserStateContext</span><span class="p">(</span><span class="n">userstate</span><span class="o">.</span><span class="n">UserStateContext</span><span class="p">):</span>
+  <span class="sd">&quot;&quot;&quot;userstate.UserStateContext for the BundleBasedDirectRunner.</span>
+
+<span class="sd">  The DirectUserStateContext buffers up updates that are to be committed</span>
+<span class="sd">  by the TransformEvaluator after running a DoFn.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_context</span><span class="p">,</span> <span class="n">dofn</span><span class="p">,</span> <span class="n">key_coder</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">step_context</span> <span class="o">=</span> <span class="n">step_context</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dofn</span> <span class="o">=</span> <span class="n">dofn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">key_coder</span> <span class="o">=</span> <span class="n">key_coder</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">all_state_specs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_timer_specs</span> <span class="o">=</span> <span class="n">userstate</span><span class="o">.</span><span class="n">get_dofn_specs</span><span class="p">(</span><span class="n">dofn</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">state_tags</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">state_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_state_specs</span><span class="p">:</span>
+      <span class="n">state_key</span> <span class="o">=</span> <span class="s1">&#39;user/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">state_spec</span><span class="o">.</span><span class="n">name</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">ReadModifyWriteStateSpec</span><span class="p">):</span>
+        <span class="n">state_tag</span> <span class="o">=</span> <span class="n">_ReadModifyWriteStateTag</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">BagStateSpec</span><span class="p">):</span>
+        <span class="n">state_tag</span> <span class="o">=</span> <span class="n">_ListStateTag</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">CombiningValueStateSpec</span><span class="p">):</span>
+        <span class="n">state_tag</span> <span class="o">=</span> <span class="n">_ListStateTag</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">SetStateSpec</span><span class="p">):</span>
+        <span class="n">state_tag</span> <span class="o">=</span> <span class="n">_SetStateTag</span><span class="p">(</span><span class="n">state_key</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid state spec: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">state_spec</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">state_tags</span><span class="p">[</span><span class="n">state_spec</span><span class="p">]</span> <span class="o">=</span> <span class="n">state_tag</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="DirectUserStateContext.get_timer"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectUserStateContext.get_timer">[docs]</a>  <span class="k">def</span> <span class="nf">get_timer</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">timer_spec</span><span class="p">:</span> <span class="n">userstate</span><span class="o">.</span><span class="n">TimerSpec</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span>
+      <span class="n">pane</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">userstate</span><span class="o">.</span><span class="n">RuntimeTimer</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">timer_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_timer_specs</span>
+    <span class="n">encoded_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">cache_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">encoded_key</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">timer_spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">userstate</span><span class="o">.</span><span class="n">RuntimeTimer</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DirectUserStateContext.get_state"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectUserStateContext.get_state">[docs]</a>  <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">state_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_state_specs</span>
+    <span class="n">encoded_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="n">cache_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">encoded_key</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cache_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span><span class="p">:</span>
+      <span class="n">state_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_tags</span><span class="p">[</span><span class="n">state_spec</span><span class="p">]</span>
+      <span class="n">value_accessor</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_underlying_state</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">window</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">DirectRuntimeState</span><span class="o">.</span><span class="n">for_spec</span><span class="p">(</span>
+          <span class="n">state_spec</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">value_accessor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span><span class="p">[</span><span class="n">cache_key</span><span class="p">]</span></div>
+
+  <span class="k">def</span> <span class="nf">_get_underlying_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_spec</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">window</span><span class="p">):</span>
+    <span class="n">state_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_tags</span><span class="p">[</span><span class="n">state_spec</span><span class="p">]</span>
+    <span class="n">encoded_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">key_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_context</span><span class="o">.</span><span class="n">get_keyed_state</span><span class="p">(</span><span class="n">encoded_key</span><span class="p">)</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span>
+            <span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">))</span>
+
+<div class="viewcode-block" id="DirectUserStateContext.commit"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectUserStateContext.commit">[docs]</a>  <span class="k">def</span> <span class="nf">commit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Commit state modifications.</span>
+    <span class="k">for</span> <span class="n">cache_key</span><span class="p">,</span> <span class="n">runtime_state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">encoded_key</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">state_spec</span> <span class="o">=</span> <span class="n">cache_key</span>
+      <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_context</span><span class="o">.</span><span class="n">get_keyed_state</span><span class="p">(</span><span class="n">encoded_key</span><span class="p">)</span>
+      <span class="n">state_tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_tags</span><span class="p">[</span><span class="n">state_spec</span><span class="p">]</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">BagStateSpec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">_cleared</span><span class="p">:</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">_new_values</span><span class="p">:</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">new_value</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">CombiningValueStateSpec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">_modified</span><span class="p">:</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">)</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span>
+              <span class="n">window</span><span class="p">,</span>
+              <span class="n">state_tag</span><span class="p">,</span>
+              <span class="n">state_spec</span><span class="o">.</span><span class="n">coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">runtime_state</span><span class="o">.</span><span class="n">_current_accumulator</span><span class="p">))</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">SetStateSpec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">is_modified</span><span class="p">():</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">new_value</span> <span class="ow">in</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">_current_accumulator</span><span class="p">:</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span>
+                <span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">state_spec</span><span class="o">.</span><span class="n">coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">new_value</span><span class="p">))</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state_spec</span><span class="p">,</span> <span class="n">userstate</span><span class="o">.</span><span class="n">ReadModifyWriteStateSpec</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">is_cleared</span><span class="p">():</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">is_modified</span><span class="p">():</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">)</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">state_tag</span><span class="p">,</span> <span class="n">runtime_state</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid state spec: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">state_spec</span><span class="p">)</span>
+
+    <span class="c1"># Commit new timers.</span>
+    <span class="k">for</span> <span class="n">cache_key</span><span class="p">,</span> <span class="n">runtime_timer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">encoded_key</span><span class="p">,</span> <span class="n">window</span><span class="p">,</span> <span class="n">timer_spec</span> <span class="o">=</span> <span class="n">cache_key</span>
+      <span class="n">state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_context</span><span class="o">.</span><span class="n">get_keyed_state</span><span class="p">(</span><span class="n">encoded_key</span><span class="p">)</span>
+      <span class="n">timer_name</span> <span class="o">=</span> <span class="s1">&#39;user/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">timer_spec</span><span class="o">.</span><span class="n">name</span>
+      <span class="k">for</span> <span class="n">dynamic_timer_tag</span><span class="p">,</span> <span class="n">timer</span> <span class="ow">in</span> <span class="n">runtime_timer</span><span class="o">.</span><span class="n">_timer_recordings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">timer</span><span class="o">.</span><span class="n">cleared</span><span class="p">:</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">clear_timer</span><span class="p">(</span>
+              <span class="n">window</span><span class="p">,</span>
+              <span class="n">timer_name</span><span class="p">,</span>
+              <span class="n">timer_spec</span><span class="o">.</span><span class="n">time_domain</span><span class="p">,</span>
+              <span class="n">dynamic_timer_tag</span><span class="o">=</span><span class="n">dynamic_timer_tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timer</span><span class="o">.</span><span class="n">timestamp</span><span class="p">:</span>
+          <span class="c1"># TODO(ccy): add corresponding watermark holds after the DirectRunner</span>
+          <span class="c1"># allows for keyed watermark holds.</span>
+          <span class="n">state</span><span class="o">.</span><span class="n">set_timer</span><span class="p">(</span>
+              <span class="n">window</span><span class="p">,</span>
+              <span class="n">timer_name</span><span class="p">,</span>
+              <span class="n">timer_spec</span><span class="o">.</span><span class="n">time_domain</span><span class="p">,</span>
+              <span class="n">timer</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span>
+              <span class="n">dynamic_timer_tag</span><span class="o">=</span><span class="n">dynamic_timer_tag</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DirectUserStateContext.reset"><a class="viewcode-back" href="../../../../apache_beam.runners.direct.direct_userstate.html#apache_beam.runners.direct.direct_userstate.DirectUserStateContext.reset">[docs]</a>  <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+      <span class="n">state</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cached_states</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cached_timers</span> <span class="o">=</span> <span class="p">{}</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
