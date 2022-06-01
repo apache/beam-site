@@ -1,0 +1,425 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.io.fileio module &mdash; Apache Beam 2.39.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.io.filesystem module" href="apache_beam.io.filesystem.html" />
+    <link rel="prev" title="apache_beam.io.filebasedsource module" href="apache_beam.io.filebasedsource.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.39.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.io.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.io.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.avroio.html">apache_beam.io.avroio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.concat_source.html">apache_beam.io.concat_source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.debezium.html">apache_beam.io.debezium module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsink.html">apache_beam.io.filebasedsink module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsource.html">apache_beam.io.filebasedsource module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.io.fileio module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#writing-to-files">Writing to Files</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystem.html">apache_beam.io.filesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystemio.html">apache_beam.io.filesystemio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystems.html">apache_beam.io.filesystems module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.hadoopfilesystem.html">apache_beam.io.hadoopfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.iobase.html">apache_beam.io.iobase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.jdbc.html">apache_beam.io.jdbc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kafka.html">apache_beam.io.kafka module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kinesis.html">apache_beam.io.kinesis module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.localfilesystem.html">apache_beam.io.localfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.mongodbio.html">apache_beam.io.mongodbio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.parquetio.html">apache_beam.io.parquetio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.range_trackers.html">apache_beam.io.range_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.restriction_trackers.html">apache_beam.io.restriction_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.snowflake.html">apache_beam.io.snowflake module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.source_test_utils.html">apache_beam.io.source_test_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.textio.html">apache_beam.io.textio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.tfrecordio.html">apache_beam.io.tfrecordio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.utils.html">apache_beam.io.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.watermark_estimators.html">apache_beam.io.watermark_estimators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="apache_beam.io.html">apache_beam.io package</a> &raquo;</li>
+        
+      <li>apache_beam.io.fileio module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/apache_beam.io.fileio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-apache_beam.io.fileio">
+<span id="apache-beam-io-fileio-module"></span><h1>apache_beam.io.fileio module<a class="headerlink" href="#module-apache_beam.io.fileio" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">PTransforms</span></code> for manipulating files in Apache Beam.</p>
+<p>Provides reading <code class="docutils literal notranslate"><span class="pre">PTransform</span></code>s, <code class="docutils literal notranslate"><span class="pre">MatchFiles</span></code>,
+<code class="docutils literal notranslate"><span class="pre">MatchAll</span></code>, that produces a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of records representing a file
+and its metadata; and <code class="docutils literal notranslate"><span class="pre">ReadMatches</span></code>, which takes in a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of file
+metadata records, and produces a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of <code class="docutils literal notranslate"><span class="pre">ReadableFile</span></code> objects.
+These transforms currently do not support splitting by themselves.</p>
+<div class="section" id="writing-to-files">
+<h2>Writing to Files<a class="headerlink" href="#writing-to-files" title="Permalink to this headline">¶</a></h2>
+<p>The transforms in this file include <code class="docutils literal notranslate"><span class="pre">WriteToFiles</span></code>, which allows you to write
+a <code class="docutils literal notranslate"><span class="pre">beam.PCollection</span></code> to files, and gives you many options to customize how to
+do this.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">WriteToFiles</span></code> transform supports bounded and unbounded PCollections
+(i.e. it can be used both batch and streaming pipelines). For streaming
+pipelines, it currently does not have support for multiple trigger firings
+on the same window.</p>
+<div class="section" id="file-naming">
+<h3>File Naming<a class="headerlink" href="#file-naming" title="Permalink to this headline">¶</a></h3>
+<p>One of the parameters received by <code class="docutils literal notranslate"><span class="pre">WriteToFiles</span></code> is a function specifying how
+to name the files that are written. This is a function that takes in the
+following parameters:</p>
+<ul class="simple">
+<li>window</li>
+<li>pane</li>
+<li>shard_index</li>
+<li>total_shards</li>
+<li>compression</li>
+<li>destination</li>
+</ul>
+<p>It should return a file name that is unique for a combination of these
+parameters.</p>
+<p>The default naming strategy is to name files
+in the format
+<cite>$prefix-$start-$end-$pane-$shard-of-$numShards$suffix$compressionSuffix</cite>,
+where:</p>
+<ul class="simple">
+<li><cite>$prefix</cite> is, by default, <cite>“output”</cite>.</li>
+<li><cite>$start</cite> and <cite>$end</cite> are the boundaries of the window for the data being
+written. These are omitted if we’re using the Global window.</li>
+<li><cite>$pane</cite> is the index for the number of firing for a window.</li>
+<li><cite>$shard</cite> and <cite>$numShards</cite> are the current shard number, and the total number
+of shards for this window firing.</li>
+<li><cite>$suffix</cite> is, by default, an empty string, but it can be set by the user via
+<code class="docutils literal notranslate"><span class="pre">default_file_naming</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="dynamic-destinations">
+<h3>Dynamic Destinations<a class="headerlink" href="#dynamic-destinations" title="Permalink to this headline">¶</a></h3>
+<p>If the elements in the input <code class="docutils literal notranslate"><span class="pre">beam.PCollection</span></code> can be partitioned into groups
+that should be treated differently (e.g. some events are to be stored as CSV,
+while some others are to be stored as Avro files), it is possible to do this
+by passing a <cite>destination</cite> parameter to <code class="docutils literal notranslate"><span class="pre">WriteToFiles</span></code>. Something like the
+following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_pcollection</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">fileio</span><span class="o">.</span><span class="n">WriteToFiles</span><span class="p">(</span>
+      <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/my/file/path&#39;</span><span class="p">,</span>
+      <span class="n">destination</span><span class="o">=</span><span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="s1">&#39;avro&#39;</span> <span class="k">if</span> <span class="n">record</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="k">else</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span>
+      <span class="n">sink</span><span class="o">=</span><span class="k">lambda</span> <span class="n">dest</span><span class="p">:</span> <span class="n">AvroSink</span><span class="p">()</span> <span class="k">if</span> <span class="n">dest</span> <span class="o">==</span> <span class="s1">&#39;avro&#39;</span> <span class="k">else</span> <span class="n">CsvSink</span><span class="p">(),</span>
+      <span class="n">file_naming</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">fileio</span><span class="o">.</span><span class="n">destination_prefix_naming</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>In this transform, depending on the type of a record, it will be written down to
+a destination named <cite>‘avro’</cite>, or <cite>‘csv’</cite>. The value returned by the
+<cite>destination</cite> call is then passed to the <cite>sink</cite> call, to determine what sort of
+sink will be used for each destination. The return type of the <cite>destination</cite>
+parameter can be anything, as long as elements can be grouped by it.</p>
+<dl class="class">
+<dt id="apache_beam.io.fileio.EmptyMatchTreatment">
+<em class="property">class </em><code class="descclassname">apache_beam.io.fileio.</code><code class="descname">EmptyMatchTreatment</code><a class="reference internal" href="_modules/apache_beam/io/fileio.html#EmptyMatchTreatment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.EmptyMatchTreatment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>How to treat empty matches in <code class="docutils literal notranslate"><span class="pre">MatchAll</span></code> and <code class="docutils literal notranslate"><span class="pre">MatchFiles</span></code> transforms.</p>
+<p>If empty matches are disallowed, an error will be thrown if a pattern does not
+match any files.</p>
+<dl class="attribute">
+<dt id="apache_beam.io.fileio.EmptyMatchTreatment.ALLOW">
+<code class="descname">ALLOW</code><em class="property"> = 'ALLOW'</em><a class="headerlink" href="#apache_beam.io.fileio.EmptyMatchTreatment.ALLOW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apache_beam.io.fileio.EmptyMatchTreatment.DISALLOW">
+<code class="descname">DISALLOW</code><em class="property"> = 'DISALLOW'</em><a class="headerlink" href="#apache_beam.io.fileio.EmptyMatchTreatment.DISALLOW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="apache_beam.io.fileio.EmptyMatchTreatment.ALLOW_IF_WILDCARD">
+<code class="descname">ALLOW_IF_WILDCARD</code><em class="property"> = 'ALLOW_IF_WILDCARD'</em><a class="headerlink" href="#apache_beam.io.fileio.EmptyMatchTreatment.ALLOW_IF_WILDCARD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="staticmethod">
+<dt id="apache_beam.io.fileio.EmptyMatchTreatment.allow_empty_match">
+<em class="property">static </em><code class="descname">allow_empty_match</code><span class="sig-paren">(</span><em>pattern</em>, <em>setting</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#EmptyMatchTreatment.allow_empty_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.EmptyMatchTreatment.allow_empty_match" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="apache_beam.io.fileio.MatchFiles">
+<em class="property">class </em><code class="descclassname">apache_beam.io.fileio.</code><code class="descname">MatchFiles</code><span class="sig-paren">(</span><em>file_pattern: str</em>, <em>empty_match_treatment='ALLOW_IF_WILDCARD'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#MatchFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.MatchFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></a></p>
+<p>Matches a file pattern using <code class="docutils literal notranslate"><span class="pre">FileSystems.match</span></code>.</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">PTransform</span></code> returns a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of matching files in the form
+of <code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code> objects.</p>
+<dl class="method">
+<dt id="apache_beam.io.fileio.MatchFiles.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll</em><span class="sig-paren">)</span> &#x2192; apache_beam.pvalue.PCollection[apache_beam.io.filesystem.FileMetadata][apache_beam.io.filesystem.FileMetadata]<a class="reference internal" href="_modules/apache_beam/io/fileio.html#MatchFiles.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.MatchFiles.expand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="apache_beam.io.fileio.MatchAll">
+<em class="property">class </em><code class="descclassname">apache_beam.io.fileio.</code><code class="descname">MatchAll</code><span class="sig-paren">(</span><em>empty_match_treatment='ALLOW'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#MatchAll"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.MatchAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></a></p>
+<p>Matches file patterns from the input PCollection via <code class="docutils literal notranslate"><span class="pre">FileSystems.match</span></code>.</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">PTransform</span></code> returns a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of matching files in the form
+of <code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code> objects.</p>
+<dl class="method">
+<dt id="apache_beam.io.fileio.MatchAll.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll: apache_beam.pvalue.PCollection</em><span class="sig-paren">)</span> &#x2192; apache_beam.pvalue.PCollection[apache_beam.io.filesystem.FileMetadata][apache_beam.io.filesystem.FileMetadata]<a class="reference internal" href="_modules/apache_beam/io/fileio.html#MatchAll.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.MatchAll.expand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="apache_beam.io.fileio.ReadableFile">
+<em class="property">class </em><code class="descclassname">apache_beam.io.fileio.</code><code class="descname">ReadableFile</code><span class="sig-paren">(</span><em>metadata</em>, <em>compression=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadableFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadableFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A utility class for accessing files.</p>
+<dl class="method">
+<dt id="apache_beam.io.fileio.ReadableFile.open">
+<code class="descname">open</code><span class="sig-paren">(</span><em>mime_type='text/plain'</em>, <em>compression_type=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadableFile.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadableFile.open" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="apache_beam.io.fileio.ReadableFile.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>mime_type='application/octet-stream'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadableFile.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadableFile.read" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="apache_beam.io.fileio.ReadableFile.read_utf8">
+<code class="descname">read_utf8</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadableFile.read_utf8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadableFile.read_utf8" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="apache_beam.io.fileio.MatchContinuously">
+<code class="descclassname">apache_beam.io.fileio.</code><code class="descname">MatchContinuously</code><span class="sig-paren">(</span><em>file_pattern</em>, <em>interval=360.0</em>, <em>has_deduplication=True</em>, <em>start_timestamp=Timestamp(1654022111.938109)</em>, <em>stop_timestamp=Timestamp(9223372036854.775000)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#MatchContinuously"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.MatchContinuously" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for new files for a given pattern every interval.</p>
+<p>This <code class="docutils literal notranslate"><span class="pre">PTransform</span></code> returns a <code class="docutils literal notranslate"><span class="pre">PCollection</span></code> of matching files in the form
+of <code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code> objects.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="apache_beam.io.fileio.ReadMatches">
+<em class="property">class </em><code class="descclassname">apache_beam.io.fileio.</code><code class="descname">ReadMatches</code><span class="sig-paren">(</span><em>compression=None</em>, <em>skip_directories=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadMatches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadMatches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">apache_beam.transforms.ptransform.PTransform</span></code></a></p>
+<p>Converts each result of MatchFiles() or MatchAll() to a ReadableFile.</p>
+<p>This helps read in a file’s contents or obtain a file descriptor.</p>
+<dl class="method">
+<dt id="apache_beam.io.fileio.ReadMatches.expand">
+<code class="descname">expand</code><span class="sig-paren">(</span><em>pcoll: apache_beam.pvalue.PCollection[typing.Union[str, apache_beam.io.filesystem.FileMetadata]][Union[str, apache_beam.io.filesystem.FileMetadata]]</em><span class="sig-paren">)</span> &#x2192; apache_beam.pvalue.PCollection[apache_beam.io.fileio.ReadableFile][apache_beam.io.fileio.ReadableFile]<a class="reference internal" href="_modules/apache_beam/io/fileio.html#ReadMatches.expand"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#apache_beam.io.fileio.ReadMatches.expand" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="apache_beam.io.filesystem.html" class="btn btn-neutral float-right" title="apache_beam.io.filesystem module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="apache_beam.io.filebasedsource.html" class="btn btn-neutral float-left" title="apache_beam.io.filebasedsource module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
