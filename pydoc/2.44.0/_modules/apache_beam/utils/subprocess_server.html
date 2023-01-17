@@ -1,0 +1,575 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.utils.subprocess_server &mdash; Apache Beam 2.44.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.44.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.utils.subprocess_server</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.utils.subprocess_server</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">urllib.error</span> <span class="kn">import</span> <span class="n">URLError</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="kn">import</span> <span class="nn">grpc</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.version</span> <span class="kn">import</span> <span class="n">__version__</span> <span class="k">as</span> <span class="n">beam_version</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SubprocessServer"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer">[docs]</a><span class="k">class</span> <span class="nc">SubprocessServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An abstract base class for running GRPC Servers as an external process.</span>
+
+<span class="sd">  This class acts as a context which will start up a server, provides a stub</span>
+<span class="sd">  to connect to it, and then shuts the server down.  For example::</span>
+
+<span class="sd">      with SubprocessServer(GrpcStubClass, [executable, arg, ...]) as stub:</span>
+<span class="sd">          stub.CallService(...)</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stub_class</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates the server object.</span>
+
+<span class="sd">    :param stub_class: the auto-generated GRPC client stub class used for</span>
+<span class="sd">        connecting to the GRPC service</span>
+<span class="sd">    :param cmd: command (including arguments) for starting up the server,</span>
+<span class="sd">        suitable for passing to `subprocess.POpen`.</span>
+<span class="sd">    :param port: (optional) the port at which the subprocess will serve its</span>
+<span class="sd">        service.  If not given, one will be randomly chosen and the special</span>
+<span class="sd">        string &quot;{{PORT}}&quot; will be substituted in the command line arguments</span>
+<span class="sd">        with the chosen port.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">RLock</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stub_class</span> <span class="o">=</span> <span class="n">stub_class</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">cmd</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+
+  <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">unused_args</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+
+<div class="viewcode-block" id="SubprocessServer.start"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer.start">[docs]</a>  <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">endpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_process</span><span class="p">()</span>
+      <span class="n">wait_secs</span> <span class="o">=</span> <span class="mf">.1</span>
+      <span class="n">channel_options</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;grpc.max_receive_message_length&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+                         <span class="p">(</span><span class="s2">&quot;grpc.max_send_message_length&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+      <span class="n">channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">channel_options</span><span class="p">)</span>
+      <span class="n">channel_ready</span> <span class="o">=</span> <span class="n">grpc</span><span class="o">.</span><span class="n">channel_ready_future</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+      <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">_LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Starting job service with </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+          <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+              <span class="s1">&#39;Service failed to start up with error </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">channel_ready</span><span class="o">.</span><span class="n">result</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">wait_secs</span><span class="p">)</span>
+          <span class="k">break</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">grpc</span><span class="o">.</span><span class="n">FutureTimeoutError</span><span class="p">,</span> <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span><span class="p">):</span>
+          <span class="n">wait_secs</span> <span class="o">*=</span> <span class="mf">1.2</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+              <span class="n">logging</span><span class="o">.</span><span class="n">WARNING</span> <span class="k">if</span> <span class="n">wait_secs</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">,</span>
+              <span class="s1">&#39;Waiting for grpc channel to be ready at </span><span class="si">%s</span><span class="s1">.&#39;</span><span class="p">,</span>
+              <span class="n">endpoint</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stub_class</span><span class="p">(</span><span class="n">channel</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>  <span class="c1"># pylint: disable=bare-except</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s2">&quot;Error bringing up service&quot;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+      <span class="k">raise</span></div>
+
+<div class="viewcode-block" id="SubprocessServer.start_process"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer.start_process">[docs]</a>  <span class="k">def</span> <span class="nf">start_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">:</span>
+        <span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">port</span><span class="p">,</span> <span class="o">=</span> <span class="n">pick_port</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{{PORT}}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">))</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cmd</span><span class="p">]</span>
+      <span class="n">endpoint</span> <span class="o">=</span> <span class="s1">&#39;localhost:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">port</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting service with </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+          <span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+
+      <span class="c1"># Emit the output of this command as info level logging.</span>
+      <span class="k">def</span> <span class="nf">log_stdout</span><span class="p">():</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+          <span class="c1"># The log obtained from stdout is bytes, decode it into string.</span>
+          <span class="c1"># Remove newline via rstrip() to not print an empty line.</span>
+          <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s1">&#39;backslashreplace&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+          <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+      <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">log_stdout</span><span class="p">)</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+      <span class="k">return</span> <span class="n">endpoint</span></div>
+
+<div class="viewcode-block" id="SubprocessServer.stop"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer.stop">[docs]</a>  <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stop_process</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SubprocessServer.stop_process"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer.stop_process">[docs]</a>  <span class="k">def</span> <span class="nf">stop_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="p">:</span>
+        <span class="k">return</span>
+      <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">break</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Sending SIGINT to job_server&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">send_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_process</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="SubprocessServer.local_temp_dir"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.SubprocessServer.local_temp_dir">[docs]</a>  <span class="k">def</span> <span class="nf">local_temp_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_local_temp_root</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="JavaJarServer"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer">[docs]</a><span class="k">class</span> <span class="nc">JavaJarServer</span><span class="p">(</span><span class="n">SubprocessServer</span><span class="p">):</span>
+
+  <span class="n">MAVEN_CENTRAL_REPOSITORY</span> <span class="o">=</span> <span class="s1">&#39;https://repo.maven.apache.org/maven2&#39;</span>
+  <span class="n">BEAM_GROUP_ID</span> <span class="o">=</span> <span class="s1">&#39;org.apache.beam&#39;</span>
+  <span class="n">JAR_CACHE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~/.apache_beam/cache/jars&quot;</span><span class="p">)</span>
+
+  <span class="n">_BEAM_SERVICES</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span>
+      <span class="s1">&#39;local&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">,</span> <span class="p">),</span>
+      <span class="nb">dict</span><span class="p">(</span><span class="fm">__init__</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;replacements&#39;</span><span class="p">,</span> <span class="p">{})))()</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stub_class</span><span class="p">,</span> <span class="n">path_to_jar</span><span class="p">,</span> <span class="n">java_arguments</span><span class="p">,</span> <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">classpath</span><span class="p">:</span>
+      <span class="c1"># java -jar ignores the classpath, so we make a new jar that embeds</span>
+      <span class="c1"># the requested classpath.</span>
+      <span class="n">path_to_jar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_classpath_jar</span><span class="p">(</span><span class="n">path_to_jar</span><span class="p">,</span> <span class="n">classpath</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">stub_class</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;java&#39;</span><span class="p">,</span> <span class="s1">&#39;-jar&#39;</span><span class="p">,</span> <span class="n">path_to_jar</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">java_arguments</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_existing_service</span> <span class="o">=</span> <span class="n">path_to_jar</span> <span class="k">if</span> <span class="n">_is_service_endpoint</span><span class="p">(</span>
+        <span class="n">path_to_jar</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="JavaJarServer.start_process"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.start_process">[docs]</a>  <span class="k">def</span> <span class="nf">start_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_service</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_service</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">shutil</span><span class="o">.</span><span class="n">which</span><span class="p">(</span><span class="s1">&#39;java&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;Java must be installed on this system to use this &#39;</span>
+            <span class="s1">&#39;transform/runner.&#39;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">start_process</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.stop_process"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.stop_process">[docs]</a>  <span class="k">def</span> <span class="nf">stop_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_existing_service</span><span class="p">:</span>
+      <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">stop_process</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.jar_name"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.jar_name">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">jar_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">artifact_id</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">classifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">appendix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;-&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="nb">filter</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[</span><span class="n">artifact_id</span><span class="p">,</span> <span class="n">appendix</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">classifier</span><span class="p">]))</span> <span class="o">+</span> <span class="s1">&#39;.jar&#39;</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.path_to_maven_jar"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.path_to_maven_jar">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">path_to_maven_jar</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">artifact_id</span><span class="p">,</span>
+      <span class="n">group_id</span><span class="p">,</span>
+      <span class="n">version</span><span class="p">,</span>
+      <span class="n">repository</span><span class="o">=</span><span class="n">MAVEN_CENTRAL_REPOSITORY</span><span class="p">,</span>
+      <span class="n">classifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">appendix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+        <span class="n">repository</span><span class="p">,</span>
+        <span class="n">group_id</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">),</span>
+        <span class="n">artifact_id</span><span class="p">,</span>
+        <span class="n">version</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">jar_name</span><span class="p">(</span><span class="n">artifact_id</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">classifier</span><span class="p">,</span> <span class="n">appendix</span><span class="p">)</span>
+    <span class="p">])</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.path_to_beam_jar"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.path_to_beam_jar">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">path_to_beam_jar</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">gradle_target</span><span class="p">,</span>
+      <span class="n">appendix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">version</span><span class="o">=</span><span class="n">beam_version</span><span class="p">,</span>
+      <span class="n">artifact_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">gradle_target</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_BEAM_SERVICES</span><span class="o">.</span><span class="n">replacements</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_BEAM_SERVICES</span><span class="o">.</span><span class="n">replacements</span><span class="p">[</span><span class="n">gradle_target</span><span class="p">]</span>
+
+    <span class="n">gradle_package</span> <span class="o">=</span> <span class="n">gradle_target</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">artifact_id</span><span class="p">:</span>
+      <span class="n">artifact_id</span> <span class="o">=</span> <span class="s1">&#39;beam-&#39;</span> <span class="o">+</span> <span class="n">gradle_package</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">)</span>
+    <span class="n">project_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">)[:</span><span class="o">-</span><span class="mi">5</span><span class="p">])</span>
+    <span class="n">local_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">project_root</span><span class="p">,</span>
+        <span class="n">gradle_package</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="p">),</span>
+        <span class="s1">&#39;build&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;libs&#39;</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">jar_name</span><span class="p">(</span>
+            <span class="n">artifact_id</span><span class="p">,</span>
+            <span class="n">version</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.dev&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">),</span>
+            <span class="n">classifier</span><span class="o">=</span><span class="s1">&#39;SNAPSHOT&#39;</span><span class="p">,</span>
+            <span class="n">appendix</span><span class="o">=</span><span class="n">appendix</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_path</span><span class="p">):</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Using pre-built snapshot at </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">local_path</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">local_path</span>
+    <span class="k">elif</span> <span class="s1">&#39;.dev&#39;</span> <span class="ow">in</span> <span class="n">version</span><span class="p">:</span>
+      <span class="c1"># TODO: Attempt to use nightly snapshots?</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="p">(</span>
+              <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> not found. &#39;</span>
+              <span class="s1">&#39;Please build the server with </span><span class="se">\n</span><span class="s1">  cd </span><span class="si">%s</span><span class="s1">; ./gradlew </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">)</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">project_root</span><span class="p">),</span> <span class="n">gradle_target</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">path_to_maven_jar</span><span class="p">(</span>
+          <span class="n">artifact_id</span><span class="p">,</span>
+          <span class="bp">cls</span><span class="o">.</span><span class="n">BEAM_GROUP_ID</span><span class="p">,</span>
+          <span class="n">version</span><span class="p">,</span>
+          <span class="bp">cls</span><span class="o">.</span><span class="n">MAVEN_CENTRAL_REPOSITORY</span><span class="p">,</span>
+          <span class="n">appendix</span><span class="o">=</span><span class="n">appendix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.local_jar"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.local_jar">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">local_jar</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cache_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">cache_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">JAR_CACHE</span>
+    <span class="c1"># TODO: Verify checksum?</span>
+    <span class="k">if</span> <span class="n">_is_service_endpoint</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">url</span>
+    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">url</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">cached_jar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">url</span><span class="p">))</span>
+      <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cached_jar</span><span class="p">):</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Using cached job server jar from </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Downloading job server jar from </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">url</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">):</span>
+          <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">)</span>
+          <span class="c1"># TODO: Clean up this cache according to some policy.</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">url_read</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+          <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">cached_jar</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">jar_write</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">url_read</span><span class="p">,</span> <span class="n">jar_write</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span><span class="p">)</span>
+          <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">cached_jar</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="n">cached_jar</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">URLError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+              <span class="s1">&#39;Unable to fetch remote job server jar at </span><span class="si">%s</span><span class="s1">: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">cached_jar</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.beam_services"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.beam_services">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+  <span class="k">def</span> <span class="nf">beam_services</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">replacements</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">old</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_BEAM_SERVICES</span><span class="o">.</span><span class="n">replacements</span>
+      <span class="bp">cls</span><span class="o">.</span><span class="n">_BEAM_SERVICES</span><span class="o">.</span><span class="n">replacements</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">old</span><span class="p">,</span> <span class="o">**</span><span class="n">replacements</span><span class="p">)</span>
+      <span class="k">yield</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="bp">cls</span><span class="o">.</span><span class="n">_BEAM_SERVICES</span><span class="o">.</span><span class="n">replacements</span> <span class="o">=</span> <span class="n">old</span></div>
+
+<div class="viewcode-block" id="JavaJarServer.make_classpath_jar"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.JavaJarServer.make_classpath_jar">[docs]</a>  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">make_classpath_jar</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">main_jar</span><span class="p">,</span> <span class="n">extra_jars</span><span class="p">,</span> <span class="n">cache_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cache_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">cache_dir</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">JAR_CACHE</span>
+    <span class="n">composite_jar_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cache_dir</span><span class="p">,</span> <span class="s1">&#39;composite-jars&#39;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">composite_jar_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Class-Path references from a jar must be relative, so we create</span>
+    <span class="c1"># a relatively-addressable subdirectory with symlinks to all the</span>
+    <span class="c1"># required jars.</span>
+    <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="p">[</span><span class="n">main_jar</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">extra_jars</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="ow">or</span> <span class="p">[</span><span class="n">pattern</span><span class="p">]:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">rel_path</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span>
+            <span class="n">path</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">classpath</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rel_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">composite_jar_dir</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">)):</span>
+          <span class="n">os</span><span class="o">.</span><span class="n">symlink</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">composite_jar_dir</span><span class="p">,</span> <span class="n">rel_path</span><span class="p">))</span>
+    <span class="c1"># Now create a single jar that simply references the rest and has the same</span>
+    <span class="c1"># main class as main_jar.</span>
+    <span class="n">composite_jar</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">composite_jar_dir</span><span class="p">,</span>
+        <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">classpath</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s1">&#39;.jar&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">composite_jar</span><span class="p">):</span>
+      <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">main_jar</span><span class="p">)</span> <span class="k">as</span> <span class="n">main</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">main</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;META-INF/MANIFEST.MF&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">manifest</span><span class="p">:</span>
+          <span class="n">main_class</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+              <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Main-Class: &#39;</span><span class="p">),</span> <span class="n">manifest</span><span class="p">))</span>
+      <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="n">composite_jar</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">composite</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">composite</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;META-INF/MANIFEST.MF&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">manifest</span><span class="p">:</span>
+          <span class="n">manifest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Manifest-Version: 1.0</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+          <span class="n">manifest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">main_class</span><span class="p">)</span>
+          <span class="n">manifest</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+              <span class="sa">b</span><span class="s1">&#39;Class-Path: &#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">  &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">classpath</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;ascii&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">composite_jar</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="n">composite_jar</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">composite_jar</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_is_service_endpoint</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^[a-zA-Z0-9.-]+:\d+$&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="pick_port"><a class="viewcode-back" href="../../../apache_beam.utils.subprocess_server.html#apache_beam.utils.subprocess_server.pick_port">[docs]</a><span class="k">def</span> <span class="nf">pick_port</span><span class="p">(</span><span class="o">*</span><span class="n">ports</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Returns a list of ports, same length as input ports list, but replaces</span>
+<span class="sd">  all None or 0 ports with a random free port.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">sockets</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span> <span class="nf">find_free_port</span><span class="p">(</span><span class="n">port</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">port</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">port</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># [Errno 97] Address family not supported by protocol</span>
+        <span class="c1"># Likely indicates we are in an IPv6-only environment (BEAM-10618). Try</span>
+        <span class="c1"># again with AF_INET6.</span>
+        <span class="k">if</span> <span class="n">e</span><span class="o">.</span><span class="n">errno</span> <span class="o">==</span> <span class="mi">97</span><span class="p">:</span>
+          <span class="n">s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET6</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="n">e</span>
+
+      <span class="n">sockets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+      <span class="n">s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">getsockname</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+  <span class="n">ports</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">find_free_port</span><span class="p">,</span> <span class="n">ports</span><span class="p">))</span>
+  <span class="c1"># Close sockets only now to avoid the same port to be chosen twice</span>
+  <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sockets</span><span class="p">:</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">ports</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,388 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.utils.profiler &mdash; Apache Beam 2.44.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.44.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.utils.profiler</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.utils.profiler</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;A profiler context manager based on cProfile.Profile and guppy.hpy objects.</span>
+
+<span class="sd">For internal use only; no backwards-compatibility guarantees.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pytype: skip-file</span>
+<span class="c1"># mypy: check-untyped-defs</span>
+
+<span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pstats</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">filesystems</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Profile"><a class="viewcode-back" href="../../../apache_beam.utils.profiler.html#apache_beam.utils.profiler.Profile">[docs]</a><span class="k">class</span> <span class="nc">Profile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;cProfile and Heapy wrapper context for saving and logging profiler</span>
+<span class="sd">  results.&quot;&quot;&quot;</span>
+
+  <span class="n">SORTBY</span> <span class="o">=</span> <span class="s1">&#39;cumulative&#39;</span>
+
+  <span class="n">profile_output</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: str</span>
+  <span class="n">stats</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: pstats.Stats</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">profile_id</span><span class="p">,</span> <span class="c1"># type: str</span>
+      <span class="n">profile_location</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># type: Optional[str]</span>
+      <span class="n">log_results</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># type: bool</span>
+      <span class="n">file_copy_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># type: Optional[Callable[[str, str], None]]</span>
+      <span class="n">time_prefix</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">_%H_%M_%S-&#39;</span><span class="p">,</span> <span class="c1"># type: str</span>
+      <span class="n">enable_cpu_profiling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># type: bool</span>
+      <span class="n">enable_memory_profiling</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="c1"># type: bool</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a Profile object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      profile_id: Unique id of the profiling session.</span>
+<span class="sd">      profile_location: The file location where the profiling results will be</span>
+<span class="sd">        stored.</span>
+<span class="sd">      log_results: Log the result to console if true.</span>
+<span class="sd">      file_copy_fn: Lambda function for copying files.</span>
+<span class="sd">      time_prefix: Format of the timestamp prefix in profiling result files.</span>
+<span class="sd">      enable_cpu_profiling: CPU profiler will be enabled during the profiling</span>
+<span class="sd">        session.</span>
+<span class="sd">      enable_memory_profiling: Memory profiler will be enabled during the</span>
+<span class="sd">        profiling session, the profiler only records the newly allocated objects</span>
+<span class="sd">        in this session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">profile_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">profile_id</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">profile_location</span> <span class="o">=</span> <span class="n">profile_location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">log_results</span> <span class="o">=</span> <span class="n">log_results</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">file_copy_fn</span> <span class="o">=</span> <span class="n">file_copy_fn</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_file_copy_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">time_prefix</span> <span class="o">=</span> <span class="n">time_prefix</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">enable_cpu_profiling</span> <span class="o">=</span> <span class="n">enable_cpu_profiling</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">enable_memory_profiling</span> <span class="o">=</span> <span class="n">enable_memory_profiling</span>
+
+  <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Start profiling: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_cpu_profiling</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">profile</span> <span class="o">=</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_memory_profiling</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">guppy</span> <span class="kn">import</span> <span class="n">hpy</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span> <span class="o">=</span> <span class="n">hpy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span><span class="o">.</span><span class="n">setrelheap</span><span class="p">()</span>
+      <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Unable to import guppy for memory profiling&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Stop profiling: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_location</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_cpu_profiling</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">create_stats</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">profile_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upload_profile_data</span><span class="p">(</span>
+            <span class="c1"># typing: seems stats attr is missing from typeshed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">profile_location</span><span class="p">,</span> <span class="s1">&#39;cpu_profile&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">stats</span><span class="p">)</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_memory_profiling</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span><span class="p">:</span>
+          <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span><span class="o">.</span><span class="n">heap</span><span class="p">()</span>
+          <span class="n">heap_dump_data</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">h</span><span class="o">.</span><span class="n">more</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_upload_profile_data</span><span class="p">(</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">profile_location</span><span class="p">,</span>
+              <span class="s1">&#39;memory_profile&#39;</span><span class="p">,</span>
+              <span class="n">heap_dump_data</span><span class="p">,</span>
+              <span class="n">write_binary</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_results</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_cpu_profiling</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">profile</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">Profile</span><span class="o">.</span><span class="n">SORTBY</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Cpu profiler data: [</span><span class="si">%s</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_memory_profiling</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span><span class="p">:</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Memory profiler data: </span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">hpy</span><span class="o">.</span><span class="n">heap</span><span class="p">())</span>
+
+<div class="viewcode-block" id="Profile.default_file_copy_fn"><a class="viewcode-back" href="../../../apache_beam.utils.profiler.html#apache_beam.utils.profiler.Profile.default_file_copy_fn">[docs]</a>  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">default_file_copy_fn</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dest</span><span class="p">):</span>
+    <span class="n">dest_handle</span> <span class="o">=</span> <span class="n">filesystems</span><span class="o">.</span><span class="n">FileSystems</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">dest</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_handle</span><span class="p">:</span>
+        <span class="n">dest_handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">src_handle</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="n">dest_handle</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">filesystems</span><span class="o">.</span><span class="n">FileSystems</span><span class="o">.</span><span class="n">rename</span><span class="p">([</span><span class="n">dest</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">],</span> <span class="p">[</span><span class="n">dest</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Profile.factory_from_options"><a class="viewcode-back" href="../../../apache_beam.utils.profiler.html#apache_beam.utils.profiler.Profile.factory_from_options">[docs]</a>  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">factory_from_options</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; Optional[Callable[..., Profile]]</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">profile_cpu</span> <span class="ow">or</span> <span class="n">options</span><span class="o">.</span><span class="n">profile_memory</span><span class="p">:</span>
+
+      <span class="k">def</span> <span class="nf">create_profiler</span><span class="p">(</span><span class="n">profile_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">options</span><span class="o">.</span><span class="n">profile_sample_rate</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">Profile</span><span class="p">(</span>
+              <span class="n">profile_id</span><span class="p">,</span>
+              <span class="n">options</span><span class="o">.</span><span class="n">profile_location</span><span class="p">,</span>
+              <span class="n">enable_cpu_profiling</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">profile_cpu</span><span class="p">,</span>
+              <span class="n">enable_memory_profiling</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">profile_memory</span><span class="p">,</span>
+              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+      <span class="k">return</span> <span class="n">create_profiler</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+  <span class="k">def</span> <span class="nf">_upload_profile_data</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">profile_location</span><span class="p">,</span> <span class="nb">dir</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">write_binary</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="c1"># type: (...) -&gt; str</span>
+    <span class="n">dump_location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">profile_location</span><span class="p">,</span>
+        <span class="nb">dir</span><span class="p">,</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_prefix</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_id</span><span class="p">))</span>
+    <span class="n">fd</span><span class="p">,</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">write_binary</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fb</span><span class="p">:</span>
+          <span class="kn">import</span> <span class="nn">marshal</span>
+          <span class="n">marshal</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fb</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+          <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Copying profiler data to: [</span><span class="si">%s</span><span class="s1">]&#39;</span><span class="p">,</span> <span class="n">dump_location</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">file_copy_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">dump_location</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dump_location</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
