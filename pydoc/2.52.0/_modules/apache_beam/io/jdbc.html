@@ -1,0 +1,666 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>apache_beam.io.jdbc &mdash; Apache Beam 2.52.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Apache Beam
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                2.52.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>apache_beam.io.jdbc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for apache_beam.io.jdbc</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;PTransforms for supporting Jdbc in Python pipelines.</span>
+
+<span class="sd">  These transforms are currently supported by Beam portable</span>
+<span class="sd">  Flink, Spark, and Dataflow v2 runners.</span>
+
+<span class="sd">  **Setup**</span>
+
+<span class="sd">  Transforms provided in this module are cross-language transforms</span>
+<span class="sd">  implemented in the Beam Java SDK. During the pipeline construction, Python SDK</span>
+<span class="sd">  will connect to a Java expansion service to expand these transforms.</span>
+<span class="sd">  To facilitate this, a small amount of setup is needed before using these</span>
+<span class="sd">  transforms in a Beam Python pipeline.</span>
+
+<span class="sd">  There are several ways to setup cross-language Jdbc transforms.</span>
+
+<span class="sd">  * Option 1: use the default expansion service</span>
+<span class="sd">  * Option 2: specify a custom expansion service</span>
+
+<span class="sd">  See below for details regarding each of these options.</span>
+
+<span class="sd">  *Option 1: Use the default expansion service*</span>
+
+<span class="sd">  This is the recommended and easiest setup option for using Python Jdbc</span>
+<span class="sd">  transforms. This option is only available for Beam 2.24.0 and later.</span>
+
+<span class="sd">  This option requires following pre-requisites before running the Beam</span>
+<span class="sd">  pipeline.</span>
+
+<span class="sd">  * Install Java runtime in the computer from where the pipeline is constructed</span>
+<span class="sd">    and make sure that &#39;java&#39; command is available.</span>
+
+<span class="sd">  In this option, Python SDK will either download (for released Beam version) or</span>
+<span class="sd">  build (when running from a Beam Git clone) a expansion service jar and use</span>
+<span class="sd">  that to expand transforms. Currently Jdbc transforms use the</span>
+<span class="sd">  &#39;beam-sdks-java-io-expansion-service&#39; jar for this purpose.</span>
+
+<span class="sd">  The transforms in this file support an extra `classpath` argument, where one</span>
+<span class="sd">  can specify any extra JARs to be included in the classpath for the expansion</span>
+<span class="sd">  service. Users will need to specify this option to include the JDBC driver</span>
+<span class="sd">  for the database that you&#39;re trying to use. **By default, a Postgres JDBC</span>
+<span class="sd">  driver** is included (i.e. the Java package</span>
+<span class="sd">  `&quot;org.postgresql:postgresql:42.2.16&quot;`).</span>
+
+<span class="sd">  *Option 2: specify a custom expansion service*</span>
+
+<span class="sd">  In this option, you startup your own expansion service and provide that as</span>
+<span class="sd">  a parameter when using the transforms provided in this module.</span>
+
+<span class="sd">  This option requires following pre-requisites before running the Beam</span>
+<span class="sd">  pipeline.</span>
+
+<span class="sd">  * Startup your own expansion service.</span>
+<span class="sd">  * Update your pipeline to provide the expansion service address when</span>
+<span class="sd">    initiating Jdbc transforms provided in this module.</span>
+
+<span class="sd">  Flink Users can use the built-in Expansion Service of the Flink Runner&#39;s</span>
+<span class="sd">  Job Server. If you start Flink&#39;s Job Server, the expansion service will be</span>
+<span class="sd">  started on port 8097. For a different address, please set the</span>
+<span class="sd">  expansion_service parameter.</span>
+
+<span class="sd">  **More information**</span>
+
+<span class="sd">  For more information regarding cross-language transforms see:</span>
+<span class="sd">  - https://beam.apache.org/roadmap/portability/</span>
+
+<span class="sd">  For more information specific to Flink runner see:</span>
+<span class="sd">  - https://beam.apache.org/documentation/runners/flink/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">typing</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.coders</span> <span class="kn">import</span> <span class="n">RowCoder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.external</span> <span class="kn">import</span> <span class="n">BeamJarExpansionService</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.external</span> <span class="kn">import</span> <span class="n">ExternalTransform</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.external</span> <span class="kn">import</span> <span class="n">NamedTupleBasedPayloadBuilder</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.schemas</span> <span class="kn">import</span> <span class="n">LogicalType</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.schemas</span> <span class="kn">import</span> <span class="n">MillisInstant</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints.schemas</span> <span class="kn">import</span> <span class="n">typing_to_runner_api</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils.timestamp</span> <span class="kn">import</span> <span class="n">Timestamp</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;WriteToJdbc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ReadFromJdbc&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">default_io_expansion_service</span><span class="p">(</span><span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">BeamJarExpansionService</span><span class="p">(</span>
+      <span class="s1">&#39;:sdks:java:extensions:schemaio-expansion-service:shadowJar&#39;</span><span class="p">,</span>
+      <span class="n">classpath</span><span class="o">=</span><span class="n">classpath</span><span class="p">)</span>
+
+
+<span class="n">JdbcConfigSchema</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">(</span>
+    <span class="s1">&#39;JdbcConfigSchema&#39;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)],</span>
+<span class="p">)</span>
+
+<span class="n">Config</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">NamedTuple</span><span class="p">(</span>
+    <span class="s1">&#39;Config&#39;</span><span class="p">,</span>
+    <span class="p">[(</span><span class="s1">&#39;driver_class_name&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;jdbc_url&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;username&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span>
+     <span class="p">(</span><span class="s1">&#39;password&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;connection_properties&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;connection_init_sqls&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">typing</span><span class="o">.</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]),</span>
+     <span class="p">(</span><span class="s1">&#39;read_query&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;write_statement&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;fetch_size&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;output_parallelization&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;autosharding&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;partition_column&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;partitions&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;max_connections&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">]),</span>
+     <span class="p">(</span><span class="s1">&#39;driver_jars&#39;</span><span class="p">,</span> <span class="n">typing</span><span class="o">.</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])],</span>
+<span class="p">)</span>
+
+<span class="n">DEFAULT_JDBC_CLASSPATH</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;org.postgresql:postgresql:42.2.16&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="WriteToJdbc"><a class="viewcode-back" href="../../../apache_beam.io.jdbc.html#apache_beam.io.jdbc.WriteToJdbc">[docs]</a><span class="k">class</span> <span class="nc">WriteToJdbc</span><span class="p">(</span><span class="n">ExternalTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;A PTransform which writes Rows to the specified database via JDBC.</span>
+
+<span class="sd">  This transform receives Rows defined as NamedTuple type and registered in</span>
+<span class="sd">  the coders registry, e.g.::</span>
+
+<span class="sd">    ExampleRow = typing.NamedTuple(&#39;ExampleRow&#39;,</span>
+<span class="sd">                                   [(&#39;id&#39;, int), (&#39;name&#39;, unicode)])</span>
+<span class="sd">    coders.registry.register_coder(ExampleRow, coders.RowCoder)</span>
+
+<span class="sd">    with TestPipeline() as p:</span>
+<span class="sd">      _ = (</span>
+<span class="sd">          p</span>
+<span class="sd">          | beam.Create([ExampleRow(1, &#39;abc&#39;)])</span>
+<span class="sd">              .with_output_types(ExampleRow)</span>
+<span class="sd">          | &#39;Write to jdbc&#39; &gt;&gt; WriteToJdbc(</span>
+<span class="sd">              table_name=&#39;jdbc_external_test_write&#39;</span>
+<span class="sd">              driver_class_name=&#39;org.postgresql.Driver&#39;,</span>
+<span class="sd">              jdbc_url=&#39;jdbc:postgresql://localhost:5432/example&#39;,</span>
+<span class="sd">              username=&#39;postgres&#39;,</span>
+<span class="sd">              password=&#39;postgres&#39;,</span>
+<span class="sd">          ))</span>
+
+<span class="sd">  table_name is a required paramater, and by default, the write_statement is</span>
+<span class="sd">  generated from it.</span>
+
+<span class="sd">  The generated write_statement can be overridden by passing in a</span>
+<span class="sd">  write_statment.</span>
+
+
+<span class="sd">  Experimental; no backwards compatibility guarantees.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">URN</span> <span class="o">=</span> <span class="s1">&#39;beam:transform:org.apache.beam:schemaio_jdbc_write:v1&#39;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">,</span>
+      <span class="n">driver_class_name</span><span class="p">,</span>
+      <span class="n">jdbc_url</span><span class="p">,</span>
+      <span class="n">username</span><span class="p">,</span>
+      <span class="n">password</span><span class="p">,</span>
+      <span class="n">statement</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">connection_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">connection_init_sqls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">autosharding</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+      <span class="n">max_connections</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">driver_jars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">expansion_service</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a write operation to Jdbc.</span>
+
+<span class="sd">    :param driver_class_name: name of the jdbc driver class</span>
+<span class="sd">    :param jdbc_url: full jdbc url to the database.</span>
+<span class="sd">    :param username: database username</span>
+<span class="sd">    :param password: database password</span>
+<span class="sd">    :param statement: sql statement to be executed</span>
+<span class="sd">    :param connection_properties: properties of the jdbc connection</span>
+<span class="sd">                                  passed as string with format</span>
+<span class="sd">                                  [propertyName=property;]*</span>
+<span class="sd">    :param connection_init_sqls: required only for MySql and MariaDB.</span>
+<span class="sd">                                 passed as list of strings</span>
+<span class="sd">    :param autosharding: enable automatic re-sharding of bundles to scale the</span>
+<span class="sd">                         number of shards with the number of workers.</span>
+<span class="sd">    :param max_connections: sets the maximum total number of connections.</span>
+<span class="sd">                            use a negative value for no limit.</span>
+<span class="sd">    :param driver_jars: comma separated paths for JDBC drivers. if not</span>
+<span class="sd">                        specified, the default classloader is used to load the</span>
+<span class="sd">                        driver jars.</span>
+<span class="sd">    :param expansion_service: The address (host:port) of the ExpansionService.</span>
+<span class="sd">    :param classpath: A list of JARs or Java packages to include in the</span>
+<span class="sd">                      classpath for the expansion service. This option is</span>
+<span class="sd">                      usually needed for `jdbc` to include extra JDBC driver</span>
+<span class="sd">                      packages.</span>
+<span class="sd">                      The packages can be in these three formats: (1) A local</span>
+<span class="sd">                      file, (2) A URL, (3) A gradle-style identifier of a Maven</span>
+<span class="sd">                      package (e.g. &quot;org.postgresql:postgresql:42.3.1&quot;).</span>
+<span class="sd">                      By default, this argument includes a Postgres SQL JDBC</span>
+<span class="sd">                      driver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span> <span class="ow">or</span> <span class="n">DEFAULT_JDBC_CLASSPATH</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">URN</span><span class="p">,</span>
+        <span class="n">NamedTupleBasedPayloadBuilder</span><span class="p">(</span>
+            <span class="n">JdbcConfigSchema</span><span class="p">(</span>
+                <span class="n">location</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">RowCoder</span><span class="p">(</span>
+                    <span class="n">typing_to_runner_api</span><span class="p">(</span><span class="n">Config</span><span class="p">)</span><span class="o">.</span><span class="n">row_type</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+                        <span class="n">Config</span><span class="p">(</span>
+                            <span class="n">driver_class_name</span><span class="o">=</span><span class="n">driver_class_name</span><span class="p">,</span>
+                            <span class="n">jdbc_url</span><span class="o">=</span><span class="n">jdbc_url</span><span class="p">,</span>
+                            <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+                            <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+                            <span class="n">connection_properties</span><span class="o">=</span><span class="n">connection_properties</span><span class="p">,</span>
+                            <span class="n">connection_init_sqls</span><span class="o">=</span><span class="n">connection_init_sqls</span><span class="p">,</span>
+                            <span class="n">write_statement</span><span class="o">=</span><span class="n">statement</span><span class="p">,</span>
+                            <span class="n">read_query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">fetch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">output_parallelization</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">autosharding</span><span class="o">=</span><span class="n">autosharding</span><span class="p">,</span>
+                            <span class="n">max_connections</span><span class="o">=</span><span class="n">max_connections</span><span class="p">,</span>
+                            <span class="n">driver_jars</span><span class="o">=</span><span class="n">driver_jars</span><span class="p">,</span>
+                            <span class="n">partitions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">partition_column</span><span class="o">=</span><span class="kc">None</span><span class="p">))),</span>
+        <span class="p">),</span>
+        <span class="n">expansion_service</span> <span class="ow">or</span> <span class="n">default_io_expansion_service</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ReadFromJdbc"><a class="viewcode-back" href="../../../apache_beam.io.jdbc.html#apache_beam.io.jdbc.ReadFromJdbc">[docs]</a><span class="k">class</span> <span class="nc">ReadFromJdbc</span><span class="p">(</span><span class="n">ExternalTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;A PTransform which reads Rows from the specified database via JDBC.</span>
+
+<span class="sd">  This transform delivers Rows defined as NamedTuple registered in</span>
+<span class="sd">  the coders registry, e.g.::</span>
+
+<span class="sd">    ExampleRow = typing.NamedTuple(&#39;ExampleRow&#39;,</span>
+<span class="sd">                                   [(&#39;id&#39;, int), (&#39;name&#39;, unicode)])</span>
+<span class="sd">    coders.registry.register_coder(ExampleRow, coders.RowCoder)</span>
+
+<span class="sd">    with TestPipeline() as p:</span>
+<span class="sd">      result = (</span>
+<span class="sd">          p</span>
+<span class="sd">          | &#39;Read from jdbc&#39; &gt;&gt; ReadFromJdbc(</span>
+<span class="sd">              table_name=&#39;jdbc_external_test_read&#39;</span>
+<span class="sd">              driver_class_name=&#39;org.postgresql.Driver&#39;,</span>
+<span class="sd">              jdbc_url=&#39;jdbc:postgresql://localhost:5432/example&#39;,</span>
+<span class="sd">              username=&#39;postgres&#39;,</span>
+<span class="sd">              password=&#39;postgres&#39;,</span>
+<span class="sd">          ))</span>
+
+<span class="sd">  table_name is a required paramater, and by default, the read_query is</span>
+<span class="sd">  generated from it.</span>
+
+<span class="sd">  The generated read_query can be overridden by passing in a read_query.</span>
+
+<span class="sd">  Experimental; no backwards compatibility guarantees.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">URN</span> <span class="o">=</span> <span class="s1">&#39;beam:transform:org.apache.beam:schemaio_jdbc_read:v1&#39;</span>
+
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">,</span>
+      <span class="n">driver_class_name</span><span class="p">,</span>
+      <span class="n">jdbc_url</span><span class="p">,</span>
+      <span class="n">username</span><span class="p">,</span>
+      <span class="n">password</span><span class="p">,</span>
+      <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_parallelization</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">fetch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">partition_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">partitions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">connection_properties</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">connection_init_sqls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_connections</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">driver_jars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">expansion_service</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">classpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initializes a read operation from Jdbc.</span>
+
+<span class="sd">    :param driver_class_name: name of the jdbc driver class</span>
+<span class="sd">    :param jdbc_url: full jdbc url to the database.</span>
+<span class="sd">    :param username: database username</span>
+<span class="sd">    :param password: database password</span>
+<span class="sd">    :param query: sql query to be executed</span>
+<span class="sd">    :param output_parallelization: is output parallelization on</span>
+<span class="sd">    :param fetch_size: how many rows to fetch</span>
+<span class="sd">    :param partition_column: enable partitioned reads by splitting on this</span>
+<span class="sd">                             column</span>
+<span class="sd">    :param partitions: override the default number of splits when using</span>
+<span class="sd">                       partition_column</span>
+<span class="sd">    :param connection_properties: properties of the jdbc connection</span>
+<span class="sd">                                  passed as string with format</span>
+<span class="sd">                                  [propertyName=property;]*</span>
+<span class="sd">    :param connection_init_sqls: required only for MySql and MariaDB.</span>
+<span class="sd">                                 passed as list of strings</span>
+<span class="sd">    :param max_connections: sets the maximum total number of connections.</span>
+<span class="sd">                            use a negative value for no limit.</span>
+<span class="sd">    :param driver_jars: comma separated paths for JDBC drivers. if not</span>
+<span class="sd">                        specified, the default classloader is used to load the</span>
+<span class="sd">                        driver jars.</span>
+<span class="sd">    :param expansion_service: The address (host:port) of the ExpansionService.</span>
+<span class="sd">    :param classpath: A list of JARs or Java packages to include in the</span>
+<span class="sd">                      classpath for the expansion service. This option is</span>
+<span class="sd">                      usually needed for `jdbc` to include extra JDBC driver</span>
+<span class="sd">                      packages.</span>
+<span class="sd">                      The packages can be in these three formats: (1) A local</span>
+<span class="sd">                      file, (2) A URL, (3) A gradle-style identifier of a Maven</span>
+<span class="sd">                      package (e.g. &quot;org.postgresql:postgresql:42.3.1&quot;).</span>
+<span class="sd">                      By default, this argument includes a Postgres SQL JDBC</span>
+<span class="sd">                      driver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">classpath</span> <span class="o">=</span> <span class="n">classpath</span> <span class="ow">or</span> <span class="n">DEFAULT_JDBC_CLASSPATH</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">URN</span><span class="p">,</span>
+        <span class="n">NamedTupleBasedPayloadBuilder</span><span class="p">(</span>
+            <span class="n">JdbcConfigSchema</span><span class="p">(</span>
+                <span class="n">location</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="n">RowCoder</span><span class="p">(</span>
+                    <span class="n">typing_to_runner_api</span><span class="p">(</span><span class="n">Config</span><span class="p">)</span><span class="o">.</span><span class="n">row_type</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+                        <span class="n">Config</span><span class="p">(</span>
+                            <span class="n">driver_class_name</span><span class="o">=</span><span class="n">driver_class_name</span><span class="p">,</span>
+                            <span class="n">jdbc_url</span><span class="o">=</span><span class="n">jdbc_url</span><span class="p">,</span>
+                            <span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">,</span>
+                            <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+                            <span class="n">connection_properties</span><span class="o">=</span><span class="n">connection_properties</span><span class="p">,</span>
+                            <span class="n">connection_init_sqls</span><span class="o">=</span><span class="n">connection_init_sqls</span><span class="p">,</span>
+                            <span class="n">write_statement</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">read_query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+                            <span class="n">fetch_size</span><span class="o">=</span><span class="n">fetch_size</span><span class="p">,</span>
+                            <span class="n">output_parallelization</span><span class="o">=</span><span class="n">output_parallelization</span><span class="p">,</span>
+                            <span class="n">autosharding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">max_connections</span><span class="o">=</span><span class="n">max_connections</span><span class="p">,</span>
+                            <span class="n">driver_jars</span><span class="o">=</span><span class="n">driver_jars</span><span class="p">,</span>
+                            <span class="n">partition_column</span><span class="o">=</span><span class="n">partition_column</span><span class="p">,</span>
+                            <span class="n">partitions</span><span class="o">=</span><span class="n">partitions</span><span class="p">))),</span>
+        <span class="p">),</span>
+        <span class="n">expansion_service</span> <span class="ow">or</span> <span class="n">default_io_expansion_service</span><span class="p">(</span><span class="n">classpath</span><span class="p">),</span>
+    <span class="p">)</span></div>
+
+
+<span class="nd">@LogicalType</span><span class="o">.</span><span class="n">register_logical_type</span>
+<span class="k">class</span> <span class="nc">JdbcDateType</span><span class="p">(</span><span class="n">LogicalType</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">MillisInstant</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Support of Legacy JdbcIO DATE logical type. Deemed to change when Java JDBCIO</span>
+<span class="sd">  has been migrated to Beam portable logical types.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">representation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; type</span>
+    <span class="k">return</span> <span class="n">Timestamp</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">urn</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;beam:logical_type:javasdk_date:v1&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">language_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span>
+
+  <span class="k">def</span> <span class="nf">to_representation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c1"># type: (datetime.date) -&gt; Timestamp</span>
+    <span class="k">return</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_utc_datetime</span><span class="p">(</span>
+        <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span>
+            <span class="n">value</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">to_language_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c1"># type: (Timestamp) -&gt; datetime.date</span>
+
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">to_utc_datetime</span><span class="p">()</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">argument_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span>
+
+  <span class="k">def</span> <span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">_from_typing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
+
+
+<span class="nd">@LogicalType</span><span class="o">.</span><span class="n">register_logical_type</span>
+<span class="k">class</span> <span class="nc">JdbcTimeType</span><span class="p">(</span><span class="n">LogicalType</span><span class="p">[</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="n">MillisInstant</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  For internal use only; no backwards-compatibility guarantees.</span>
+
+<span class="sd">  Support of Legacy JdbcIO TIME logical type. . Deemed to change when Java</span>
+<span class="sd">  JDBCIO has been migrated to Beam portable logical types.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">representation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="c1"># type: () -&gt; type</span>
+    <span class="k">return</span> <span class="n">Timestamp</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">urn</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;beam:logical_type:javasdk_time:v1&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">language_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span>
+
+  <span class="k">def</span> <span class="nf">to_representation_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c1"># type: (datetime.date) -&gt; Timestamp</span>
+    <span class="k">return</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_utc_datetime</span><span class="p">(</span>
+        <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">utcfromtimestamp</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+            <span class="n">value</span><span class="p">,</span>
+            <span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">))</span>
+
+  <span class="k">def</span> <span class="nf">to_language_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="c1"># type: (Timestamp) -&gt; datetime.date</span>
+
+    <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">to_utc_datetime</span><span class="p">()</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">argument_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span>
+
+  <span class="k">def</span> <span class="nf">argument</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">_from_typing</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">typ</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
