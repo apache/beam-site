@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.typehints.native_type_compatibility module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.typehints.opcodes module" href="apache_beam.typehints.opcodes.html" />
+    <link rel="prev" title="apache_beam.typehints.intrinsic_one_ops module" href="apache_beam.typehints.intrinsic_one_ops.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.typehints.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.typehints.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.arrow_batching_microbenchmark.html">apache_beam.typehints.arrow_batching_microbenchmark module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.arrow_type_compatibility.html">apache_beam.typehints.arrow_type_compatibility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.batch.html">apache_beam.typehints.batch module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.decorators.html">apache_beam.typehints.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.intrinsic_one_ops.html">apache_beam.typehints.intrinsic_one_ops module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.typehints.native_type_compatibility module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.match_is_named_tuple"><code class="docutils literal notranslate"><span class="pre">match_is_named_tuple()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.extract_optional_type"><code class="docutils literal notranslate"><span class="pre">extract_optional_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.match_is_set"><code class="docutils literal notranslate"><span class="pre">match_is_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.is_any"><code class="docutils literal notranslate"><span class="pre">is_any()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.is_new_type"><code class="docutils literal notranslate"><span class="pre">is_new_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.is_forward_ref"><code class="docutils literal notranslate"><span class="pre">is_forward_ref()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_builtin_to_typing"><code class="docutils literal notranslate"><span class="pre">convert_builtin_to_typing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_collections_to_typing"><code class="docutils literal notranslate"><span class="pre">convert_collections_to_typing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_to_beam_type"><code class="docutils literal notranslate"><span class="pre">convert_to_beam_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_to_beam_types"><code class="docutils literal notranslate"><span class="pre">convert_to_beam_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_to_typing_type"><code class="docutils literal notranslate"><span class="pre">convert_to_typing_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.typehints.native_type_compatibility.convert_to_typing_types"><code class="docutils literal notranslate"><span class="pre">convert_to_typing_types()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.opcodes.html">apache_beam.typehints.opcodes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.pandas_type_compatibility.html">apache_beam.typehints.pandas_type_compatibility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.pytorch_type_compatibility.html">apache_beam.typehints.pytorch_type_compatibility module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.row_type.html">apache_beam.typehints.row_type module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.schema_registry.html">apache_beam.typehints.schema_registry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.schemas.html">apache_beam.typehints.schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.sharded_key_type.html">apache_beam.typehints.sharded_key_type module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.trivial_inference.html">apache_beam.typehints.trivial_inference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.typecheck.html">apache_beam.typehints.typecheck module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.typehints.typehints.html">apache_beam.typehints.typehints module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+      <li class="breadcrumb-item active">apache_beam.typehints.native_type_compatibility module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.typehints.native_type_compatibility.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.typehints.native_type_compatibility">
+<span id="apache-beam-typehints-native-type-compatibility-module"></span><h1>apache_beam.typehints.native_type_compatibility module<a class="headerlink" href="#module-apache_beam.typehints.native_type_compatibility" title="Link to this heading">¶</a></h1>
+<p>Module to convert Python’s native typing types to Beam types.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.match_is_named_tuple">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">match_is_named_tuple</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#match_is_named_tuple"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.match_is_named_tuple" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.extract_optional_type">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">extract_optional_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#extract_optional_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.extract_optional_type" title="Link to this definition">¶</a></dt>
+<dd><p>Extracts the non-None type from Optional type user_type.</p>
+<p>If user_type is not Optional, returns None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.match_is_set">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">match_is_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#match_is_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.match_is_set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.is_any">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">is_any</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#is_any"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.is_any" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.is_new_type">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">is_new_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#is_new_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.is_new_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.is_forward_ref">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">is_forward_ref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#is_forward_ref"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.is_forward_ref" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_builtin_to_typing">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_builtin_to_typing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_builtin_to_typing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_builtin_to_typing" title="Link to this definition">¶</a></dt>
+<dd><p>Convert recursively a given builtin to a typing object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> (<cite>builtins</cite>) – builtin object that exist in _BUILTINS_TO_TYPING.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The given builtins converted to a type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)">type</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_collections_to_typing">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_collections_to_typing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_collections_to_typing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_collections_to_typing" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a given collections.abc type to a typing object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> – an object inheriting from a collections.abc object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding typing object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)">type</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_to_beam_type">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_to_beam_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_to_beam_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_to_beam_type" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a given typing type to a Beam type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> (<cite>typing.Union[type, str]</cite>) – typing type or string literal representing
+a type.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The given type converted to a Beam type as far as we can do the
+conversion.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)">type</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – The type was malformed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_to_beam_types">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_to_beam_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_to_beam_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_to_beam_types" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the given list or dictionary of args to Beam types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Either an iterable of types, or a dictionary where the values are</p></li>
+<li><p><strong>types.</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If given an iterable, a list of converted types. If given a dictionary,
+a dictionary with the same keys, and values which have been converted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_to_typing_type">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_to_typing_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_to_typing_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_to_typing_type" title="Link to this definition">¶</a></dt>
+<dd><p>Converts a given Beam type to a typing type.</p>
+<p>This is the reverse of convert_to_beam_type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>typ</strong> – If a typehints.TypeConstraint, the type to convert. Otherwise, typ
+will be unchanged.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Converted version of typ, or unchanged.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – The type was malformed or could not be converted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.typehints.native_type_compatibility.convert_to_typing_types">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.typehints.native_type_compatibility.</span></span><span class="sig-name descname"><span class="pre">convert_to_typing_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/typehints/native_type_compatibility.html#convert_to_typing_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.typehints.native_type_compatibility.convert_to_typing_types" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the given list or dictionary of args to typing types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> – Either an iterable of types, or a dictionary where the values are</p></li>
+<li><p><strong>types.</strong></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>If given an iterable, a list of converted types. If given a dictionary,
+a dictionary with the same keys, and values which have been converted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.typehints.intrinsic_one_ops.html" class="btn btn-neutral float-left" title="apache_beam.typehints.intrinsic_one_ops module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.typehints.opcodes.html" class="btn btn-neutral float-right" title="apache_beam.typehints.opcodes module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.testing.test_utils module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.testing.util module" href="apache_beam.testing.util.html" />
+    <link rel="prev" title="apache_beam.testing.test_stream_service module" href="apache_beam.testing.test_stream_service.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.testing.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.testing.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.datatype_inference.html">apache_beam.testing.datatype_inference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.extra_assertions.html">apache_beam.testing.extra_assertions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.metric_result_matchers.html">apache_beam.testing.metric_result_matchers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.pipeline_verifiers.html">apache_beam.testing.pipeline_verifiers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.synthetic_pipeline.html">apache_beam.testing.synthetic_pipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_pipeline.html">apache_beam.testing.test_pipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_stream.html">apache_beam.testing.test_stream module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_stream_service.html">apache_beam.testing.test_stream_service module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.testing.test_utils module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.TempDir"><code class="docutils literal notranslate"><span class="pre">TempDir</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.compute_hash"><code class="docutils literal notranslate"><span class="pre">compute_hash()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.patch_retry"><code class="docutils literal notranslate"><span class="pre">patch_retry()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.delete_files"><code class="docutils literal notranslate"><span class="pre">delete_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.cleanup_subscriptions"><code class="docutils literal notranslate"><span class="pre">cleanup_subscriptions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.cleanup_topics"><code class="docutils literal notranslate"><span class="pre">cleanup_topics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.PullResponseMessage"><code class="docutils literal notranslate"><span class="pre">PullResponseMessage</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.create_pull_response"><code class="docutils literal notranslate"><span class="pre">create_pull_response()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.create_file"><code class="docutils literal notranslate"><span class="pre">create_file()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.read_files_from_pattern"><code class="docutils literal notranslate"><span class="pre">read_files_from_pattern()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.test_utils.LCGenerator"><code class="docutils literal notranslate"><span class="pre">LCGenerator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.util.html">apache_beam.testing.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.testing.html">apache_beam.testing package</a></li>
+      <li class="breadcrumb-item active">apache_beam.testing.test_utils module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.testing.test_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.testing.test_utils">
+<span id="apache-beam-testing-test-utils-module"></span><h1>apache_beam.testing.test_utils module<a class="headerlink" href="#module-apache_beam.testing.test_utils" title="Link to this heading">¶</a></h1>
+<p>Utility methods for testing</p>
+<p>For internal use only; no backwards-compatibility guarantees.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.TempDir">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">TempDir</span></span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#TempDir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.TempDir" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Context Manager to create and clean-up a temporary directory.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.TempDir.get_path">
+<span class="sig-name descname"><span class="pre">get_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#TempDir.get_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.TempDir.get_path" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the path to the temporary directory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.TempDir.create_temp_file">
+<span class="sig-name descname"><span class="pre">create_temp_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#TempDir.create_temp_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.TempDir.create_temp_file" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a temporary file in the temporary directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>suffix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The filename suffix of the temporary file (e.g. ‘.txt’)</p></li>
+<li><p><strong>lines</strong> (<em>List</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – A list of lines that will be written to the temporary
+file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The name of the temporary file created.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.compute_hash">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">compute_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hashing_alg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sha1'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#compute_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.compute_hash" title="Link to this definition">¶</a></dt>
+<dd><p>Compute a hash value of a list of objects by hashing their string
+representations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.patch_retry">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">patch_retry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">testcase</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#patch_retry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.patch_retry" title="Link to this definition">¶</a></dt>
+<dd><p>A function to patch retry module to use mock clock and logger.</p>
+<p>Clock and logger that defined in retry decorator will be replaced in test
+in order to skip sleep phase when retry happens.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>testcase</strong> – An instance of unittest.TestCase that calls this function to
+patch retry module.</p></li>
+<li><p><strong>module</strong> – The module that uses retry and need to be replaced with mock
+clock and logger in test.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.delete_files">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">delete_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_paths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#delete_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.delete_files" title="Link to this definition">¶</a></dt>
+<dd><p>A function to clean up files or directories using <code class="docutils literal notranslate"><span class="pre">FileSystems</span></code>.</p>
+<p>Glob is supported in file path and directories will be deleted recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_paths</strong> – A list of strings contains file paths or directories.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.cleanup_subscriptions">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">cleanup_subscriptions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sub_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#cleanup_subscriptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.cleanup_subscriptions" title="Link to this definition">¶</a></dt>
+<dd><p>Cleanup PubSub subscriptions if exist.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.cleanup_topics">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">cleanup_topics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pub_client</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#cleanup_topics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.cleanup_topics" title="Link to this definition">¶</a></dt>
+<dd><p>Cleanup PubSub topics if exist.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.PullResponseMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">PullResponseMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attributes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publish_time_secs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publish_time_nanos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ack_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#PullResponseMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.PullResponseMessage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Data representing a pull request response.</p>
+<p>Utility class for <code class="docutils literal notranslate"><span class="pre">create_pull_response</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.create_pull_response">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">create_pull_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">responses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#create_pull_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.create_pull_response" title="Link to this definition">¶</a></dt>
+<dd><p>Create an instance of <code class="docutils literal notranslate"><span class="pre">google.cloud.pubsub.types.ReceivedMessage</span></code>.</p>
+<p>Used to simulate the response from pubsub.SubscriberClient().pull().</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>responses</strong> – list of <code class="docutils literal notranslate"><span class="pre">PullResponseMessage</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of <code class="docutils literal notranslate"><span class="pre">google.cloud.pubsub.types.PullResponse</span></code> populated with
+responses.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.create_file">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">create_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contents</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#create_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.create_file" title="Link to this definition">¶</a></dt>
+<dd><p>Create a file to use as input to test pipelines</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.read_files_from_pattern">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">read_files_from_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_pattern</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#read_files_from_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.read_files_from_pattern" title="Link to this definition">¶</a></dt>
+<dd><p>Reads the files that match a pattern</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.test_utils.</span></span><span class="sig-name descname"><span class="pre">LCGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25214903917</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">11</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">48</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A pure Python implementation of linear congruential generator.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.seed" title="Link to this definition">¶</a></dt>
+<dd><p>Set the seed for the generator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.seed_jdk">
+<span class="sig-name descname"><span class="pre">seed_jdk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.seed_jdk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.seed_jdk" title="Link to this definition">¶</a></dt>
+<dd><p>Set the seed in the way equivalent to java.util.Random.seed.</p>
+<p>This method provide a JDK equivalent random generator. Note that the JDK
+implementation has a known issue that is close seed generating close first
+pseudo-random number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.next_int">
+<span class="sig-name descname"><span class="pre">next_int</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.next_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.next_int" title="Link to this definition">¶</a></dt>
+<dd><p>Get the next integer value in the range of np.int32 ([0, 2^31-1]).</p>
+<p>Equivalent to java.util.Random.nextInt.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.next_uint">
+<span class="sig-name descname"><span class="pre">next_uint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.next_uint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.next_uint" title="Link to this definition">¶</a></dt>
+<dd><p>Get the next unsigned integer value in the range of np.uint32.</p>
+<p>Equivalent to java.util.Random.next(32).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.rand_bytes">
+<span class="sig-name descname"><span class="pre">rand_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.rand_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.rand_bytes" title="Link to this definition">¶</a></dt>
+<dd><p>Get random bytes of given length.</p>
+<p>Equivalent to java.util.Random.nextBytes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.test_utils.LCGenerator.random_sample">
+<span class="sig-name descname"><span class="pre">random_sample</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/test_utils.html#LCGenerator.random_sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.test_utils.LCGenerator.random_sample" title="Link to this definition">¶</a></dt>
+<dd><p>Get random sample between [0.0, 1.0), single precision float value.</p>
+<p>Equivalent to java.util.Random.nextFloat.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.testing.test_stream_service.html" class="btn btn-neutral float-left" title="apache_beam.testing.test_stream_service module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.testing.util.html" class="btn btn-neutral float-right" title="apache_beam.testing.util module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

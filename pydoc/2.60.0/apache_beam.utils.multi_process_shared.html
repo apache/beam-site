@@ -1,0 +1,228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.utils.multi_process_shared module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.utils.plugin module" href="apache_beam.utils.plugin.html" />
+    <link rel="prev" title="apache_beam.utils.interactive_utils module" href="apache_beam.utils.interactive_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.annotations.html">apache_beam.utils.annotations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.histogram.html">apache_beam.utils.histogram module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.interactive_utils.html">apache_beam.utils.interactive_utils module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.utils.multi_process_shared module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.multi_process_shared.patched_autoproxy"><code class="docutils literal notranslate"><span class="pre">patched_autoproxy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.multi_process_shared.MultiProcessShared"><code class="docutils literal notranslate"><span class="pre">MultiProcessShared</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.plugin.html">apache_beam.utils.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.processes.html">apache_beam.utils.processes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.profiler.html">apache_beam.utils.profiler module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.proto_utils.html">apache_beam.utils.proto_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.python_callable.html">apache_beam.utils.python_callable module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.retry.html">apache_beam.utils.retry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sentinel.html">apache_beam.utils.sentinel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sharded_key.html">apache_beam.utils.sharded_key module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.shared.html">apache_beam.utils.shared module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.subprocess_server.html">apache_beam.utils.subprocess_server module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.thread_pool_executor.html">apache_beam.utils.thread_pool_executor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.timestamp.html">apache_beam.utils.timestamp module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.transform_service_launcher.html">apache_beam.utils.transform_service_launcher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.urns.html">apache_beam.utils.urns module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.utils.html">apache_beam.utils package</a></li>
+      <li class="breadcrumb-item active">apache_beam.utils.multi_process_shared module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.utils.multi_process_shared.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.utils.multi_process_shared">
+<span id="apache-beam-utils-multi-process-shared-module"></span><h1>apache_beam.utils.multi_process_shared module<a class="headerlink" href="#module-apache_beam.utils.multi_process_shared" title="Link to this heading">¶</a></h1>
+<p>Implements a shared object that spans processes.</p>
+<p>This object will be instanciated once per VM and methods will be invoked
+on it via rpc.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.utils.multi_process_shared.patched_autoproxy">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.utils.multi_process_shared.</span></span><span class="sig-name descname"><span class="pre">patched_autoproxy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serializer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exposed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">incref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">manager_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/multi_process_shared.html#patched_autoproxy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.multi_process_shared.patched_autoproxy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.utils.multi_process_shared.MultiProcessShared">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.utils.multi_process_shared.</span></span><span class="sig-name descname"><span class="pre">MultiProcessShared</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constructor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'/home/runner/work/beam/beam/beam/sdks/python/target/.tox/docs/tmp'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always_proxy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/multi_process_shared.html#MultiProcessShared"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.multi_process_shared.MultiProcessShared" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generic" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">T</span></code>]</p>
+<p>MultiProcessShared is used to share a single object across processes.</p>
+<p>For example, one could have the class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyExpensiveObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="p">[</span><span class="n">expensive</span> <span class="n">initialization</span> <span class="ow">and</span> <span class="n">memory</span> <span class="n">allocation</span><span class="p">]</span>
+
+  <span class="k">def</span> <span class="nf">method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>One could share a single instance of this class by wrapping it as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ptr</span> <span class="o">=</span> <span class="n">MultiProcessShared</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">MyExpensiveObject</span><span class="p">(</span><span class="o">...</span><span class="p">))</span>
+<span class="n">my_expensive_object</span> <span class="o">=</span> <span class="n">shared_ptr</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>which could then be invoked as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">my_expensive_object</span><span class="o">.</span><span class="n">method</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This can then be released with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shared_ptr</span><span class="o">.</span><span class="n">release</span><span class="p">(</span><span class="n">my_expensive_object</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>but care should be taken to avoid releasing the object too soon or
+expensive re-initialization may be required, defeating the point of
+using a shared object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>constructor</strong> – function that initialises / constructs the object if not
+present in the cache. This function should take no arguments. It should
+return an initialised object, or raise an exception if the object could
+not be initialised / constructed.</p></li>
+<li><p><strong>tag</strong> – an indentifier to store with the cached object. If multiple
+MultiProcessShared instances are created with the same tag, they will all
+share the same proxied object.</p></li>
+<li><p><strong>path</strong> – a temporary path in which to create the inter-process lock</p></li>
+<li><p><strong>always_proxy</strong> – whether to direct all calls through the proxy, rather than
+call the object directly for the process that created it</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.multi_process_shared.MultiProcessShared.acquire">
+<span class="sig-name descname"><span class="pre">acquire</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/multi_process_shared.html#MultiProcessShared.acquire"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.multi_process_shared.MultiProcessShared.acquire" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.multi_process_shared.MultiProcessShared.release">
+<span class="sig-name descname"><span class="pre">release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/multi_process_shared.html#MultiProcessShared.release"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.multi_process_shared.MultiProcessShared.release" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.multi_process_shared.MultiProcessShared.unsafe_hard_delete">
+<span class="sig-name descname"><span class="pre">unsafe_hard_delete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/multi_process_shared.html#MultiProcessShared.unsafe_hard_delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.multi_process_shared.MultiProcessShared.unsafe_hard_delete" title="Link to this definition">¶</a></dt>
+<dd><p>Force deletes the underlying object</p>
+<p>This function should be used with great care since any other references
+to this object will now be invalid and may lead to strange errors. Only
+call unsafe_hard_delete if either (a) you are sure no other references
+to this object exist, or (b) you are ok with all existing references to
+this object throwing strange errors when derefrenced.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.utils.interactive_utils.html" class="btn btn-neutral float-left" title="apache_beam.utils.interactive_utils module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.utils.plugin.html" class="btn btn-neutral float-right" title="apache_beam.utils.plugin module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

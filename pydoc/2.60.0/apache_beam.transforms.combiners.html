@@ -1,0 +1,754 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.combiners module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.transforms.core module" href="apache_beam.transforms.core.html" />
+    <link rel="prev" title="apache_beam.transforms.combinefn_lifecycle_pipeline module" href="apache_beam.transforms.combinefn_lifecycle_pipeline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.transforms.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.transforms.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.combinefn_lifecycle_pipeline.html">apache_beam.transforms.combinefn_lifecycle_pipeline module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.transforms.combiners module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.Count"><code class="docutils literal notranslate"><span class="pre">Count</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.Mean"><code class="docutils literal notranslate"><span class="pre">Mean</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.Sample"><code class="docutils literal notranslate"><span class="pre">Sample</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.Top"><code class="docutils literal notranslate"><span class="pre">Top</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToDict"><code class="docutils literal notranslate"><span class="pre">ToDict</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToList"><code class="docutils literal notranslate"><span class="pre">ToList</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToSet"><code class="docutils literal notranslate"><span class="pre">ToSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.Latest"><code class="docutils literal notranslate"><span class="pre">Latest</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.CountCombineFn"><code class="docutils literal notranslate"><span class="pre">CountCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.MeanCombineFn"><code class="docutils literal notranslate"><span class="pre">MeanCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.SampleCombineFn"><code class="docutils literal notranslate"><span class="pre">SampleCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.TopCombineFn"><code class="docutils literal notranslate"><span class="pre">TopCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToDictCombineFn"><code class="docutils literal notranslate"><span class="pre">ToDictCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToListCombineFn"><code class="docutils literal notranslate"><span class="pre">ToListCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.ToSetCombineFn"><code class="docutils literal notranslate"><span class="pre">ToSetCombineFn</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.transforms.combiners.LatestCombineFn"><code class="docutils literal notranslate"><span class="pre">LatestCombineFn</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.core.html">apache_beam.transforms.core module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.create_source.html">apache_beam.transforms.create_source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.deduplicate.html">apache_beam.transforms.deduplicate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.display.html">apache_beam.transforms.display module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.enrichment.html">apache_beam.transforms.enrichment module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.environments.html">apache_beam.transforms.environments module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.error_handling.html">apache_beam.transforms.error_handling module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.external.html">apache_beam.transforms.external module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.external_java.html">apache_beam.transforms.external_java module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.external_transform_provider.html">apache_beam.transforms.external_transform_provider module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.fully_qualified_named_transform.html">apache_beam.transforms.fully_qualified_named_transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.periodicsequence.html">apache_beam.transforms.periodicsequence module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.ptransform.html">apache_beam.transforms.ptransform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.resources.html">apache_beam.transforms.resources module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.sideinputs.html">apache_beam.transforms.sideinputs module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.sql.html">apache_beam.transforms.sql module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.stats.html">apache_beam.transforms.stats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.timeutil.html">apache_beam.transforms.timeutil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.trigger.html">apache_beam.transforms.trigger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.userstate.html">apache_beam.transforms.userstate module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.util.html">apache_beam.transforms.util module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.transforms.window.html">apache_beam.transforms.window module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.combiners module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.transforms.combiners.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.transforms.combiners">
+<span id="apache-beam-transforms-combiners-module"></span><h1>apache_beam.transforms.combiners module<a class="headerlink" href="#module-apache_beam.transforms.combiners" title="Link to this heading">¶</a></h1>
+<p>A library of basic combiner PTransform subclasses.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">Count</span></span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combiners for counting elements.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.Globally">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Globally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.Globally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.Globally" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>combiners.Count.Globally counts the total number of elements.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.Globally.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.Globally.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.Globally.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.PerKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.PerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.PerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>combiners.Count.PerKey counts how many elements each unique key has.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.PerKey.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.PerKey.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.PerKey.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.PerElement">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PerElement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.PerElement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.PerElement" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>combiners.Count.PerElement counts how many times each element occurs.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Count.PerElement.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Count.PerElement.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Count.PerElement.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Mean">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">Mean</span></span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Mean" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combiners for computing arithmetic means of elements.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Mean.Globally">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Globally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Mean.Globally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Mean.Globally" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>combiners.Mean.Globally computes the arithmetic mean of the elements.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Mean.Globally.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Mean.Globally.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Mean.Globally.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Mean.PerKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Mean.PerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Mean.PerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>combiners.Mean.PerKey finds the means of the values for each key.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Mean.PerKey.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Mean.PerKey.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Mean.PerKey.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">Sample</span></span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combiners for sampling n elements without replacement.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizeGlobally">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FixedSizeGlobally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizeGlobally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizeGlobally" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>Sample n elements from the input PCollection without replacement.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizeGlobally.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizeGlobally.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizeGlobally.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizeGlobally.display_data">
+<span class="sig-name descname"><span class="pre">display_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizeGlobally.display_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizeGlobally.display_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizeGlobally.default_label">
+<span class="sig-name descname"><span class="pre">default_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizeGlobally.default_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizeGlobally.default_label" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizePerKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">FixedSizePerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizePerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizePerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>Sample n elements associated with each key without replacement.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizePerKey.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizePerKey.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizePerKey.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizePerKey.display_data">
+<span class="sig-name descname"><span class="pre">display_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizePerKey.display_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizePerKey.display_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Sample.FixedSizePerKey.default_label">
+<span class="sig-name descname"><span class="pre">default_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Sample.FixedSizePerKey.default_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Sample.FixedSizePerKey.default_label" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">Top</span></span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combiners for obtaining extremal elements.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.Of">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Of</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.Of"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.Of" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>Returns the n greatest elements in the PCollection.</p>
+<p>This transform will retrieve the n greatest elements in the PCollection
+to which it is applied, where “greatest” is determined by a
+function supplied as the <cite>key</cite> or <cite>reverse</cite> arguments.</p>
+<p>Creates a global Top operation.</p>
+<p>The arguments ‘key’ and ‘reverse’ may be passed as keyword arguments,
+and have the same meaning as for Python’s sort functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – number of elements to extract from pcoll.</p></li>
+<li><p><strong>key</strong> – (optional) a mapping of elements to a comparable key, similar to
+the key argument of Python’s sorting methods.</p></li>
+<li><p><strong>reverse</strong> – (optional) whether to order things smallest to largest, rather
+than largest to smallest</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.Of.default_label">
+<span class="sig-name descname"><span class="pre">default_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.Of.default_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.Of.default_label" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.Of.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.Of.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.Of.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.PerKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.PerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.PerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>Identifies the N greatest elements associated with each key.</p>
+<p>This transform will produce a PCollection mapping unique keys in the input
+PCollection to the n greatest elements with which they are associated, where
+“greatest” is determined by a function supplied as the <cite>key</cite> or
+<cite>reverse</cite> arguments.</p>
+<p>Creates a per-key Top operation.</p>
+<p>The arguments ‘key’ and ‘reverse’ may be passed as keyword arguments,
+and have the same meaning as for Python’s sort functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n</strong> – number of elements to extract from pcoll.</p></li>
+<li><p><strong>key</strong> – (optional) a mapping of elements to a comparable key, similar to
+the key argument of Python’s sorting methods.</p></li>
+<li><p><strong>reverse</strong> – (optional) whether to order things smallest to largest, rather
+than largest to smallest</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.PerKey.default_label">
+<span class="sig-name descname"><span class="pre">default_label</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.PerKey.default_label"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.PerKey.default_label" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.PerKey.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.PerKey.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.PerKey.expand" title="Link to this definition">¶</a></dt>
+<dd><p>Expands the transform.</p>
+<p>Raises TypeCheckError: If the output type of the input PCollection is not
+compatible with Tuple[A, B].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pcoll</strong> – PCollection to process</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the PCollection containing the result.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.Largest">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Largest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.Largest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.Largest" title="Link to this definition">¶</a></dt>
+<dd><p>Obtain a list of the greatest N elements in a PCollection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.Smallest">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Smallest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.Smallest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.Smallest" title="Link to this definition">¶</a></dt>
+<dd><p>Obtain a list of the least N elements in a PCollection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.LargestPerKey">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LargestPerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.LargestPerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.LargestPerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies the N greatest elements associated with each key.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Top.SmallestPerKey">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">SmallestPerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Top.SmallestPerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Top.SmallestPerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Identifies the N least elements associated with each key.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDict">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDict" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>A global CombineFn that condenses a PCollection into a single dict.</p>
+<p>PCollections should consist of 2-tuples, notionally (key, value) pairs.
+If multiple values are associated with the same key, only one of the values
+will be present in the resulting dict.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDict.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDict.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDict.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToList">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToList" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>A global CombineFn that condenses a PCollection into a single list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToList.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToList.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToList.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSet" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>A global CombineFn that condenses a PCollection into a set.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSet.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSet.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSet.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">Latest</span></span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Combiners for computing the latest element</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.Globally">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Globally</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">has_defaults</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.Globally"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.Globally" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">CombinerWithoutDefaults</span></code></p>
+<p>Compute the element with the latest timestamp from a
+PCollection.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.Globally.add_timestamp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimestampParam</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.Globally.add_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.Globally.add_timestamp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.Globally.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.Globally.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.Globally.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.PerKey">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">PerKey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.PerKey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.PerKey" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>Compute elements with the latest timestamp for each key
+from a keyed PCollection</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.PerKey.add_timestamp">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_timestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimestampParam</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.PerKey.add_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.PerKey.add_timestamp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.Latest.PerKey.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#Latest.PerKey.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.Latest.PerKey.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">CountCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for computing PCollection size.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn.add_inputs">
+<span class="sig-name descname"><span class="pre">add_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn.add_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn.add_inputs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.CountCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#CountCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.CountCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">MeanCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for computing an arithmetic mean.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sum_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sum_count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.MeanCombineFn.for_input_type">
+<span class="sig-name descname"><span class="pre">for_input_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#MeanCombineFn.for_input_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.MeanCombineFn.for_input_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">SampleCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for all Sample transforms.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.setup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heaps</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.compact">
+<span class="sig-name descname"><span class="pre">compact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.compact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.compact" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">heap</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.SampleCombineFn.teardown">
+<span class="sig-name descname"><span class="pre">teardown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#SampleCombineFn.teardown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.SampleCombineFn.teardown" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">TopCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn doing the combining for all of the Top transforms.</p>
+<p>This CombineFn uses a <cite>key</cite> or <cite>reverse</cite> operator to rank the elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> – (optional) a mapping of elements to a comparable key, similar to
+the key argument of Python’s sorting methods.</p></li>
+<li><p><strong>reverse</strong> – (optional) whether to order things smallest to largest, rather
+than largest to smallest</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.display_data">
+<span class="sig-name descname"><span class="pre">display_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.display_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.display_data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.compact">
+<span class="sig-name descname"><span class="pre">compact</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.compact"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.compact" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.TopCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#TopCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.TopCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDictCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToDictCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDictCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDictCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for to_dict.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDictCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDictCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDictCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDictCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDictCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDictCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDictCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDictCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDictCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToDictCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToDictCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToDictCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToListCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToListCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToListCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToListCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for to_list.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToListCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToListCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToListCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToListCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToListCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToListCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToListCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToListCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToListCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToListCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToListCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToListCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSetCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">ToSetCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSetCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSetCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn for ToSet.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSetCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSetCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSetCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSetCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSetCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSetCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSetCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSetCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSetCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.ToSetCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#ToSetCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.ToSetCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.LatestCombineFn">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.transforms.combiners.</span></span><span class="sig-name descname"><span class="pre">LatestCombineFn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#LatestCombineFn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.LatestCombineFn" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.CombineFn" title="apache_beam.transforms.core.CombineFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">CombineFn</span></code></a></p>
+<p>CombineFn to get the element with the latest timestamp
+from a PCollection.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.LatestCombineFn.create_accumulator">
+<span class="sig-name descname"><span class="pre">create_accumulator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#LatestCombineFn.create_accumulator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.LatestCombineFn.create_accumulator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.LatestCombineFn.add_input">
+<span class="sig-name descname"><span class="pre">add_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#LatestCombineFn.add_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.LatestCombineFn.add_input" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.LatestCombineFn.merge_accumulators">
+<span class="sig-name descname"><span class="pre">merge_accumulators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulators</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#LatestCombineFn.merge_accumulators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.LatestCombineFn.merge_accumulators" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.transforms.combiners.LatestCombineFn.extract_output">
+<span class="sig-name descname"><span class="pre">extract_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">accumulator</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/transforms/combiners.html#LatestCombineFn.extract_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.transforms.combiners.LatestCombineFn.extract_output" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.transforms.combinefn_lifecycle_pipeline.html" class="btn btn-neutral float-left" title="apache_beam.transforms.combinefn_lifecycle_pipeline module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.transforms.core.html" class="btn btn-neutral float-right" title="apache_beam.transforms.core module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

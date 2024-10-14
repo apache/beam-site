@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.transforms.embeddings.vertex_ai &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.transforms.embeddings.vertex_ai</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.transforms.embeddings.vertex_ai</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+
+<span class="c1"># Vertex AI Python SDK is required for this module.</span>
+<span class="c1"># Follow https://cloud.google.com/vertex-ai/docs/python-sdk/use-vertex-ai-python-sdk # pylint: disable=line-too-long</span>
+<span class="c1"># to install Vertex AI Python SDK.</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">from</span> <span class="nn">google.auth.credentials</span> <span class="kn">import</span> <span class="n">Credentials</span>
+
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">import</span> <span class="nn">vertexai</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.inference.base</span> <span class="kn">import</span> <span class="n">ModelHandler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.inference.base</span> <span class="kn">import</span> <span class="n">RunInference</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.transforms.base</span> <span class="kn">import</span> <span class="n">EmbeddingsManager</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.transforms.base</span> <span class="kn">import</span> <span class="n">_ImageEmbeddingHandler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.transforms.base</span> <span class="kn">import</span> <span class="n">_TextEmbeddingHandler</span>
+<span class="kn">from</span> <span class="nn">vertexai.language_models</span> <span class="kn">import</span> <span class="n">TextEmbeddingInput</span>
+<span class="kn">from</span> <span class="nn">vertexai.language_models</span> <span class="kn">import</span> <span class="n">TextEmbeddingModel</span>
+<span class="kn">from</span> <span class="nn">vertexai.vision_models</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">vertexai.vision_models</span> <span class="kn">import</span> <span class="n">MultiModalEmbeddingModel</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;VertexAITextEmbeddings&quot;</span><span class="p">,</span> <span class="s2">&quot;VertexAIImageEmbeddings&quot;</span><span class="p">]</span>
+
+<span class="n">DEFAULT_TASK_TYPE</span> <span class="o">=</span> <span class="s2">&quot;RETRIEVAL_DOCUMENT&quot;</span>
+<span class="c1"># TODO: https://github.com/apache/beam/issues/29356</span>
+<span class="c1"># Can this list be automatically pulled from Vertex SDK?</span>
+<span class="n">TASK_TYPE_INPUTS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;RETRIEVAL_DOCUMENT&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RETRIEVAL_QUERY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SEMANTIC_SIMILARITY&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CLASSIFICATION&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CLUSTERING&quot;</span>
+<span class="p">]</span>
+<span class="n">_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Vertex AI limits requests to 5 at a time.</span>
+
+
+<span class="k">class</span> <span class="nc">_VertexAITextEmbeddingHandler</span><span class="p">(</span><span class="n">ModelHandler</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">  Note: Intended for internal use and guarantees no backwards compatibility.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">task_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_TASK_TYPE</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Credentials</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="n">vertexai</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="k">if</span> <span class="n">task_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TASK_TYPE_INPUTS</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;task_type must be one of </span><span class="si">{</span><span class="n">TASK_TYPE_INPUTS</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">task_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task_type</span> <span class="o">=</span> <span class="n">task_type</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+
+  <span class="k">def</span> <span class="nf">run_inference</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+      <span class="n">model</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">inference_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">_BATCH_SIZE</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">):</span>
+      <span class="n">text_batch</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">batch_size</span><span class="p">]</span>
+      <span class="n">text_batch</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="n">TextEmbeddingInput</span><span class="p">(</span>
+              <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">task_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_type</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">text_batch</span>
+      <span class="p">]</span>
+      <span class="n">embeddings_batch</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_embeddings</span><span class="p">(</span><span class="n">text_batch</span><span class="p">)</span>
+      <span class="n">embeddings</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">el</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">embeddings_batch</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">embeddings</span>
+
+  <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">TextEmbeddingModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+  <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># ModelHandler is internal to the user and is not exposed.</span>
+    <span class="c1"># Hence we need to override the __repr__ method to expose</span>
+    <span class="c1"># the name of the class.</span>
+    <span class="k">return</span> <span class="s1">&#39;VertexAITextEmbeddings&#39;</span>
+
+
+<div class="viewcode-block" id="VertexAITextEmbeddings">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAITextEmbeddings">[docs]</a>
+<span class="k">class</span> <span class="nc">VertexAITextEmbeddings</span><span class="p">(</span><span class="n">EmbeddingsManager</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+      <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">task_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_TASK_TYPE</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Credentials</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding Config for Vertex AI Text Embedding models following</span>
+<span class="sd">    https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings # pylint: disable=line-too-long</span>
+<span class="sd">    Text Embeddings are generated for a batch of text using the Vertex AI SDK.</span>
+<span class="sd">    Embeddings are returned in a list for each text in the batch. Look at</span>
+<span class="sd">    https://cloud.google.com/vertex-ai/docs/generative-ai/learn/model-versioning#stable-versions-available.md # pylint: disable=line-too-long</span>
+<span class="sd">    for more information on model versions and lifecycle.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      model_name: The name of the Vertex AI Text Embedding model.</span>
+<span class="sd">      columns: The columns containing the text to be embedded.</span>
+<span class="sd">      task_type: The downstream task for the embeddings. Valid values are</span>
+<span class="sd">        RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, SEMANTIC_SIMILARITY,</span>
+<span class="sd">        CLASSIFICATION, CLUSTERING. For more information on the task type,</span>
+<span class="sd">        look at https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings # pylint: disable=line-too-long</span>
+<span class="sd">      title: Identifier of the text content.</span>
+<span class="sd">      project: The default GCP project for API calls.</span>
+<span class="sd">      location: The default location for API calls.</span>
+<span class="sd">      credentials: Custom credentials for API calls.</span>
+<span class="sd">        Defaults to environment credentials.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="o">=</span> <span class="n">credentials</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">task_type</span> <span class="o">=</span> <span class="n">task_type</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VertexAITextEmbeddings.get_model_handler">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAITextEmbeddings.get_model_handler">[docs]</a>
+  <span class="k">def</span> <span class="nf">get_model_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelHandler</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_VertexAITextEmbeddingHandler</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+        <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+        <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">task_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">task_type</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VertexAITextEmbeddings.get_ptransform_for_processing">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAITextEmbeddings.get_ptransform_for_processing">[docs]</a>
+  <span class="k">def</span> <span class="nf">get_ptransform_for_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">RunInference</span><span class="p">(</span>
+        <span class="n">model_handler</span><span class="o">=</span><span class="n">_TextEmbeddingHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+        <span class="n">inference_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inference_args</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">class</span> <span class="nc">_VertexAIImageEmbeddingHandler</span><span class="p">(</span><span class="n">ModelHandler</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Credentials</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="n">vertexai</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">location</span><span class="p">,</span> <span class="n">credentials</span><span class="o">=</span><span class="n">credentials</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="n">dimension</span>
+
+  <span class="k">def</span> <span class="nf">run_inference</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Image</span><span class="p">],</span>
+      <span class="n">model</span><span class="p">:</span> <span class="n">MultiModalEmbeddingModel</span><span class="p">,</span>
+      <span class="n">inference_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># Maximum request size for muli-model embedding models is 1.</span>
+    <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+      <span class="n">embedding_response</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_embeddings</span><span class="p">(</span>
+          <span class="n">image</span><span class="o">=</span><span class="n">img</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+      <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">embedding_response</span><span class="o">.</span><span class="n">image_embedding</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">embeddings</span>
+
+  <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">MultiModalEmbeddingModel</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+  <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># ModelHandler is internal to the user and is not exposed.</span>
+    <span class="c1"># Hence we need to override the __repr__ method to expose</span>
+    <span class="c1"># the name of the class.</span>
+    <span class="k">return</span> <span class="s1">&#39;VertexAIImageEmbeddings&#39;</span>
+
+
+<div class="viewcode-block" id="VertexAIImageEmbeddings">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAIImageEmbeddings">[docs]</a>
+<span class="k">class</span> <span class="nc">VertexAIImageEmbeddings</span><span class="p">(</span><span class="n">EmbeddingsManager</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+      <span class="n">dimension</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Credentials</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Embedding Config for Vertex AI Image Embedding models following</span>
+<span class="sd">    https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-multimodal-embeddings # pylint: disable=line-too-long</span>
+<span class="sd">    Image Embeddings are generated for a batch of images using the Vertex AI API.</span>
+<span class="sd">    Embeddings are returned in a list for each image in the batch. This</span>
+<span class="sd">    transform makes remote calls to the Vertex AI service and may incur costs</span>
+<span class="sd">    for use.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      model_name: The name of the Vertex AI Multi-Modal Embedding model.</span>
+<span class="sd">      columns: The columns containing the text to be embedded.</span>
+<span class="sd">      dimension: The length of the embedding vector to generate. Must be one of</span>
+<span class="sd">        128, 256, 512, or 1408. If not set, Vertex AI&#39;s default value is 1408.</span>
+<span class="sd">      project: The default GCP project for API calls.</span>
+<span class="sd">      location: The default location for API calls.</span>
+<span class="sd">      credentials: Custom credentials for API calls.</span>
+<span class="sd">        Defaults to environment credentials.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="o">=</span> <span class="n">credentials</span>
+    <span class="k">if</span> <span class="n">dimension</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dimension</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1408</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;dimension argument must be one of 128, 256, 512, or 1408&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="n">dimension</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="VertexAIImageEmbeddings.get_model_handler">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAIImageEmbeddings.get_model_handler">[docs]</a>
+  <span class="k">def</span> <span class="nf">get_model_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelHandler</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_VertexAIImageEmbeddingHandler</span><span class="p">(</span>
+        <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+        <span class="n">dimension</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+        <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VertexAIImageEmbeddings.get_ptransform_for_processing">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.transforms.embeddings.vertex_ai.html#apache_beam.ml.transforms.embeddings.vertex_ai.VertexAIImageEmbeddings.get_ptransform_for_processing">[docs]</a>
+  <span class="k">def</span> <span class="nf">get_ptransform_for_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">RunInference</span><span class="p">(</span>
+        <span class="n">model_handler</span><span class="o">=</span><span class="n">_ImageEmbeddingHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+        <span class="n">inference_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">inference_args</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

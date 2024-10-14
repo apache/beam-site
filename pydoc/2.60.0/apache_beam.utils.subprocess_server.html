@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.utils.subprocess_server module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.utils.thread_pool_executor module" href="apache_beam.utils.thread_pool_executor.html" />
+    <link rel="prev" title="apache_beam.utils.shared module" href="apache_beam.utils.shared.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.annotations.html">apache_beam.utils.annotations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.histogram.html">apache_beam.utils.histogram module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.interactive_utils.html">apache_beam.utils.interactive_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.multi_process_shared.html">apache_beam.utils.multi_process_shared module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.plugin.html">apache_beam.utils.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.processes.html">apache_beam.utils.processes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.profiler.html">apache_beam.utils.profiler module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.proto_utils.html">apache_beam.utils.proto_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.python_callable.html">apache_beam.utils.python_callable module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.retry.html">apache_beam.utils.retry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sentinel.html">apache_beam.utils.sentinel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sharded_key.html">apache_beam.utils.sharded_key module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.shared.html">apache_beam.utils.shared module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.utils.subprocess_server module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.subprocess_server.SubprocessServer"><code class="docutils literal notranslate"><span class="pre">SubprocessServer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.subprocess_server.JavaJarServer"><code class="docutils literal notranslate"><span class="pre">JavaJarServer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.subprocess_server.is_service_endpoint"><code class="docutils literal notranslate"><span class="pre">is_service_endpoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.subprocess_server.pick_port"><code class="docutils literal notranslate"><span class="pre">pick_port()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.thread_pool_executor.html">apache_beam.utils.thread_pool_executor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.timestamp.html">apache_beam.utils.timestamp module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.transform_service_launcher.html">apache_beam.utils.transform_service_launcher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.urns.html">apache_beam.utils.urns module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.utils.html">apache_beam.utils package</a></li>
+      <li class="breadcrumb-item active">apache_beam.utils.subprocess_server module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.utils.subprocess_server.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.utils.subprocess_server">
+<span id="apache-beam-utils-subprocess-server-module"></span><h1>apache_beam.utils.subprocess_server module<a class="headerlink" href="#module-apache_beam.utils.subprocess_server" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.utils.subprocess_server.</span></span><span class="sig-name descname"><span class="pre">SubprocessServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stub_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An abstract base class for running GRPC Servers as an external process.</p>
+<p>This class acts as a context which will start up a server, provides a stub
+to connect to it, and then shuts the server down.  For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">SubprocessServer</span><span class="p">(</span><span class="n">GrpcStubClass</span><span class="p">,</span> <span class="p">[</span><span class="n">executable</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="k">as</span> <span class="n">stub</span><span class="p">:</span>
+    <span class="n">stub</span><span class="o">.</span><span class="n">CallService</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Creates the server object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stub_class</strong> – the auto-generated GRPC client stub class used for
+connecting to the GRPC service</p></li>
+<li><p><strong>cmd</strong> – command (including arguments) for starting up the server,
+suitable for passing to <cite>subprocess.POpen</cite>.</p></li>
+<li><p><strong>port</strong> – (optional) the port at which the subprocess will serve its
+service.  If not given, one will be randomly chosen and the special
+string “{{PORT}}” will be substituted in the command line arguments
+with the chosen port.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer.cache_subprocesses">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_subprocesses</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer.cache_subprocesses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer.cache_subprocesses" title="Link to this definition">¶</a></dt>
+<dd><p>A context that ensures any subprocess created or used in its duration
+stay alive for at least the duration of this context.</p>
+<p>These subprocesses may be shared with other contexts as well.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer.start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer.start_process">
+<span class="sig-name descname"><span class="pre">start_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer.start_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer.start_process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer.stop" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.SubprocessServer.stop_process">
+<span class="sig-name descname"><span class="pre">stop_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#SubprocessServer.stop_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.SubprocessServer.stop_process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.utils.subprocess_server.</span></span><span class="sig-name descname"><span class="pre">JavaJarServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stub_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_jar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">java_arguments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classpath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.utils.subprocess_server.SubprocessServer" title="apache_beam.utils.subprocess_server.SubprocessServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SubprocessServer</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.MAVEN_CENTRAL_REPOSITORY">
+<span class="sig-name descname"><span class="pre">MAVEN_CENTRAL_REPOSITORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'https://repo.maven.apache.org/maven2'</span></em><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.MAVEN_CENTRAL_REPOSITORY" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.BEAM_GROUP_ID">
+<span class="sig-name descname"><span class="pre">BEAM_GROUP_ID</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'org.apache.beam'</span></em><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.BEAM_GROUP_ID" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.JAR_CACHE">
+<span class="sig-name descname"><span class="pre">JAR_CACHE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/.apache_beam/cache/jars'</span></em><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.JAR_CACHE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.start_process">
+<span class="sig-name descname"><span class="pre">start_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.start_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.start_process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.stop_process">
+<span class="sig-name descname"><span class="pre">stop_process</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.stop_process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.stop_process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.jar_name">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">jar_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.jar_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.jar_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.path_to_maven_jar">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path_to_maven_jar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">artifact_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://repo.maven.apache.org/maven2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classifier</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.path_to_maven_jar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.path_to_maven_jar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.path_to_beam_jar">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">path_to_beam_jar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradle_target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'2.60.0'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.path_to_beam_jar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.path_to_beam_jar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.local_jar">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">local_jar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.local_jar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.local_jar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.beam_services">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">beam_services</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">replacements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.beam_services"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.beam_services" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.JavaJarServer.make_classpath_jar">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_classpath_jar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">main_jar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_jars</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#JavaJarServer.make_classpath_jar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.JavaJarServer.make_classpath_jar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.is_service_endpoint">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.utils.subprocess_server.</span></span><span class="sig-name descname"><span class="pre">is_service_endpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#is_service_endpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.is_service_endpoint" title="Link to this definition">¶</a></dt>
+<dd><p>Checks whether the path conforms to the ‘beam_services’ PipelineOption.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.utils.subprocess_server.pick_port">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.utils.subprocess_server.</span></span><span class="sig-name descname"><span class="pre">pick_port</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">ports</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/utils/subprocess_server.html#pick_port"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.utils.subprocess_server.pick_port" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of ports, same length as input ports list, but replaces
+all None or 0 ports with a random free port.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.utils.shared.html" class="btn btn-neutral float-left" title="apache_beam.utils.shared module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.utils.thread_pool_executor.html" class="btn btn-neutral float-right" title="apache_beam.utils.thread_pool_executor module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

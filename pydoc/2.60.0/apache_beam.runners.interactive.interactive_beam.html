@@ -1,0 +1,547 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.runners.interactive.interactive_beam module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.runners.interactive.interactive_environment module" href="apache_beam.runners.interactive.interactive_environment.html" />
+    <link rel="prev" title="apache_beam.runners.interactive.cache_manager module" href="apache_beam.runners.interactive.cache_manager.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.runners.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.dask.html">apache_beam.runners.dask package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.dataflow.html">apache_beam.runners.dataflow package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.direct.html">apache_beam.runners.direct package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="apache_beam.runners.interactive.html">apache_beam.runners.interactive package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="apache_beam.runners.interactive.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="apache_beam.runners.interactive.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.job.html">apache_beam.runners.job package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.runners.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.runners.html">apache_beam.runners package</a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.runners.interactive.html">apache_beam.runners.interactive package</a></li>
+      <li class="breadcrumb-item active">apache_beam.runners.interactive.interactive_beam module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.runners.interactive.interactive_beam.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.runners.interactive.interactive_beam">
+<span id="apache-beam-runners-interactive-interactive-beam-module"></span><h1>apache_beam.runners.interactive.interactive_beam module<a class="headerlink" href="#module-apache_beam.runners.interactive.interactive_beam" title="Link to this heading">¶</a></h1>
+<p>Module of Interactive Beam features that can be used in notebook.</p>
+<p>The purpose of the module is to reduce the learning curve of Interactive Beam
+users, provide a single place for importing and add sugar syntax for all
+Interactive Beam components. It gives users capability to interact with existing
+environment/session/context for Interactive Beam and visualize PCollections as
+bounded dataset. In the meantime, it hides the interactivity implementation
+from users so that users can focus on developing Beam pipeline without worrying
+about how hidden states in the interactive session are managed.</p>
+<dl class="simple">
+<dt>A convention to import this module:</dt><dd><p>from apache_beam.runners.interactive import interactive_beam as ib</p>
+</dd>
+</dl>
+<p>Note: If you want backward-compatibility, only invoke interfaces provided by
+this module in your notebook or application code.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">Options</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.runners.interactive.options.interactive_options.html#apache_beam.runners.interactive.options.interactive_options.InteractiveOptions" title="apache_beam.runners.interactive.options.interactive_options.InteractiveOptions"><code class="xref py py-class docutils literal notranslate"><span class="pre">InteractiveOptions</span></code></a></p>
+<p>Options that guide how Interactive Beam works.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.enable_recording_replay">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">enable_recording_replay</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.enable_recording_replay" title="Link to this definition">¶</a></dt>
+<dd><p>Whether replayable source data recorded should be replayed for multiple
+PCollection evaluations and pipeline runs as long as the data recorded is
+still valid.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.recordable_sources">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recordable_sources</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.recordable_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Interactive Beam automatically records data from sources in this set.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.recording_duration">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recording_duration</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.recording_duration" title="Link to this definition">¶</a></dt>
+<dd><p>The data recording of sources ends as soon as the background source
+recording job has run for this long.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.recording_size_limit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">recording_size_limit</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.recording_size_limit" title="Link to this definition">¶</a></dt>
+<dd><p>The data recording of sources ends as soon as the size (in bytes) of data
+recorded from recordable sources reaches the limit.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.display_timestamp_format">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_timestamp_format</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.display_timestamp_format" title="Link to this definition">¶</a></dt>
+<dd><p>The format in which timestamps are displayed.</p>
+<p>Default is ‘%Y-%m-%d %H:%M:%S.%f%z’, e.g. 2020-02-01 15:05:06.000015-08:00.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.display_timezone">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">display_timezone</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.display_timezone" title="Link to this definition">¶</a></dt>
+<dd><p>The timezone in which timestamps are displayed.</p>
+<p>Defaults to local timezone.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Options.cache_root">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cache_root</span></span><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Options.cache_root" title="Link to this definition">¶</a></dt>
+<dd><p>The cache directory specified by the user.</p>
+<p>Defaults to None.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Recordings">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">Recordings</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Recordings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Recordings" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An introspection interface for recordings for pipelines.</p>
+<p>When a user materializes a PCollection onto disk (eg. ib.show) for a streaming
+pipeline, a background source recording job is started. This job pulls data
+from all defined unbounded sources for that PCollection’s pipeline. The
+following methods allow for introspection into that background recording job.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Recordings.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Recordings.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Recordings.describe" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a description of all the recordings for the given pipeline.</p>
+<p>If no pipeline is given then this returns a dictionary of descriptions for
+all pipelines.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Recordings.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Recordings.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Recordings.clear" title="Link to this definition">¶</a></dt>
+<dd><p>Clears all recordings of the given pipeline. Returns True if cleared.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Recordings.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Recordings.stop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Recordings.stop" title="Link to this definition">¶</a></dt>
+<dd><p>Stops the background source recording of the given pipeline.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Recordings.record">
+<span class="sig-name descname"><span class="pre">record</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Recordings.record"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Recordings.record" title="Link to this definition">¶</a></dt>
+<dd><p>Starts a background source recording job for the given pipeline. Returns
+True if the recording job was started.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">Clusters</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An interface to control clusters implicitly created and managed by
+the current interactive environment. This class is not needed and
+should not be used otherwise.</p>
+<p>Do not use it for clusters a user explicitly manages: e.g., if you have
+a Flink cluster running somewhere and provides the flink master when
+running a pipeline with the FlinkRunner, the cluster will not be tracked
+or managed by Beam.
+To reuse the same cluster for your pipelines, use the same pipeline
+options: e.g., a pipeline option with the same flink master if you are
+using FlinkRunner.</p>
+<p>This module is experimental. No backwards-compatibility guarantees.</p>
+<p>Interactive Beam automatically creates/reuses existing worker clusters to
+execute pipelines when it detects the need from configurations.
+Currently, the only supported cluster implementation is Flink running on
+Cloud Dataproc.</p>
+<p>To configure a pipeline to run on Cloud Dataproc with Flink, set the
+underlying runner of the InteractiveRunner to FlinkRunner and the pipeline
+options to indicate where on Cloud the FlinkRunner should be deployed to.</p>
+<blockquote>
+<div><p>An example to enable automatic Dataproc cluster creation/reuse:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">PipelineOptions</span><span class="p">([</span>
+    <span class="s1">&#39;--project=my-project&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;--region=my-region&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;--environment_type=DOCKER&#39;</span><span class="p">])</span>
+<span class="n">pipeline</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">InteractiveRunner</span><span class="p">(</span>
+    <span class="n">underlying_runner</span><span class="o">=</span><span class="n">FlinkRunner</span><span class="p">()),</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Reuse a pipeline options in another pipeline would configure Interactive Beam
+to reuse the same Dataproc cluster implicitly managed by the current
+interactive environment.
+If a flink_master is identified as a known cluster, the corresponding cluster
+is also resued.
+Furthermore, if a cluster is explicitly created by using a pipeline as an
+identifier to a known cluster, the cluster is reused.</p>
+<blockquote>
+<div><p>An example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># If pipeline runs on a known cluster, below code reuses the cluster</span>
+<span class="c1"># manager without creating a new one.</span>
+<span class="n">dcm</span> <span class="o">=</span> <span class="n">ib</span><span class="o">.</span><span class="n">clusters</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">pipeline</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>To provision the cluster, use WorkerOptions. Supported configurations are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.</span> <span class="n">subnetwork</span>
+<span class="mf">2.</span> <span class="n">num_workers</span>
+<span class="mf">3.</span> <span class="n">machine_type</span>
+</pre></div>
+</div>
+<p>To configure a pipeline to run on an existing FlinkRunner deployed elsewhere,
+set the flink_master explicitly so no cluster will be created/reused.</p>
+<blockquote>
+<div><p>An example pipeline options to skip automatic Dataproc cluster usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">options</span> <span class="o">=</span> <span class="n">PipelineOptions</span><span class="p">([</span>
+    <span class="s1">&#39;--flink_master=some.self.hosted.flink:port&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;--environment_type=DOCKER&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>To configure a pipeline to run on a local FlinkRunner, explicitly set the
+default cluster metadata to None: ib.clusters.set_default_cluster(None).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.DATAPROC_FLINK_VERSION">
+<span class="sig-name descname"><span class="pre">DATAPROC_FLINK_VERSION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'1.17'</span></em><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.DATAPROC_FLINK_VERSION" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.DATAPROC_MINIMUM_WORKER_NUM">
+<span class="sig-name descname"><span class="pre">DATAPROC_MINIMUM_WORKER_NUM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.DATAPROC_MINIMUM_WORKER_NUM" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="apache_beam.runners.interactive.dataproc.dataproc_cluster_manager.html#apache_beam.runners.interactive.dataproc.dataproc_cluster_manager.DataprocClusterManager" title="apache_beam.runners.interactive.dataproc.dataproc_cluster_manager.DataprocClusterManager"><span class="pre">DataprocClusterManager</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.create" title="Link to this definition">¶</a></dt>
+<dd><p>Creates a Dataproc cluster manager provisioned for the cluster
+identified. If the cluster is known, returns an existing cluster manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.cleanup" title="Link to this definition">¶</a></dt>
+<dd><p>Cleans up the cluster associated with the given cluster_identifier.</p>
+<p>When None cluster_identifier is provided: if force is True, cleans up for
+all clusters; otherwise, do a dry run and NOOP.
+If a beam.Pipeline is given as the ClusterIdentifier while multiple
+pipelines share the same cluster, it only cleans up the association between
+the pipeline and the cluster identified.
+If the cluster_identifier is unknown, NOOP.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.describe">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.describe" title="Link to this definition">¶</a></dt>
+<dd><p>Describes the ClusterMetadata by a ClusterIdentifier.</p>
+<p>If no cluster_identifier is given or if the cluster_identifier is unknown,
+it returns descriptions for all known clusters.</p>
+<p>Example usage:
+# Describe the cluster executing work for a pipeline.
+ib.clusters.describe(pipeline)
+# Describe the cluster with the flink master url.
+ib.clusters.describe(master_url)
+# Describe all existing clusters.
+ib.clusters.describe()</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.set_default_cluster">
+<span class="sig-name descname"><span class="pre">set_default_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters.set_default_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.set_default_cluster" title="Link to this definition">¶</a></dt>
+<dd><p>Temporarily sets the default metadata for creating or reusing a
+DataprocClusterManager. It is always updated to the most recently created
+cluster.</p>
+<p>If no known ClusterMetadata can be identified by the ClusterIdentifer, NOOP.
+If None is set, next time when Flink is in use, if no cluster is explicitly
+configured by a pipeline, the job runs locally.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.Clusters.cluster_metadata">
+<span class="sig-name descname"><span class="pre">cluster_metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_identifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pipeline.html#apache_beam.pipeline.Pipeline" title="apache_beam.pipeline.Pipeline"><span class="pre">Pipeline</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="apache_beam.runners.interactive.dataproc.types.html#apache_beam.runners.interactive.dataproc.types.ClusterMetadata" title="apache_beam.runners.interactive.dataproc.types.ClusterMetadata"><span class="pre">ClusterMetadata</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#Clusters.cluster_metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.Clusters.cluster_metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches the ClusterMetadata by a ClusterIdentifier that could be a
+URL in string, a Beam pipeline, or an equivalent to a known ClusterMetadata;</p>
+<p>If the given cluster_identifier is an URL or a pipeline that is unknown to
+the current environment, the default cluster metadata (could be None) is
+returned.
+If the given cluster_identifier is a ClusterMetadata but unknown to the
+current environment, passes it through (NOOP).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.watch">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">watch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">watchable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#watch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.watch" title="Link to this definition">¶</a></dt>
+<dd><p>Monitors a watchable.</p>
+<p>This allows Interactive Beam to implicitly pass on the information about the
+location of your pipeline definition.</p>
+<p>Current implementation mainly watches for PCollection variables defined in
+user code. A watchable can be a dictionary of variable metadata such as
+locals(), a str name of a module, a module object or an instance of a class.
+The variable can come from any scope even local variables in a method of a
+class defined in a module.</p>
+<blockquote>
+<div><p>Below are all valid:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">watch</span><span class="p">(</span><span class="n">__main__</span><span class="p">)</span>  <span class="c1"># if import __main__ is already invoked</span>
+<span class="n">watch</span><span class="p">(</span><span class="s1">&#39;__main__&#39;</span><span class="p">)</span>  <span class="c1"># does not require invoking import __main__ beforehand</span>
+<span class="n">watch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># inside a class</span>
+<span class="n">watch</span><span class="p">(</span><span class="n">SomeInstance</span><span class="p">())</span>  <span class="c1"># an instance of a class</span>
+<span class="n">watch</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>  <span class="c1"># inside a function, watching local variables within</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>If you write a Beam pipeline in the __main__ module directly, since the
+__main__ module is always watched, you don’t have to instruct Interactive
+Beam. If your Beam pipeline is defined in some module other than __main__,
+such as inside a class function or a unit test, you can watch() the scope.</p>
+<blockquote>
+<div><p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Foo</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+  <span class="k">def</span> <span class="nf">run_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">()</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+      <span class="n">init_pcoll</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span>  <span class="s1">&#39;Init Create&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+      <span class="n">watch</span><span class="p">(</span><span class="nb">locals</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">init_pcoll</span>
+<span class="n">init_pcoll</span> <span class="o">=</span> <span class="n">Foo</span><span class="p">()</span><span class="o">.</span><span class="n">run_pipeline</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Interactive Beam caches init_pcoll for the first run.</p>
+<p>Then you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show</span><span class="p">(</span><span class="n">init_pcoll</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To visualize data from init_pcoll once the pipeline is executed.</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.show">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">pcolls</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.13)"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pvalue.html#apache_beam.pvalue.PCollection" title="apache_beam.pvalue.PCollection"><span class="pre">PCollection</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="apache_beam.pvalue.html#apache_beam.pvalue.PCollection" title="apache_beam.pvalue.PCollection"><span class="pre">PCollection</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.pvalue.html#apache_beam.pvalue.PCollection" title="apache_beam.pvalue.PCollection"><span class="pre">PCollection</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_window_info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'inf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'inf'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.show" title="Link to this definition">¶</a></dt>
+<dd><p>Shows given PCollections in an interactive exploratory way if used within
+a notebook, or prints a heading sampled data if used within an ipython shell.
+Noop if used in a non-interactive environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_window_info</strong> – (optional) if True, windowing information of the
+data will be visualized too. Default is false.</p></li>
+<li><p><strong>visualize_data</strong> – (optional) by default, the visualization contains data
+tables rendering data from given pcolls separately as if they are
+converted into dataframes. If visualize_data is True, there will be a
+more dive-in widget and statistically overview widget of the data.
+Otherwise, those 2 data visualization widgets will not be displayed.</p></li>
+<li><p><strong>n</strong> – (optional) max number of elements to visualize. Default ‘inf’.</p></li>
+<li><p><strong>duration</strong> – (optional) max duration of elements to read in integer seconds or
+a string duration. Default ‘inf’.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The given pcolls can be dictionary of PCollections (as values), or iterable
+of PCollections or plain PCollection values.</p>
+<p>The user can specify either the max number of elements with <cite>n</cite> to read
+or the maximum duration of elements to read with <cite>duration</cite>. When a limiter is
+not supplied, it is assumed to be infinite.</p>
+<p>By default, the visualization contains data tables rendering data from given
+pcolls separately as if they are converted into dataframes. If visualize_data
+is True, there will be a more dive-in widget and statistically overview widget
+of the data. Otherwise, those 2 data visualization widgets will not be
+displayed.</p>
+<p>Ad hoc builds a pipeline fragment including only transforms that are
+necessary to produce data for given PCollections pcolls, runs the pipeline
+fragment to compute data for those pcolls and then visualizes the data.</p>
+<p>The function is always blocking. If used within a notebook, the data
+visualized might be dynamically updated before the function returns as more
+and more data could getting processed and emitted when the pipeline fragment
+is being executed. If used within an ipython shell, there will be no dynamic
+plotting but a static plotting in the end of pipeline fragment execution.</p>
+<p>The PCollections given must belong to the same pipeline.</p>
+<blockquote>
+<div><p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">InteractiveRunner</span><span class="p">())</span>
+<span class="n">init</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s1">&#39;Init&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">))</span>
+<span class="n">square</span> <span class="o">=</span> <span class="n">init</span> <span class="o">|</span> <span class="s1">&#39;Square&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">cube</span> <span class="o">=</span> <span class="n">init</span> <span class="o">|</span> <span class="s1">&#39;Cube&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Below builds a pipeline fragment from the defined pipeline `p` that</span>
+<span class="c1"># contains only applied transforms of `Init` and `Square`. Then the</span>
+<span class="c1"># interactive runner runs the pipeline fragment implicitly to compute data</span>
+<span class="c1"># represented by PCollection `square` and visualizes it.</span>
+<span class="n">show</span><span class="p">(</span><span class="n">square</span><span class="p">)</span>
+
+<span class="c1"># This is equivalent to `show(square)` because `square` depends on `init`</span>
+<span class="c1"># and `init` is included in the pipeline fragment and computed anyway.</span>
+<span class="n">show</span><span class="p">(</span><span class="n">init</span><span class="p">,</span> <span class="n">square</span><span class="p">)</span>
+
+<span class="c1"># Below is similar to running `p.run()`. It computes data for both</span>
+<span class="c1"># PCollection `square` and PCollection `cube`, then visualizes them.</span>
+<span class="n">show</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="n">cube</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.collect">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">pcolls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'inf'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_window_info</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">runner</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_compute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tuple</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.collect" title="Link to this definition">¶</a></dt>
+<dd><p>Materializes the elements from a PCollection into a Dataframe.</p>
+<p>This reads each element from file and reads only the amount that it needs
+into memory. The user can specify either the max number of elements to read
+or the maximum duration of elements to read. When a limiter is not supplied,
+it is assumed to be infinite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcolls</strong> – PCollections to compute.</p></li>
+<li><p><strong>n</strong> – (optional) max number of elements to visualize. Default ‘inf’.</p></li>
+<li><p><strong>duration</strong> – (optional) max duration of elements to read in integer seconds or
+a string duration. Default ‘inf’.</p></li>
+<li><p><strong>include_window_info</strong> – (optional) if True, appends the windowing information
+to each row. Default False.</p></li>
+<li><p><strong>runner</strong> – (optional) the runner with which to compute the results</p></li>
+<li><p><strong>options</strong> – (optional) any additional pipeline options to use to compute the
+results</p></li>
+<li><p><strong>force_compute</strong> – (optional) if True, forces recomputation rather than using
+cached PCollections</p></li>
+<li><p><strong>force_tuple</strong> – (optional) if True, return a 1-tuple or results rather than
+the bare results if only one PCollection is computed</p></li>
+</ul>
+</dd>
+</dl>
+<p>For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">InteractiveRunner</span><span class="p">())</span>
+<span class="n">init</span> <span class="o">=</span> <span class="n">p</span> <span class="o">|</span> <span class="s1">&#39;Init&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="n">square</span> <span class="o">=</span> <span class="n">init</span> <span class="o">|</span> <span class="s1">&#39;Square&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Run the pipeline and bring the PCollection into memory as a Dataframe.</span>
+<span class="n">in_memory_square</span> <span class="o">=</span> <span class="n">head</span><span class="p">(</span><span class="n">square</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.show_graph">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">show_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#show_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.show_graph" title="Link to this definition">¶</a></dt>
+<dd><p>Shows the current pipeline shape of a given Beam pipeline as a DAG.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.interactive_beam.evict_recorded_data">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.interactive_beam.</span></span><span class="sig-name descname"><span class="pre">evict_recorded_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/interactive_beam.html#evict_recorded_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.interactive_beam.evict_recorded_data" title="Link to this definition">¶</a></dt>
+<dd><p>Forcefully evicts all recorded replayable data for the given pipeline. If
+no pipeline is specified, evicts for all user defined pipelines.</p>
+<p>Once invoked, Interactive Beam will record new data based on the guidance of
+options the next time it evaluates/visualizes PCollections or runs pipelines.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.runners.interactive.cache_manager.html" class="btn btn-neutral float-left" title="apache_beam.runners.interactive.cache_manager module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.runners.interactive.interactive_environment.html" class="btn btn-neutral float-right" title="apache_beam.runners.interactive.interactive_environment module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

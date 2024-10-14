@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.metrics.monitoring_infos module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.ml package" href="apache_beam.ml.html" />
+    <link rel="prev" title="apache_beam.metrics.metricbase module" href="apache_beam.metrics.metricbase.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.metrics.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.cells.html">apache_beam.metrics.cells module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.metric.html">apache_beam.metrics.metric module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.metricbase.html">apache_beam.metrics.metricbase module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.metrics.monitoring_infos module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.extract_counter_value"><code class="docutils literal notranslate"><span class="pre">extract_counter_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.extract_gauge_value"><code class="docutils literal notranslate"><span class="pre">extract_gauge_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.extract_distribution"><code class="docutils literal notranslate"><span class="pre">extract_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.extract_string_set_value"><code class="docutils literal notranslate"><span class="pre">extract_string_set_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.create_labels"><code class="docutils literal notranslate"><span class="pre">create_labels()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_user_counter"><code class="docutils literal notranslate"><span class="pre">int64_user_counter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_counter"><code class="docutils literal notranslate"><span class="pre">int64_counter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_user_distribution"><code class="docutils literal notranslate"><span class="pre">int64_user_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_distribution"><code class="docutils literal notranslate"><span class="pre">int64_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_user_gauge"><code class="docutils literal notranslate"><span class="pre">int64_user_gauge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.int64_gauge"><code class="docutils literal notranslate"><span class="pre">int64_gauge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.user_set_string"><code class="docutils literal notranslate"><span class="pre">user_set_string()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.create_monitoring_info"><code class="docutils literal notranslate"><span class="pre">create_monitoring_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.is_counter"><code class="docutils literal notranslate"><span class="pre">is_counter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.is_gauge"><code class="docutils literal notranslate"><span class="pre">is_gauge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.is_distribution"><code class="docutils literal notranslate"><span class="pre">is_distribution()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.is_string_set"><code class="docutils literal notranslate"><span class="pre">is_string_set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.is_user_monitoring_info"><code class="docutils literal notranslate"><span class="pre">is_user_monitoring_info()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.extract_metric_result_map_value"><code class="docutils literal notranslate"><span class="pre">extract_metric_result_map_value()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.parse_namespace_and_name"><code class="docutils literal notranslate"><span class="pre">parse_namespace_and_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.get_step_name"><code class="docutils literal notranslate"><span class="pre">get_step_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.to_key"><code class="docutils literal notranslate"><span class="pre">to_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.sum_payload_combiner"><code class="docutils literal notranslate"><span class="pre">sum_payload_combiner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.distribution_payload_combiner"><code class="docutils literal notranslate"><span class="pre">distribution_payload_combiner()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.monitoring_infos.consolidate"><code class="docutils literal notranslate"><span class="pre">consolidate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+      <li class="breadcrumb-item active">apache_beam.metrics.monitoring_infos module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.metrics.monitoring_infos.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.metrics.monitoring_infos">
+<span id="apache-beam-metrics-monitoring-infos-module"></span><h1>apache_beam.metrics.monitoring_infos module<a class="headerlink" href="#module-apache_beam.metrics.monitoring_infos" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.extract_counter_value">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">extract_counter_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#extract_counter_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.extract_counter_value" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the counter value of the monitoring info.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.extract_gauge_value">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">extract_gauge_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#extract_gauge_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.extract_gauge_value" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a tuple containing (timestamp, value)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.extract_distribution">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">extract_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#extract_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.extract_distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a tuple of (count, sum, min, max).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>proto</strong> – The monitoring info for the distribution.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.extract_string_set_value">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">extract_string_set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#extract_string_set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.extract_string_set_value" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.create_labels">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">create_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcollection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#create_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.create_labels" title="Link to this definition">¶</a></dt>
+<dd><p>Create the label dictionary based on the provided values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+<li><p><strong>pcollection</strong> – The pcollection id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_user_counter">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_user_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_user_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_user_counter" title="Link to this definition">¶</a></dt>
+<dd><p>Return the counter monitoring info for the specifed URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>metric</strong> – The payload field to use in the monitoring info or an int value.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_counter">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcollection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_counter" title="Link to this definition">¶</a></dt>
+<dd><p>Return the counter monitoring info for the specifed URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>metric</strong> – The payload field to use in the monitoring info or an int value.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+<li><p><strong>pcollection</strong> – The pcollection id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_user_distribution">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_user_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_user_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_user_distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Return the distribution monitoring info for the URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>metric</strong> – The DistributionData for the metric.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_distribution">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pcollection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Return a distribution monitoring info for the URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>metric</strong> – The DistributionData for the metric.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+<li><p><strong>pcollection</strong> – The pcollection id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_user_gauge">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_user_gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_user_gauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_user_gauge" title="Link to this definition">¶</a></dt>
+<dd><p>Return the gauge monitoring info for the URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – User-defined namespace of gauge metric.</p></li>
+<li><p><strong>name</strong> – Name of gauge metric.</p></li>
+<li><p><strong>metric</strong> – The GaugeData containing the metrics.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.int64_gauge">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">int64_gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#int64_gauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.int64_gauge" title="Link to this definition">¶</a></dt>
+<dd><p>Return the gauge monitoring info for the URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>metric</strong> – An int representing the value. The current time will be used for
+the timestamp.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.user_set_string">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">user_set_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ptransform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#user_set_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.user_set_string" title="Link to this definition">¶</a></dt>
+<dd><p>Return the string set monitoring info for the URN, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – User-defined namespace of StringSet.</p></li>
+<li><p><strong>name</strong> – Name of StringSet.</p></li>
+<li><p><strong>metric</strong> – The StringSetData representing the metrics.</p></li>
+<li><p><strong>ptransform</strong> – The ptransform id used as a label.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.create_monitoring_info">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">create_monitoring_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">urn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_urn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MonitoringInfo</span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#create_monitoring_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.create_monitoring_info" title="Link to this definition">¶</a></dt>
+<dd><p>Return the gauge monitoring info for the URN, type, metric and labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>urn</strong> – The URN of the monitoring info/metric.</p></li>
+<li><p><strong>type_urn</strong> – The URN of the type of the monitoring info/metric.
+i.e. beam:metrics:sum_int_64, beam:metrics:latest_int_64.</p></li>
+<li><p><strong>payload</strong> – The payload field to use in the monitoring info.</p></li>
+<li><p><strong>labels</strong> – The label dictionary to use in the MonitoringInfo.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.is_counter">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">is_counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#is_counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.is_counter" title="Link to this definition">¶</a></dt>
+<dd><p>Returns true if the monitoring info is a coutner metric.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.is_gauge">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">is_gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#is_gauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.is_gauge" title="Link to this definition">¶</a></dt>
+<dd><p>Returns true if the monitoring info is a gauge metric.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.is_distribution">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">is_distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#is_distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.is_distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Returns true if the monitoring info is a distrbution metric.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.is_string_set">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">is_string_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#is_string_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.is_string_set" title="Link to this definition">¶</a></dt>
+<dd><p>Returns true if the monitoring info is a StringSet metric.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.is_user_monitoring_info">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">is_user_monitoring_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#is_user_monitoring_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.is_user_monitoring_info" title="Link to this definition">¶</a></dt>
+<dd><p>Returns true if the monitoring info is a user metric.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.extract_metric_result_map_value">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">extract_metric_result_map_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.metrics.cells.html#apache_beam.metrics.cells.DistributionResult" title="apache_beam.metrics.cells.DistributionResult"><span class="pre">DistributionResult</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="apache_beam.metrics.cells.html#apache_beam.metrics.cells.GaugeResult" title="apache_beam.metrics.cells.GaugeResult"><span class="pre">GaugeResult</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.13)"><span class="pre">set</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#extract_metric_result_map_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.extract_metric_result_map_value" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the relevant GaugeResult, DistributionResult or int value for
+counter metric, set for StringSet metric.</p>
+<p>These are the proper format for use in the MetricResult.query() result.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.parse_namespace_and_name">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">parse_namespace_and_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#parse_namespace_and_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.parse_namespace_and_name" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the (namespace, name) tuple of the URN in the monitoring info.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.get_step_name">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">get_step_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#get_step_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.get_step_name" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a step name for the given monitoring info or None if step name
+cannot be specified.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.to_key">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">to_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monitoring_info_proto</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MonitoringInfo</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.13)"><span class="pre">FrozenSet</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Hashable" title="(in Python v3.13)"><span class="pre">Hashable</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#to_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.to_key" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a key based on the URN and labels.</p>
+<p>This is useful in maps to prevent reporting the same MonitoringInfo twice.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.sum_payload_combiner">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">sum_payload_combiner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#sum_payload_combiner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.sum_payload_combiner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.distribution_payload_combiner">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">distribution_payload_combiner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload_b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#distribution_payload_combiner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.distribution_payload_combiner" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.metrics.monitoring_infos.consolidate">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.monitoring_infos.</span></span><span class="sig-name descname"><span class="pre">consolidate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key=&lt;function</span> <span class="pre">to_key&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/monitoring_infos.html#consolidate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.monitoring_infos.consolidate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.metrics.metricbase.html" class="btn btn-neutral float-left" title="apache_beam.metrics.metricbase module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.ml.html" class="btn btn-neutral float-right" title="apache_beam.ml package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

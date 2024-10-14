@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.inference.vllm_inference &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.inference.vllm_inference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.inference.vllm_inference</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam.io.filesystems</span> <span class="kn">import</span> <span class="n">FileSystems</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.inference.base</span> <span class="kn">import</span> <span class="n">ModelHandler</span>
+<span class="kn">from</span> <span class="nn">apache_beam.ml.inference.base</span> <span class="kn">import</span> <span class="n">PredictionResult</span>
+<span class="kn">from</span> <span class="nn">apache_beam.utils</span> <span class="kn">import</span> <span class="n">subprocess_server</span>
+<span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span> <span class="nn">vllm</span>  <span class="c1"># pylint: disable=unused-import</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;vllm module successfully imported.&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+  <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;vllm module was not found. This is ok as long as the specified &#39;</span> \
+    <span class="s1">&#39;runner has vllm dependencies installed.&#39;</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;OpenAIChatMessage&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;VLLMCompletionsModelHandler&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;VLLMChatModelHandler&#39;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="OpenAIChatMessage">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.OpenAIChatMessage">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">OpenAIChatMessage</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;&quot;</span>
+<span class="sd">  Dataclass containing previous chat messages in conversation.</span>
+<span class="sd">  Role is the entity that sent the message (either &#39;user&#39; or &#39;system&#39;).</span>
+<span class="sd">  Content is the contents of the message.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">role</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">content</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">start_process</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+  <span class="n">port</span><span class="p">,</span> <span class="o">=</span> <span class="n">subprocess_server</span><span class="o">.</span><span class="n">pick_port</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+  <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">arg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;{{PORT}}&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">port</span><span class="p">))</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">cmd</span><span class="p">]</span>  <span class="c1"># pylint: disable=not-an-iterable</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting service with </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;,&quot;</span><span class="p">,</span> <span class="s2">&quot;&#39;&quot;</span><span class="p">))</span>
+  <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+      <span class="n">cmd</span><span class="p">,</span> <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">)</span>
+
+  <span class="c1"># Emit the output of this command as info level logging.</span>
+  <span class="k">def</span> <span class="nf">log_stdout</span><span class="p">():</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+    <span class="k">while</span> <span class="n">line</span><span class="p">:</span>
+      <span class="c1"># The log obtained from stdout is bytes, decode it into string.</span>
+      <span class="c1"># Remove newline via rstrip() to not print an empty line.</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">errors</span><span class="o">=</span><span class="s1">&#39;backslashreplace&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+      <span class="n">line</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+
+  <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">log_stdout</span><span class="p">)</span>
+  <span class="n">t</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+  <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">process</span><span class="p">,</span> <span class="n">port</span>
+
+
+<span class="k">def</span> <span class="nf">getVLLMClient</span><span class="p">(</span><span class="n">port</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenAI</span><span class="p">:</span>
+  <span class="n">openai_api_key</span> <span class="o">=</span> <span class="s2">&quot;EMPTY&quot;</span>
+  <span class="n">openai_api_base</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;http://localhost:</span><span class="si">{</span><span class="n">port</span><span class="si">}</span><span class="s2">/v1&quot;</span>
+  <span class="k">return</span> <span class="n">OpenAI</span><span class="p">(</span>
+      <span class="n">api_key</span><span class="o">=</span><span class="n">openai_api_key</span><span class="p">,</span>
+      <span class="n">base_url</span><span class="o">=</span><span class="n">openai_api_base</span><span class="p">,</span>
+  <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_VLLMModelServer</span><span class="p">():</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vllm_server_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span> <span class="o">=</span> <span class="n">vllm_server_kwargs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_server_started</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_server_process</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_server_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">start_server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_started</span><span class="p">:</span>
+      <span class="n">server_cmd</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="s1">&#39;python&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;-m&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;vllm.entrypoints.openai.api_server&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;--model&#39;</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">,</span>
+          <span class="s1">&#39;--port&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;{{PORT}}&#39;</span><span class="p">,</span>
+      <span class="p">]</span>
+      <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">server_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;--</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">server_cmd</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_server_process</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_port</span> <span class="o">=</span> <span class="n">start_process</span><span class="p">(</span><span class="n">server_cmd</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">check_connectivity</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">get_server_port</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_started</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">start_server</span><span class="p">()</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_port</span>
+
+  <span class="k">def</span> <span class="nf">check_connectivity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retries</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">getVLLMClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server_port</span><span class="p">)</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_process</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">models</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">list</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;models: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">models</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">models</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_server_started</span> <span class="o">=</span> <span class="kc">True</span>
+          <span class="k">return</span>
+      <span class="k">except</span><span class="p">:</span>  <span class="c1"># pylint: disable=bare-except</span>
+        <span class="k">pass</span>
+      <span class="c1"># Sleep while bringing up the process</span>
+      <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">retries</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_server_started</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+          <span class="s2">&quot;Failed to start vLLM server, polling process exited with code &quot;</span> <span class="o">+</span>
+          <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.  Next time a request is tried, the server will be restarted&quot;</span> <span class="o">%</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_server_process</span><span class="o">.</span><span class="n">poll</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">start_server</span><span class="p">(</span><span class="n">retries</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VLLMCompletionsModelHandler">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMCompletionsModelHandler">[docs]</a>
+<span class="k">class</span> <span class="nc">VLLMCompletionsModelHandler</span><span class="p">(</span><span class="n">ModelHandler</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span>
+                                               <span class="n">PredictionResult</span><span class="p">,</span>
+                                               <span class="n">_VLLMModelServer</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">vllm_server_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implementation of the ModelHandler interface for vLLM using text as</span>
+<span class="sd">    input.</span>
+
+<span class="sd">    Example Usage::</span>
+
+<span class="sd">      pcoll | RunInference(VLLMModelHandler(model_name=&#39;facebook/opt-125m&#39;))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      model_name: The vLLM model. See</span>
+<span class="sd">        https://docs.vllm.ai/en/latest/models/supported_models.html for</span>
+<span class="sd">        supported models.</span>
+<span class="sd">      vllm_server_kwargs: Any additional kwargs to be passed into your vllm</span>
+<span class="sd">        server when it is being created. Will be invoked using</span>
+<span class="sd">        `python -m vllm.entrypoints.openai.api_serverv &lt;beam provided args&gt;</span>
+<span class="sd">        &lt;vllm_server_kwargs&gt;`. For example, you could pass</span>
+<span class="sd">        `{&#39;echo&#39;: &#39;true&#39;}` to prepend new messages with the previous message.</span>
+<span class="sd">        For a list of possible kwargs, see</span>
+<span class="sd">        https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html#extra-parameters-for-completions-api</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">vllm_server_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_env_vars</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="VLLMCompletionsModelHandler.load_model">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMCompletionsModelHandler.load_model">[docs]</a>
+  <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_VLLMModelServer</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_VLLMModelServer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VLLMCompletionsModelHandler.run_inference">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMCompletionsModelHandler.run_inference">[docs]</a>
+  <span class="k">def</span> <span class="nf">run_inference</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+      <span class="n">model</span><span class="p">:</span> <span class="n">_VLLMModelServer</span><span class="p">,</span>
+      <span class="n">inference_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs inferences on a batch of text strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      batch: A sequence of examples as text strings.</span>
+<span class="sd">      model: A _VLLMModelServer containing info for connecting to the server.</span>
+<span class="sd">      inference_args: Any additional arguments for an inference.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      An Iterable of type PredictionResult.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">getVLLMClient</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_server_port</span><span class="p">())</span>
+    <span class="n">inference_args</span> <span class="o">=</span> <span class="n">inference_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># TODO(https://github.com/apache/beam/issues/32528): We should add support</span>
+    <span class="c1"># for taking in batches and doing a bunch of async calls. That will end up</span>
+    <span class="c1"># being more efficient when we can do in bundle batching.</span>
+    <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">completion</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="n">prompt</span><span class="p">,</span> <span class="o">**</span><span class="n">inference_args</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">completion</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">check_connectivity</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">PredictionResult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="VLLMCompletionsModelHandler.share_model_across_processes">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMCompletionsModelHandler.share_model_across_processes">[docs]</a>
+  <span class="k">def</span> <span class="nf">share_model_across_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="VLLMChatModelHandler">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMChatModelHandler">[docs]</a>
+<span class="k">class</span> <span class="nc">VLLMChatModelHandler</span><span class="p">(</span><span class="n">ModelHandler</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">OpenAIChatMessage</span><span class="p">],</span>
+                                        <span class="n">PredictionResult</span><span class="p">,</span>
+                                        <span class="n">_VLLMModelServer</span><span class="p">]):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">chat_template_path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">vllm_server_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Implementation of the ModelHandler interface for vLLM using previous</span>
+<span class="sd">    messages as input.</span>
+
+<span class="sd">    Example Usage::</span>
+
+<span class="sd">      pcoll | RunInference(VLLMModelHandler(model_name=&#39;facebook/opt-125m&#39;))</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      model_name: The vLLM model. See</span>
+<span class="sd">        https://docs.vllm.ai/en/latest/models/supported_models.html for</span>
+<span class="sd">        supported models.</span>
+<span class="sd">      chat_template_path: Path to a chat template. This file must be accessible</span>
+<span class="sd">        from your runner&#39;s execution environment, so it is recommended to use</span>
+<span class="sd">        a cloud based file storage system (e.g. Google Cloud Storage).</span>
+<span class="sd">        For info on chat templates, see:</span>
+<span class="sd">        https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html#chat-template</span>
+<span class="sd">      vllm_server_kwargs: Any additional kwargs to be passed into your vllm</span>
+<span class="sd">        server when it is being created. Will be invoked using</span>
+<span class="sd">        `python -m vllm.entrypoints.openai.api_serverv &lt;beam provided args&gt;</span>
+<span class="sd">        &lt;vllm_server_kwargs&gt;`. For example, you could pass</span>
+<span class="sd">        `{&#39;echo&#39;: &#39;true&#39;}` to prepend new messages with the previous message.</span>
+<span class="sd">        For a list of possible kwargs, see</span>
+<span class="sd">        https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html#extra-parameters-for-chat-api</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">vllm_server_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_env_vars</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_chat_template_path</span> <span class="o">=</span> <span class="n">chat_template_path</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_chat_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;template-</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s1">.jinja&#39;</span>
+
+<div class="viewcode-block" id="VLLMChatModelHandler.load_model">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMChatModelHandler.load_model">[docs]</a>
+  <span class="k">def</span> <span class="nf">load_model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_VLLMModelServer</span><span class="p">:</span>
+    <span class="n">chat_template_contents</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chat_template_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">local_chat_template_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chat_file</span><span class="p">)</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">local_chat_template_path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">FileSystems</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_chat_template_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+          <span class="n">chat_template_contents</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_chat_template_path</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+          <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">chat_template_contents</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="p">[</span><span class="s1">&#39;chat_template&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">local_chat_template_path</span>
+
+    <span class="k">return</span> <span class="n">_VLLMModelServer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vllm_server_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="VLLMChatModelHandler.run_inference">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMChatModelHandler.run_inference">[docs]</a>
+  <span class="k">def</span> <span class="nf">run_inference</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">OpenAIChatMessage</span><span class="p">]],</span>
+      <span class="n">model</span><span class="p">:</span> <span class="n">_VLLMModelServer</span><span class="p">,</span>
+      <span class="n">inference_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs inferences on a batch of text strings.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      batch: A sequence of examples as OpenAI messages.</span>
+<span class="sd">      model: A _VLLMModelServer for connecting to the spun up server.</span>
+<span class="sd">      inference_args: Any additional arguments for an inference.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      An Iterable of type PredictionResult.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">getVLLMClient</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">get_server_port</span><span class="p">())</span>
+    <span class="n">inference_args</span> <span class="o">=</span> <span class="n">inference_args</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># TODO(https://github.com/apache/beam/issues/32528): We should add support</span>
+    <span class="c1"># for taking in batches and doing a bunch of async calls. That will end up</span>
+    <span class="c1"># being more efficient when we can do in bundle batching.</span>
+    <span class="k">for</span> <span class="n">messages</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
+      <span class="n">formatted</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="n">messages</span><span class="p">:</span>
+        <span class="n">formatted</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="n">message</span><span class="o">.</span><span class="n">role</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="n">message</span><span class="o">.</span><span class="n">content</span><span class="p">})</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">completion</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_model_name</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="n">formatted</span><span class="p">,</span> <span class="o">**</span><span class="n">inference_args</span><span class="p">)</span>
+        <span class="n">predictions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">completion</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">check_connectivity</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">e</span>
+
+    <span class="k">return</span> <span class="p">[</span><span class="n">PredictionResult</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="VLLMChatModelHandler.share_model_across_processes">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vllm_inference.html#apache_beam.ml.inference.vllm_inference.VLLMChatModelHandler.share_model_across_processes">[docs]</a>
+  <span class="k">def</span> <span class="nf">share_model_across_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

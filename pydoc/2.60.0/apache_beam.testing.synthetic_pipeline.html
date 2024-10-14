@@ -1,0 +1,527 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.testing.synthetic_pipeline module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.testing.test_pipeline module" href="apache_beam.testing.test_pipeline.html" />
+    <link rel="prev" title="apache_beam.testing.pipeline_verifiers module" href="apache_beam.testing.pipeline_verifiers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.testing.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.testing.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.datatype_inference.html">apache_beam.testing.datatype_inference module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.extra_assertions.html">apache_beam.testing.extra_assertions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.metric_result_matchers.html">apache_beam.testing.metric_result_matchers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.pipeline_verifiers.html">apache_beam.testing.pipeline_verifiers module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.testing.synthetic_pipeline module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.get_generator"><code class="docutils literal notranslate"><span class="pre">get_generator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.parse_byte_size"><code class="docutils literal notranslate"><span class="pre">parse_byte_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.div_round_up"><code class="docutils literal notranslate"><span class="pre">div_round_up()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.rotate_key"><code class="docutils literal notranslate"><span class="pre">rotate_key()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.initial_splitting_zipf"><code class="docutils literal notranslate"><span class="pre">initial_splitting_zipf()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SyntheticStep"><code class="docutils literal notranslate"><span class="pre">SyntheticStep</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker"><code class="docutils literal notranslate"><span class="pre">NonLiquidShardingOffsetRangeTracker</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider"><code class="docutils literal notranslate"><span class="pre">SyntheticSDFStepRestrictionProvider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.get_synthetic_sdf_step"><code class="docutils literal notranslate"><span class="pre">get_synthetic_sdf_step()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource"><code class="docutils literal notranslate"><span class="pre">SyntheticSource</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider"><code class="docutils literal notranslate"><span class="pre">SyntheticSDFSourceRestrictionProvider</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFAsSource"><code class="docutils literal notranslate"><span class="pre">SyntheticSDFAsSource</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.ShuffleBarrier"><code class="docutils literal notranslate"><span class="pre">ShuffleBarrier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.SideInputBarrier"><code class="docutils literal notranslate"><span class="pre">SideInputBarrier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.merge_using_gbk"><code class="docutils literal notranslate"><span class="pre">merge_using_gbk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.merge_using_side_input"><code class="docutils literal notranslate"><span class="pre">merge_using_side_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.expand_using_gbk"><code class="docutils literal notranslate"><span class="pre">expand_using_gbk()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.expand_using_second_output"><code class="docutils literal notranslate"><span class="pre">expand_using_second_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.parse_args"><code class="docutils literal notranslate"><span class="pre">parse_args()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.run"><code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator"><code class="docutils literal notranslate"><span class="pre">StatefulLoadGenerator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_pipeline.html">apache_beam.testing.test_pipeline module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_stream.html">apache_beam.testing.test_stream module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_stream_service.html">apache_beam.testing.test_stream_service module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.test_utils.html">apache_beam.testing.test_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.testing.util.html">apache_beam.testing.util module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.testing.html">apache_beam.testing package</a></li>
+      <li class="breadcrumb-item active">apache_beam.testing.synthetic_pipeline module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.testing.synthetic_pipeline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.testing.synthetic_pipeline">
+<span id="apache-beam-testing-synthetic-pipeline-module"></span><h1>apache_beam.testing.synthetic_pipeline module<a class="headerlink" href="#module-apache_beam.testing.synthetic_pipeline" title="Link to this heading">¶</a></h1>
+<p>A set of utilities to write pipelines for performance tests.</p>
+<p>This module offers a way to create pipelines using synthetic sources and steps.
+Exact shape of the pipeline and the behaviour of sources and steps can be
+controlled through arguments. Please see function ‘parse_args()’ for more
+details about the arguments.</p>
+<p>Shape of the pipeline is primarily controlled through two arguments. Argument
+‘steps’ can be used to define a list of steps as a JSON string. Argument
+‘barrier’ describes how these steps are separated from each other. Argument
+‘barrier’ can be use to build a pipeline as a series of steps or a tree of
+steps with a fanin or a fanout of size 2.</p>
+<p>Other arguments describe what gets generated by synthetic sources that produce
+data for the pipeline.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.get_generator">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">get_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#get_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.get_generator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.parse_byte_size">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">parse_byte_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#parse_byte_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.parse_byte_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.div_round_up">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">div_round_up</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#div_round_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.div_round_up" title="Link to this definition">¶</a></dt>
+<dd><p>Return ceil(a/b).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.rotate_key">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">rotate_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#rotate_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.rotate_key" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a new key-value pair of the same size but with a different key.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.initial_splitting_zipf">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">initial_splitting_zipf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">desired_num_bundles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_total_records</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#initial_splitting_zipf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.initial_splitting_zipf" title="Link to this definition">¶</a></dt>
+<dd><p>Split the given range (defined by start_position, stop_position) into
+desired_num_bundles using zipf with the given distribution_parameter.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticStep">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SyntheticStep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">per_element_delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_bundle_delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_records_per_input_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_filter_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticStep" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.DoFn" title="apache_beam.transforms.core.DoFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoFn</span></code></a></p>
+<p>A DoFn of which behavior can be controlled through prespecified parameters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticStep.start_bundle">
+<span class="sig-name descname"><span class="pre">start_bundle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticStep.start_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticStep.start_bundle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticStep.finish_bundle">
+<span class="sig-name descname"><span class="pre">finish_bundle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticStep.finish_bundle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticStep.finish_bundle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticStep.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticStep.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticStep.process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">NonLiquidShardingOffsetRangeTracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.io.restriction_trackers.html#apache_beam.io.restriction_trackers.OffsetRange" title="apache_beam.io.restriction_trackers.OffsetRange"><span class="pre">OffsetRange</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#NonLiquidShardingOffsetRangeTracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.io.restriction_trackers.html#apache_beam.io.restriction_trackers.OffsetRestrictionTracker" title="apache_beam.io.restriction_trackers.OffsetRestrictionTracker"><code class="xref py py-class docutils literal notranslate"><span class="pre">OffsetRestrictionTracker</span></code></a></p>
+<p>An OffsetRangeTracker that doesn’t allow splitting.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker.try_split">
+<span class="sig-name descname"><span class="pre">try_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">split_offset</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#NonLiquidShardingOffsetRangeTracker.try_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker.try_split" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker.checkpoint">
+<span class="sig-name descname"><span class="pre">checkpoint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#NonLiquidShardingOffsetRangeTracker.checkpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.NonLiquidShardingOffsetRangeTracker.checkpoint" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SyntheticSDFStepRestrictionProvider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_splitting_num_bundles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_splitting_uneven_chunks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_liquid_sharding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_estimate_override</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFStepRestrictionProvider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.RestrictionProvider" title="apache_beam.transforms.core.RestrictionProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">RestrictionProvider</span></code></a></p>
+<p>A <cite>RestrictionProvider</cite> for SyntheticSDFStep.</p>
+<p>An initial_restriction and split that operate on num_records and ignores
+source description (element). Splits into initial_splitting_num_bundles.
+Returns size_estimate_override as restriction size, if set. Otherwise uses
+element size.</p>
+<p>If initial_splitting_uneven_chunks, produces uneven chunks.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.initial_restriction">
+<span class="sig-name descname"><span class="pre">initial_restriction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFStepRestrictionProvider.initial_restriction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.initial_restriction" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.create_tracker">
+<span class="sig-name descname"><span class="pre">create_tracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFStepRestrictionProvider.create_tracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.create_tracker" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFStepRestrictionProvider.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.split" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.restriction_size">
+<span class="sig-name descname"><span class="pre">restriction_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFStepRestrictionProvider.restriction_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFStepRestrictionProvider.restriction_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.get_synthetic_sdf_step">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">get_synthetic_sdf_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">per_element_delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_bundle_delay_sec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_records_per_input_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_filter_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_splitting_num_bundles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_splitting_uneven_chunks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disable_liquid_sharding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_estimate_override</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#get_synthetic_sdf_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.get_synthetic_sdf_step" title="Link to this definition">¶</a></dt>
+<dd><p>A function which returns a SyntheticSDFStep with given parameters.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SyntheticSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_spec</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.io.iobase.html#apache_beam.io.iobase.BoundedSource" title="apache_beam.io.iobase.BoundedSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">BoundedSource</span></code></a></p>
+<p>A custom source of a specified size.</p>
+<p>Initiates a synthetic source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_spec</strong> – Input specification of the source. See corresponding option in
+function ‘parse_args()’ below for more details.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – if input parameters are invalid.</p>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.element_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">element_size</span></span><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.element_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.estimate_size">
+<span class="sig-name descname"><span class="pre">estimate_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource.estimate_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.estimate_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">desired_bundle_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.split" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.get_range_tracker">
+<span class="sig-name descname"><span class="pre">get_range_tracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop_position</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource.get_range_tracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.get_range_tracker" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">range_tracker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.read" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSource.default_output_coder">
+<span class="sig-name descname"><span class="pre">default_output_coder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSource.default_output_coder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSource.default_output_coder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SyntheticSDFSourceRestrictionProvider</span></span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFSourceRestrictionProvider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.RestrictionProvider" title="apache_beam.transforms.core.RestrictionProvider"><code class="xref py py-class docutils literal notranslate"><span class="pre">RestrictionProvider</span></code></a></p>
+<p>A <cite>RestrictionProvider</cite> for SyntheticSDFAsSource.</p>
+<p>In initial_restriction(element) and split(element), element means source
+description.
+A typical element is like:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>‘key_size’: 1,
+‘value_size’: 1,
+‘initial_splitting_num_bundles’: 8,
+‘initial_splitting_desired_bundle_size’: 2,
+‘sleep_per_input_record_sec’: 0,
+‘initial_splitting’ : ‘const’</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.initial_restriction">
+<span class="sig-name descname"><span class="pre">initial_restriction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFSourceRestrictionProvider.initial_restriction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.initial_restriction" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.create_tracker">
+<span class="sig-name descname"><span class="pre">create_tracker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFSourceRestrictionProvider.create_tracker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.create_tracker" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFSourceRestrictionProvider.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.split" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.restriction_size">
+<span class="sig-name descname"><span class="pre">restriction_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restriction</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFSourceRestrictionProvider.restriction_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFSourceRestrictionProvider.restriction_size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFAsSource">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SyntheticSDFAsSource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">unused_args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">unused_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFAsSource"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFAsSource" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.DoFn" title="apache_beam.transforms.core.DoFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoFn</span></code></a></p>
+<p>A SDF that generates records like a source.</p>
+<p>This SDF accepts a PCollection of record-based source description.
+A typical description is like:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>{</dt><dd><p>‘key_size’: 1,
+‘value_size’: 1,
+‘initial_splitting_num_bundles’: 8,
+‘initial_splitting_desired_bundle_size’: 2,
+‘sleep_per_input_record_sec’: 0,
+‘initial_splitting’ : ‘const’</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<dl class="simple">
+<dt>A simple pipeline taking this SDF as a source is like:</dt><dd><p>p
+| beam.Create([description1, description2,…])
+| beam.ParDo(SyntheticSDFAsSource())</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The SDF.process() will have different param content between defining a DoFn
+and runtime.
+When defining an SDF.process, the restriction_tracker should be a
+<cite>RestrictionProvider</cite>.
+During runtime, the DoFnRunner.process_with_sized_restriction() will feed
+a ‘RestrictionTracker’ based on a restriction to SDF.process().</p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SyntheticSDFAsSource.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">restriction_tracker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RestrictionParam(SyntheticSDFSourceRestrictionProvider)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SyntheticSDFAsSource.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SyntheticSDFAsSource.process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.ShuffleBarrier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">ShuffleBarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#ShuffleBarrier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.ShuffleBarrier" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.ShuffleBarrier.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#ShuffleBarrier.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.ShuffleBarrier.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SideInputBarrier">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">SideInputBarrier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SideInputBarrier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SideInputBarrier" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.SideInputBarrier.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#SideInputBarrier.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.SideInputBarrier.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.merge_using_gbk">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">merge_using_gbk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#merge_using_gbk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.merge_using_gbk" title="Link to this definition">¶</a></dt>
+<dd><p>Merges two given PCollections using a CoGroupByKey.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.merge_using_side_input">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">merge_using_side_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#merge_using_side_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.merge_using_side_input" title="Link to this definition">¶</a></dt>
+<dd><p>Merges two given PCollections using side inputs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.expand_using_gbk">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">expand_using_gbk</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#expand_using_gbk"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.expand_using_gbk" title="Link to this definition">¶</a></dt>
+<dd><p>Expands a given PCollection into two copies using GroupByKey.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.expand_using_second_output">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">expand_using_second_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#expand_using_second_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.expand_using_second_output" title="Link to this definition">¶</a></dt>
+<dd><p>Expands a given PCollection into two copies using side outputs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.parse_args">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">parse_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#parse_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.parse_args" title="Link to this definition">¶</a></dt>
+<dd><p>Parses a given set of arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> – set of arguments to be passed.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a tuple where first item gives the set of arguments defined and parsed
+within this method and second item gives the set of unknown arguments.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.run">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_main_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.run" title="Link to this definition">¶</a></dt>
+<dd><p>Runs the workflow.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.testing.synthetic_pipeline.</span></span><span class="sig-name descname"><span class="pre">StatefulLoadGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_options</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>A PTransform for generating random data using Timers API.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateKeys">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GenerateKeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.GenerateKeys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateKeys" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.DoFn" title="apache_beam.transforms.core.DoFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoFn</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateKeys.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">impulse</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.GenerateKeys.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateKeys.process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">GenerateLoad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_records_per_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bundle_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.GenerateLoad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.core.html#apache_beam.transforms.core.DoFn" title="apache_beam.transforms.core.DoFn"><code class="xref py py-class docutils literal notranslate"><span class="pre">DoFn</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.state_spec">
+<span class="sig-name descname"><span class="pre">state_spec</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">CombiningValueStateSpec(bundles_remaining)</span></em><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.state_spec" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.timer_spec">
+<span class="sig-name descname"><span class="pre">timer_spec</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">TimerSpec(ts-timer)</span></em><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.timer_spec" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.process">
+<span class="sig-name descname"><span class="pre">process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">records_remaining</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StateParam(bundles_remaining)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimerParam(ts</span> <span class="pre">-</span> <span class="pre">timer)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.GenerateLoad.process"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.process" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.process_timer">
+<span class="sig-name descname"><span class="pre">process_timer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">KeyParam</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">records_remaining</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">StateParam(bundles_remaining)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimerParam(ts</span> <span class="pre">-</span> <span class="pre">timer)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.GenerateLoad.process_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.GenerateLoad.process_timer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pbegin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/testing/synthetic_pipeline.html#StatefulLoadGenerator.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.testing.synthetic_pipeline.StatefulLoadGenerator.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.testing.pipeline_verifiers.html" class="btn btn-neutral float-left" title="apache_beam.testing.pipeline_verifiers module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.testing.test_pipeline.html" class="btn btn-neutral float-right" title="apache_beam.testing.test_pipeline module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

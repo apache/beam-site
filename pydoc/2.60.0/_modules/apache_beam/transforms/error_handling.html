@@ -1,0 +1,265 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.error_handling &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.error_handling</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.transforms.error_handling</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Utilities for gracefully handling errors and excluding bad elements.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">apache_beam</span> <span class="kn">import</span> <span class="n">transforms</span>
+
+
+<div class="viewcode-block" id="ErrorHandler">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.ErrorHandler">[docs]</a>
+<span class="k">class</span> <span class="nc">ErrorHandler</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;ErrorHandlers are used to skip and otherwise process bad records.</span>
+
+<span class="sd">  Error handlers allow one to implement the &quot;dead letter queue&quot; pattern in</span>
+<span class="sd">  a fluent manner, disaggregating the error processing specification from</span>
+<span class="sd">  the main processing chain.</span>
+
+<span class="sd">  This is typically used as follows::</span>
+
+<span class="sd">    with error_handling.ErrorHandler(WriteToSomewhere(...)) as error_handler:</span>
+<span class="sd">      result = pcoll | SomeTransform().with_error_handler(error_handler)</span>
+
+<span class="sd">  in which case errors encountered by `SomeTransform()`` in processing pcoll</span>
+<span class="sd">  will be written by the PTransform `WriteToSomewhere(...)` and excluded from</span>
+<span class="sd">  `result` rather than failing the pipeline.</span>
+
+<span class="sd">  To implement `with_error_handling` on a PTransform, one caches the provided</span>
+<span class="sd">  error handler for use in `expand`.  During `expand()` one can invoke</span>
+<span class="sd">  `error_handler.add_error_pcollection(...)` any number of times with</span>
+<span class="sd">  PCollections containing error records to be processed by the given error</span>
+<span class="sd">  handler, or (if applicable) simply invoke `with_error_handling(...)` on any</span>
+<span class="sd">  subtransforms.</span>
+
+<span class="sd">  The `with_error_handling` should accept `None` to indicate that error handling</span>
+<span class="sd">  is not enabled (and make implementation-by-forwarding-error-handlers easier).</span>
+<span class="sd">  In this case, any non-recoverable errors should fail the pipeline (e.g.</span>
+<span class="sd">  propagate exceptions in `process` methods) rather than silently ignore errors.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">consumer</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span> <span class="o">=</span> <span class="n">consumer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_creation_traceback</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">()[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_error_pcolls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_error_pcolls</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exec_info</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">exec_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ErrorHandler.close">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.ErrorHandler.close">[docs]</a>
+  <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates all error-producing operations have reported any errors.</span>
+
+<span class="sd">    Invokes the provided error consuming PTransform on any provided error</span>
+<span class="sd">    PCollections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_error_pcolls</span><span class="p">)</span> <span class="o">|</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">_consumer</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ErrorHandler.output">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.ErrorHandler.output">[docs]</a>
+  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns result of applying the error consumer to the error pcollections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="s2">&quot;Cannot access the output of an error handler &quot;</span>
+          <span class="s2">&quot;until it has been closed.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span></div>
+
+
+<div class="viewcode-block" id="ErrorHandler.add_error_pcollection">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.ErrorHandler.add_error_pcollection">[docs]</a>
+  <span class="k">def</span> <span class="nf">add_error_pcollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called by a class implementing error handling on the error records.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">_register_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_error_pcolls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pcoll</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ErrorHandler.verify_closed">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.ErrorHandler.verify_closed">[docs]</a>
+  <span class="k">def</span> <span class="nf">verify_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called at end of pipeline construction to ensure errors are not ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="s2">&quot;Unclosed error handler initialized at </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_creation_traceback</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">class</span> <span class="nc">_IdentityPTransform</span><span class="p">(</span><span class="n">transforms</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pcoll</span>
+
+
+<div class="viewcode-block" id="CollectingErrorHandler">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.CollectingErrorHandler">[docs]</a>
+<span class="k">class</span> <span class="nc">CollectingErrorHandler</span><span class="p">(</span><span class="n">ErrorHandler</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An ErrorHandler that simply collects all errors for further processing.</span>
+
+<span class="sd">  This ErrorHandler requires the set of errors be retrieved via `output()`</span>
+<span class="sd">  and consumed (or explicitly discarded).</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_IdentityPTransform</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_creation_traceback</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_stack</span><span class="p">()[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_accessed</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="CollectingErrorHandler.output">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.CollectingErrorHandler.output">[docs]</a>
+  <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_accessed</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">output</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="CollectingErrorHandler.verify_closed">
+<a class="viewcode-back" href="../../../apache_beam.transforms.error_handling.html#apache_beam.transforms.error_handling.CollectingErrorHandler.verify_closed">[docs]</a>
+  <span class="k">def</span> <span class="nf">verify_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_accessed</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="s2">&quot;CollectingErrorHandler requires the output to be retrieved. &quot;</span>
+          <span class="s2">&quot;Initialized at </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_creation_traceback</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">verify_closed</span><span class="p">()</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

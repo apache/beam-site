@@ -1,0 +1,1196 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.yaml.yaml_transform &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.yaml.yaml_transform</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.yaml.yaml_transform</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pprint</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span>
+
+<span class="kn">import</span> <span class="nn">jinja2</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">yaml.loader</span> <span class="kn">import</span> <span class="n">SafeLoader</span>
+
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io.filesystems</span> <span class="kn">import</span> <span class="n">FileSystems</span>
+<span class="kn">from</span> <span class="nn">apache_beam.options.pipeline_options</span> <span class="kn">import</span> <span class="n">GoogleCloudOptions</span>
+<span class="kn">from</span> <span class="nn">apache_beam.transforms.fully_qualified_named_transform</span> <span class="kn">import</span> <span class="n">FullyQualifiedNamedTransform</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml</span> <span class="kn">import</span> <span class="n">yaml_provider</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml.yaml_combine</span> <span class="kn">import</span> <span class="n">normalize_combine</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml.yaml_mapping</span> <span class="kn">import</span> <span class="n">normalize_mapping</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml.yaml_mapping</span> <span class="kn">import</span> <span class="n">validate_generic_expressions</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;YamlTransform&quot;</span><span class="p">]</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">yaml_provider</span><span class="o">.</span><span class="n">fix_pycallable</span><span class="p">()</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span> <span class="nn">jsonschema</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">jsonschema</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span>
+<span class="k">def</span> <span class="nf">pipeline_schema</span><span class="p">(</span><span class="n">strictness</span><span class="p">):</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span>
+                         <span class="s1">&#39;pipeline.schema.yaml&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">yaml_file</span><span class="p">:</span>
+    <span class="n">pipeline_schema</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">yaml_file</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">strictness</span> <span class="o">==</span> <span class="s1">&#39;per_transform&#39;</span><span class="p">:</span>
+    <span class="n">transform_schemas_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;transforms.schema.yaml&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">transform_schemas_path</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+          <span class="s2">&quot;Please run &quot;</span>
+          <span class="s2">&quot;python -m apache_beam.yaml.generate_yaml_docs &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;--schema_file=&#39;</span><span class="si">{</span><span class="n">transform_schemas_path</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+          <span class="s2">&quot;to run with transform-specific validation.&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">transform_schemas_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+      <span class="n">pipeline_schema</span><span class="p">[</span><span class="s1">&#39;$defs&#39;</span><span class="p">][</span><span class="s1">&#39;transform&#39;</span><span class="p">][</span><span class="s1">&#39;allOf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">fin</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">pipeline_schema</span>
+
+
+<span class="k">def</span> <span class="nf">_closest_line</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+  <span class="n">best_line</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">o</span><span class="p">[</span><span class="n">step</span><span class="p">]</span>
+    <span class="n">maybe_line</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">maybe_line</span> <span class="o">!=</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span>
+      <span class="n">best_line</span> <span class="o">=</span> <span class="n">maybe_line</span>
+  <span class="k">return</span> <span class="n">best_line</span>
+
+
+<span class="k">def</span> <span class="nf">validate_against_schema</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">strictness</span><span class="p">):</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">jsonschema</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span> <span class="n">pipeline_schema</span><span class="p">(</span><span class="n">strictness</span><span class="p">))</span>
+  <span class="k">except</span> <span class="n">jsonschema</span><span class="o">.</span><span class="n">ValidationError</span> <span class="k">as</span> <span class="n">exn</span><span class="p">:</span>
+    <span class="n">exn</span><span class="o">.</span><span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; around line </span><span class="si">{</span><span class="n">_closest_line</span><span class="p">(</span><span class="n">pipeline</span><span class="p">,</span><span class="w"> </span><span class="n">exn</span><span class="o">.</span><span class="n">path</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">raise</span> <span class="n">exn</span>
+
+
+<span class="k">def</span> <span class="nf">memoize_method</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_cache&#39;</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">args</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+  <span class="k">return</span> <span class="n">wrapper</span>
+
+
+<span class="k">def</span> <span class="nf">only_element</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+  <span class="n">x</span><span class="p">,</span> <span class="o">=</span> <span class="n">xs</span>
+  <span class="k">return</span> <span class="n">x</span>
+
+
+<span class="c1"># These allow a user to explicitly pass no input to a transform (i.e. use it</span>
+<span class="c1"># as a root transform) without an error even if the transform is not known to</span>
+<span class="c1"># handle it.</span>
+<span class="k">def</span> <span class="nf">explicitly_empty</span><span class="p">():</span>
+  <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;__explicitly_empty__&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">is_explicitly_empty</span><span class="p">(</span><span class="n">io</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">io</span> <span class="o">==</span> <span class="n">explicitly_empty</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="n">io</span><span class="p">):</span>
+  <span class="k">return</span> <span class="ow">not</span> <span class="n">io</span> <span class="ow">or</span> <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">io</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">io</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">io</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{}</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">io</span>
+
+
+<span class="k">class</span> <span class="nc">SafeLineLoader</span><span class="p">(</span><span class="n">SafeLoader</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;A yaml loader that attaches line information to mappings and strings.&quot;&quot;&quot;</span>
+  <span class="k">class</span> <span class="nc">TaggedString</span><span class="p">(</span><span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A string class to which we can attach metadata.</span>
+
+<span class="sd">    This is primarily used to trace a string&#39;s origin back to its place in a</span>
+<span class="sd">    yaml file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="c1"># Pickle as an ordinary string.</span>
+      <span class="k">return</span> <span class="nb">str</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">construct_scalar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_scalar</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">TaggedString</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">value</span><span class="o">.</span><span class="n">_line_</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">start_mark</span><span class="o">.</span><span class="n">line</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+  <span class="k">def</span> <span class="nf">construct_mapping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">mapping</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="n">deep</span><span class="p">)</span>
+    <span class="n">mapping</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">start_mark</span><span class="o">.</span><span class="n">line</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">mapping</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">mapping</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">create_uuid</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span> <span class="nf">strip_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">tagged_str</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">):</span>
+      <span class="k">return</span> <span class="p">{</span>
+          <span class="bp">cls</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">tagged_str</span><span class="p">):</span>
+          <span class="bp">cls</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tagged_str</span><span class="p">)</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+          <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;__line__&#39;</span><span class="p">,</span> <span class="s1">&#39;__uuid__&#39;</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">tagged_str</span><span class="p">)</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">TaggedString</span><span class="p">)</span> <span class="ow">and</span> <span class="n">tagged_str</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span> <span class="nf">get_line</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__line__&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;_line_&#39;</span><span class="p">,</span> <span class="s1">&#39;unknown&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LightweightScope</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span> <span class="o">=</span> <span class="n">transforms</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]:</span> <span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_uuid_by_name</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">:</span>
+      <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uuid_by_name</span><span class="p">[</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">])</span>
+      <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uuid_by_name</span><span class="p">[</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">])</span>
+
+  <span class="k">def</span> <span class="nf">get_transform_id_and_output_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+      <span class="n">transform_name</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">transform_name</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="n">name</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id</span><span class="p">(</span><span class="n">transform_name</span><span class="p">),</span> <span class="n">output</span>
+
+  <span class="k">def</span> <span class="nf">get_transform_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">transform_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">transform_name</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uuid_by_name</span><span class="p">[</span><span class="n">transform_name</span><span class="p">]</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Unknown transform at line &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">transform_name</span><span class="p">)</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">transform_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Ambiguous transform at line &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">transform_name</span><span class="p">)</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">transform_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">only_element</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Scope</span><span class="p">(</span><span class="n">LightweightScope</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;To look up PCollections (typically outputs of prior transforms) by name.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">root</span><span class="p">,</span>
+      <span class="n">inputs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+      <span class="n">transforms</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">],</span>
+      <span class="n">providers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">]],</span>
+      <span class="n">input_providers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">]):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">transforms</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span> <span class="o">=</span> <span class="n">inputs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">providers</span> <span class="o">=</span> <span class="n">providers</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_seen_names</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">input_providers</span> <span class="o">=</span> <span class="n">input_providers</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_all_followers</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span> <span class="nf">followers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_followers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_all_followers</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+      <span class="c1"># TODO(yaml): Also trace through outputs and composites.</span>
+      <span class="k">for</span> <span class="n">transform</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+          <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">input</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="p">:</span>
+              <span class="n">transform_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id_and_output_name</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">_all_followers</span><span class="p">[</span><span class="n">transform_id</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transform</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_all_followers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id</span><span class="p">(</span><span class="n">transform_name</span><span class="p">)]</span>
+
+  <span class="k">def</span> <span class="nf">compute_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">transform_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">compute_outputs</span><span class="p">(</span><span class="n">transform_id</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">get_pcollection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inputs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s1">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+      <span class="n">transform</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">[</span><span class="n">output</span><span class="p">]</span>
+      <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">outputs</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">outputs</span><span class="p">))]</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">output</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">outputs</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">outputs</span><span class="p">))]</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Unknown output </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="si">}</span><span class="s1"> &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;at line </span><span class="si">{</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s1">: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">transform</span><span class="si">}</span><span class="s1"> only has outputs </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+      <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">only_element</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">error_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">)][</span><span class="s1">&#39;config&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;error_handling&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">error_output</span> <span class="ow">and</span> <span class="n">error_output</span> <span class="ow">in</span> <span class="n">outputs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="k">return</span> <span class="nb">next</span><span class="p">(</span>
+              <span class="n">output</span> <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outputs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="n">error_output</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Ambiguous output at line </span><span class="si">{</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="s1">: &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1"> has outputs </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">get_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_outputs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id</span><span class="p">(</span><span class="n">transform_name</span><span class="p">))</span>
+
+  <span class="nd">@memoize_method</span>
+  <span class="k">def</span> <span class="nf">compute_outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transform_id</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">expand_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="p">[</span><span class="n">transform_id</span><span class="p">],</span> <span class="bp">self</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">best_provider</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">input_providers</span><span class="p">:</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">Iterable</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="n">t</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_transform_id</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
+    <span class="n">possible_providers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">providers</span><span class="p">[</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">available</span><span class="p">()</span>
+    <span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">possible_providers</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;No available provider for type </span><span class="si">%r</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)))</span>
+    <span class="c1"># From here on, we have the invariant that possible_providers is not empty.</span>
+
+    <span class="c1"># Only one possible provider, no need to rank further.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_providers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">possible_providers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">best_matches</span><span class="p">(</span>
+        <span class="n">possible_providers</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">],</span>
+        <span class="n">adjacent_provider_options</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">yaml_provider</span><span class="o">.</span><span class="n">Provider</span><span class="p">]:</span>
+<span class="w">      </span><span class="sd">&quot;&quot;&quot;Given a set of possible providers, and a set of providers for each</span>
+<span class="sd">      adjacent transform, returns the top possible providers as ranked by</span>
+<span class="sd">      affinity to the adjacent transforms&#39; providers.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+      <span class="n">providers_by_score</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">possible_providers</span><span class="p">:</span>
+        <span class="c1"># The sum of the affinity of the best provider</span>
+        <span class="c1"># for each adjacent transform.</span>
+        <span class="n">providers_by_score</span><span class="p">[</span><span class="nb">sum</span><span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">affinity</span><span class="p">(</span><span class="n">ap</span><span class="p">)</span> <span class="k">for</span> <span class="n">ap</span> <span class="ow">in</span> <span class="n">apo</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">apo</span> <span class="ow">in</span> <span class="n">adjacent_provider_options</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">providers_by_score</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">providers_by_score</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+
+    <span class="c1"># If there are any inputs, prefer to match them.</span>
+    <span class="k">if</span> <span class="n">input_providers</span><span class="p">:</span>
+      <span class="n">possible_providers</span> <span class="o">=</span> <span class="n">best_matches</span><span class="p">(</span>
+          <span class="n">possible_providers</span><span class="p">,</span> <span class="p">[[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">input_providers</span><span class="p">])</span>
+
+    <span class="c1"># Without __uuid__ we can&#39;t find downstream operations.</span>
+    <span class="k">if</span> <span class="s1">&#39;__uuid__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">possible_providers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># Match against downstream transforms, continuing until there is no tie</span>
+    <span class="c1"># or we run out of downstream transforms.</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_providers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">adjacent_transforms</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">followers</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]))</span>
+      <span class="k">while</span> <span class="n">adjacent_transforms</span><span class="p">:</span>
+        <span class="c1"># This is a list of all possible providers for each adjacent transform.</span>
+        <span class="n">adjacent_provider_options</span> <span class="o">=</span> <span class="p">[[</span>
+            <span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">providers</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_transforms_by_uuid</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">available</span><span class="p">()</span>
+        <span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">adjacent_transforms</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">apo</span> <span class="k">for</span> <span class="n">apo</span> <span class="ow">in</span> <span class="n">adjacent_provider_options</span><span class="p">):</span>
+          <span class="c1"># One of the transforms had no available providers.</span>
+          <span class="c1"># We will throw an error later, doesn&#39;t matter what we return.</span>
+          <span class="k">break</span>
+        <span class="c1"># Filter down the set of possible providers to the best ones.</span>
+        <span class="n">possible_providers</span> <span class="o">=</span> <span class="n">best_matches</span><span class="p">(</span>
+            <span class="n">possible_providers</span><span class="p">,</span> <span class="n">adjacent_provider_options</span><span class="p">)</span>
+        <span class="c1"># If we are down to one option, no need to go further.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_providers</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+          <span class="k">break</span>
+        <span class="c1"># Go downstream one more step.</span>
+        <span class="n">adjacent_transforms</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">followers</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">adjacent_transforms</span><span class="p">],</span> <span class="p">[])</span>
+
+    <span class="k">return</span> <span class="n">possible_providers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+  <span class="c1"># A method on scope as providers may be scoped...</span>
+  <span class="k">def</span> <span class="nf">create_ptransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">input_pcolls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing transform type: </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">providers</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;Unknown transform type </span><span class="si">%r</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)))</span>
+
+    <span class="c1"># TODO(yaml): Perhaps we can do better than a greedy choice here.</span>
+    <span class="c1"># TODO(yaml): Figure out why this is needed.</span>
+    <span class="n">providers_by_input</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_providers</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">input_providers</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">providers_by_input</span><span class="p">[</span><span class="n">pcoll</span><span class="p">]</span> <span class="k">for</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="n">input_pcolls</span>
+        <span class="k">if</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="n">providers_by_input</span>
+    <span class="p">]</span>
+    <span class="n">provider</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_provider</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">input_providers</span><span class="p">)</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">{}))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">&#39;Config for transform at </span><span class="si">%s</span><span class="s1"> must be a mapping.&#39;</span> <span class="o">%</span>
+          <span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">input_pcolls</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="p">{}))</span> <span class="ow">and</span>
+        <span class="n">provider</span><span class="o">.</span><span class="n">requires_inputs</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">config</span><span class="p">)):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s1">&#39;Missing inputs for transform at </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;-generic&#39;</span><span class="p">):</span>
+        <span class="c1"># Centralize the validation rather than require every implementation</span>
+        <span class="c1"># to do it.</span>
+        <span class="n">validate_generic_expressions</span><span class="p">(</span>
+            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">config</span><span class="p">,</span> <span class="n">input_pcolls</span><span class="p">)</span>
+
+      <span class="c1"># pylint: disable=undefined-loop-variable</span>
+      <span class="n">ptransform</span> <span class="o">=</span> <span class="n">provider</span><span class="o">.</span><span class="n">create_transform</span><span class="p">(</span>
+          <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">config</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_ptransform</span><span class="p">)</span>
+      <span class="c1"># TODO(robertwb): Should we have a better API for adding annotations</span>
+      <span class="c1"># than this?</span>
+      <span class="n">annotations</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+          <span class="n">yaml_type</span><span class="o">=</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+          <span class="n">yaml_args</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">config</span><span class="p">),</span>
+          <span class="n">yaml_provider</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">provider</span><span class="o">.</span><span class="n">to_json</span><span class="p">()),</span>
+          <span class="o">**</span><span class="n">ptransform</span><span class="o">.</span><span class="n">annotations</span><span class="p">())</span>
+      <span class="n">ptransform</span><span class="o">.</span><span class="n">annotations</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">annotations</span>
+      <span class="n">original_expand</span> <span class="o">=</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">expand</span>
+
+      <span class="k">def</span> <span class="nf">recording_expand</span><span class="p">(</span><span class="n">pvalue</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">original_expand</span><span class="p">(</span><span class="n">pvalue</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">record_providers</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">):</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pvalueish</span><span class="p">:</span>
+              <span class="n">record_providers</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pvalueish</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+              <span class="n">record_providers</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pvalueish</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pvalueish</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_providers</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">input_providers</span><span class="p">[</span><span class="n">pvalueish</span><span class="p">]</span> <span class="o">=</span> <span class="n">provider</span>
+
+        <span class="n">record_providers</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+      <span class="n">ptransform</span><span class="o">.</span><span class="n">expand</span> <span class="o">=</span> <span class="n">recording_expand</span>
+      <span class="k">return</span> <span class="n">ptransform</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exn</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exn</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+        <span class="c1"># Create a slightly more generic error message for argument errors.</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exn</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;positional&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;keyword&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\S+lambda\S+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39;  +&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exn</span><span class="p">)</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s1">&#39;Invalid transform specification at </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s1">&#39;</span>
+      <span class="p">)</span> <span class="kn">from</span> <span class="nn">exn</span>
+
+  <span class="k">def</span> <span class="nf">unique_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">,</span> <span class="n">strictness</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+      <span class="n">strictness</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="s1">&#39;ExternalTransform&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+      <span class="c1"># The label may have interesting information.</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="n">ptransform</span><span class="o">.</span><span class="n">label</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seen_names</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">strictness</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Duplicate name at </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">@</span><span class="si">{</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_seen_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">name</span>
+
+
+<span class="k">def</span> <span class="nf">expand_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Missing type parameter for transform at </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="nb">type</span> <span class="o">==</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">expand_composite_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">expand_leaf_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">expand_leaf_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="n">normalize_inputs_outputs</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">inputs_dict</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="n">key</span><span class="p">:</span> <span class="n">scope</span><span class="o">.</span><span class="n">get_pcollection</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+  <span class="p">}</span>
+  <span class="n">input_type</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input_type&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">input_type</span> <span class="o">==</span> <span class="s1">&#39;list&#39;</span><span class="p">:</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">inputs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+  <span class="k">elif</span> <span class="n">input_type</span> <span class="o">==</span> <span class="s1">&#39;map&#39;</span><span class="p">:</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs_dict</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="n">scope</span><span class="o">.</span><span class="n">root</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">inputs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="n">inputs_dict</span>
+  <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Expanding </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>
+  <span class="n">ptransform</span> <span class="o">=</span> <span class="n">scope</span><span class="o">.</span><span class="n">create_ptransform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">inputs_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="c1"># TODO: Move validation to construction?</span>
+    <span class="k">with</span> <span class="n">FullyQualifiedNamedTransform</span><span class="o">.</span><span class="n">with_filter</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="n">inputs</span> <span class="o">|</span> <span class="n">scope</span><span class="o">.</span><span class="n">unique_name</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">ptransform</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">ptransform</span>
+  <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exn</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Error apply transform </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">exn</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exn</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="c1"># TODO: Handle (or at least reject) nested case.</span>
+    <span class="k">return</span> <span class="n">outputs</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s1">&#39;out</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">pcoll</span> <span class="k">for</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">outputs</span><span class="p">)}</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;out&#39;</span><span class="p">:</span> <span class="n">outputs</span><span class="p">}</span>
+  <span class="k">elif</span> <span class="n">outputs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">PDone</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{}</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Transform </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1"> returned an unexpected type &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">expand_composite_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="n">normalize_inputs_outputs</span><span class="p">(</span><span class="n">normalize_source_sink</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>
+
+  <span class="n">inner_scope</span> <span class="o">=</span> <span class="n">Scope</span><span class="p">(</span>
+      <span class="n">scope</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+      <span class="p">{</span>
+          <span class="n">key</span><span class="p">:</span> <span class="n">scope</span><span class="o">.</span><span class="n">get_pcollection</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+      <span class="p">},</span>
+      <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">],</span>
+      <span class="n">yaml_provider</span><span class="o">.</span><span class="n">merge_providers</span><span class="p">(</span>
+          <span class="n">yaml_provider</span><span class="o">.</span><span class="n">parse_providers</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;providers&#39;</span><span class="p">,</span> <span class="p">[])),</span>
+          <span class="n">scope</span><span class="o">.</span><span class="n">providers</span><span class="p">),</span>
+      <span class="n">scope</span><span class="o">.</span><span class="n">input_providers</span><span class="p">)</span>
+
+  <span class="k">class</span> <span class="nc">CompositePTransform</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+      <span class="n">inner_scope</span><span class="o">.</span><span class="n">compute_all</span><span class="p">()</span>
+      <span class="k">if</span> <span class="s1">&#39;__implicit_outputs__&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">inner_scope</span><span class="o">.</span><span class="n">get_outputs</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">][</span><span class="s1">&#39;__implicit_outputs__&#39;</span><span class="p">])</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">inner_scope</span><span class="o">.</span><span class="n">get_pcollection</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+  <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Composite&#39;</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># top-level pipeline, don&#39;t nest</span>
+    <span class="k">return</span> <span class="n">CompositePTransform</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Expanding </span><span class="si">%s</span><span class="s2"> &quot;</span><span class="p">,</span> <span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">({</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">scope</span><span class="o">.</span><span class="n">get_pcollection</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span> <span class="ow">or</span> <span class="n">scope</span><span class="o">.</span><span class="n">root</span><span class="p">)</span> <span class="o">|</span> <span class="n">scope</span><span class="o">.</span><span class="n">unique_name</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="n">CompositePTransform</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">expand_chain_transform</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">scope</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">expand_composite_transform</span><span class="p">(</span><span class="n">chain_as_composite</span><span class="p">(</span><span class="n">spec</span><span class="p">),</span> <span class="n">scope</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">chain_as_composite</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">is_not_output_of_last_transform</span><span class="p">(</span><span class="n">new_transforms</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span>
+         <span class="n">value</span> <span class="o">!=</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">])</span> <span class="ow">or</span>
+        <span class="p">(</span><span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]))</span>
+
+  <span class="c1"># A chain is simply a composite transform where all inputs and outputs</span>
+  <span class="c1"># are implicit.</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="n">normalize_source_sink</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="k">if</span> <span class="s1">&#39;transforms&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;Chain at </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s2"> missing transforms property.&quot;</span><span class="p">)</span>
+  <span class="n">has_explicit_outputs</span> <span class="o">=</span> <span class="s1">&#39;output&#39;</span> <span class="ow">in</span> <span class="n">spec</span>
+  <span class="n">composite_spec</span> <span class="o">=</span> <span class="n">normalize_inputs_outputs</span><span class="p">(</span><span class="n">tag_explicit_inputs</span><span class="p">(</span><span class="n">spec</span><span class="p">))</span>
+  <span class="n">new_transforms</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">transform</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">io</span> <span class="ow">in</span> <span class="n">transform</span> <span class="k">for</span> <span class="n">io</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">)):</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="s1">&#39;input&#39;</span> <span class="ow">in</span> <span class="n">transform</span> <span class="ow">and</span> <span class="s1">&#39;output&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">transform</span> <span class="ow">and</span>
+          <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])):</span>
+        <span class="c1"># This is OK as source clause sets an explicitly empty input.</span>
+        <span class="k">pass</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Transform </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span><span class="si">}</span><span class="s1"> is part of a chain, &#39;</span>
+            <span class="s1">&#39;must have implicit inputs and outputs.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="k">pass</span>
+      <span class="k">elif</span> <span class="n">is_explicitly_empty</span><span class="p">(</span><span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]):</span>
+        <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+      <span class="k">elif</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]):</span>
+        <span class="k">del</span> <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">key</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span>
+    <span class="n">new_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+  <span class="n">new_transforms</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;extra_transforms&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+  <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_transforms</span>
+
+  <span class="n">last_transform</span> <span class="o">=</span> <span class="n">new_transforms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">has_explicit_outputs</span><span class="p">:</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">is_not_output_of_last_transform</span><span class="p">(</span><span class="n">new_transforms</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Explicit output </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2"> of the chain transform&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; is not an output of the last transform.&quot;</span><span class="p">)</span>
+
+    <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">key</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">last_transform</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;__implicit_outputs__&#39;</span><span class="p">:</span> <span class="n">last_transform</span><span class="p">}</span>
+  <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">composite_spec</span><span class="p">:</span>
+    <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Chain&#39;</span>
+  <span class="n">composite_spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;composite&#39;</span>
+  <span class="k">return</span> <span class="n">composite_spec</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess_chain</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;chain&#39;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">chain_as_composite</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">pipeline_as_composite</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;composite&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;transforms&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">,</span>
+        <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">(),</span>
+    <span class="p">}</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;composite&#39;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">normalize_source_sink</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span> <span class="ow">and</span> <span class="s1">&#39;sink&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;transforms&#39;</span><span class="p">,</span> <span class="p">[]))</span>
+  <span class="k">if</span> <span class="s1">&#39;source&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s1">&#39;input&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">]:</span>
+      <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;source&#39;</span><span class="p">][</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">explicitly_empty</span><span class="p">()</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;source&#39;</span><span class="p">))</span>
+  <span class="k">if</span> <span class="s1">&#39;sink&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;sink&#39;</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess_source_sink</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;composite&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">normalize_source_sink</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">tag_explicit_inputs</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;input&#39;</span> <span class="ow">in</span> <span class="n">spec</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">explicitly_empty</span><span class="p">())</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">normalize_inputs_outputs</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="n">spec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">normalize_io</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+    <span class="n">io</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+      <span class="k">return</span> <span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="n">io</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">strip_metadata</span><span class="p">(</span><span class="n">io</span><span class="p">,</span> <span class="n">tagged_str</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">normalize_io</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">),</span> <span class="n">output</span><span class="o">=</span><span class="n">normalize_io</span><span class="p">(</span><span class="s1">&#39;output&#39;</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="n">line</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">get_line</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="n">extract_name</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot; at line </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s1">&#39;</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;at line </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s1">&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">extract_name</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;name&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s1">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="s1">&#39;type&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">extract_name</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">values</span><span class="p">())))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+  <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">spec</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">push_windowing_to_roots</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="n">scope</span> <span class="o">=</span> <span class="n">LightweightScope</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">])</span>
+  <span class="n">consumed_outputs_by_transform</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">transform</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">input_ref</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">transform_id</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="n">scope</span><span class="o">.</span><span class="n">get_transform_id_and_output_name</span><span class="p">(</span><span class="n">input_ref</span><span class="p">)</span>
+        <span class="n">consumed_outputs_by_transform</span><span class="p">[</span><span class="n">transform_id</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># Could be an input or an ambiguity we&#39;ll raise later.</span>
+        <span class="k">pass</span>
+
+  <span class="k">for</span> <span class="n">transform</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">transform</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span> <span class="ow">and</span> <span class="s1">&#39;windowing&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">transform</span><span class="p">:</span>
+      <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span>
+      <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;__consumed_outputs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">consumed_outputs_by_transform</span><span class="p">[</span>
+          <span class="n">transform</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]]</span>
+
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess_windowing</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;WindowInto&#39;</span><span class="p">:</span>
+    <span class="c1"># This is the transform where it is actually applied.</span>
+    <span class="k">if</span> <span class="s1">&#39;windowing&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">{})</span>
+      <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">][</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;windowing&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spec</span>
+  <span class="k">elif</span> <span class="s1">&#39;windowing&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="c1"># Nothing to do.</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+    <span class="c1"># Apply the windowing to any reads, creates, etc. in this transform</span>
+    <span class="c1"># TODO(robertwb): Better handle the case where a read is followed by a</span>
+    <span class="c1"># setting of the timestamps. We should be careful of sliding windows</span>
+    <span class="c1"># in particular.</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">push_windowing_to_roots</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+  <span class="n">windowing</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;windowing&#39;</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]):</span>
+    <span class="c1"># Apply the windowing to all inputs by wrapping it in a transform that</span>
+    <span class="c1"># first applies windowing and then applies the original transform.</span>
+    <span class="n">original_inputs</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+    <span class="n">windowing_transforms</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;WindowInto&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;WindowInto[</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;windowing&#39;</span><span class="p">:</span> <span class="n">windowing</span><span class="p">,</span>
+        <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">key</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">(),</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">original_inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+    <span class="n">windowed_inputs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">original_inputs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">windowing_transforms</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">modified_spec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">spec</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">windowed_inputs</span><span class="p">,</span> <span class="n">__uuid__</span><span class="o">=</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">())</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;composite&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;transforms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">modified_spec</span><span class="p">]</span> <span class="o">+</span> <span class="n">windowing_transforms</span><span class="p">,</span>
+        <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="n">modified_spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+  <span class="k">elif</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+    <span class="c1"># Pushing the windowing down was sufficient.</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="k">else</span><span class="p">:</span>
+    <span class="c1"># No inputs, apply the windowing to all outputs.</span>
+    <span class="n">consumed_outputs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;__consumed_outputs&#39;</span><span class="p">,</span> <span class="p">{</span><span class="kc">None</span><span class="p">}))</span>
+    <span class="n">modified_spec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">__uuid__</span><span class="o">=</span><span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">())</span>
+    <span class="n">windowing_transforms</span> <span class="o">=</span> <span class="p">[{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;WindowInto&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;WindowInto[</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;windowing&#39;</span><span class="p">:</span> <span class="n">windowing</span><span class="p">,</span>
+        <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">modified_spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">out</span> <span class="k">if</span> <span class="n">out</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">(),</span>
+    <span class="p">}</span> <span class="k">for</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">consumed_outputs</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">consumed_outputs</span> <span class="o">==</span> <span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+      <span class="n">windowed_outputs</span> <span class="o">=</span> <span class="n">only_element</span><span class="p">(</span><span class="n">windowing_transforms</span><span class="p">)[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">windowed_outputs</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="n">out</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">]</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">consumed_outputs</span><span class="p">,</span> <span class="n">windowing_transforms</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;composite&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;transforms&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">modified_spec</span><span class="p">]</span> <span class="o">+</span> <span class="n">windowing_transforms</span><span class="p">,</span>
+        <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="n">windowed_outputs</span><span class="p">,</span>
+        <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">],</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess_flattened_inputs</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="c1"># Prefer to add the flattens as sibling operations rather than nesting</span>
+  <span class="c1"># to keep graph shape consistent when the number of inputs goes from</span>
+  <span class="c1"># one to multiple.</span>
+  <span class="n">new_transforms</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Flatten&#39;</span><span class="p">:</span>
+      <span class="c1"># Don&#39;t flatten before explicit flatten.</span>
+      <span class="c1"># But we do have to expand list inputs into singleton inputs.</span>
+      <span class="k">def</span> <span class="nf">all_inputs</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+              <span class="k">yield</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}{</span><span class="n">ix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">values</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span>
+
+      <span class="n">inputs_dict</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">all_inputs</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+        <span class="k">while</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">inputs_dict</span><span class="p">:</span>
+          <span class="n">key</span> <span class="o">+=</span> <span class="s1">&#39;_&#39;</span>
+        <span class="n">inputs_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+      <span class="n">t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="n">inputs_dict</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">replaced_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+          <span class="n">flatten_id</span> <span class="o">=</span> <span class="n">SafeLineLoader</span><span class="o">.</span><span class="n">create_uuid</span><span class="p">()</span>
+          <span class="n">new_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+              <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;Flatten&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-Flatten[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]),</span> <span class="n">key</span><span class="p">),</span>
+              <span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="p">{</span>
+                  <span class="sa">f</span><span class="s1">&#39;input</span><span class="si">{</span><span class="n">ix</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">:</span> <span class="n">value</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="n">ix</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+              <span class="p">},</span>
+              <span class="s1">&#39;__line__&#39;</span><span class="p">:</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;__line__&#39;</span><span class="p">],</span>
+              <span class="s1">&#39;__uuid__&#39;</span><span class="p">:</span> <span class="n">flatten_id</span><span class="p">,</span>
+          <span class="p">})</span>
+          <span class="n">replaced_inputs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">flatten_id</span>
+      <span class="k">if</span> <span class="n">replaced_inputs</span><span class="p">:</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="p">{</span><span class="o">**</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">],</span> <span class="o">**</span><span class="n">replaced_inputs</span><span class="p">})</span>
+    <span class="n">new_transforms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="n">new_transforms</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">ensure_transforms_have_types</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;type&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing type specification in </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">ensure_errors_consumed</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;composite&#39;</span><span class="p">:</span>
+    <span class="n">scope</span> <span class="o">=</span> <span class="n">LightweightScope</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">])</span>
+    <span class="n">to_handle</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">consumed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">scope</span><span class="o">.</span><span class="n">get_transform_id_and_output_name</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]:</span>
+      <span class="n">config</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+      <span class="k">if</span> <span class="s1">&#39;error_handling&#39;</span> <span class="ow">in</span> <span class="n">config</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;output&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;error_handling&#39;</span><span class="p">]:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+              <span class="sa">f</span><span class="s1">&#39;Missing output in error_handling of </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">to_handle</span><span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;__uuid__&#39;</span><span class="p">],</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;error_handling&#39;</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">t</span>
+      <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">empty_if_explicitly_empty</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">input</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+          <span class="n">consumed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">scope</span><span class="o">.</span><span class="n">get_transform_id_and_output_name</span><span class="p">(</span><span class="nb">input</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">error_pcoll</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">to_handle</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">error_pcoll</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">consumed</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">transform_name</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">))</span>
+        <span class="n">error_output_name</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;error_handling&#39;</span><span class="p">][</span><span class="s1">&#39;output&#39;</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;Unconsumed error output for </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="si">}</span><span class="s1">. &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;The output named </span><span class="si">{</span><span class="n">transform_name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">error_output_name</span><span class="si">}</span><span class="s1"> &#39;</span>
+            <span class="s1">&#39;must be used as an input to some other transform. &#39;</span>
+            <span class="s1">&#39;See https://beam.apache.org/documentation/sdks/yaml-errors&#39;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">lift_config</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;config&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="n">common_params</span> <span class="o">=</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">,</span> <span class="s1">&#39;transforms&#39;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+                   <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common_params</span><span class="p">},</span>
+        <span class="o">**</span><span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1">#</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common_params</span> <span class="ow">or</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;__line__&#39;</span><span class="p">,</span> <span class="s1">&#39;__uuid__&#39;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">ensure_config</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+  <span class="k">if</span> <span class="s1">&#39;config&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+    <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">known_transforms</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+    <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">spec</span><span class="p">):</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">phase</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39;composite&#39;</span><span class="p">,</span> <span class="s1">&#39;chain&#39;</span><span class="p">}</span> <span class="ow">and</span> <span class="s1">&#39;transforms&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">:</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+          <span class="n">spec</span><span class="p">,</span> <span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="n">apply</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]])</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="k">if</span> <span class="n">known_transforms</span><span class="p">:</span>
+    <span class="n">known_transforms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">known_transforms</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">([</span><span class="s1">&#39;chain&#39;</span><span class="p">,</span> <span class="s1">&#39;composite&#39;</span><span class="p">])</span>
+
+  <span class="k">def</span> <span class="nf">ensure_transforms_have_providers</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">known_transforms</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_transforms</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">&#39;Unknown type or missing provider &#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;for type </span><span class="si">{</span><span class="n">spec</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="k">def</span> <span class="nf">preprocess_languages</span><span class="p">(</span><span class="n">spec</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;AssignTimestamps&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;Combine&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;Filter&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;MapToFields&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;Partition&#39;</span><span class="p">):</span>
+      <span class="n">language</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;config&#39;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;language&#39;</span><span class="p">,</span> <span class="s1">&#39;generic&#39;</span><span class="p">)</span>
+      <span class="n">new_type</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">language</span>
+      <span class="k">if</span> <span class="n">known_transforms</span> <span class="ow">and</span> <span class="n">new_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">known_transforms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="s1">&#39;generic&#39;</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Missing language for </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+              <span class="sa">f</span><span class="s1">&#39;Unknown language </span><span class="si">{</span><span class="n">language</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">identify_object</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+      <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">new_type</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">spec</span>
+
+  <span class="k">for</span> <span class="n">phase</span> <span class="ow">in</span> <span class="p">[</span>
+      <span class="n">ensure_transforms_have_types</span><span class="p">,</span>
+      <span class="n">normalize_mapping</span><span class="p">,</span>
+      <span class="n">normalize_combine</span><span class="p">,</span>
+      <span class="n">preprocess_languages</span><span class="p">,</span>
+      <span class="n">ensure_transforms_have_providers</span><span class="p">,</span>
+      <span class="n">preprocess_source_sink</span><span class="p">,</span>
+      <span class="n">preprocess_chain</span><span class="p">,</span>
+      <span class="n">tag_explicit_inputs</span><span class="p">,</span>
+      <span class="n">normalize_inputs_outputs</span><span class="p">,</span>
+      <span class="n">preprocess_flattened_inputs</span><span class="p">,</span>
+      <span class="n">ensure_errors_consumed</span><span class="p">,</span>
+      <span class="n">preprocess_windowing</span><span class="p">,</span>
+      <span class="c1"># TODO(robertwb): Consider enabling this by default, or as an option.</span>
+      <span class="c1"># lift_config,</span>
+      <span class="n">ensure_config</span><span class="p">,</span>
+  <span class="p">]:</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">spec</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+      <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span>
+      <span class="n">pprint</span><span class="o">.</span><span class="n">pprint</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">spec</span>
+
+
+<span class="k">class</span> <span class="nc">_BeamFileIOLoader</span><span class="p">(</span><span class="n">jinja2</span><span class="o">.</span><span class="n">BaseLoader</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">get_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environment</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">FileSystems</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+      <span class="n">source</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">source</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="kc">True</span>
+
+
+<span class="k">def</span> <span class="nf">expand_jinja</span><span class="p">(</span>
+    <span class="n">jinja_template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">jinja_variables</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="k">return</span> <span class="p">(</span>  <span class="c1"># keep formatting</span>
+      <span class="n">jinja2</span><span class="o">.</span><span class="n">Environment</span><span class="p">(</span>
+          <span class="n">undefined</span><span class="o">=</span><span class="n">jinja2</span><span class="o">.</span><span class="n">StrictUndefined</span><span class="p">,</span> <span class="n">loader</span><span class="o">=</span><span class="n">_BeamFileIOLoader</span><span class="p">())</span>
+      <span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">jinja_template</span><span class="p">)</span>
+      <span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="o">**</span><span class="n">jinja_variables</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="YamlTransform">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_transform.html#apache_beam.yaml.yaml_transform.YamlTransform">[docs]</a>
+<span class="k">class</span> <span class="nc">YamlTransform</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">providers</span><span class="o">=</span><span class="p">{}):</span>  <span class="c1"># pylint: disable=dangerous-default-value</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="n">spec</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLineLoader</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">providers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+      <span class="n">providers</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="n">key</span><span class="p">:</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">as_provider_list</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">providers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+      <span class="p">}</span>
+    <span class="c1"># TODO(BEAM-26941): Validate as a transform.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_providers</span> <span class="o">=</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">merge_providers</span><span class="p">(</span>
+        <span class="n">providers</span><span class="p">,</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">standard_providers</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">known_transforms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_providers</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_was_chain</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;chain&#39;</span>
+
+<div class="viewcode-block" id="YamlTransform.expand">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_transform.html#apache_beam.yaml.yaml_transform.YamlTransform.expand">[docs]</a>
+  <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcolls</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcolls</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">PBegin</span><span class="p">):</span>
+      <span class="n">root</span> <span class="o">=</span> <span class="n">pcolls</span>
+      <span class="n">pipeline</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">pipeline</span>
+      <span class="n">pcolls</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcolls</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">):</span>
+      <span class="n">root</span> <span class="o">=</span> <span class="n">pcolls</span><span class="o">.</span><span class="n">pipeline</span>
+      <span class="n">pipeline</span> <span class="o">=</span> <span class="n">root</span>
+      <span class="n">pcolls</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="n">pcolls</span><span class="p">}</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;input&#39;</span><span class="p">:</span> <span class="s1">&#39;input&#39;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_was_chain</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">]:</span>
+          <span class="c1"># This should have been copied as part of the composite-to-chain.</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;transforms&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">root</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">pcolls</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span><span class="o">.</span><span class="n">pipeline</span>
+      <span class="n">pipeline</span> <span class="o">=</span> <span class="n">root</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">[</span><span class="s1">&#39;input&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">pcolls</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+    <span class="n">python_provider</span> <span class="o">=</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">InlineProvider</span><span class="p">({})</span>
+
+    <span class="c1"># Label goog-dataflow-yaml if job is started using Beam YAML.</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">GoogleCloudOptions</span><span class="p">)</span>
+    <span class="n">yaml_version</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;beam-yaml=&#39;</span> <span class="o">+</span> <span class="n">beam</span><span class="o">.</span><span class="n">version</span><span class="o">.</span><span class="n">__version__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">options</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+      <span class="n">options</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">yaml_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">options</span><span class="o">.</span><span class="n">labels</span><span class="p">:</span>
+      <span class="n">options</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yaml_version</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">expand_transform</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">,</span>
+        <span class="n">Scope</span><span class="p">(</span>
+            <span class="n">root</span><span class="p">,</span>
+            <span class="n">pcolls</span><span class="p">,</span>
+            <span class="n">transforms</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_spec</span><span class="p">],</span>
+            <span class="n">providers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_providers</span><span class="p">,</span>
+            <span class="n">input_providers</span><span class="o">=</span><span class="p">{</span>
+                <span class="n">pcoll</span><span class="p">:</span> <span class="n">python_provider</span>
+                <span class="k">for</span> <span class="n">pcoll</span> <span class="ow">in</span> <span class="n">pcolls</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">}))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">only_element</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+
+
+<span class="k">def</span> <span class="nf">expand_pipeline</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">,</span>
+    <span class="n">pipeline_spec</span><span class="p">,</span>
+    <span class="n">providers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">validate_schema</span><span class="o">=</span><span class="s1">&#39;generic&#39;</span> <span class="k">if</span> <span class="n">jsonschema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pipeline_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">pipeline_spec</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">pipeline_spec</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">SafeLineLoader</span><span class="p">)</span>
+  <span class="c1"># TODO(robertwb): It&#39;s unclear whether this gives as good of errors, but</span>
+  <span class="c1"># this could certainly be handy as a first pass when Beam is not available.</span>
+  <span class="k">if</span> <span class="n">validate_schema</span> <span class="ow">and</span> <span class="n">validate_schema</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+    <span class="n">validate_against_schema</span><span class="p">(</span><span class="n">pipeline_spec</span><span class="p">,</span> <span class="n">validate_schema</span><span class="p">)</span>
+  <span class="c1"># Calling expand directly to avoid outer layer of nesting.</span>
+  <span class="k">return</span> <span class="n">YamlTransform</span><span class="p">(</span>
+      <span class="n">pipeline_as_composite</span><span class="p">(</span><span class="n">pipeline_spec</span><span class="p">[</span><span class="s1">&#39;pipeline&#39;</span><span class="p">]),</span>
+      <span class="n">yaml_provider</span><span class="o">.</span><span class="n">merge_providers</span><span class="p">(</span>
+          <span class="n">yaml_provider</span><span class="o">.</span><span class="n">parse_providers</span><span class="p">(</span><span class="n">pipeline_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;providers&#39;</span><span class="p">,</span> <span class="p">[])),</span>
+          <span class="n">providers</span> <span class="ow">or</span> <span class="p">{}))</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">PBegin</span><span class="p">(</span><span class="n">pipeline</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
