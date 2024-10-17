@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.yaml.yaml_io &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.yaml.yaml_io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.yaml.yaml_io</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;This module contains the Python implementations for the builtin IOs.</span>
+
+<span class="sd">They are referenced from standard_io.py.</span>
+
+<span class="sd">Note that in the case that they overlap with other (likely Java)</span>
+<span class="sd">implementations of the same transforms, the configs must be kept in sync.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">fastavro</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">import</span> <span class="nn">apache_beam</span> <span class="k">as</span> <span class="nn">beam</span>
+<span class="kn">import</span> <span class="nn">apache_beam.io</span> <span class="k">as</span> <span class="nn">beam_io</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">ReadFromBigQuery</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">WriteToBigQuery</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io</span> <span class="kn">import</span> <span class="n">avroio</span>
+<span class="kn">from</span> <span class="nn">apache_beam.io.gcp.bigquery</span> <span class="kn">import</span> <span class="n">BigQueryDisposition</span>
+<span class="kn">from</span> <span class="nn">apache_beam.portability.api</span> <span class="kn">import</span> <span class="n">schema_pb2</span>
+<span class="kn">from</span> <span class="nn">apache_beam.typehints</span> <span class="kn">import</span> <span class="n">schemas</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml</span> <span class="kn">import</span> <span class="n">json_utils</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml</span> <span class="kn">import</span> <span class="n">yaml_mapping</span>
+<span class="kn">from</span> <span class="nn">apache_beam.yaml</span> <span class="kn">import</span> <span class="n">yaml_provider</span>
+
+
+<div class="viewcode-block" id="read_from_text">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.read_from_text">[docs]</a>
+<span class="k">def</span> <span class="nf">read_from_text</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+  <span class="c1"># TODO(yaml): Consider passing the filename and offset, possibly even</span>
+  <span class="c1"># by default.</span>
+
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Reads lines from a text files.</span>
+
+<span class="sd">  The resulting PCollection consists of rows with a single string filed named</span>
+<span class="sd">  &quot;line.&quot;</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    path (str): The file path to read from.  The path can contain glob</span>
+<span class="sd">      characters such as ``*`` and ``?``.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">return</span> <span class="n">beam_io</span><span class="o">.</span><span class="n">ReadFromText</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="n">line</span><span class="o">=</span><span class="n">s</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="write_to_text">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.write_to_text">[docs]</a>
+<span class="nd">@beam</span><span class="o">.</span><span class="n">ptransform_fn</span>
+<span class="k">def</span> <span class="nf">write_to_text</span><span class="p">(</span><span class="n">pcoll</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Writes a PCollection to a (set of) text files(s).</span>
+
+<span class="sd">  The input must be a PCollection whose schema has exactly one field.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">      path (str): The file path to write to. The files written will</span>
+<span class="sd">        begin with this prefix, followed by a shard identifier.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span>
+        <span class="n">_</span> <span class="ow">in</span> <span class="n">schemas</span><span class="o">.</span><span class="n">named_fields_from_element_type</span><span class="p">(</span><span class="n">pcoll</span><span class="o">.</span><span class="n">element_type</span><span class="p">)</span>
+    <span class="p">]</span>
+  <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exn</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;WriteToText requires an input schema with exactly one field.&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">exn</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;WriteToText requires an input schema with exactly one field, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+        <span class="n">field_names</span><span class="p">)</span>
+  <span class="n">sole_field_name</span><span class="p">,</span> <span class="o">=</span> <span class="n">field_names</span>
+  <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+      <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sole_field_name</span><span class="p">)))</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToText</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_from_bigquery">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.read_from_bigquery">[docs]</a>
+<span class="k">def</span> <span class="nf">read_from_bigquery</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">row_restriction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Reads data from BigQuery.</span>
+
+<span class="sd">  Exactly one of table or query must be set.</span>
+<span class="sd">  If query is set, neither row_restriction nor fields should be set.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    table (str): The table to read from, specified as `DATASET.TABLE`</span>
+<span class="sd">      or `PROJECT:DATASET.TABLE`.</span>
+<span class="sd">    query (str): A query to be used instead of the table argument.</span>
+<span class="sd">    row_restriction (str): Optional SQL text filtering statement, similar to a</span>
+<span class="sd">      WHERE clause in a query. Aggregates are not supported. Restricted to a</span>
+<span class="sd">      maximum length for 1 MB.</span>
+<span class="sd">    selected_fields (List[str]): Optional List of names of the fields in the</span>
+<span class="sd">      table that should be read. If empty, all fields will be read. If the</span>
+<span class="sd">      specified field is a nested field, all the sub-fields in the field will be</span>
+<span class="sd">      selected. The output field order is unrelated to the order of fields</span>
+<span class="sd">      given here.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">table</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">row_restriction</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fields</span> <span class="ow">is</span> <span class="kc">None</span>
+  <span class="k">return</span> <span class="n">ReadFromBigQuery</span><span class="p">(</span>
+      <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">,</span>
+      <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
+      <span class="n">row_restriction</span><span class="o">=</span><span class="n">row_restriction</span><span class="p">,</span>
+      <span class="n">selected_fields</span><span class="o">=</span><span class="n">fields</span><span class="p">,</span>
+      <span class="n">method</span><span class="o">=</span><span class="s1">&#39;DIRECT_READ&#39;</span><span class="p">,</span>
+      <span class="n">output_type</span><span class="o">=</span><span class="s1">&#39;BEAM_ROW&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="write_to_bigquery">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.write_to_bigquery">[docs]</a>
+<span class="k">def</span> <span class="nf">write_to_bigquery</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">create_disposition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">CREATE_IF_NEEDED</span><span class="p">,</span>
+    <span class="n">write_disposition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_APPEND</span><span class="p">,</span>
+    <span class="n">error_handling</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+  <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Writes data to a BigQuery table.</span>
+
+<span class="s2">  Args:</span>
+<span class="s2">    table (str): The table to read from, specified as `DATASET.TABLE`</span>
+<span class="s2">      or `PROJECT:DATASET.TABLE`.</span>
+<span class="s2">      create_disposition (BigQueryDisposition): A string describing what</span>
+<span class="s2">        happens if the table does not exist. Possible values are:</span>
+
+<span class="s2">        * :attr:`</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">CREATE_IF_NEEDED</span><span class="si">}</span><span class="s2">`: create if does not</span>
+<span class="s2">          exist.</span>
+<span class="s2">        * :attr:`</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">CREATE_NEVER</span><span class="si">}</span><span class="s2">`: fail the write if does not</span>
+<span class="s2">          exist.</span>
+
+<span class="s2">        Defaults to `</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">CREATE_IF_NEEDED</span><span class="si">}</span><span class="s2">`.</span>
+
+<span class="s2">      write_disposition (BigQueryDisposition): A string describing what happens</span>
+<span class="s2">        if the table has already some data. Possible values are:</span>
+
+<span class="s2">        * :attr:`</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_TRUNCATE</span><span class="si">}</span><span class="s2">`: delete existing rows.</span>
+<span class="s2">        * :attr:`</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_APPEND</span><span class="si">}</span><span class="s2">`: add to existing rows.</span>
+<span class="s2">        * :attr:`</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_EMPTY</span><span class="si">}</span><span class="s2">`: fail the write if table not</span>
+<span class="s2">          empty.</span>
+
+<span class="s2">        For streaming pipelines WriteTruncate can not be used.</span>
+
+<span class="s2">        Defaults to `</span><span class="si">{</span><span class="n">BigQueryDisposition</span><span class="o">.</span><span class="n">WRITE_APPEND</span><span class="si">}</span><span class="s2">`.</span>
+
+<span class="s2">      error_handling: If specified, should be a mapping giving an output into</span>
+<span class="s2">        which to emit records that failed to bet written to BigQuery, as</span>
+<span class="s2">        described at https://beam.apache.org/documentation/sdks/yaml-errors/</span>
+<span class="s2">        Otherwise permanently failing records will cause pipeline failure.</span>
+<span class="s2">  &quot;&quot;&quot;</span>
+  <span class="k">class</span> <span class="nc">WriteToBigQueryHandlingErrors</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="k">return</span> <span class="s1">&#39;WriteToBigQuery&#39;</span>
+
+    <span class="k">def</span> <span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+      <span class="n">write_result</span> <span class="o">=</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">WriteToBigQuery</span><span class="p">(</span>
+          <span class="n">table</span><span class="p">,</span>
+          <span class="n">method</span><span class="o">=</span><span class="n">WriteToBigQuery</span><span class="o">.</span><span class="n">Method</span><span class="o">.</span><span class="n">STORAGE_WRITE_API</span>
+          <span class="k">if</span> <span class="n">error_handling</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+          <span class="n">create_disposition</span><span class="o">=</span><span class="n">create_disposition</span><span class="p">,</span>
+          <span class="n">write_disposition</span><span class="o">=</span><span class="n">write_disposition</span><span class="p">,</span>
+          <span class="n">temp_file_format</span><span class="o">=</span><span class="s1">&#39;AVRO&#39;</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">error_handling</span> <span class="ow">and</span> <span class="s1">&#39;output&#39;</span> <span class="ow">in</span> <span class="n">error_handling</span><span class="p">:</span>
+        <span class="c1"># TODO: Support error rates.</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;post_write&#39;</span><span class="p">:</span> <span class="n">write_result</span><span class="o">.</span><span class="n">failed_rows_with_errors</span>
+            <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">error_handling</span><span class="p">[</span><span class="s1">&#39;output&#39;</span><span class="p">]:</span> <span class="n">write_result</span><span class="o">.</span><span class="n">failed_rows_with_errors</span>
+        <span class="p">}</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">write_result</span><span class="o">.</span><span class="n">_method</span> <span class="o">==</span> <span class="n">WriteToBigQuery</span><span class="o">.</span><span class="n">Method</span><span class="o">.</span><span class="n">FILE_LOADS</span><span class="p">:</span>
+          <span class="c1"># Never returns errors, just fails.</span>
+          <span class="k">return</span> <span class="p">{</span>
+              <span class="s1">&#39;post_write&#39;</span><span class="p">:</span> <span class="n">write_result</span><span class="o">.</span><span class="n">destination_load_jobid_pairs</span>
+              <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+          <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+
+          <span class="c1"># This should likely be pushed into the BQ read itself to avoid</span>
+          <span class="c1"># the possibility of silently ignoring errors.</span>
+          <span class="k">def</span> <span class="nf">raise_exception</span><span class="p">(</span><span class="n">failed_row_with_error</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">failed_row_with_error</span><span class="o">.</span><span class="n">error_message</span><span class="p">)</span>
+
+          <span class="n">_</span> <span class="o">=</span> <span class="n">write_result</span><span class="o">.</span><span class="n">failed_rows_with_errors</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">raise_exception</span><span class="p">)</span>
+          <span class="k">return</span> <span class="p">{</span>
+              <span class="s1">&#39;post_write&#39;</span><span class="p">:</span> <span class="n">write_result</span><span class="o">.</span><span class="n">failed_rows_with_errors</span>
+              <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="kc">None</span><span class="p">)</span>
+          <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">WriteToBigQueryHandlingErrors</span><span class="p">()</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_create_parser</span><span class="p">(</span>
+    <span class="nb">format</span><span class="p">,</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">bytes</span><span class="p">],</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]]:</span>
+
+  <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">_validate_schema</span><span class="p">():</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">schema</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1"> format requires valid </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1"> schema to be passed to &#39;</span>
+          <span class="sa">f</span><span class="s1">&#39;schema parameter.&#39;</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;RAW&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RAW format does not take a schema&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="p">[</span><span class="n">schemas</span><span class="o">.</span><span class="n">schema_field</span><span class="p">(</span><span class="s1">&#39;payload&#39;</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)]),</span>
+        <span class="k">lambda</span> <span class="n">payload</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="n">payload</span><span class="o">=</span><span class="n">payload</span><span class="p">))</span>
+  <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;JSON&#39;</span><span class="p">:</span>
+    <span class="n">_validate_schema</span><span class="p">()</span>
+    <span class="n">beam_schema</span> <span class="o">=</span> <span class="n">json_utils</span><span class="o">.</span><span class="n">json_schema_to_beam_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">beam_schema</span><span class="p">,</span> <span class="n">json_utils</span><span class="o">.</span><span class="n">json_parser</span><span class="p">(</span><span class="n">beam_schema</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;AVRO&#39;</span><span class="p">:</span>
+    <span class="n">_validate_schema</span><span class="p">()</span>
+    <span class="n">beam_schema</span> <span class="o">=</span> <span class="n">avroio</span><span class="o">.</span><span class="n">avro_schema_to_beam_schema</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+    <span class="n">covert_to_row</span> <span class="o">=</span> <span class="n">avroio</span><span class="o">.</span><span class="n">avro_dict_to_beam_row</span><span class="p">(</span><span class="n">schema</span><span class="p">,</span> <span class="n">beam_schema</span><span class="p">)</span>
+    <span class="c1"># pylint: disable=line-too-long</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">beam_schema</span><span class="p">,</span>
+        <span class="k">lambda</span> <span class="n">record</span><span class="p">:</span> <span class="n">covert_to_row</span><span class="p">(</span>
+            <span class="n">fastavro</span><span class="o">.</span><span class="n">schemaless_reader</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">record</span><span class="p">),</span> <span class="n">schema</span><span class="p">)))</span>  <span class="c1"># type: ignore[call-arg]</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_create_formatter</span><span class="p">(</span>
+    <span class="nb">format</span><span class="p">,</span> <span class="n">schema</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="n">beam_schema</span><span class="p">:</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]:</span>
+
+  <span class="k">if</span> <span class="nb">format</span><span class="o">.</span><span class="n">islower</span><span class="p">():</span>
+    <span class="nb">format</span> <span class="o">=</span> <span class="nb">format</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+  <span class="k">if</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;RAW&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">schema</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;RAW format does not take a schema&#39;</span><span class="p">)</span>
+    <span class="n">field_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">beam_schema</span><span class="o">.</span><span class="n">fields</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Expecting exactly one field, found </span><span class="si">{</span><span class="n">field_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">convert_to_bytes</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+      <span class="n">output</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">field_names</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">output</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot encode payload for WriteToPubSub. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Expected valid string or bytes object, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="si">}</span><span class="s2"> of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convert_to_bytes</span>
+  <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;JSON&#39;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">json_utils</span><span class="o">.</span><span class="n">json_formater</span><span class="p">(</span><span class="n">beam_schema</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="nb">format</span> <span class="o">==</span> <span class="s1">&#39;AVRO&#39;</span><span class="p">:</span>
+    <span class="n">avro_schema</span> <span class="o">=</span> <span class="n">schema</span> <span class="ow">or</span> <span class="n">avroio</span><span class="o">.</span><span class="n">beam_schema_to_avro_schema</span><span class="p">(</span><span class="n">beam_schema</span><span class="p">)</span>
+    <span class="n">from_row</span> <span class="o">=</span> <span class="n">avroio</span><span class="o">.</span><span class="n">beam_row_to_avro_dict</span><span class="p">(</span><span class="n">avro_schema</span><span class="p">,</span> <span class="n">beam_schema</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">formatter</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+      <span class="n">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">()</span>
+      <span class="n">fastavro</span><span class="o">.</span><span class="n">schemaless_writer</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">avro_schema</span><span class="p">,</span> <span class="n">from_row</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+      <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">formatter</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown format: </span><span class="si">{</span><span class="nb">format</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="read_from_pubsub">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.read_from_pubsub">[docs]</a>
+<span class="nd">@beam</span><span class="o">.</span><span class="n">ptransform_fn</span>
+<span class="nd">@yaml_mapping</span><span class="o">.</span><span class="n">maybe_with_exception_handling_transform_fn</span>
+<span class="k">def</span> <span class="nf">read_from_pubsub</span><span class="p">(</span>
+    <span class="n">root</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">topic</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">subscription</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attributes_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_attribute</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timestamp_attribute</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Reads messages from Cloud Pub/Sub.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    topic: Cloud Pub/Sub topic in the form</span>
+<span class="sd">      &quot;projects/&lt;project&gt;/topics/&lt;topic&gt;&quot;. If provided, subscription must be</span>
+<span class="sd">      None.</span>
+<span class="sd">    subscription: Existing Cloud Pub/Sub subscription to use in the</span>
+<span class="sd">      form &quot;projects/&lt;project&gt;/subscriptions/&lt;subscription&gt;&quot;. If not</span>
+<span class="sd">      specified, a temporary subscription will be created from the specified</span>
+<span class="sd">      topic. If provided, topic must be None.</span>
+<span class="sd">    format: The expected format of the message payload.  Currently suported</span>
+<span class="sd">      formats are</span>
+
+<span class="sd">        - RAW: Produces records with a single `payload` field whose contents</span>
+<span class="sd">            are the raw bytes of the pubsub message.</span>
+<span class="sd">        - AVRO: Parses records with a given Avro schema.</span>
+<span class="sd">        - JSON: Parses records with a given JSON schema.</span>
+
+<span class="sd">    schema: Schema specification for the given format.</span>
+<span class="sd">    attributes: List of attribute keys whose values will be flattened into the</span>
+<span class="sd">      output message as additional fields.  For example, if the format is `raw`</span>
+<span class="sd">      and attributes is `[&quot;a&quot;, &quot;b&quot;]` then this read will produce elements of</span>
+<span class="sd">      the form `Row(payload=..., a=..., b=...)`.</span>
+<span class="sd">    attribute_map: Name of a field in which to store the full set of attributes</span>
+<span class="sd">      associated with this message.  For example, if the format is `raw` and</span>
+<span class="sd">      `attribute_map` is set to `&quot;attrs&quot;` then this read will produce elements</span>
+<span class="sd">      of the form `Row(payload=..., attrs=...)` where `attrs` is a Map type</span>
+<span class="sd">      of string to string.</span>
+<span class="sd">      If both `attributes` and `attribute_map` are set, the overlapping</span>
+<span class="sd">      attribute values will be present in both the flattened structure and the</span>
+<span class="sd">      attribute map.</span>
+<span class="sd">    id_attribute: The attribute on incoming Pub/Sub messages to use as a unique</span>
+<span class="sd">      record identifier. When specified, the value of this attribute (which</span>
+<span class="sd">      can be any string that uniquely identifies the record) will be used for</span>
+<span class="sd">      deduplication of messages. If not provided, we cannot guarantee</span>
+<span class="sd">      that no duplicate data will be delivered on the Pub/Sub stream. In this</span>
+<span class="sd">      case, deduplication of the stream will be strictly best effort.</span>
+<span class="sd">    timestamp_attribute: Message value to use as element timestamp. If None,</span>
+<span class="sd">      uses message publishing time as the timestamp.</span>
+
+<span class="sd">      Timestamp values should be in one of two formats:</span>
+
+<span class="sd">      - A numerical value representing the number of milliseconds since the</span>
+<span class="sd">        Unix epoch.</span>
+<span class="sd">      - A string in RFC 3339 format, UTC timezone. Example:</span>
+<span class="sd">        ``2015-10-29T23:41:41.123Z``. The sub-second component of the</span>
+<span class="sd">        timestamp is optional, and digits beyond the first three (i.e., time</span>
+<span class="sd">        units smaller than milliseconds) may be ignored.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="n">topic</span> <span class="ow">and</span> <span class="n">subscription</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Only one of topic and subscription may be specified.&#39;</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="ow">not</span> <span class="n">topic</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">subscription</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;One of topic or subscription may be specified.&#39;</span><span class="p">)</span>
+  <span class="n">payload_schema</span><span class="p">,</span> <span class="n">parser</span> <span class="o">=</span> <span class="n">_create_parser</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+  <span class="n">extra_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">schema_pb2</span><span class="o">.</span><span class="n">Field</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">attributes</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">attributes_map</span><span class="p">:</span>
+    <span class="n">mapper</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="n">parser</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attributes</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+      <span class="n">extra_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+          <span class="p">[</span><span class="n">schemas</span><span class="o">.</span><span class="n">schema_field</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">attributes_map</span><span class="p">:</span>
+      <span class="n">extra_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+          <span class="n">schemas</span><span class="o">.</span><span class="n">schema_field</span><span class="p">(</span><span class="n">attributes_map</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">mapper</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="n">parser</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+        <span class="c1"># Should missing attributes be optional or parse errors?</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">:</span>
+          <span class="n">values</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+      <span class="k">if</span> <span class="n">attributes_map</span><span class="p">:</span>
+        <span class="n">values</span><span class="p">[</span><span class="n">attributes_map</span><span class="p">]</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">attributes</span>
+      <span class="k">return</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>
+
+  <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">root</span>
+      <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ReadFromPubSub</span><span class="p">(</span>
+          <span class="n">topic</span><span class="o">=</span><span class="n">topic</span><span class="p">,</span>
+          <span class="n">subscription</span><span class="o">=</span><span class="n">subscription</span><span class="p">,</span>
+          <span class="n">with_attributes</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">attributes</span> <span class="ow">or</span> <span class="n">attributes_map</span><span class="p">),</span>
+          <span class="n">id_label</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
+          <span class="n">timestamp_attribute</span><span class="o">=</span><span class="n">timestamp_attribute</span><span class="p">)</span>
+      <span class="o">|</span> <span class="s1">&#39;ParseMessage&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">mapper</span><span class="p">))</span>
+  <span class="n">output</span><span class="o">.</span><span class="n">element_type</span> <span class="o">=</span> <span class="n">schemas</span><span class="o">.</span><span class="n">named_tuple_from_schema</span><span class="p">(</span>
+      <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span><span class="n">fields</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">payload_schema</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span> <span class="o">+</span> <span class="n">extra_fields</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">output</span></div>
+
+
+
+<div class="viewcode-block" id="write_to_pubsub">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.write_to_pubsub">[docs]</a>
+<span class="nd">@beam</span><span class="o">.</span><span class="n">ptransform_fn</span>
+<span class="nd">@yaml_mapping</span><span class="o">.</span><span class="n">maybe_with_exception_handling_transform_fn</span>
+<span class="k">def</span> <span class="nf">write_to_pubsub</span><span class="p">(</span>
+    <span class="n">pcoll</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">topic</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attributes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">attributes_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">id_attribute</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timestamp_attribute</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Writes messages to Cloud Pub/Sub.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    topic: Cloud Pub/Sub topic in the form &quot;/topics/&lt;project&gt;/&lt;topic&gt;&quot;.</span>
+<span class="sd">    format: How to format the message payload.  Currently suported</span>
+<span class="sd">      formats are</span>
+
+<span class="sd">        - RAW: Expects a message with a single field (excluding</span>
+<span class="sd">            attribute-related fields) whose contents are used as the raw bytes</span>
+<span class="sd">            of the pubsub message.</span>
+<span class="sd">        - AVRO: Encodes records with a given Avro schema, which may be inferred</span>
+<span class="sd">            from the input PCollection schema.</span>
+<span class="sd">        - JSON: Formats records with a given JSON schema, which may be inferred</span>
+<span class="sd">            from the input PCollection schema.</span>
+
+<span class="sd">    schema: Schema specification for the given format.</span>
+<span class="sd">    attributes: List of attribute keys whose values will be pulled out as</span>
+<span class="sd">      PubSub message attributes.  For example, if the format is `raw`</span>
+<span class="sd">      and attributes is `[&quot;a&quot;, &quot;b&quot;]` then elements of the form</span>
+<span class="sd">      `Row(any_field=..., a=..., b=...)` will result in PubSub messages whose</span>
+<span class="sd">      payload has the contents of any_field and whose attribute will be</span>
+<span class="sd">      populated with the values of `a` and `b`.</span>
+<span class="sd">    attribute_map: Name of a string-to-string map field in which to pull a set</span>
+<span class="sd">      of attributes associated with this message.  For example, if the format</span>
+<span class="sd">      is `raw` and `attribute_map` is set to `&quot;attrs&quot;` then elements of the form</span>
+<span class="sd">      `Row(any_field=..., attrs=...)` will result in PubSub messages whose</span>
+<span class="sd">      payload has the contents of any_field and whose attribute will be</span>
+<span class="sd">      populated with the values from attrs.</span>
+<span class="sd">      If both `attributes` and `attribute_map` are set, the union of attributes</span>
+<span class="sd">      from these two sources will be used to populate the PubSub message</span>
+<span class="sd">      attributes.</span>
+<span class="sd">    id_attribute: If set, will set an attribute for each Cloud Pub/Sub message</span>
+<span class="sd">      with the given name and a unique value. This attribute can then be used</span>
+<span class="sd">      in a ReadFromPubSub PTransform to deduplicate messages.</span>
+<span class="sd">    timestamp_attribute: If set, will set an attribute for each Cloud Pub/Sub</span>
+<span class="sd">      message with the given name and the message&#39;s publish time as the value.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">input_schema</span> <span class="o">=</span> <span class="n">schemas</span><span class="o">.</span><span class="n">schema_from_element_type</span><span class="p">(</span><span class="n">pcoll</span><span class="o">.</span><span class="n">element_type</span><span class="p">)</span>
+
+  <span class="n">extra_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attributes</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="p">[</span><span class="n">attributes</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+    <span class="n">extra_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">attributes_map</span><span class="p">:</span>
+    <span class="n">extra_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attributes_map</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">attributes_extractor</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">attributes_map</span><span class="p">:</span>
+      <span class="n">attribute_values</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">attributes_map</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">attribute_values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">attributes</span><span class="p">:</span>
+      <span class="n">attribute_values</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">attr</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">attribute_values</span>
+
+  <span class="n">schema_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">input_schema</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+  <span class="n">missing_attribute_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">extra_fields</span><span class="p">)</span> <span class="o">-</span> <span class="n">schema_names</span>
+  <span class="k">if</span> <span class="n">missing_attribute_names</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;Attribute fields </span><span class="si">{</span><span class="n">missing_attribute_names</span><span class="si">}</span><span class="s1"> &#39;</span>
+        <span class="sa">f</span><span class="s1">&#39;not found in schema fields </span><span class="si">{</span><span class="n">schema_names</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+  <span class="n">payload_schema</span> <span class="o">=</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">(</span>
+      <span class="n">fields</span><span class="o">=</span><span class="p">[</span>
+          <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">input_schema</span><span class="o">.</span><span class="n">fields</span>
+          <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">extra_fields</span>
+      <span class="p">])</span>
+  <span class="n">formatter</span> <span class="o">=</span> <span class="n">_create_formatter</span><span class="p">(</span><span class="nb">format</span><span class="p">,</span> <span class="n">schema</span><span class="p">,</span> <span class="n">payload_schema</span><span class="p">)</span>
+  <span class="k">return</span> <span class="p">(</span>
+      <span class="n">pcoll</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+          <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gcp</span><span class="o">.</span><span class="n">pubsub</span><span class="o">.</span><span class="n">PubsubMessage</span><span class="p">(</span>
+              <span class="n">formatter</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">attributes_extractor</span><span class="p">(</span><span class="n">row</span><span class="p">)))</span>
+      <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToPubSub</span><span class="p">(</span>
+          <span class="n">topic</span><span class="p">,</span>
+          <span class="n">with_attributes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">id_label</span><span class="o">=</span><span class="n">id_attribute</span><span class="p">,</span>
+          <span class="n">timestamp_attribute</span><span class="o">=</span><span class="n">timestamp_attribute</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="io_providers">
+<a class="viewcode-back" href="../../../apache_beam.yaml.yaml_io.html#apache_beam.yaml.yaml_io.io_providers">[docs]</a>
+<span class="k">def</span> <span class="nf">io_providers</span><span class="p">():</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s1">&#39;standard_io.yaml&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">yaml_provider</span><span class="o">.</span><span class="n">parse_providers</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">SafeLoader</span><span class="p">))</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.metrics.metricbase module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.metrics.monitoring_infos module" href="apache_beam.metrics.monitoring_infos.html" />
+    <link rel="prev" title="apache_beam.metrics.metric module" href="apache_beam.metrics.metric.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.metrics.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.cells.html">apache_beam.metrics.cells module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.metric.html">apache_beam.metrics.metric module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.metrics.metricbase module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.Metric"><code class="docutils literal notranslate"><span class="pre">Metric</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.Counter"><code class="docutils literal notranslate"><span class="pre">Counter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.Distribution"><code class="docutils literal notranslate"><span class="pre">Distribution</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.Gauge"><code class="docutils literal notranslate"><span class="pre">Gauge</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.StringSet"><code class="docutils literal notranslate"><span class="pre">StringSet</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.Histogram"><code class="docutils literal notranslate"><span class="pre">Histogram</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName"><code class="docutils literal notranslate"><span class="pre">MetricName</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.monitoring_infos.html">apache_beam.metrics.monitoring_infos module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+      <li class="breadcrumb-item active">apache_beam.metrics.metricbase module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.metrics.metricbase.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.metrics.metricbase">
+<span id="apache-beam-metrics-metricbase-module"></span><h1>apache_beam.metrics.metricbase module<a class="headerlink" href="#module-apache_beam.metrics.metricbase" title="Link to this heading">¶</a></h1>
+<p>The classes in this file are interfaces for metrics. They are not intended
+to be subclassed or created directly by users. To work with and access metrics,
+users should use the classes and methods exposed in metric.py.</p>
+<p>Available classes:</p>
+<ul class="simple">
+<li><p>Metric - Base interface of a metrics object.</p></li>
+<li><dl class="simple">
+<dt>Counter - Counter metric interface. Allows a count to be incremented or</dt><dd><p>decremented during pipeline execution.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Distribution - Distribution Metric interface. Allows statistics about the</dt><dd><p>distribution of a variable to be collected during pipeline execution.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Gauge - Gauge Metric interface. Allows to track the latest value of a</dt><dd><p>variable during pipeline execution.</p>
+</dd>
+</dl>
+</li>
+<li><p>MetricName - Namespace and name used to refer to a Metric.</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Metric">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">Metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Metric" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Base interface of a metric object.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Counter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">Counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Counter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<p>Counter metric interface. Allows a count to be incremented/decremented
+during pipeline execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Counter.inc">
+<span class="sig-name descname"><span class="pre">inc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Counter.inc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Counter.inc" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Counter.dec">
+<span class="sig-name descname"><span class="pre">dec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Counter.dec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Counter.dec" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Distribution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">Distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<p>Distribution Metric interface.</p>
+<p>Allows statistics about the distribution of a variable to be collected during
+pipeline execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Distribution.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Distribution.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Distribution.update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Gauge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">Gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Gauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Gauge" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<p>Gauge Metric interface.</p>
+<p>Allows tracking of the latest value of a variable during pipeline
+execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Gauge.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Gauge.set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Gauge.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.StringSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">StringSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#StringSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.StringSet" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<p>StringSet Metric interface.</p>
+<p>Reports set of unique string values during pipeline execution..</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.StringSet.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#StringSet.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.StringSet.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Histogram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">Histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Histogram" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><code class="xref py py-class docutils literal notranslate"><span class="pre">Metric</span></code></a></p>
+<p>Histogram Metric interface.</p>
+<p>Allows statistics about the percentile of a variable to be collected during
+pipeline execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.Histogram.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#Histogram.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.Histogram.update" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.MetricName">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metricbase.</span></span><span class="sig-name descname"><span class="pre">MetricName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">urn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.13)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#MetricName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.MetricName" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The name of a metric.</p>
+<p>The name of a metric consists of a namespace and a name. The namespace
+allows grouping related metrics together and also prevents collisions
+between multiple metrics of the same name.</p>
+<p>Initializes <code class="docutils literal notranslate"><span class="pre">MetricName</span></code>.</p>
+<p>Note: namespace and name should be set for user metrics,
+urn and labels should be set for an arbitrary metric to package into a
+MonitoringInfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – A string with the namespace of a metric.</p></li>
+<li><p><strong>name</strong> – A string with the name of a metric.</p></li>
+<li><p><strong>urn</strong> – URN to populate on a MonitoringInfo, when sending to RunnerHarness.</p></li>
+<li><p><strong>labels</strong> – Labels to populate on a MonitoringInfo</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metricbase.MetricName.fast_name">
+<span class="sig-name descname"><span class="pre">fast_name</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metricbase.html#MetricName.fast_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metricbase.MetricName.fast_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.metrics.metric.html" class="btn btn-neutral float-left" title="apache_beam.metrics.metric module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.metrics.monitoring_infos.html" class="btn btn-neutral float-right" title="apache_beam.metrics.monitoring_infos module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

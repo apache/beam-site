@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.kafka module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.io.kinesis module" href="apache_beam.io.kinesis.html" />
+    <link rel="prev" title="apache_beam.io.jdbc module" href="apache_beam.io.jdbc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.io.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.io.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.avroio.html">apache_beam.io.avroio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.concat_source.html">apache_beam.io.concat_source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.debezium.html">apache_beam.io.debezium module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsink.html">apache_beam.io.filebasedsink module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsource.html">apache_beam.io.filebasedsource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.fileio.html">apache_beam.io.fileio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystem.html">apache_beam.io.filesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystemio.html">apache_beam.io.filesystemio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystems.html">apache_beam.io.filesystems module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.hadoopfilesystem.html">apache_beam.io.hadoopfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.iobase.html">apache_beam.io.iobase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.jdbc.html">apache_beam.io.jdbc module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.io.kafka module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kafka.ReadFromKafkaSchema"><code class="docutils literal notranslate"><span class="pre">ReadFromKafkaSchema</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kafka.default_io_expansion_service"><code class="docutils literal notranslate"><span class="pre">default_io_expansion_service()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kafka.ReadFromKafka"><code class="docutils literal notranslate"><span class="pre">ReadFromKafka</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kafka.WriteToKafkaSchema"><code class="docutils literal notranslate"><span class="pre">WriteToKafkaSchema</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kafka.WriteToKafka"><code class="docutils literal notranslate"><span class="pre">WriteToKafka</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kinesis.html">apache_beam.io.kinesis module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.localfilesystem.html">apache_beam.io.localfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.mongodbio.html">apache_beam.io.mongodbio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.parquetio.html">apache_beam.io.parquetio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.range_trackers.html">apache_beam.io.range_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.requestresponse.html">apache_beam.io.requestresponse module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.restriction_trackers.html">apache_beam.io.restriction_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.snowflake.html">apache_beam.io.snowflake module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.source_test_utils.html">apache_beam.io.source_test_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.textio.html">apache_beam.io.textio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.tfrecordio.html">apache_beam.io.tfrecordio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.utils.html">apache_beam.io.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.watermark_estimators.html">apache_beam.io.watermark_estimators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.io.html">apache_beam.io package</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.kafka module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.io.kafka.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.io.kafka">
+<span id="apache-beam-io-kafka-module"></span><h1>apache_beam.io.kafka module<a class="headerlink" href="#module-apache_beam.io.kafka" title="Link to this heading">¶</a></h1>
+<dl class="simple">
+<dt>Unbounded source and sink transforms for</dt><dd><p><a class="reference external" href="href=&quot;http://kafka.apache.org/">Kafka</a>.</p>
+</dd>
+</dl>
+<p>These transforms are currently supported by Beam portable runners (for
+example, portable Flink and Spark) as well as Dataflow runner.</p>
+<p><strong>Setup</strong></p>
+<p>Transforms provided in this module are cross-language transforms
+implemented in the Beam Java SDK. During the pipeline construction, Python SDK
+will connect to a Java expansion service to expand these transforms.
+To facilitate this, a small amount of setup is needed before using these
+transforms in a Beam Python pipeline.</p>
+<p>There are several ways to setup cross-language Kafka transforms.</p>
+<ul class="simple">
+<li><p>Option 1: use the default expansion service</p></li>
+<li><p>Option 2: specify a custom expansion service</p></li>
+</ul>
+<p>See below for details regarding each of these options.</p>
+<p><em>Option 1: Use the default expansion service</em></p>
+<p>This is the recommended and easiest setup option for using Python Kafka
+transforms. This option is only available for Beam 2.22.0 and later.</p>
+<p>This option requires following pre-requisites before running the Beam
+pipeline.</p>
+<ul class="simple">
+<li><p>Install Java runtime in the computer from where the pipeline is constructed
+and make sure that ‘java’ command is available.</p></li>
+</ul>
+<p>In this option, Python SDK will either download (for released Beam version) or
+build (when running from a Beam Git clone) an expansion service jar and use
+that to expand transforms. Currently Kafka transforms use the
+‘beam-sdks-java-io-expansion-service’ jar for this purpose.</p>
+<p>Note that the KafkaIO read transform can be compiled in two modes</p>
+<ul class="simple">
+<li><p><cite>ReadFromKafkaViaUnbounded</cite> (legacy)</p></li>
+<li><p><cite>ReadFromKafkaViaSDF</cite> (default)</p></li>
+</ul>
+<p>To use the legacy mode, the <cite>use_deprecated_read</cite> flag should be specified
+within the IO expansion service. For example,</p>
+<blockquote>
+<div><dl class="simple">
+<dt>kafka.default_io_expansion_service(</dt><dd><p>append_args=[”–experiments=use_deprecated_read”]</p>
+</dd>
+</dl>
+<p>)</p>
+</div></blockquote>
+<p><em>Option 2: specify a custom expansion service</em></p>
+<p>In this option, you startup your own expansion service and provide that as
+a parameter when using the transforms provided in this module.</p>
+<p>This option requires following pre-requisites before running the Beam
+pipeline.</p>
+<ul class="simple">
+<li><p>Startup your own expansion service.</p></li>
+<li><p>Update your pipeline to provide the expansion service address when
+initiating Kafka transforms provided in this module.</p></li>
+</ul>
+<p>Flink Users can use the built-in Expansion Service of the Flink Runner’s
+Job Server. If you start Flink’s Job Server, the expansion service will be
+started on port 8097. For a different address, please set the
+expansion_service parameter.</p>
+<p><strong>More information</strong></p>
+<p>For more information regarding cross-language transforms see:
+- <a class="reference external" href="https://beam.apache.org/roadmap/portability/">https://beam.apache.org/roadmap/portability/</a></p>
+<p>For more information specific to Flink runner see:
+- <a class="reference external" href="https://beam.apache.org/documentation/runners/flink/">https://beam.apache.org/documentation/runners/flink/</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kafka.</span></span><span class="sig-name descname"><span class="pre">ReadFromKafkaSchema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_deserializer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_deserializer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_read_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_read_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit_offset_in_finalize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_polling_timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redistribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redistribute_num_keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_duplicates</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Create new instance of ReadFromKafkaSchema(consumer_config, topics, key_deserializer, value_deserializer, start_read_time, max_num_records, max_read_time, commit_offset_in_finalize, timestamp_policy, consumer_polling_timeout, redistribute, redistribute_num_keys, allow_duplicates)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.allow_duplicates">
+<span class="sig-name descname"><span class="pre">allow_duplicates</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.allow_duplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 12</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.commit_offset_in_finalize">
+<span class="sig-name descname"><span class="pre">commit_offset_in_finalize</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.commit_offset_in_finalize" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 7</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.consumer_config">
+<span class="sig-name descname"><span class="pre">consumer_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.13)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.consumer_config" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.consumer_polling_timeout">
+<span class="sig-name descname"><span class="pre">consumer_polling_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.consumer_polling_timeout" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 9</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.key_deserializer">
+<span class="sig-name descname"><span class="pre">key_deserializer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.key_deserializer" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.max_num_records">
+<span class="sig-name descname"><span class="pre">max_num_records</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.max_num_records" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.max_read_time">
+<span class="sig-name descname"><span class="pre">max_read_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.max_read_time" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.redistribute">
+<span class="sig-name descname"><span class="pre">redistribute</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.redistribute" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 10</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.redistribute_num_keys">
+<span class="sig-name descname"><span class="pre">redistribute_num_keys</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int32</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.redistribute_num_keys" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 11</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.start_read_time">
+<span class="sig-name descname"><span class="pre">start_read_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.start_read_time" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.timestamp_policy">
+<span class="sig-name descname"><span class="pre">timestamp_policy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.timestamp_policy" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 8</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.topics">
+<span class="sig-name descname"><span class="pre">topics</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.topics" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafkaSchema.value_deserializer">
+<span class="sig-name descname"><span class="pre">value_deserializer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafkaSchema.value_deserializer" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.default_io_expansion_service">
+<span class="sig-prename descclassname"><span class="pre">apache_beam.io.kafka.</span></span><span class="sig-name descname"><span class="pre">default_io_expansion_service</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">append_args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kafka.html#default_io_expansion_service"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kafka.default_io_expansion_service" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kafka.</span></span><span class="sig-name descname"><span class="pre">ReadFromKafka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">consumer_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_deserializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'org.apache.kafka.common.serialization.ByteArrayDeserializer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_deserializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'org.apache.kafka.common.serialization.ByteArrayDeserializer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_read_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_records</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_read_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit_offset_in_finalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ProcessingTime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumer_polling_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">with_metadata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redistribute</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redistribute_num_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_duplicates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kafka.html#ReadFromKafka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform" title="apache_beam.transforms.external.ExternalTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalTransform</span></code></a></p>
+<p>An external PTransform which reads from Kafka and returns a KV pair for
+each item in the specified Kafka topics. If no Kafka Deserializer for
+key/value is provided, then the data will be returned as a raw byte array.</p>
+<p>Experimental; no backwards compatibility guarantees.</p>
+<p>Initializes a read operation from Kafka.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>consumer_config</strong> – A dictionary containing the consumer configuration.</p></li>
+<li><p><strong>topics</strong> – A list of topic strings.</p></li>
+<li><p><strong>key_deserializer</strong> – A fully-qualified Java class name of a Kafka
+Deserializer for the topic’s key, e.g.
+‘org.apache.kafka.common.serialization.LongDeserializer’.
+Default: ‘org.apache.kafka.common.serialization.ByteArrayDeserializer’.</p></li>
+<li><p><strong>value_deserializer</strong> – A fully-qualified Java class name of a Kafka
+Deserializer for the topic’s value, e.g.
+‘org.apache.kafka.common.serialization.LongDeserializer’.
+Default: ‘org.apache.kafka.common.serialization.ByteArrayDeserializer’.</p></li>
+<li><p><strong>start_read_time</strong> – Use timestamp to set up start offset in milliseconds
+epoch.</p></li>
+<li><p><strong>max_num_records</strong> – Maximum amount of records to be read. Mainly used
+for tests and demo applications.</p></li>
+<li><p><strong>max_read_time</strong> – Maximum amount of time in seconds the transform
+executes. Mainly used for tests and demo applications.</p></li>
+<li><p><strong>commit_offset_in_finalize</strong> – Whether to commit offsets when finalizing.</p></li>
+<li><p><strong>timestamp_policy</strong> – The built-in timestamp policy which is used for
+extracting timestamp from KafkaRecord.</p></li>
+<li><p><strong>consumer_polling_timeout</strong> – Kafka client polling request
+timeout time in seconds. A lower timeout optimizes for latency. Increase
+the timeout if the consumer is not fetching any records. Default is 2
+seconds.</p></li>
+<li><p><strong>with_metadata</strong> – whether the returned PCollection should contain
+Kafka related metadata or not. If False (default), elements of the
+returned PCollection will be of type ‘bytes’ if True, elements of the
+returned PCollection will be of the type ‘Row’. Note that, currently
+this only works when using default key and value deserializers where
+Java Kafka Reader reads keys and values as ‘byte[]’.</p></li>
+<li><p><strong>expansion_service</strong> – The address (host:port) of the ExpansionService.</p></li>
+<li><p><strong>redistribute</strong> – whether a Redistribute transform should be applied
+immediately after the read.</p></li>
+<li><p><strong>redistribute_num_keys</strong> – Configures how many keys the Redistribute
+spreads the data across.</p></li>
+<li><p><strong>allow_duplicates</strong> – whether the Redistribute transform allows for
+duplicates (this serves solely as a hint to the underlying runner).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.byte_array_deserializer">
+<span class="sig-name descname"><span class="pre">byte_array_deserializer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'org.apache.kafka.common.serialization.ByteArrayDeserializer'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.byte_array_deserializer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.processing_time_policy">
+<span class="sig-name descname"><span class="pre">processing_time_policy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ProcessingTime'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.processing_time_policy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.create_time_policy">
+<span class="sig-name descname"><span class="pre">create_time_policy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'CreateTime'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.create_time_policy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.log_append_time">
+<span class="sig-name descname"><span class="pre">log_append_time</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LogAppendTime'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.log_append_time" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.URN_WITH_METADATA">
+<span class="sig-name descname"><span class="pre">URN_WITH_METADATA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beam:transform:org.apache.beam:kafka_read_with_metadata:v1'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.URN_WITH_METADATA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.ReadFromKafka.URN_WITHOUT_METADATA">
+<span class="sig-name descname"><span class="pre">URN_WITHOUT_METADATA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beam:transform:org.apache.beam:kafka_read_without_metadata:v1'</span></em><a class="headerlink" href="#apache_beam.io.kafka.ReadFromKafka.URN_WITHOUT_METADATA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafkaSchema">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kafka.</span></span><span class="sig-name descname"><span class="pre">WriteToKafkaSchema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_serializer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_serializer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafkaSchema" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a></p>
+<p>Create new instance of WriteToKafkaSchema(producer_config, topic, key_serializer, value_serializer)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafkaSchema.key_serializer">
+<span class="sig-name descname"><span class="pre">key_serializer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafkaSchema.key_serializer" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafkaSchema.producer_config">
+<span class="sig-name descname"><span class="pre">producer_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.13)"><span class="pre">Mapping</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafkaSchema.producer_config" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafkaSchema.topic">
+<span class="sig-name descname"><span class="pre">topic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafkaSchema.topic" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafkaSchema.value_serializer">
+<span class="sig-name descname"><span class="pre">value_serializer</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafkaSchema.value_serializer" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafka">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kafka.</span></span><span class="sig-name descname"><span class="pre">WriteToKafka</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer_config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_serializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'org.apache.kafka.common.serialization.ByteArraySerializer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_serializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'org.apache.kafka.common.serialization.ByteArraySerializer'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kafka.html#WriteToKafka"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafka" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform" title="apache_beam.transforms.external.ExternalTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalTransform</span></code></a></p>
+<p>An external PTransform which writes KV data to a specified Kafka topic.
+If no Kafka Serializer for key/value is provided, then key/value are
+assumed to be byte arrays.</p>
+<p>Experimental; no backwards compatibility guarantees.</p>
+<p>Initializes a write operation to Kafka.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>producer_config</strong> – A dictionary containing the producer configuration.</p></li>
+<li><p><strong>topic</strong> – A Kafka topic name.</p></li>
+<li><p><strong>key_deserializer</strong> – A fully-qualified Java class name of a Kafka
+Serializer for the topic’s key, e.g.
+‘org.apache.kafka.common.serialization.LongSerializer’.
+Default: ‘org.apache.kafka.common.serialization.ByteArraySerializer’.</p></li>
+<li><p><strong>value_deserializer</strong> – A fully-qualified Java class name of a Kafka
+Serializer for the topic’s value, e.g.
+‘org.apache.kafka.common.serialization.LongSerializer’.
+Default: ‘org.apache.kafka.common.serialization.ByteArraySerializer’.</p></li>
+<li><p><strong>expansion_service</strong> – The address (host:port) of the ExpansionService.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafka.byte_array_serializer">
+<span class="sig-name descname"><span class="pre">byte_array_serializer</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'org.apache.kafka.common.serialization.ByteArraySerializer'</span></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafka.byte_array_serializer" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kafka.WriteToKafka.URN">
+<span class="sig-name descname"><span class="pre">URN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beam:transform:org.apache.beam:kafka_write:v1'</span></em><a class="headerlink" href="#apache_beam.io.kafka.WriteToKafka.URN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.io.jdbc.html" class="btn btn-neutral float-left" title="apache_beam.io.jdbc module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.io.kinesis.html" class="btn btn-neutral float-right" title="apache_beam.io.kinesis module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

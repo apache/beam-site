@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.runners.interactive.cache_manager module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.runners.interactive.interactive_beam module" href="apache_beam.runners.interactive.interactive_beam.html" />
+    <link rel="prev" title="apache_beam.runners.interactive.background_caching_job module" href="apache_beam.runners.interactive.background_caching_job.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.runners.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.dask.html">apache_beam.runners.dask package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.dataflow.html">apache_beam.runners.dataflow package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.direct.html">apache_beam.runners.direct package</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="apache_beam.runners.interactive.html">apache_beam.runners.interactive package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="apache_beam.runners.interactive.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="apache_beam.runners.interactive.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.runners.job.html">apache_beam.runners.job package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.runners.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.runners.html">apache_beam.runners package</a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.runners.interactive.html">apache_beam.runners.interactive package</a></li>
+      <li class="breadcrumb-item active">apache_beam.runners.interactive.cache_manager module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.runners.interactive.cache_manager.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.runners.interactive.cache_manager">
+<span id="apache-beam-runners-interactive-cache-manager-module"></span><h1>apache_beam.runners.interactive.cache_manager module<a class="headerlink" href="#module-apache_beam.runners.interactive.cache_manager" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">CacheManager</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Abstract class for caching PCollections.</p>
+<p>A PCollection cache is identified by labels, which consist of a prefix (either
+‘full’ or ‘sample’) and a cache_label which is a hash of the PCollection
+derivation.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.exists">
+<span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.exists" title="Link to this definition">¶</a></dt>
+<dd><p>Returns if the PCollection cache exists.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.is_latest_version">
+<span class="sig-name descname"><span class="pre">is_latest_version</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">version</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.is_latest_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.is_latest_version" title="Link to this definition">¶</a></dt>
+<dd><p>Returns if the given version number is the latest.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.read" title="Link to this definition">¶</a></dt>
+<dd><p>Return the PCollection as a list as well as the version number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*labels</strong> – List of labels for PCollection instance.</p></li>
+<li><p><strong>**args</strong> – Dict of additional arguments. Currently only ‘tail’ as a boolean.
+When tail is True, will wait and read new elements until the cache is
+complete.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A tuple containing an iterator for the items in the PCollection and the</dt><dd><p>version number.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+<p>It is possible that the version numbers from read() and_latest_version()
+are different. This usually means that the cache’s been evicted (thus
+unavailable =&gt; read() returns version = -1), but it had reached version n
+before eviction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.write" title="Link to this definition">¶</a></dt>
+<dd><p>Writes the value to the given cache.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – An encodable (with corresponding PCoder) value</p></li>
+<li><p><strong>*labels</strong> – List of labels for PCollection instance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.clear" title="Link to this definition">¶</a></dt>
+<dd><p>Clears the cache entry of the given labels and returns True on success.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> – An encodable (with corresponding PCoder) value</p></li>
+<li><p><strong>*labels</strong> – List of labels for PCollection instance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.source" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a PTransform that reads the PCollection cache.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.sink">
+<span class="sig-name descname"><span class="pre">sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_capture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.sink" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a PTransform that writes the PCollection cache.</p>
+<p>TODO(BEAM-10514): Make sure labels will not be converted into an
+arbitrarily long file path: e.g., windows has a 260 path limit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.save_pcoder">
+<span class="sig-name descname"><span class="pre">save_pcoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.save_pcoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.save_pcoder" title="Link to this definition">¶</a></dt>
+<dd><p>Saves pcoder for given PCollection.</p>
+<p>Correct reading of PCollection from Cache requires PCoder to be known.
+This method saves desired PCoder for PCollection that will subsequently
+be used by sink(…), source(…), and, most importantly, read(…) method.
+The latter must be able to read a PCollection written by Beam using
+non-Beam IO.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcoder</strong> – A PCoder to be used for reading and writing a PCollection.</p></li>
+<li><p><strong>*labels</strong> – List of labels for PCollection instance.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.load_pcoder">
+<span class="sig-name descname"><span class="pre">load_pcoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.load_pcoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.load_pcoder" title="Link to this definition">¶</a></dt>
+<dd><p>Returns previously saved PCoder for reading and writing PCollection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.cleanup" title="Link to this definition">¶</a></dt>
+<dd><p>Cleans up all the PCollection caches.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.CacheManager.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#CacheManager.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.CacheManager.size" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the size of the PCollection on disk in bytes.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">FileBasedCacheManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'text'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#apache_beam.runners.interactive.cache_manager.CacheManager" title="apache_beam.runners.interactive.cache_manager.CacheManager"><code class="xref py py-class docutils literal notranslate"><span class="pre">CacheManager</span></code></a></p>
+<p>Maps PCollections to local temp files for materialization.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.exists">
+<span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.exists" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.save_pcoder">
+<span class="sig-name descname"><span class="pre">save_pcoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.save_pcoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.save_pcoder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.load_pcoder">
+<span class="sig-name descname"><span class="pre">load_pcoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.load_pcoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.load_pcoder" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.read" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.write" title="Link to this definition">¶</a></dt>
+<dd><p>Imitates how a WriteCache transform works without running a pipeline.</p>
+<p>For testing and cache manager development, not for production usage because
+the write is not sharded and does not use Beam execution model.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.clear">
+<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.clear" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.source">
+<span class="sig-name descname"><span class="pre">source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.sink">
+<span class="sig-name descname"><span class="pre">sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_capture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.sink" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.raw_sink">
+<span class="sig-name descname"><span class="pre">raw_sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_capture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.raw_sink"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.raw_sink" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.raw_source">
+<span class="sig-name descname"><span class="pre">raw_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.raw_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.raw_source" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#FileBasedCacheManager.cleanup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.FileBasedCacheManager.cleanup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.ReadCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">ReadCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#ReadCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.ReadCache" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>A PTransform that reads the PCollections from the cache.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.ReadCache.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pbegin</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#ReadCache.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.ReadCache.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.WriteCache">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">WriteCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cache_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sample_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_capture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#WriteCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.WriteCache" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.ptransform.html#apache_beam.transforms.ptransform.PTransform" title="apache_beam.transforms.ptransform.PTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">PTransform</span></code></a></p>
+<p>A PTransform that writes the PCollections to the cache.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.WriteCache.expand">
+<span class="sig-name descname"><span class="pre">expand</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pcoll</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#WriteCache.expand"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.WriteCache.expand" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">SafeFastPrimitivesCoder</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#SafeFastPrimitivesCoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.coders.coders.html#apache_beam.coders.coders.Coder" title="apache_beam.coders.coders.Coder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coder</span></code></a></p>
+<p>This class add an quote/unquote step to escape special characters.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#SafeFastPrimitivesCoder.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder.encode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#SafeFastPrimitivesCoder.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.SafeFastPrimitivesCoder.decode" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.Base64Coder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.runners.interactive.cache_manager.</span></span><span class="sig-name descname"><span class="pre">Base64Coder</span></span><a class="reference internal" href="_modules/apache_beam/runners/interactive/cache_manager.html#Base64Coder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.Base64Coder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.coders.coders.html#apache_beam.coders.coders.Coder" title="apache_beam.coders.coders.Coder"><code class="xref py py-class docutils literal notranslate"><span class="pre">Coder</span></code></a></p>
+<p>Used to safely encode arbitrary bytes to textio.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.Base64Coder.encode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altchars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.Base64Coder.encode" title="Link to this definition">¶</a></dt>
+<dd><p>Encode the bytes-like object s using Base64 and return a bytes object.</p>
+<p>Optional altchars should be a byte string of length 2 which specifies an
+alternative alphabet for the ‘+’ and ‘/’ characters.  This allows an
+application to e.g. generate url or filesystem safe Base64 strings.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.runners.interactive.cache_manager.Base64Coder.decode">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altchars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.runners.interactive.cache_manager.Base64Coder.decode" title="Link to this definition">¶</a></dt>
+<dd><p>Decode the Base64 encoded bytes-like object or ASCII string s.</p>
+<p>Optional altchars must be a bytes-like object or ASCII string of length 2
+which specifies the alternative alphabet used instead of the ‘+’ and ‘/’
+characters.</p>
+<p>The result is returned as a bytes object.  A binascii.Error is raised if
+s is incorrectly padded.</p>
+<p>If validate is False (the default), characters that are neither in the
+normal base-64 alphabet nor the alternative alphabet are discarded prior
+to the padding check.  If validate is True, these non-alphabet characters
+in the input result in a binascii.Error.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.runners.interactive.background_caching_job.html" class="btn btn-neutral float-left" title="apache_beam.runners.interactive.background_caching_job module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.runners.interactive.interactive_beam.html" class="btn btn-neutral float-right" title="apache_beam.runners.interactive.interactive_beam module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

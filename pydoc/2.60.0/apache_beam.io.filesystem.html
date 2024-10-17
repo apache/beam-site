@@ -1,0 +1,696 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.filesystem module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.io.filesystemio module" href="apache_beam.io.filesystemio.html" />
+    <link rel="prev" title="apache_beam.io.fileio module" href="apache_beam.io.fileio.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.io.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.io.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.avroio.html">apache_beam.io.avroio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.concat_source.html">apache_beam.io.concat_source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.debezium.html">apache_beam.io.debezium module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsink.html">apache_beam.io.filebasedsink module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsource.html">apache_beam.io.filebasedsource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.fileio.html">apache_beam.io.fileio module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.io.filesystem module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.filesystem.CompressionTypes"><code class="docutils literal notranslate"><span class="pre">CompressionTypes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.filesystem.CompressedFile"><code class="docutils literal notranslate"><span class="pre">CompressedFile</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata"><code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.filesystem.FileSystem"><code class="docutils literal notranslate"><span class="pre">FileSystem</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.filesystem.MatchResult"><code class="docutils literal notranslate"><span class="pre">MatchResult</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystemio.html">apache_beam.io.filesystemio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystems.html">apache_beam.io.filesystems module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.hadoopfilesystem.html">apache_beam.io.hadoopfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.iobase.html">apache_beam.io.iobase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.jdbc.html">apache_beam.io.jdbc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kafka.html">apache_beam.io.kafka module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kinesis.html">apache_beam.io.kinesis module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.localfilesystem.html">apache_beam.io.localfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.mongodbio.html">apache_beam.io.mongodbio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.parquetio.html">apache_beam.io.parquetio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.range_trackers.html">apache_beam.io.range_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.requestresponse.html">apache_beam.io.requestresponse module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.restriction_trackers.html">apache_beam.io.restriction_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.snowflake.html">apache_beam.io.snowflake module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.source_test_utils.html">apache_beam.io.source_test_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.textio.html">apache_beam.io.textio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.tfrecordio.html">apache_beam.io.tfrecordio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.utils.html">apache_beam.io.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.watermark_estimators.html">apache_beam.io.watermark_estimators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.io.html">apache_beam.io package</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.filesystem module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.io.filesystem.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.io.filesystem">
+<span id="apache-beam-io-filesystem-module"></span><h1>apache_beam.io.filesystem module<a class="headerlink" href="#module-apache_beam.io.filesystem" title="Link to this heading">¶</a></h1>
+<p>File system abstraction for file-based sources and sinks.</p>
+<dl class="simple">
+<dt>Note to implementors:</dt><dd><p>“path” arguments will be URLs in the form scheme://foo/bar. The exception is
+LocalFileSystem, which gets unix-style paths in the form /foo/bar.</p>
+</dd>
+</dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.filesystem.</span></span><span class="sig-name descname"><span class="pre">CompressionTypes</span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressionTypes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Enum-like class representing known compression types.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.AUTO">
+<span class="sig-name descname"><span class="pre">AUTO</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'auto'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.AUTO" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.BZIP2">
+<span class="sig-name descname"><span class="pre">BZIP2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bzip2'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.BZIP2" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.DEFLATE">
+<span class="sig-name descname"><span class="pre">DEFLATE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'deflate'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.DEFLATE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.ZSTD">
+<span class="sig-name descname"><span class="pre">ZSTD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'zstd'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.ZSTD" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.GZIP">
+<span class="sig-name descname"><span class="pre">GZIP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gzip'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.GZIP" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.LZMA">
+<span class="sig-name descname"><span class="pre">LZMA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lzma'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.LZMA" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.UNCOMPRESSED">
+<span class="sig-name descname"><span class="pre">UNCOMPRESSED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'uncompressed'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.UNCOMPRESSED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.is_valid_compression_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_valid_compression_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compression_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressionTypes.is_valid_compression_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.is_valid_compression_type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns True for valid compression types, False otherwise.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.mime_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mime_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">compression_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'application/octet-stream'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressionTypes.mime_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.mime_type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressionTypes.detect_compression_type">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">detect_compression_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressionTypes.detect_compression_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressionTypes.detect_compression_type" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the compression type of a file (based on its suffix).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.filesystem.</span></span><span class="sig-name descname"><span class="pre">CompressedFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileobj</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.13)"><span class="pre">BinaryIO</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gzip'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16777216</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>File wrapper for easier handling of compressed files.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.readable">
+<span class="sig-name descname"><span class="pre">readable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.readable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.readable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.writeable">
+<span class="sig-name descname"><span class="pre">writeable</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.writeable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.writeable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.write"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.write" title="Link to this definition">¶</a></dt>
+<dd><p>Write data to file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.read"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.read" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.readline">
+<span class="sig-name descname"><span class="pre">readline</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.13)"><span class="pre">bytes</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.readline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.readline" title="Link to this definition">¶</a></dt>
+<dd><p>Equivalent to standard file.readline(). Same return conventions apply.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.closed">
+<span class="sig-name descname"><span class="pre">closed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.closed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.closed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.close" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.flush">
+<span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.flush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.flush" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.seekable">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">seekable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.seekable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.seek">
+<span class="sig-name descname"><span class="pre">seek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">whence</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.seek"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.seek" title="Link to this definition">¶</a></dt>
+<dd><p>Set the file’s current offset.</p>
+<p>Seeking behavior:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>seeking from the end <a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_END" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_END</span></code></a> the whole file is decompressed
+once to determine its size. Therefore it is preferred to use
+<a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_SET" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_SET</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_CUR" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_CUR</span></code></a> to avoid the processing
+overhead</p></li>
+<li><p>seeking backwards from the current position rewinds the file to <code class="docutils literal notranslate"><span class="pre">0</span></code>
+and decompresses the chunks to the requested offset</p></li>
+<li><p>seeking is only supported in files opened for reading</p></li>
+<li><p>if the new offset is out of bound, it is adjusted to either <code class="docutils literal notranslate"><span class="pre">0</span></code> or
+<code class="docutils literal notranslate"><span class="pre">EOF</span></code>.</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – seek offset in the uncompressed content represented as
+number</p></li>
+<li><p><strong>whence</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – seek mode. Supported modes are <a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_SET" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_SET</span></code></a>
+(absolute seek), <a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_CUR" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_CUR</span></code></a> (seek relative to the current
+position), and <a class="reference external" href="https://docs.python.org/3/library/os.html#os.SEEK_END" title="(in Python v3.13)"><code class="xref py py-data docutils literal notranslate"><span class="pre">os.SEEK_END</span></code></a> (seek relative to the end, offset
+should be negative).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.13)"><strong>IOError</strong></a> – When this buffer is closed.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – When whence is invalid or the file is not seekable</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.CompressedFile.tell">
+<span class="sig-name descname"><span class="pre">tell</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#CompressedFile.tell"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.CompressedFile.tell" title="Link to this definition">¶</a></dt>
+<dd><p>Returns current position in uncompressed file.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileMetadata">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.filesystem.</span></span><span class="sig-name descname"><span class="pre">FileMetadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">size_in_bytes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_updated_in_seconds</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileMetadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileMetadata" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Metadata about a file path that is the output of FileSystem.match.</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>path: [Required] file path.
+size_in_bytes: [Required] file size in bytes.
+last_updated_in_seconds: [Optional] last modified timestamp of the file, or
+valued 0.0 if not specified.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.filesystem.</span></span><span class="sig-name descname"><span class="pre">FileSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pipeline_options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.utils.plugin.html#apache_beam.utils.plugin.BeamPlugin" title="apache_beam.utils.plugin.BeamPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeamPlugin</span></code></a></p>
+<p>A class that defines the functions that can be performed on a filesystem.</p>
+<p>All methods are abstract and they are for file system providers to
+implement. Clients should use the FileSystems class to interact with
+the correct file system based on the provided file pattern scheme.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pipeline_options</strong> – Instance of <code class="docutils literal notranslate"><span class="pre">PipelineOptions</span></code> or dict of options and
+values (like <code class="docutils literal notranslate"><span class="pre">RuntimeValueProvider.runtime_options</span></code>).</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.CHUNK_SIZE">
+<span class="sig-name descname"><span class="pre">CHUNK_SIZE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.CHUNK_SIZE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.scheme">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scheme</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.scheme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.scheme" title="Link to this definition">¶</a></dt>
+<dd><p>URI scheme for the FileSystem</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.join">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basepath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">paths</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.join" title="Link to this definition">¶</a></dt>
+<dd><p>Join two or more pathname components for the filesystem</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>basepath</strong> – string path of the first component of the path</p></li>
+<li><p><strong>paths</strong> – path components to be added</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: full path after combining all the passed components</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.split">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.split" title="Link to this definition">¶</a></dt>
+<dd><p>Splits the given path into two parts.</p>
+<p>Splits the path into a pair (head, tail) such that tail contains the last
+component of the path and head contains everything up to that.</p>
+<p>For file-systems other than the local file-system, head should include the
+prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – path as a string</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a pair of path components as strings.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.mkdirs">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mkdirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.mkdirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.mkdirs" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively create directories for the provided path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string path of the directory structure that should be created</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#IOError" title="(in Python v3.13)"><strong>IOError</strong></a> – if leaf directory already exists.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.has_dirs">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">has_dirs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.has_dirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.has_dirs" title="Link to this definition">¶</a></dt>
+<dd><p>Whether this FileSystem supports directories.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.match_files">
+<span class="sig-name descname"><span class="pre">match_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_metas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><span class="pre">FileMetadata</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><span class="pre">FileMetadata</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.match_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.match_files" title="Link to this definition">¶</a></dt>
+<dd><p>Filter <a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a> objects by <em>pattern</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_metas</strong> (list of <a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a>) – Files to consider when matching</p></li>
+<li><p><strong>pattern</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File pattern</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#apache_beam.io.filesystem.FileSystem.translate_pattern" title="apache_beam.io.filesystem.FileSystem.translate_pattern"><code class="xref py py-meth docutils literal notranslate"><span class="pre">translate_pattern()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generator of matching <a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.translate_pattern">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">translate_pattern</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.translate_pattern"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.translate_pattern" title="Link to this definition">¶</a></dt>
+<dd><p>Translate a <em>pattern</em> to a regular expression.
+There is no way to quote meta-characters.</p>
+<dl class="simple">
+<dt>Pattern syntax:</dt><dd><p>The pattern syntax is based on the <a class="reference external" href="https://docs.python.org/2/library/fnmatch.html">fnmatch</a> syntax, with the following
+differences:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">*</span></code> Is equivalent to <code class="docutils literal notranslate"><span class="pre">[^/\]*</span></code> rather than <code class="docutils literal notranslate"><span class="pre">.*</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">**</span></code> Is equivalent to <code class="docutils literal notranslate"><span class="pre">.*</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#apache_beam.io.filesystem.FileSystem.match" title="apache_beam.io.filesystem.FileSystem.match"><code class="xref py py-meth docutils literal notranslate"><span class="pre">match()</span></code></a> uses this method</p>
+</div>
+<p>This method is based on <a class="reference external" href="https://github.com/python/cpython/blob/170ea8ccd4235d28538ab713041502d07ad1cacd/Lib/fnmatch.py#L85-L120">Python 2.7’s fnmatch.translate</a>.
+The code in this method is licensed under
+PYTHON SOFTWARE FOUNDATION LICENSE VERSION 2.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">patterns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.match"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.match" title="Link to this definition">¶</a></dt>
+<dd><p>Find all matching paths to the patterns provided.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#apache_beam.io.filesystem.FileSystem.translate_pattern" title="apache_beam.io.filesystem.FileSystem.translate_pattern"><code class="xref py py-meth docutils literal notranslate"><span class="pre">translate_pattern()</span></code></a></p>
+</div>
+<p>Patterns ending with ‘/’ or ‘' will be appended with ‘*’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>patterns</strong> – list of string for the file path pattern to match against</p></li>
+<li><p><strong>limits</strong> – list of maximum number of responses that need to be fetched</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: list of <code class="docutils literal notranslate"><span class="pre">MatchResult</span></code> objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>BeamIOError</strong> – if any of the pattern match operations fail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.create">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mime_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'application/octet-stream'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.13)"><span class="pre">BinaryIO</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.create" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a write channel for the given file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – string path of the file object to be written to the system</p></li>
+<li><p><strong>mime_type</strong> – MIME type to specify the type of content in the file object</p></li>
+<li><p><strong>compression_type</strong> – Type of compression to be used for this object</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: file handle with a close function for the user to use</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.open">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">open</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mime_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'application/octet-stream'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.BinaryIO" title="(in Python v3.13)"><span class="pre">BinaryIO</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.open"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.open" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a read channel for the given file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – string path of the file object to be read</p></li>
+<li><p><strong>mime_type</strong> – MIME type to specify the type of content in the file object</p></li>
+<li><p><strong>compression_type</strong> – Type of compression to be used for this object</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: file handle with a close function for the user to use</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.copy">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_file_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.copy" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively copy the file tree from the source to the destination</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_file_names</strong> – list of source file objects that needs to be copied</p></li>
+<li><p><strong>destination_file_names</strong> – list of destination of the new object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>BeamIOError</strong> – if any of the copy operations fail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.rename">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_file_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination_file_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.rename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.rename" title="Link to this definition">¶</a></dt>
+<dd><p>Rename the files at the source list to the destination list.
+Source and destination lists should be of the same size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_file_names</strong> – List of file paths that need to be moved</p></li>
+<li><p><strong>destination_file_names</strong> – List of destination_file_names for the files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>BeamIOError</strong> – if any of the rename operations fail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.exists">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">exists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.exists"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.exists" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the provided path exists on the FileSystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string path that needs to be checked.</p>
+</dd>
+</dl>
+<p>Returns: boolean flag indicating if path exists</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.size">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.size" title="Link to this definition">¶</a></dt>
+<dd><p>Get size in bytes of a file on the FileSystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string filepath of file.</p>
+</dd>
+</dl>
+<p>Returns: int size of file according to the FileSystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>BeamIOError</strong> – if path doesn’t exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.last_updated">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">last_updated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.last_updated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.last_updated" title="Link to this definition">¶</a></dt>
+<dd><p>Get UNIX Epoch time in seconds on the FileSystem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string path of file.</p>
+</dd>
+</dl>
+<p>Returns: float UNIX Epoch time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>BeamIOError</strong> – if path doesn’t exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.checksum">
+<span class="sig-name descname"><span class="pre">checksum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.checksum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.checksum" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch checksum metadata of a file on the
+<a class="reference internal" href="#apache_beam.io.filesystem.FileSystem" title="apache_beam.io.filesystem.FileSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystem</span></code></a>.</p>
+<p>This operation returns checksum metadata as stored in the underlying
+FileSystem. It should not need to read file data to obtain this value.
+Checksum type and format are FileSystem dependent and are not compatible
+between FileSystems.
+FileSystem implementations may return file size if a checksum isn’t
+available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string path of a file.</p>
+</dd>
+</dl>
+<p>Returns: string containing checksum</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>BeamIOError</strong> – if path isn’t a file or doesn’t exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.metadata">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">metadata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.metadata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.metadata" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch metadata of a file on the
+<a class="reference internal" href="#apache_beam.io.filesystem.FileSystem" title="apache_beam.io.filesystem.FileSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystem</span></code></a>.</p>
+<p>This operation returns metadata as stored in the underlying
+FileSystem. It should not need to read file data to obtain this value.
+For web based file systems, this method should also incur as few as
+possible requests.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> – string path of a file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileMetadata</span></code></a>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>BeamIOError</strong> – if path isn’t a file or doesn’t exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.delete">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Deletes files or directories at the provided paths.
+Directories will be deleted recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>paths</strong> – list of paths that give the file objects to be deleted</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>BeamIOError</strong> – if any of the delete operations fail</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.LineageLevel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">LineageLevel</span></span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.LineageLevel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.LineageLevel" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.LineageLevel.FILE">
+<span class="sig-name descname"><span class="pre">FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'FILE'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.LineageLevel.FILE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.LineageLevel.TOP_LEVEL">
+<span class="sig-name descname"><span class="pre">TOP_LEVEL</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TOP_LEVEL'</span></em><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.LineageLevel.TOP_LEVEL" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.FileSystem.report_lineage">
+<span class="sig-name descname"><span class="pre">report_lineage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unused_lineage</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#FileSystem.report_lineage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.FileSystem.report_lineage" title="Link to this definition">¶</a></dt>
+<dd><p>Report Lineage metrics for path.</p>
+<p>Unless override by FileSystem implementations, default to no-op.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.filesystem.MatchResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.filesystem.</span></span><span class="sig-name descname"><span class="pre">MatchResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#apache_beam.io.filesystem.FileMetadata" title="apache_beam.io.filesystem.FileMetadata"><span class="pre">FileMetadata</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/filesystem.html#MatchResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.filesystem.MatchResult" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Result from the <code class="docutils literal notranslate"><span class="pre">FileSystem</span></code> match operation which contains the list
+of matched <code class="docutils literal notranslate"><span class="pre">FileMetadata</span></code>.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.io.fileio.html" class="btn btn-neutral float-left" title="apache_beam.io.fileio module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.io.filesystemio.html" class="btn btn-neutral float-right" title="apache_beam.io.filesystemio module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

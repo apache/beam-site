@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.metrics.metric module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.metrics.metricbase module" href="apache_beam.metrics.metricbase.html" />
+    <link rel="prev" title="apache_beam.metrics.cells module" href="apache_beam.metrics.cells.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.metrics.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.cells.html">apache_beam.metrics.cells module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.metrics.metric module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metric.Metrics"><code class="docutils literal notranslate"><span class="pre">Metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter"><code class="docutils literal notranslate"><span class="pre">MetricsFilter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.metrics.metric.Lineage"><code class="docutils literal notranslate"><span class="pre">Lineage</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.metricbase.html">apache_beam.metrics.metricbase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.metrics.monitoring_infos.html">apache_beam.metrics.monitoring_infos module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+      <li class="breadcrumb-item active">apache_beam.metrics.metric module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.metrics.metric.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.metrics.metric">
+<span id="apache-beam-metrics-metric-module"></span><h1>apache_beam.metrics.metric module<a class="headerlink" href="#module-apache_beam.metrics.metric" title="Link to this heading">¶</a></h1>
+<p>User-facing classes for Metrics API.</p>
+<p>The classes in this file allow users to define and use metrics to be collected
+and displayed as part of their pipeline execution.</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>Metrics - This class lets pipeline and transform writers create and access</dt><dd><p>metric objects such as counters, distributions, etc.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metric.</span></span><span class="sig-name descname"><span class="pre">Metrics</span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Lets users create/access metric objects during pipeline execution.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.get_namespace">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_namespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.get_namespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.get_namespace" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.counter">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">counter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Metrics.DelegatingCounter" title="apache_beam.metrics.metric.Metrics.DelegatingCounter"><span class="pre">DelegatingCounter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.counter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.counter" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains or creates a Counter metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – A class or string that gives the namespace to a metric</p></li>
+<li><p><strong>name</strong> – A string that gives a unique name to a metric</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Counter object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.distribution">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">distribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Metrics.DelegatingDistribution" title="apache_beam.metrics.metric.Metrics.DelegatingDistribution"><span class="pre">DelegatingDistribution</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.distribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.distribution" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains or creates a Distribution metric.</p>
+<p>Distribution metrics are restricted to integer-only distributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – A class or string that gives the namespace to a metric</p></li>
+<li><p><strong>name</strong> – A string that gives a unique name to a metric</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Distribution object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.gauge">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Metrics.DelegatingGauge" title="apache_beam.metrics.metric.Metrics.DelegatingGauge"><span class="pre">DelegatingGauge</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.gauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.gauge" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains or creates a Gauge metric.</p>
+<p>Gauge metrics are restricted to integer-only values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – A class or string that gives the namespace to a metric</p></li>
+<li><p><strong>name</strong> – A string that gives a unique name to a metric</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A Distribution object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.string_set">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">string_set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Metrics.DelegatingStringSet" title="apache_beam.metrics.metric.Metrics.DelegatingStringSet"><span class="pre">DelegatingStringSet</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.string_set"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.string_set" title="Link to this definition">¶</a></dt>
+<dd><p>Obtains or creates a String set metric.</p>
+<p>String set metrics are restricted to string values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – A class or string that gives the namespace to a metric</p></li>
+<li><p><strong>name</strong> – A string that gives a unique name to a metric</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A StringSet object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.DelegatingCounter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DelegatingCounter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_wide</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.DelegatingCounter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.DelegatingCounter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.Counter" title="apache_beam.metrics.metricbase.Counter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></a></p>
+<p>Metrics Counter that Delegates functionality to MetricsEnvironment.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.DelegatingDistribution">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DelegatingDistribution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.DelegatingDistribution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.DelegatingDistribution" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.Distribution" title="apache_beam.metrics.metricbase.Distribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Distribution</span></code></a></p>
+<p>Metrics Distribution Delegates functionality to MetricsEnvironment.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.DelegatingGauge">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DelegatingGauge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.DelegatingGauge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.DelegatingGauge" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.Gauge" title="apache_beam.metrics.metricbase.Gauge"><code class="xref py py-class docutils literal notranslate"><span class="pre">Gauge</span></code></a></p>
+<p>Metrics Gauge that Delegates functionality to MetricsEnvironment.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Metrics.DelegatingStringSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">DelegatingStringSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.MetricName" title="apache_beam.metrics.metricbase.MetricName"><span class="pre">MetricName</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Metrics.DelegatingStringSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Metrics.DelegatingStringSet" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.StringSet" title="apache_beam.metrics.metricbase.StringSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">StringSet</span></code></a></p>
+<p>Metrics StringSet that Delegates functionality to MetricsEnvironment.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metric.</span></span><span class="sig-name descname"><span class="pre">MetricsFilter</span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Simple object to filter metrics results.</p>
+<p>If filters by matching a result’s step-namespace-name with three internal
+sets. No execution/matching logic is added to this object, so that it may
+be used to construct arguments as an RPC request. It is left for runners
+to implement matching logic by themselves.</p>
+<p>Note: This class only supports user defined metrics.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.steps">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">steps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.13)"><span class="pre">FrozenSet</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.steps" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.13)"><span class="pre">FrozenSet</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.namespaces">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">namespaces</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.FrozenSet" title="(in Python v3.13)"><span class="pre">FrozenSet</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.namespaces" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_metric">
+<span class="sig-name descname"><span class="pre">with_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="apache_beam.metrics.metricbase.html#apache_beam.metrics.metricbase.Metric" title="apache_beam.metrics.metricbase.Metric"><span class="pre">Metric</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_metric" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_name">
+<span class="sig-name descname"><span class="pre">with_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_names">
+<span class="sig-name descname"><span class="pre">with_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_names" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_namespace">
+<span class="sig-name descname"><span class="pre">with_namespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_namespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_namespace" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_namespaces">
+<span class="sig-name descname"><span class="pre">with_namespaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">namespaces</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_namespaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_namespaces" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_step">
+<span class="sig-name descname"><span class="pre">with_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_step" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.MetricsFilter.with_steps">
+<span class="sig-name descname"><span class="pre">with_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterable" title="(in Python v3.13)"><span class="pre">Iterable</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.MetricsFilter" title="apache_beam.metrics.metric.MetricsFilter"><span class="pre">MetricsFilter</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#MetricsFilter.with_steps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.MetricsFilter.with_steps" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.metrics.metric.</span></span><span class="sig-name descname"><span class="pre">Lineage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Standard collection of metrics used to record source and sinks information
+for lineage tracking.</p>
+<p>Create a Lineage with valid label (<a class="reference internal" href="#apache_beam.metrics.metric.Lineage.SOURCE" title="apache_beam.metrics.metric.Lineage.SOURCE"><code class="xref py py-data docutils literal notranslate"><span class="pre">SOURCE</span></code></a> or
+<a class="reference internal" href="#apache_beam.metrics.metric.Lineage.SINK" title="apache_beam.metrics.metric.Lineage.SINK"><code class="xref py py-data docutils literal notranslate"><span class="pre">SINK</span></code></a>)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.LINEAGE_NAMESPACE">
+<span class="sig-name descname"><span class="pre">LINEAGE_NAMESPACE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'lineage'</span></em><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.LINEAGE_NAMESPACE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.SOURCE">
+<span class="sig-name descname"><span class="pre">SOURCE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sources'</span></em><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.SOURCE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.SINK">
+<span class="sig-name descname"><span class="pre">SINK</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sinks'</span></em><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.SINK" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.sources">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sources</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Lineage" title="apache_beam.metrics.metric.Lineage"><span class="pre">Lineage</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.sources" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.sinks">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sinks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#apache_beam.metrics.metric.Lineage" title="apache_beam.metrics.metric.Lineage"><span class="pre">Lineage</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.sinks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.sinks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.wrap_segment">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wrap_segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">segment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.wrap_segment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.wrap_segment" title="Link to this definition">¶</a></dt>
+<dd><p>Wrap segment to valid segment name.</p>
+<p>Specifically, If there are reserved chars (colon, whitespace, dot), escape
+with backtick. If the segment is already wrapped, return the original.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.get_fq_name">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_fq_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.get_fq_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.get_fq_name" title="Link to this definition">¶</a></dt>
+<dd><p>Assemble fully qualified name
+(<a class="reference external" href="https://cloud.google.com/data-catalog/docs/fully-qualified-names">FQN</a>).
+Format:</p>
+<ul class="simple">
+<li><p><cite>system:segment1.segment2</cite></p></li>
+<li><p><cite>system:subtype:segment1.segment2</cite></p></li>
+<li><p><cite>system:`segment1.with.dots:colons</cite>.segment2`</p></li>
+</ul>
+<p>This helper method is for internal and testing usage only.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">system</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">segments</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.add" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the given details as Lineage.</p>
+<p>For asset level lineage the resource location should be specified as
+Dataplex FQN, see
+<a class="reference external" href="https://cloud.google.com/data-catalog/docs/fully-qualified-names">https://cloud.google.com/data-catalog/docs/fully-qualified-names</a></p>
+<p>Example of adding FQN components:</p>
+<ul class="simple">
+<li><p><cite>add(“system”, “segment1”, “segment2”)</cite></p></li>
+<li><p><cite>add(“system”, “segment1”, “segment2”, subtype=”subtype”)</cite></p></li>
+</ul>
+<p>Example of adding a FQN:</p>
+<ul class="simple">
+<li><p><cite>add(“system:segment1.segment2”)</cite></p></li>
+<li><p><cite>add(“system:subtype:segment1.segment2”)</cite></p></li>
+</ul>
+<p>The first positional argument serves as system, if full segments are
+provided, or the full FQN if it is provided as a single argument.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.metrics.metric.Lineage.query">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MetricResults</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Set" title="(in Python v3.13)"><span class="pre">Set</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/apache_beam/metrics/metric.html#Lineage.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.metrics.metric.Lineage.query" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.metrics.cells.html" class="btn btn-neutral float-left" title="apache_beam.metrics.cells module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.metrics.metricbase.html" class="btn btn-neutral float-right" title="apache_beam.metrics.metricbase module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

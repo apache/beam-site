@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.utils.multi_process_shared &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.utils.multi_process_shared</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.utils.multi_process_shared</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Implements a shared object that spans processes.</span>
+
+<span class="sd">This object will be instanciated once per VM and methods will be invoked</span>
+<span class="sd">on it via rpc.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1"># pytype: skip-file</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">multiprocessing.managers</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Generic</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="kn">import</span> <span class="nn">fasteners</span>
+
+<span class="c1"># In some python versions, there is a bug where AutoProxy doesn&#39;t handle</span>
+<span class="c1"># the kwarg &#39;manager_owned&#39;. We implement our own backup here to make sure</span>
+<span class="c1"># we avoid this problem. More info here:</span>
+<span class="c1"># https://stackoverflow.com/questions/46779860/multiprocessing-managers-and-custom-classes</span>
+<span class="n">autoproxy</span> <span class="o">=</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">managers</span><span class="o">.</span><span class="n">AutoProxy</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+
+<div class="viewcode-block" id="patched_autoproxy">
+<a class="viewcode-back" href="../../../apache_beam.utils.multi_process_shared.html#apache_beam.utils.multi_process_shared.patched_autoproxy">[docs]</a>
+<span class="k">def</span> <span class="nf">patched_autoproxy</span><span class="p">(</span>
+    <span class="n">token</span><span class="p">,</span>
+    <span class="n">serializer</span><span class="p">,</span>
+    <span class="n">manager</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">authkey</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">exposed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">incref</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">manager_owned</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">autoproxy</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">serializer</span><span class="p">,</span> <span class="n">manager</span><span class="p">,</span> <span class="n">authkey</span><span class="p">,</span> <span class="n">exposed</span><span class="p">,</span> <span class="n">incref</span><span class="p">)</span></div>
+
+
+
+<span class="n">multiprocessing</span><span class="o">.</span><span class="n">managers</span><span class="o">.</span><span class="n">AutoProxy</span> <span class="o">=</span> <span class="n">patched_autoproxy</span>  <span class="c1"># type: ignore[attr-defined]</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>
+<span class="n">AUTH_KEY</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;mps&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">_SingletonProxy</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Proxies the shared object so we can release it with better errors and no</span>
+<span class="sd">  risk of dangling references in the multiprocessing manager infrastructure.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">entry</span><span class="p">):</span>
+    <span class="c1"># Guard names so as to not conflict with names of underlying object.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_entry</span> <span class="o">=</span> <span class="n">entry</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_valid</span> <span class="o">=</span> <span class="kc">True</span>
+
+  <span class="c1"># Used to make the shared object callable (see _AutoProxyWrapper below)</span>
+  <span class="k">def</span> <span class="nf">singletonProxy_call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_valid</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Entry was released.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_entry</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">singletonProxy_release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_valid</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_valid</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_valid</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Entry was released.&#39;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_entry</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="c1"># Swallow AttributeError exceptions so that they are ignored when</span>
+      <span class="c1"># calculating public functions. These can occur if __getattr__ is</span>
+      <span class="c1"># overriden, for example to only support some platforms. This will mean</span>
+      <span class="c1"># that these functions will be silently unavailable to the</span>
+      <span class="c1"># MultiProcessShared object, leading to worse errors when someone tries</span>
+      <span class="c1"># to use them, but it will keep them from breaking the whole object for</span>
+      <span class="c1"># functions which are unusable anyways.</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">&#39;Attribute </span><span class="si">%s</span><span class="s1"> is unavailable as a public function because &#39;</span>
+          <span class="s1">&#39;its __getattr__ function raised the following exception &#39;</span>
+          <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+          <span class="n">name</span><span class="p">,</span>
+          <span class="n">e</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Needed for multiprocessing.managers&#39;s proxying.</span>
+    <span class="nb">dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_SingletonProxy_entry</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span>
+    <span class="nb">dir</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;singletonProxy_call__&#39;</span><span class="p">)</span>
+    <span class="nb">dir</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;singletonProxy_release&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dir</span>
+
+
+<span class="k">class</span> <span class="nc">_SingletonEntry</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Represents a single, refcounted entry in this process.&quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constructor</span><span class="p">,</span> <span class="n">initialize_eagerly</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span> <span class="o">=</span> <span class="n">constructor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">refcount</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">initialize_eagerly</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">constructor</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">constructor</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">refcount</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="n">_SingletonProxy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxy</span><span class="p">):</span>
+    <span class="n">proxy</span><span class="o">.</span><span class="n">singletonProxy_release</span><span class="p">()</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">refcount</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">refcount</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span> <span class="nf">unsafe_hard_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span><span class="p">:</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialied</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">class</span> <span class="nc">_SingletonManager</span><span class="p">:</span>
+  <span class="n">entries</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+  <span class="k">def</span> <span class="nf">register_singleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constructor</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">initialize_eagerly</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">,</span> <span class="n">tag</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">_SingletonEntry</span><span class="p">(</span><span class="n">constructor</span><span class="p">,</span> <span class="n">initialize_eagerly</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">has_singleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span>
+
+  <span class="k">def</span> <span class="nf">acquire_singleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+
+  <span class="k">def</span> <span class="nf">release_singleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">release</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">unsafe_hard_delete_singleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">entries</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">unsafe_hard_delete</span><span class="p">()</span>
+
+
+<span class="n">_process_level_singleton_manager</span> <span class="o">=</span> <span class="n">_SingletonManager</span><span class="p">()</span>
+
+<span class="n">_process_local_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_SingletonRegistrar</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">managers</span><span class="o">.</span><span class="n">BaseManager</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+
+<span class="n">_SingletonRegistrar</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s1">&#39;acquire_singleton&#39;</span><span class="p">,</span>
+    <span class="nb">callable</span><span class="o">=</span><span class="n">_process_level_singleton_manager</span><span class="o">.</span><span class="n">acquire_singleton</span><span class="p">)</span>
+<span class="n">_SingletonRegistrar</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s1">&#39;release_singleton&#39;</span><span class="p">,</span>
+    <span class="nb">callable</span><span class="o">=</span><span class="n">_process_level_singleton_manager</span><span class="o">.</span><span class="n">release_singleton</span><span class="p">)</span>
+<span class="n">_SingletonRegistrar</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="s1">&#39;unsafe_hard_delete_singleton&#39;</span><span class="p">,</span>
+    <span class="nb">callable</span><span class="o">=</span><span class="n">_process_level_singleton_manager</span><span class="o">.</span><span class="n">unsafe_hard_delete_singleton</span><span class="p">)</span>
+
+
+<span class="c1"># By default, objects registered with BaseManager.register will have only</span>
+<span class="c1"># public methods available (excluding __call__). If you know the functions</span>
+<span class="c1"># you would like to expose, you can do so at register time with the `exposed`</span>
+<span class="c1"># attribute. Since we don&#39;t, we will add a wrapper around the returned AutoProxy</span>
+<span class="c1"># object to handle __call__ function calls and turn them into</span>
+<span class="c1"># singletonProxy_call__ calls (which is a wrapper around the underlying</span>
+<span class="c1"># object&#39;s __call__ function)</span>
+<span class="k">class</span> <span class="nc">_AutoProxyWrapper</span><span class="p">:</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proxyObject</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">managers</span><span class="o">.</span><span class="n">BaseProxy</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_proxyObject</span> <span class="o">=</span> <span class="n">proxyObject</span>
+
+  <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxyObject</span><span class="o">.</span><span class="n">singletonProxy_call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_proxyObject</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">get_auto_proxy_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_proxyObject</span>
+
+
+<div class="viewcode-block" id="MultiProcessShared">
+<a class="viewcode-back" href="../../../apache_beam.utils.multi_process_shared.html#apache_beam.utils.multi_process_shared.MultiProcessShared">[docs]</a>
+<span class="k">class</span> <span class="nc">MultiProcessShared</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;MultiProcessShared is used to share a single object across processes.</span>
+
+<span class="sd">  For example, one could have the class::</span>
+
+<span class="sd">    class MyExpensiveObject(object):</span>
+<span class="sd">      def __init__(self, args):</span>
+<span class="sd">        [expensive initialization and memory allocation]</span>
+
+<span class="sd">      def method(self, arg):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">  One could share a single instance of this class by wrapping it as::</span>
+
+<span class="sd">    shared_ptr = MultiProcessShared(lambda: MyExpensiveObject(...))</span>
+<span class="sd">    my_expensive_object = shared_ptr.acquire()</span>
+
+<span class="sd">  which could then be invoked as::</span>
+
+<span class="sd">    my_expensive_object.method(arg)</span>
+
+<span class="sd">  This can then be released with::</span>
+
+<span class="sd">    shared_ptr.release(my_expensive_object)</span>
+
+<span class="sd">  but care should be taken to avoid releasing the object too soon or</span>
+<span class="sd">  expensive re-initialization may be required, defeating the point of</span>
+<span class="sd">  using a shared object.</span>
+
+
+<span class="sd">  Args:</span>
+<span class="sd">    constructor: function that initialises / constructs the object if not</span>
+<span class="sd">      present in the cache. This function should take no arguments. It should</span>
+<span class="sd">      return an initialised object, or raise an exception if the object could</span>
+<span class="sd">      not be initialised / constructed.</span>
+<span class="sd">    tag: an indentifier to store with the cached object. If multiple</span>
+<span class="sd">      MultiProcessShared instances are created with the same tag, they will all</span>
+<span class="sd">      share the same proxied object.</span>
+<span class="sd">    path: a temporary path in which to create the inter-process lock</span>
+<span class="sd">    always_proxy: whether to direct all calls through the proxy, rather than</span>
+<span class="sd">      call the object directly for the process that created it</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">constructor</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">T</span><span class="p">],</span>
+      <span class="n">tag</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span>
+      <span class="n">always_proxy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_constructor</span> <span class="o">=</span> <span class="n">constructor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span> <span class="o">=</span> <span class="n">tag</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_always_proxy</span> <span class="o">=</span> <span class="kc">False</span> <span class="k">if</span> <span class="n">always_proxy</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">always_proxy</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_proxy</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_rpc_address</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cross_process_lock</span> <span class="o">=</span> <span class="n">fasteners</span><span class="o">.</span><span class="n">InterProcessLock</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.lock&#39;</span><span class="p">)</span>
+
+  <span class="k">def</span> <span class="nf">_get_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">address_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.address&quot;</span>
+      <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">_process_local_lock</span><span class="p">:</span>
+          <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cross_process_lock</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">address_file</span><span class="p">):</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">_create_server</span><span class="p">(</span><span class="n">address_file</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">_process_level_singleton_manager</span><span class="o">.</span><span class="n">has_singleton</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_always_proxy</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">_process_level_singleton_manager</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">address_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+                <span class="n">address</span> <span class="o">=</span> <span class="n">fin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+              <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Connecting to remote proxy at </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">address</span><span class="p">)</span>
+              <span class="n">host</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+              <span class="c1"># We need to be able to authenticate with both the manager and</span>
+              <span class="c1"># the process.</span>
+              <span class="n">manager</span> <span class="o">=</span> <span class="n">_SingletonRegistrar</span><span class="p">(</span>
+                  <span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="n">host</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">port</span><span class="p">)),</span> <span class="n">authkey</span><span class="o">=</span><span class="n">AUTH_KEY</span><span class="p">)</span>
+              <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">authkey</span> <span class="o">=</span> <span class="n">AUTH_KEY</span>
+              <span class="k">try</span><span class="p">:</span>
+                <span class="n">manager</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span> <span class="o">=</span> <span class="n">manager</span>
+              <span class="k">except</span> <span class="ne">ConnectionError</span><span class="p">:</span>
+                <span class="c1"># The server is no longer good, assume it died.</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">address_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span>
+
+<div class="viewcode-block" id="MultiProcessShared.acquire">
+<a class="viewcode-back" href="../../../apache_beam.utils.multi_process_shared.html#apache_beam.utils.multi_process_shared.MultiProcessShared.acquire">[docs]</a>
+  <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># TODO: Allow passing/parameterizing the callable here, in case they are</span>
+    <span class="c1"># not available at MultiProcessShared construction time (e.g. from side</span>
+    <span class="c1"># inputs)</span>
+    <span class="c1"># Caveat: They must always agree, as they will be ignored if the object</span>
+    <span class="c1"># is already constructed.</span>
+    <span class="n">singleton</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span><span class="o">.</span><span class="n">acquire_singleton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_AutoProxyWrapper</span><span class="p">(</span><span class="n">singleton</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MultiProcessShared.release">
+<a class="viewcode-back" href="../../../apache_beam.utils.multi_process_shared.html#apache_beam.utils.multi_process_shared.MultiProcessShared.release">[docs]</a>
+  <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_manager</span><span class="o">.</span><span class="n">release_singleton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_auto_proxy_object</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="MultiProcessShared.unsafe_hard_delete">
+<a class="viewcode-back" href="../../../apache_beam.utils.multi_process_shared.html#apache_beam.utils.multi_process_shared.MultiProcessShared.unsafe_hard_delete">[docs]</a>
+  <span class="k">def</span> <span class="nf">unsafe_hard_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Force deletes the underlying object</span>
+<span class="sd">    </span>
+<span class="sd">      This function should be used with great care since any other references</span>
+<span class="sd">      to this object will now be invalid and may lead to strange errors. Only</span>
+<span class="sd">      call unsafe_hard_delete if either (a) you are sure no other references</span>
+<span class="sd">      to this object exist, or (b) you are ok with all existing references to</span>
+<span class="sd">      this object throwing strange errors when derefrenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_get_manager</span><span class="p">()</span><span class="o">.</span><span class="n">unsafe_hard_delete_singleton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span> <span class="nf">_create_server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address_file</span><span class="p">):</span>
+    <span class="c1"># We need to be able to authenticate with both the manager and the process.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_serving_manager</span> <span class="o">=</span> <span class="n">_SingletonRegistrar</span><span class="p">(</span>
+        <span class="n">address</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">authkey</span><span class="o">=</span><span class="n">AUTH_KEY</span><span class="p">)</span>
+    <span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()</span><span class="o">.</span><span class="n">authkey</span> <span class="o">=</span> <span class="n">AUTH_KEY</span>
+    <span class="c1"># Initialize eagerly to avoid acting as the server if there are issues.</span>
+    <span class="c1"># Note, however, that _create_server itself is called lazily.</span>
+    <span class="n">_process_level_singleton_manager</span><span class="o">.</span><span class="n">register_singleton</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_constructor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">,</span> <span class="n">initialize_eagerly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_server</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_serving_manager</span><span class="o">.</span><span class="n">get_server</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">&#39;Starting proxy server at </span><span class="si">%s</span><span class="s1"> for shared </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">address</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tag</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">address_file</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fout</span><span class="p">:</span>
+      <span class="n">fout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">address_file</span> <span class="o">+</span> <span class="s1">&#39;.tmp&#39;</span><span class="p">,</span> <span class="n">address_file</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_server</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Done starting server&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

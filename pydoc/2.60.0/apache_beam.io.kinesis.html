@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.kinesis module &mdash; Apache Beam 2.60.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/documentation_options.js?v=1bc0be70"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.io.localfilesystem module" href="apache_beam.io.localfilesystem.html" />
+    <link rel="prev" title="apache_beam.io.kafka module" href="apache_beam.io.kafka.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="apache_beam.io.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.io.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.avroio.html">apache_beam.io.avroio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.concat_source.html">apache_beam.io.concat_source module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.debezium.html">apache_beam.io.debezium module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsink.html">apache_beam.io.filebasedsink module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filebasedsource.html">apache_beam.io.filebasedsource module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.fileio.html">apache_beam.io.fileio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystem.html">apache_beam.io.filesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystemio.html">apache_beam.io.filesystemio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.filesystems.html">apache_beam.io.filesystems module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.hadoopfilesystem.html">apache_beam.io.hadoopfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.iobase.html">apache_beam.io.iobase module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.jdbc.html">apache_beam.io.jdbc module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.kafka.html">apache_beam.io.kafka module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.io.kinesis module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kinesis.WriteToKinesis"><code class="docutils literal notranslate"><span class="pre">WriteToKinesis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kinesis.ReadDataFromKinesis"><code class="docutils literal notranslate"><span class="pre">ReadDataFromKinesis</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kinesis.InitialPositionInStream"><code class="docutils literal notranslate"><span class="pre">InitialPositionInStream</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.io.kinesis.WatermarkPolicy"><code class="docutils literal notranslate"><span class="pre">WatermarkPolicy</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.localfilesystem.html">apache_beam.io.localfilesystem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.mongodbio.html">apache_beam.io.mongodbio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.parquetio.html">apache_beam.io.parquetio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.range_trackers.html">apache_beam.io.range_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.requestresponse.html">apache_beam.io.requestresponse module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.restriction_trackers.html">apache_beam.io.restriction_trackers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.snowflake.html">apache_beam.io.snowflake module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.source_test_utils.html">apache_beam.io.source_test_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.textio.html">apache_beam.io.textio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.tfrecordio.html">apache_beam.io.tfrecordio module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.utils.html">apache_beam.io.utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.io.watermark_estimators.html">apache_beam.io.watermark_estimators module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.io.html">apache_beam.io package</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.kinesis module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.io.kinesis.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.io.kinesis">
+<span id="apache-beam-io-kinesis-module"></span><h1>apache_beam.io.kinesis module<a class="headerlink" href="#module-apache_beam.io.kinesis" title="Link to this heading">¶</a></h1>
+<p>PTransforms for supporting Kinesis streaming in Python pipelines.</p>
+<p>These transforms are currently supported by Beam Flink and Spark portable
+runners.</p>
+<p><strong>Setup</strong></p>
+<p>Transforms provided in this module are cross-language transforms
+implemented in the Beam Java SDK. During the pipeline construction, Python SDK
+will connect to a Java expansion service to expand these transforms.
+To facilitate this, a small amount of setup is needed before using these
+transforms in a Beam Python pipeline.</p>
+<p>There are several ways to setup cross-language Kinesis transforms.</p>
+<ul class="simple">
+<li><p>Option 1: use the default expansion service</p></li>
+<li><p>Option 2: specify a custom expansion service</p></li>
+</ul>
+<p>See below for details regarding each of these options.</p>
+<p><em>Option 1: Use the default expansion service</em></p>
+<p>This is the recommended and easiest setup option for using Python Kinesis
+transforms. This option is only available for Beam 2.25.0 and later.</p>
+<p>This option requires following pre-requisites before running the Beam
+pipeline.</p>
+<ul class="simple">
+<li><p>Install Java runtime in the computer from where the pipeline is constructed
+and make sure that ‘java’ command is available.</p></li>
+</ul>
+<p>In this option, Python SDK will either download (for released Beam version) or
+build (when running from a Beam Git clone) a expansion service jar and use
+that to expand transforms. Currently Kinesis transforms use the
+‘beam-sdks-java-io-kinesis-expansion-service’ jar for this purpose.</p>
+<p><em>Option 2: specify a custom expansion service</em></p>
+<p>In this option, you startup your own expansion service and provide that as
+a parameter when using the transforms provided in this module.</p>
+<p>This option requires following pre-requisites before running the Beam
+pipeline.</p>
+<ul class="simple">
+<li><p>Startup your own expansion service.</p></li>
+<li><p>Update your pipeline to provide the expansion service address when
+initiating Kinesis transforms provided in this module.</p></li>
+</ul>
+<p>Flink Users can use the built-in Expansion Service of the Flink Runner’s
+Job Server. If you start Flink’s Job Server, the expansion service will be
+started on port 8097. For a different address, please set the
+expansion_service parameter.</p>
+<p><strong>More information</strong></p>
+<p>For more information regarding cross-language transforms see:
+- <a class="reference external" href="https://beam.apache.org/roadmap/portability/">https://beam.apache.org/roadmap/portability/</a></p>
+<p>For more information specific to Flink runner see:
+- <a class="reference external" href="https://beam.apache.org/documentation/runners/flink/">https://beam.apache.org/documentation/runners/flink/</a></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WriteToKinesis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kinesis.</span></span><span class="sig-name descname"><span class="pre">WriteToKinesis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">producer_properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#WriteToKinesis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.WriteToKinesis" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform" title="apache_beam.transforms.external.ExternalTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalTransform</span></code></a></p>
+<p>An external PTransform which writes byte array stream to Amazon Kinesis.</p>
+<p>Experimental; no backwards compatibility guarantees.</p>
+<p>Initializes a write operation to Kinesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream_name</strong> – Kinesis stream name.</p></li>
+<li><p><strong>aws_access_key</strong> – Kinesis access key.</p></li>
+<li><p><strong>aws_secret_key</strong> – Kinesis access key secret.</p></li>
+<li><p><strong>region</strong> – AWS region. Example: ‘us-east-1’.</p></li>
+<li><p><strong>service_endpoint</strong> – Kinesis service endpoint</p></li>
+<li><p><strong>verify_certificate</strong> – Enable or disable certificate verification.
+Never set to False on production. True by default.</p></li>
+<li><p><strong>partition_key</strong> – Specify default partition key.</p></li>
+<li><p><strong>producer_properties</strong> – Specify the configuration properties for Kinesis
+Producer Library (KPL) as dictionary.
+Example: {‘CollectionMaxCount’: ‘1000’, ‘ConnectTimeout’: ‘10000’}</p></li>
+<li><p><strong>expansion_service</strong> – The address (host:port) of the ExpansionService.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WriteToKinesis.URN">
+<span class="sig-name descname"><span class="pre">URN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beam:transform:org.apache.beam:kinesis_write:v1'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.WriteToKinesis.URN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.ReadDataFromKinesis">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kinesis.</span></span><span class="sig-name descname"><span class="pre">ReadDataFromKinesis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_access_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aws_secret_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_endpoint</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_certificate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_num_records</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_read_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_position_in_stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_timestamp_in_stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">request_records_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">up_to_date_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_capacity_per_shard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watermark_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watermark_idle_duration_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rate_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansion_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#ReadDataFromKinesis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.ReadDataFromKinesis" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="apache_beam.transforms.external.html#apache_beam.transforms.external.ExternalTransform" title="apache_beam.transforms.external.ExternalTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExternalTransform</span></code></a></p>
+<p>An external PTransform which reads byte array stream from Amazon Kinesis.</p>
+<p>Experimental; no backwards compatibility guarantees.</p>
+<p>Initializes a read operation from Kinesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream_name</strong> – Kinesis stream name.</p></li>
+<li><p><strong>aws_access_key</strong> – Kinesis access key.</p></li>
+<li><p><strong>aws_secret_key</strong> – Kinesis access key secret.</p></li>
+<li><p><strong>region</strong> – AWS region. Example: ‘us-east-1’.</p></li>
+<li><p><strong>service_endpoint</strong> – Kinesis service endpoint</p></li>
+<li><p><strong>verify_certificate</strong> – Enable or disable certificate verification.
+Never set to False on production. True by default.</p></li>
+<li><p><strong>max_num_records</strong> – Specifies to read at most a given number of records.
+Must be greater than 0.</p></li>
+<li><p><strong>max_read_time</strong> – Specifies to read records during x milliseconds.</p></li>
+<li><p><strong>initial_timestamp_in_stream</strong> – Specify reading beginning at the given
+timestamp in milliseconds. Must be in the past.</p></li>
+<li><p><strong>initial_position_in_stream</strong> – Specify reading from some initial
+position in stream. Possible values:
+LATEST - Start after the most recent data record (fetch new data).
+TRIM_HORIZON - Start from the oldest available data record.
+AT_TIMESTAMP - Start from the record at or after the specified
+server-side timestamp.</p></li>
+<li><p><strong>request_records_limit</strong> – Specifies the maximum number of records in
+GetRecordsResult returned by GetRecords call which is limited by 10K
+records. If should be adjusted according to average size of data record
+to prevent shard overloading. More at:
+docs.aws.amazon.com/kinesis/latest/APIReference/API_GetRecords.html</p></li>
+<li><p><strong>up_to_date_threshold</strong> – Specifies how late in milliseconds records
+consumed by this source can be to still be considered on time. Defaults
+to zero.</p></li>
+<li><p><strong>max_capacity_per_shard</strong> – Specifies the maximum number of messages per
+one shard. Defaults to 10’000.</p></li>
+<li><p><strong>watermark_policy</strong> – Specifies the watermark policy. Possible values:
+PROCESSING_TYPE, ARRIVAL_TIME. Defaults to ARRIVAL_TIME.</p></li>
+<li><p><strong>watermark_idle_duration_threshold</strong> – Use only when watermark policy is
+ARRIVAL_TIME. Denotes the duration for which the watermark can be idle.
+Passed in milliseconds.</p></li>
+<li><p><strong>rate_limit</strong> – Sets fixed rate policy for given milliseconds value. By
+default there is no rate limit.</p></li>
+<li><p><strong>expansion_service</strong> – The address (host:port) of the ExpansionService.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.ReadDataFromKinesis.URN">
+<span class="sig-name descname"><span class="pre">URN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'beam:transform:org.apache.beam:kinesis_read_data:v1'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.ReadDataFromKinesis.URN" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.InitialPositionInStream">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kinesis.</span></span><span class="sig-name descname"><span class="pre">InitialPositionInStream</span></span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#InitialPositionInStream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.InitialPositionInStream" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.InitialPositionInStream.LATEST">
+<span class="sig-name descname"><span class="pre">LATEST</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LATEST'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.InitialPositionInStream.LATEST" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.InitialPositionInStream.TRIM_HORIZON">
+<span class="sig-name descname"><span class="pre">TRIM_HORIZON</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'TRIM_HORIZON'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.InitialPositionInStream.TRIM_HORIZON" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.InitialPositionInStream.AT_TIMESTAMP">
+<span class="sig-name descname"><span class="pre">AT_TIMESTAMP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'AT_TIMESTAMP'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.InitialPositionInStream.AT_TIMESTAMP" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.InitialPositionInStream.validate_param">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#InitialPositionInStream.validate_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.InitialPositionInStream.validate_param" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WatermarkPolicy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.io.kinesis.</span></span><span class="sig-name descname"><span class="pre">WatermarkPolicy</span></span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#WatermarkPolicy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.WatermarkPolicy" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WatermarkPolicy.PROCESSING_TYPE">
+<span class="sig-name descname"><span class="pre">PROCESSING_TYPE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'PROCESSING_TYPE'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.WatermarkPolicy.PROCESSING_TYPE" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WatermarkPolicy.ARRIVAL_TIME">
+<span class="sig-name descname"><span class="pre">ARRIVAL_TIME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ARRIVAL_TIME'</span></em><a class="headerlink" href="#apache_beam.io.kinesis.WatermarkPolicy.ARRIVAL_TIME" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.io.kinesis.WatermarkPolicy.validate_param">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_param</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/apache_beam/io/kinesis.html#WatermarkPolicy.validate_param"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#apache_beam.io.kinesis.WatermarkPolicy.validate_param" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.io.kafka.html" class="btn btn-neutral float-left" title="apache_beam.io.kafka module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.io.localfilesystem.html" class="btn btn-neutral float-right" title="apache_beam.io.localfilesystem module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
