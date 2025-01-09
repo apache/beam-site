@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.managed &mdash; Apache Beam 2.62.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f86a2ac2"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.managed</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.transforms.managed</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Managed Transforms.</span>
+
+<span class="sd">This module builds and instantiates turnkey transforms that can be managed by</span>
+<span class="sd">the underlying runner. This means the runner can upgrade the transform to a</span>
+<span class="sd">more optimal/updated version without requiring the user to do anything. It may</span>
+<span class="sd">also replace the transform with something entirely different if it chooses to.</span>
+<span class="sd">By default, however, the specified transform will remain unchanged.</span>
+
+<span class="sd">Using Managed Transforms</span>
+<span class="sd">========================</span>
+<span class="sd">Managed turnkey transforms have a defined configuration and can be built using</span>
+<span class="sd">an inline :class:`dict` like so::</span>
+
+<span class="sd">  results = p | beam.managed.Read(</span>
+<span class="sd">                    beam.managed.ICEBERG,</span>
+<span class="sd">                    config={&quot;table&quot;: &quot;foo&quot;,</span>
+<span class="sd">                            &quot;catalog_name&quot;: &quot;bar&quot;,</span>
+<span class="sd">                            &quot;catalog_properties&quot;: {</span>
+<span class="sd">                                &quot;warehouse&quot;: &quot;path/to/warehouse&quot;,</span>
+<span class="sd">                                &quot;catalog-impl&quot;: &quot;org.apache.my.CatalogImpl&quot;}})</span>
+
+<span class="sd">A YAML configuration file can also be used to build a Managed transform. Say we</span>
+<span class="sd">have the following `config.yaml` file::</span>
+
+<span class="sd">  topic: &quot;foo&quot;</span>
+<span class="sd">  bootstrap_servers: &quot;localhost:1234&quot;</span>
+<span class="sd">  format: &quot;AVRO&quot;</span>
+
+<span class="sd">Simply provide the location to the file like so::</span>
+
+<span class="sd">  input_rows = p | beam.Create(...)</span>
+<span class="sd">  input_rows | beam.managed.Write(</span>
+<span class="sd">                    beam.managed.KAFKA,</span>
+<span class="sd">                    config_url=&quot;path/to/config.yaml&quot;)</span>
+
+<span class="sd">Available transforms</span>
+<span class="sd">====================</span>
+<span class="sd">Available transforms are:</span>
+
+<span class="sd">- **Kafka Read and Write**</span>
+<span class="sd">- **Iceberg Read and Write**</span>
+
+<span class="sd">**Note:** inputs and outputs need to be PCollection(s) of Beam</span>
+<span class="sd">:py:class:`apache_beam.pvalue.Row` elements.</span>
+
+<span class="sd">**Note:** Today, all managed transforms are essentially cross-language</span>
+<span class="sd">transforms, and Java&#39;s ManagedSchemaTransform is used under the hood.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.portability.common_urns</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManagedTransforms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.external</span><span class="w"> </span><span class="kn">import</span> <span class="n">BeamJarExpansionService</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.external</span><span class="w"> </span><span class="kn">import</span> <span class="n">SchemaAwareExternalTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.ptransform</span><span class="w"> </span><span class="kn">import</span> <span class="n">PTransform</span>
+
+<span class="n">ICEBERG</span> <span class="o">=</span> <span class="s2">&quot;iceberg&quot;</span>
+<span class="n">KAFKA</span> <span class="o">=</span> <span class="s2">&quot;kafka&quot;</span>
+<span class="n">BIGQUERY</span> <span class="o">=</span> <span class="s2">&quot;bigquery&quot;</span>
+<span class="n">_MANAGED_IDENTIFIER</span> <span class="o">=</span> <span class="s2">&quot;beam:transform:managed:v1&quot;</span>
+<span class="n">_EXPANSION_SERVICE_JAR_TARGETS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;sdks:java:io:expansion-service:shadowJar&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">KAFKA</span><span class="p">,</span> <span class="n">ICEBERG</span><span class="p">],</span>
+    <span class="s2">&quot;sdks:java:io:google-cloud-platform:expansion-service:shadowJar&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="n">BIGQUERY</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ICEBERG&quot;</span><span class="p">,</span> <span class="s2">&quot;KAFKA&quot;</span><span class="p">,</span> <span class="s2">&quot;BIGQUERY&quot;</span><span class="p">,</span> <span class="s2">&quot;Read&quot;</span><span class="p">,</span> <span class="s2">&quot;Write&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="Read">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Read">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Read</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Read using Managed Transforms&quot;&quot;&quot;</span>
+  <span class="n">_READ_TRANSFORMS</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="n">ICEBERG</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">ICEBERG_READ</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span>
+      <span class="n">KAFKA</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">KAFKA_READ</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span>
+      <span class="n">BIGQUERY</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">BIGQUERY_READ</span><span class="o">.</span><span class="n">urn</span>
+  <span class="p">}</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">source</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">config_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">expansion_service</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
+    <span class="n">identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_READ_TRANSFORMS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;An unsupported source was specified: &#39;</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s2">&#39;. Please specify &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;one of the following sources: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_READ_TRANSFORMS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span> <span class="o">=</span> <span class="n">_resolve_expansion_service</span><span class="p">(</span>
+        <span class="n">source</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">expansion_service</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_underlying_identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_config_url</span> <span class="o">=</span> <span class="n">config_url</span>
+
+<div class="viewcode-block" id="Read.expand">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Read.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">|</span> <span class="n">SchemaAwareExternalTransform</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="n">_MANAGED_IDENTIFIER</span><span class="p">,</span>
+        <span class="n">expansion_service</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span><span class="p">,</span>
+        <span class="n">rearrange_based_on_discovery</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">transform_identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_underlying_identifier</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_yaml_config</span><span class="p">,</span>
+        <span class="n">config_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Read.default_label">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Read.default_label">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Managed Read(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Write">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Write">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Write</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Write using Managed Transforms&quot;&quot;&quot;</span>
+  <span class="n">_WRITE_TRANSFORMS</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="n">ICEBERG</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">ICEBERG_WRITE</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span>
+      <span class="n">KAFKA</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">KAFKA_WRITE</span><span class="o">.</span><span class="n">urn</span><span class="p">,</span>
+      <span class="n">BIGQUERY</span><span class="p">:</span> <span class="n">ManagedTransforms</span><span class="o">.</span><span class="n">Urns</span><span class="o">.</span><span class="n">BIGQUERY_WRITE</span><span class="o">.</span><span class="n">urn</span>
+  <span class="p">}</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">sink</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">config_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">expansion_service</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sink</span> <span class="o">=</span> <span class="n">sink</span>
+    <span class="n">identifier</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_WRITE_TRANSFORMS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">sink</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">identifier</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;An unsupported sink was specified: &#39;</span><span class="si">{</span><span class="n">sink</span><span class="si">}</span><span class="s2">&#39;. Please specify &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;one of the following sinks: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_WRITE_TRANSFORMS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span> <span class="o">=</span> <span class="n">_resolve_expansion_service</span><span class="p">(</span>
+        <span class="n">sink</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">expansion_service</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_underlying_identifier</span> <span class="o">=</span> <span class="n">identifier</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_config_url</span> <span class="o">=</span> <span class="n">config_url</span>
+
+<div class="viewcode-block" id="Write.expand">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Write.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">|</span> <span class="n">SchemaAwareExternalTransform</span><span class="p">(</span>
+        <span class="n">identifier</span><span class="o">=</span><span class="n">_MANAGED_IDENTIFIER</span><span class="p">,</span>
+        <span class="n">expansion_service</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_expansion_service</span><span class="p">,</span>
+        <span class="n">rearrange_based_on_discovery</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">transform_identifier</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_underlying_identifier</span><span class="p">,</span>
+        <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_yaml_config</span><span class="p">,</span>
+        <span class="n">config_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_url</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Write.default_label">
+<a class="viewcode-back" href="../../../apache_beam.transforms.managed.html#apache_beam.transforms.managed.Write.default_label">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_label</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;Managed Write(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sink</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_expansion_service</span><span class="p">(</span>
+    <span class="n">transform_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">expansion_service</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">expansion_service</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">expansion_service</span>
+
+  <span class="n">default_target</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">for</span> <span class="n">gradle_target</span><span class="p">,</span> <span class="n">transforms</span> <span class="ow">in</span> <span class="n">_EXPANSION_SERVICE_JAR_TARGETS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">transform_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">:</span>
+      <span class="n">default_target</span> <span class="o">=</span> <span class="n">gradle_target</span>
+      <span class="k">break</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">default_target</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;No expansion service was specified and could not find a &quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;default expansion service for </span><span class="si">{</span><span class="n">transform_name</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">BeamJarExpansionService</span><span class="p">(</span><span class="n">default_target</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
