@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.anomaly.base &mdash; Apache Beam 2.64.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07e49155"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.anomaly.base</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.anomaly.base</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Base classes for anomaly detection</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;AnomalyPrediction&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AnomalyResult&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ThresholdFn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AggregationFn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AnomalyDetector&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;EnsembleAnomalyDetector&quot;</span>
+<span class="p">]</span>
+
+<span class="n">DEFAULT_NORMAL_LABEL</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">DEFAULT_OUTLIER_LABEL</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">DEFAULT_MISSING_LABEL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+
+
+<div class="viewcode-block" id="AnomalyPrediction">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AnomalyPrediction">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnomalyPrediction</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;A dataclass for anomaly detection predictions.&quot;&quot;&quot;</span>
+  <span class="c1">#: The ID of detector (model) that generates the prediction.</span>
+  <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="c1">#: The outlier score resulting from applying the detector to the input data.</span>
+  <span class="n">score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="c1">#: The outlier label (normal or outlier) derived from the outlier score.</span>
+  <span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="c1">#: The threshold used to determine the label.</span>
+  <span class="n">threshold</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="c1">#: Additional information about the prediction.</span>
+  <span class="n">info</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+  <span class="c1">#: If enabled, a list of `AnomalyPrediction` objects used to derive the</span>
+  <span class="c1">#: aggregated prediction.</span>
+  <span class="n">source_predictions</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">AnomalyPrediction</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="AnomalyResult">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AnomalyResult">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnomalyResult</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;A dataclass for the anomaly detection results&quot;&quot;&quot;</span>
+  <span class="c1">#: The original input data.</span>
+  <span class="n">example</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span>
+  <span class="c1">#: The iterable of `AnomalyPrediction` objects containing the predictions.</span>
+  <span class="c1">#: Expect length 1 if it is a result for a non-ensemble detector or an</span>
+  <span class="c1">#: ensemble detector with an aggregation strategy applied.</span>
+  <span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">AnomalyPrediction</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="ThresholdFn">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.ThresholdFn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ThresholdFn</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An abstract base class for threshold functions.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    normal_label: The integer label used to identify normal data. Defaults to 0.</span>
+<span class="sd">    outlier_label: The integer label used to identify outlier data. Defaults to</span>
+<span class="sd">      1.</span>
+<span class="sd">    missing_label: The integer label used when a score is missing because the</span>
+<span class="sd">      model is not ready to score.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">normal_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_NORMAL_LABEL</span><span class="p">,</span>
+      <span class="n">outlier_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_OUTLIER_LABEL</span><span class="p">,</span>
+      <span class="n">missing_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_MISSING_LABEL</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span> <span class="o">=</span> <span class="n">normal_label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span> <span class="o">=</span> <span class="n">outlier_label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span> <span class="o">=</span> <span class="n">missing_label</span>
+
+  <span class="nd">@property</span>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_stateful</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates whether the threshold function is stateful or not.&quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+  <span class="nd">@property</span>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieves the current threshold value, or None if not set.&quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="ThresholdFn.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.ThresholdFn.apply">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the threshold function to a given score to classify it as</span>
+<span class="sd">    normal or outlier.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      score: The outlier score generated from the detector (model).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      The label assigned to the score, either `self._normal_label`</span>
+<span class="sd">      or `self._outlier_label`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AggregationFn">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AggregationFn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AggregationFn</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An abstract base class for aggregation functions.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AggregationFn.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AggregationFn.apply">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">AnomalyPrediction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AnomalyPrediction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the aggregation function to an iterable of predictions, either on</span>
+<span class="sd">    their outlier scores or labels.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      predictions: An Iterable of `AnomalyPrediction` objects to aggregate.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      An `AnomalyPrediction` object containing the aggregated result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AnomalyDetector">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AnomalyDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnomalyDetector</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An abstract base class for anomaly detectors.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    model_id: The ID of detector (model). Defaults to the value of the</span>
+<span class="sd">      `spec_type` attribute, or &#39;unknown&#39; if not set.</span>
+<span class="sd">    features: An Iterable of strings representing the names of the input</span>
+<span class="sd">      features in the `beam.Row`</span>
+<span class="sd">    target: The name of the target field in the `beam.Row`.</span>
+<span class="sd">    threshold_criterion: An optional `ThresholdFn` to apply to the outlier score</span>
+<span class="sd">      and yield a label.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">threshold_criterion</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ThresholdFn</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model_id</span> <span class="o">=</span> <span class="n">model_id</span> <span class="k">if</span> <span class="n">model_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spec_type&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;unknown&quot;</span><span class="p">)()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_features</span> <span class="o">=</span> <span class="n">features</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_target</span> <span class="o">=</span> <span class="n">target</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_criterion</span> <span class="o">=</span> <span class="n">threshold_criterion</span>
+
+<div class="viewcode-block" id="AnomalyDetector.learn_one">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AnomalyDetector.learn_one">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">learn_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Trains the detector on a single data instance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      x: A `beam.Row` representing the data instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="AnomalyDetector.score_one">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.AnomalyDetector.score_one">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">score_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scores a single data instance for anomalies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      x: A `beam.Row` representing the data instance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      The outlier score as a float. None if an exception occurs during scoring,</span>
+<span class="sd">      and NaN if the model is not ready.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EnsembleAnomalyDetector">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.EnsembleAnomalyDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnsembleAnomalyDetector</span><span class="p">(</span><span class="n">AnomalyDetector</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;An abstract base class for an ensemble of anomaly (sub-)detectors.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    sub_detectors: A List of `AnomalyDetector` used in this ensemble model.</span>
+<span class="sd">    aggregation_strategy: An optional `AggregationFn` to apply to the</span>
+<span class="sd">      predictions from all sub-detectors and yield an aggregated result.</span>
+<span class="sd">    model_id: Inherited from `AnomalyDetector`.</span>
+<span class="sd">    features: Inherited from `AnomalyDetector`.</span>
+<span class="sd">    target: Inherited from `AnomalyDetector`.</span>
+<span class="sd">    threshold_criterion: Inherited from `AnomalyDetector`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">sub_detectors</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">AnomalyDetector</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">aggregation_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AggregationFn</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;model_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;spec_type&#39;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="s1">&#39;custom&#39;</span><span class="p">)()</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_aggregation_strategy</span> <span class="o">=</span> <span class="n">aggregation_strategy</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sub_detectors</span> <span class="o">=</span> <span class="n">sub_detectors</span>
+
+<div class="viewcode-block" id="EnsembleAnomalyDetector.learn_one">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.EnsembleAnomalyDetector.learn_one">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">learn_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inherited from `AnomalyDetector.learn_one`.</span>
+
+<span class="sd">    This method is never called during ensemble detector training. The training</span>
+<span class="sd">    process is done on each sub-detector independently and in parallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="EnsembleAnomalyDetector.score_one">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.base.html#apache_beam.ml.anomaly.base.EnsembleAnomalyDetector.score_one">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">score_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inherited from `AnomalyDetector.score_one`.</span>
+
+<span class="sd">    This method is never called during ensemble detector scoring. The scoring</span>
+<span class="sd">    process is done on sub-detector independently and in parallel, and then</span>
+<span class="sd">    the results are aggregated in the pipeline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
