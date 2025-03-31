@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.anomaly.thresholds &mdash; Apache Beam 2.64.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=07e49155"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.anomaly.thresholds</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.anomaly.thresholds</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThresholdFn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.specifiable</span><span class="w"> </span><span class="kn">import</span> <span class="n">specifiable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.univariate.quantile</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedSlidingQuantileTracker</span>  <span class="c1"># pylint: disable=line-too-long</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.univariate.quantile</span><span class="w"> </span><span class="kn">import</span> <span class="n">QuantileTracker</span>
+
+
+<div class="viewcode-block" id="FixedThreshold">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.thresholds.html#apache_beam.ml.anomaly.thresholds.FixedThreshold">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FixedThreshold</span><span class="p">(</span><span class="n">ThresholdFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a fixed cutoff value to anomaly scores.</span>
+
+<span class="sd">  This `ThresholdFn` is stateless and uses a pre-defined cutoff value to</span>
+<span class="sd">  classify anomaly scores. Scores below the cutoff are considered normal, while</span>
+<span class="sd">  scores at or above the cutoff are classified as outliers.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    cutoff (float): The fixed threshold value. Anomaly scores at or above this</span>
+<span class="sd">      value will be labeled as outliers.</span>
+<span class="sd">    **kwargs: Additional keyword arguments to be passed to the base</span>
+<span class="sd">      `ThresholdFn` constructor.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cutoff</span> <span class="o">=</span> <span class="n">cutoff</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_stateful</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates whether this ThresholdFn is stateful.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      bool: Always False for `FixedThreshold` as it is stateless.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the fixed cutoff threshold value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      float: The fixed threshold value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cutoff</span>
+
+<div class="viewcode-block" id="FixedThreshold.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.thresholds.html#apache_beam.ml.anomaly.thresholds.FixedThreshold.apply">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the fixed threshold to an anomaly score.</span>
+
+<span class="sd">    Classifies the given anomaly score as normal or outlier based on the</span>
+<span class="sd">    predefined cutoff.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      score (Optional[float]): The input anomaly score.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Optional[int]: The anomaly label:</span>
+<span class="sd">        - `normal_label` if the score is less than the threshold.</span>
+<span class="sd">        - `outlier_label` if the score is at or above the threshold.</span>
+<span class="sd">        - `missing_label` if the score is `NaN` (detector not ready).</span>
+<span class="sd">        - `None` if the score is `None` (detector ready, but unable to produce</span>
+<span class="sd">          score).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># score error: detector is ready but is unable to produce the score due to</span>
+    <span class="c1"># errors such as ill-formatted input.</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># score missing: detector is not yet ready</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span>
+
+    <span class="k">if</span> <span class="n">score</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QuantileThreshold">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.thresholds.html#apache_beam.ml.anomaly.thresholds.QuantileThreshold">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QuantileThreshold</span><span class="p">(</span><span class="n">ThresholdFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a quantile-based dynamic threshold to anomaly scores.</span>
+
+<span class="sd">  This `ThresholdFn` is stateful and uses a quantile tracker to dynamically</span>
+<span class="sd">  determine the threshold for anomaly detection. It estimates the specified</span>
+<span class="sd">  quantile of the incoming anomaly scores and uses this quantile value as the</span>
+<span class="sd">  threshold.</span>
+
+<span class="sd">  The threshold adapts over time as more data is processed, making it suitable</span>
+<span class="sd">  for scenarios where the distribution of anomaly scores may change.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    quantile (Optional[float]): The quantile to be tracked (e.g., 0.95 for the</span>
+<span class="sd">      95th percentile). This value determines the dynamic threshold. Defaults to</span>
+<span class="sd">      0.95.</span>
+<span class="sd">    quantile_tracker (Optional[BufferedQuantileTracker]): An optional</span>
+<span class="sd">      pre-initialized quantile tracker. If provided, this tracker will be used;</span>
+<span class="sd">      otherwise, a `BufferedSlidingQuantileTracker` will be created with a</span>
+<span class="sd">      default window size of 100.</span>
+<span class="sd">    **kwargs: Additional keyword arguments to be passed to the base</span>
+<span class="sd">      `ThresholdFn` constructor.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">quantile</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+      <span class="n">quantile_tracker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">QuantileTracker</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">quantile_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span> <span class="o">=</span> <span class="n">quantile_tracker</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span> <span class="o">=</span> <span class="n">BufferedSlidingQuantileTracker</span><span class="p">(</span>
+          <span class="n">window_size</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">quantile</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_stateful</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Indicates whether this ThresholdFn is stateful.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      bool: Always True for `QuantileThreshold` as it is stateful.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the current quantile-based threshold value.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      float: The dynamically calculated threshold value based on the quantile</span>
+<span class="sd">        tracker.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+<div class="viewcode-block" id="QuantileThreshold.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.thresholds.html#apache_beam.ml.anomaly.thresholds.QuantileThreshold.apply">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the quantile-based threshold to an anomaly score.</span>
+
+<span class="sd">    Updates the quantile tracker with the given score and classifies the score</span>
+<span class="sd">    as normal or outlier based on the current quantile threshold.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      score (Optional[float]): The input anomaly score.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Optional[int]: The anomaly label:</span>
+<span class="sd">        - `normal_label` if the score is less than the threshold.</span>
+<span class="sd">        - `outlier_label` if the score is at or above the threshold.</span>
+<span class="sd">        - `missing_label` if the score is `NaN` (detector not ready).</span>
+<span class="sd">        - `None` if the score is `None` (detector ready, but unable to produce</span>
+<span class="sd">          score).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># score error: detector is ready but is unable to produce the score due to</span>
+    <span class="c1"># errors such as ill-formatted input.</span>
+    <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># store NaN instead of None in quantile tracker to simplify tracker logic.</span>
+      <span class="c1"># After all, it is only a place holder and will not be used in calculation</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;NaN&quot;</span><span class="p">))</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tracker</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+    <span class="c1"># score missing: detector is not yet ready</span>
+    <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">score</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span>
+
+    <span class="k">if</span> <span class="n">score</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span>
+
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
