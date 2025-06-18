@@ -1,0 +1,467 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.anomaly.aggregations &mdash; Apache Beam 2.66.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e44e05e7"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.anomaly.aggregations</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.anomaly.aggregations</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_MISSING_LABEL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_NORMAL_LABEL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_OUTLIER_LABEL</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AggregationFn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnomalyPrediction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.specifiable</span><span class="w"> </span><span class="kn">import</span> <span class="n">specifiable</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AggModelIdMixin</span><span class="p">:</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agg_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span> <span class="o">=</span> <span class="n">agg_model_id</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_set_agg_model_id_if_unset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agg_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span> <span class="o">=</span> <span class="n">agg_model_id</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">):</span>
+    <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;model_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SourcePredictionMixin</span><span class="p">:</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_source_predictions</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_include_source_predictions</span> <span class="o">=</span> <span class="n">include_source_predictions</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_source_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">source_predictions</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_include_source_predictions</span><span class="p">:</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;source_predictions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source_predictions</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="LabelAggregation">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.LabelAggregation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelAggregation</span><span class="p">(</span><span class="n">AggregationFn</span><span class="p">,</span> <span class="n">_AggModelIdMixin</span><span class="p">,</span> <span class="n">_SourcePredictionMixin</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly predictions based on their labels.</span>
+
+<span class="sd">  This is an abstract base class for `AggregationFn`s that combine multiple</span>
+<span class="sd">  `AnomalyPrediction` objects into a single `AnomalyPrediction` based on</span>
+<span class="sd">  the labels of the input predictions.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    agg_func (Callable[[Iterable[int]], int]): A function that aggregates</span>
+<span class="sd">      a collection of anomaly labels (integers) into a single label.</span>
+<span class="sd">    agg_model_id (Optional[str]): The model id used in aggregated predictions.</span>
+<span class="sd">      Defaults to None.</span>
+<span class="sd">    include_source_predictions (bool): If True, include the input predictions in</span>
+<span class="sd">      the `source_predictions` of the output. Defaults to False.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">agg_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="nb">int</span><span class="p">],</span>
+      <span class="n">agg_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">include_source_predictions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">normal_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_NORMAL_LABEL</span><span class="p">,</span>
+      <span class="n">outlier_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_OUTLIER_LABEL</span><span class="p">,</span>
+      <span class="n">missing_label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_MISSING_LABEL</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agg</span> <span class="o">=</span> <span class="n">agg_func</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span> <span class="o">=</span> <span class="n">normal_label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span> <span class="o">=</span> <span class="n">outlier_label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span> <span class="o">=</span> <span class="n">missing_label</span>
+    <span class="n">_AggModelIdMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agg_model_id</span><span class="p">)</span>
+    <span class="n">_SourcePredictionMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_source_predictions</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LabelAggregation.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.LabelAggregation.apply">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">AnomalyPrediction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AnomalyPrediction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the label aggregation function to a list of predictions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      predictions (Iterable[AnomalyPrediction]): A collection of</span>
+<span class="sd">        `AnomalyPrediction` objects to be aggregated.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      AnomalyPrediction: A single `AnomalyPrediction` object with the</span>
+<span class="sd">        aggregated label. The aggregated label is determined as follows:</span>
+
+<span class="sd">        - If there are any non-missing and non-error labels, the `agg_func` is</span>
+<span class="sd">          applied to aggregate them.</span>
+<span class="sd">        - If all labels are error labels (`None`), the aggregated label is also</span>
+<span class="sd">          `None`.</span>
+<span class="sd">        - If there are a mix of missing and error labels, the aggregated label</span>
+<span class="sd">          is the `missing_label`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_AggModelIdMixin</span><span class="o">.</span><span class="n">add_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">)</span>
+    <span class="n">_SourcePredictionMixin</span><span class="o">.</span><span class="n">add_source_predictions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">prediction</span><span class="o">.</span><span class="n">label</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span> <span class="k">if</span>
+        <span class="n">prediction</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">prediction</span><span class="o">.</span><span class="n">label</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="c1"># apply aggregation_fn if there is any non-None and non-missing label</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agg</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)):</span>
+      <span class="c1"># all are error labels (None) -- all scores are error</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># some missing labels with some error labels (None)</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_missing_label</span>
+
+    <span class="k">return</span> <span class="n">AnomalyPrediction</span><span class="p">(</span><span class="o">**</span><span class="n">result_dict</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ScoreAggregation">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.ScoreAggregation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScoreAggregation</span><span class="p">(</span><span class="n">AggregationFn</span><span class="p">,</span> <span class="n">_AggModelIdMixin</span><span class="p">,</span> <span class="n">_SourcePredictionMixin</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly predictions based on their scores.</span>
+
+<span class="sd">  This is an abstract base class for `AggregationFn`s that combine multiple</span>
+<span class="sd">  `AnomalyPrediction` objects into a single `AnomalyPrediction` based on</span>
+<span class="sd">  the scores of the input predictions.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    agg_func (Callable[[Iterable[float]], float]): A function that aggregates</span>
+<span class="sd">      a collection of anomaly scores (floats) into a single score.</span>
+<span class="sd">    agg_model_id (Optional[str]): The model id used in aggregated predictions.</span>
+<span class="sd">      Defaults to None.</span>
+<span class="sd">    include_source_predictions (bool): If True, include the input predictions in</span>
+<span class="sd">      the `source_predictions` of the output. Defaults to False.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">agg_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Iterable</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="nb">float</span><span class="p">],</span>
+      <span class="n">agg_model_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">include_source_predictions</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agg</span> <span class="o">=</span> <span class="n">agg_func</span>
+    <span class="n">_AggModelIdMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agg_model_id</span><span class="p">)</span>
+    <span class="n">_SourcePredictionMixin</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include_source_predictions</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ScoreAggregation.apply">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.ScoreAggregation.apply">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">AnomalyPrediction</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AnomalyPrediction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Applies the score aggregation function to a list of predictions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      predictions (Iterable[AnomalyPrediction]): A collection of</span>
+<span class="sd">        `AnomalyPrediction` objects to be aggregated.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      AnomalyPrediction: A single `AnomalyPrediction` object with the</span>
+<span class="sd">        aggregated score. The aggregated score is determined as follows:</span>
+
+<span class="sd">        - If there are any non-missing and non-error scores, the `agg_func` is</span>
+<span class="sd">          applied to aggregate them.</span>
+<span class="sd">        - If all scores are error scores (`None`), the aggregated score is also</span>
+<span class="sd">          `None`.</span>
+<span class="sd">        - If there are a mix of missing (`NaN`) and error scores (`None`), the</span>
+<span class="sd">          aggregated score is `NaN`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_AggModelIdMixin</span><span class="o">.</span><span class="n">add_model_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">)</span>
+    <span class="n">_SourcePredictionMixin</span><span class="o">.</span><span class="n">add_source_predictions</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)</span>
+
+    <span class="n">scores</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">prediction</span><span class="o">.</span><span class="n">score</span> <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">predictions</span>
+        <span class="k">if</span> <span class="n">prediction</span><span class="o">.</span><span class="n">score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">prediction</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="c1"># apply aggregation_fn if there is any non-None and non-NaN score</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_agg</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="n">predictions</span><span class="p">)):</span>
+      <span class="c1"># all are error scores (None)</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># some missing scores (NaN) with some error scores (None)</span>
+      <span class="n">result_dict</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">AnomalyPrediction</span><span class="p">(</span><span class="o">**</span><span class="n">result_dict</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MajorityVote">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.MajorityVote">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MajorityVote</span><span class="p">(</span><span class="n">LabelAggregation</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly labels using majority voting.</span>
+
+<span class="sd">  This `AggregationFn` implements a majority voting strategy to combine</span>
+<span class="sd">  anomaly labels from multiple `AnomalyPrediction` objects. It counts the</span>
+<span class="sd">  occurrences of normal and outlier labels and selects the label with the</span>
+<span class="sd">  higher count as the aggregated label. In case of a tie, a tie-breaker</span>
+<span class="sd">  label is used.</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">    If input labels are [normal, outlier, outlier, normal, outlier], and</span>
+<span class="sd">    normal_label=0, outlier_label=1, then the aggregated label will be</span>
+<span class="sd">    outlier (1) because outliers have a majority (3 vs 2).</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    normal_label (int): The integer label for normal predictions. Defaults to 0.</span>
+<span class="sd">    outlier_label (int): The integer label for outlier predictions. Defaults to</span>
+<span class="sd">      1.</span>
+<span class="sd">    tie_breaker (int): The label to return if there is a tie in votes.</span>
+<span class="sd">      Defaults to 0 (normal_label).</span>
+<span class="sd">    **kwargs: Additional keyword arguments to pass to the base</span>
+<span class="sd">      `LabelAggregation` class.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tie_breaker</span><span class="o">=</span><span class="n">DEFAULT_NORMAL_LABEL</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tie_breaker</span> <span class="o">=</span> <span class="n">tie_breaker</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+      <span class="n">counters</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">Counter</span><span class="p">(</span><span class="n">predictions</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">counters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">counters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span><span class="p">]:</span>
+        <span class="n">vote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span>
+      <span class="k">elif</span> <span class="n">counters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">counters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span><span class="p">]:</span>
+        <span class="n">vote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">vote</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tie_breaker</span>
+      <span class="k">return</span> <span class="n">vote</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agg_func</span><span class="o">=</span><span class="n">inner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># And scheme</span>
+<div class="viewcode-block" id="AllVote">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.AllVote">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AllVote</span><span class="p">(</span><span class="n">LabelAggregation</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly labels using an &quot;all vote&quot; (AND) scheme.</span>
+
+<span class="sd">  This `AggregationFn` implements an &quot;all vote&quot; strategy. It aggregates</span>
+<span class="sd">  anomaly labels such that the result is considered an outlier only if all</span>
+<span class="sd">  input `AnomalyPrediction` objects are labeled as outliers.</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">    If input labels are [outlier, outlier, outlier], and outlier_label=1,</span>
+<span class="sd">    then the aggregated label will be outlier (1).</span>
+<span class="sd">    If input labels are [outlier, normal, outlier], and outlier_label=1,</span>
+<span class="sd">    then the aggregated label will be normal (0).</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    normal_label (int): The integer label for normal predictions. Defaults to 0.</span>
+<span class="sd">    outlier_label (int): The integer label for outlier predictions. Defaults to</span>
+<span class="sd">      1.</span>
+<span class="sd">    **kwargs: Additional keyword arguments to pass to the base</span>
+<span class="sd">      `LabelAggregation` class.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span> <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+          <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span><span class="p">,</span>
+              <span class="n">predictions</span><span class="p">))</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agg_func</span><span class="o">=</span><span class="n">inner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Or scheme</span>
+<div class="viewcode-block" id="AnyVote">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.AnyVote">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnyVote</span><span class="p">(</span><span class="n">LabelAggregation</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly labels using an &quot;any vote&quot; (OR) scheme.</span>
+
+<span class="sd">  This `AggregationFn` implements an &quot;any vote&quot; strategy. It aggregates</span>
+<span class="sd">  anomaly labels such that the result is considered an outlier if at least</span>
+<span class="sd">  one of the input `AnomalyPrediction` objects is labeled as an outlier.</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">    If input labels are [normal, normal, outlier], and outlier_label=1,</span>
+<span class="sd">    then the aggregated label will be outlier (1).</span>
+<span class="sd">    If input labels are [normal, normal, normal], and outlier_label=1,</span>
+<span class="sd">    then the aggregated label will be normal (0).</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    normal_label (int): The integer label for normal predictions. Defaults to 0.</span>
+<span class="sd">    outlier_label (int): The integer label for outlier predictions. Defaults to</span>
+<span class="sd">      1.</span>
+<span class="sd">    **kwargs: Additional keyword arguments to pass to the base</span>
+<span class="sd">      `LabelAggregation` class.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="n">predictions</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+          <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_outlier_label</span><span class="p">,</span>
+              <span class="n">predictions</span><span class="p">))</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_label</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agg_func</span><span class="o">=</span><span class="n">inner</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="AverageScore">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.AverageScore">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AverageScore</span><span class="p">(</span><span class="n">ScoreAggregation</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly scores by calculating their average.</span>
+
+<span class="sd">  This `AggregationFn` computes the average of the anomaly scores from a</span>
+<span class="sd">  collection of `AnomalyPrediction` objects.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    **kwargs: Additional keyword arguments to pass to the base</span>
+<span class="sd">      `ScoreAggregation` class.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agg_func</span><span class="o">=</span><span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MaxScore">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.aggregations.html#apache_beam.ml.anomaly.aggregations.MaxScore">[docs]</a>
+<span class="nd">@specifiable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaxScore</span><span class="p">(</span><span class="n">ScoreAggregation</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Aggregates anomaly scores by selecting the maximum score.</span>
+
+<span class="sd">  This `AggregationFn` selects the highest anomaly score from a collection</span>
+<span class="sd">  of `AnomalyPrediction` objects as the aggregated score.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    **kwargs: Additional keyword arguments to pass to the base</span>
+<span class="sd">      `ScoreAggregation` class.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">agg_func</span><span class="o">=</span><span class="nb">max</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
