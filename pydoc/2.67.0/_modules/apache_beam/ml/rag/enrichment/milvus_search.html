@@ -1,0 +1,770 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.enrichment.milvus_search &mdash; Apache Beam 2.67.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=959b4fbe"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.enrichment.milvus_search</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.enrichment.milvus_search</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.protobuf.json_format</span><span class="w"> </span><span class="kn">import</span> <span class="n">MessageToDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnSearchRequest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hits</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">MilvusClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">SearchResult</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chunk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embedding</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.enrichment</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnrichmentSourceHandler</span>
+
+
+<div class="viewcode-block" id="SearchStrategy">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.SearchStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SearchStrategy</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Search strategies for information retrieval.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    HYBRID: Combines vector and keyword search approaches. Leverages both</span>
+<span class="sd">      semantic understanding and exact matching. Typically provides the most</span>
+<span class="sd">      comprehensive results. Useful for queries with both conceptual and</span>
+<span class="sd">      specific keyword components.</span>
+<span class="sd">    VECTOR: Vector similarity search only. Based on semantic similarity between</span>
+<span class="sd">      query and documents. Effective for conceptual searches and finding related</span>
+<span class="sd">      content. Less sensitive to exact terminology than keyword search.</span>
+<span class="sd">    KEYWORD: Keyword/text search only. Based on exact or fuzzy matching of</span>
+<span class="sd">      specific terms. Effective for precise queries where exact wording matters.</span>
+<span class="sd">      Less effective for conceptual or semantic searches.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">HYBRID</span> <span class="o">=</span> <span class="s2">&quot;hybrid&quot;</span>
+  <span class="n">VECTOR</span> <span class="o">=</span> <span class="s2">&quot;vector&quot;</span>
+  <span class="n">KEYWORD</span> <span class="o">=</span> <span class="s2">&quot;keyword&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="KeywordSearchMetrics">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.KeywordSearchMetrics">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KeywordSearchMetrics</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Metrics for keyword search.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    BM25: Range [0 to ∞), Best Match 25 ranking algorithm for text relevance.</span>
+<span class="sd">      Combines term frequency, inverse document frequency, and document length.</span>
+<span class="sd">      Higher scores indicate greater relevance. Higher scores indicate greater</span>
+<span class="sd">      relevance. Takes into account diminishing returns of term frequency.</span>
+<span class="sd">      Balances between exact matching and semantic relevance.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">BM25</span> <span class="o">=</span> <span class="s2">&quot;BM25&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="VectorSearchMetrics">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.VectorSearchMetrics">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorSearchMetrics</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Metrics for vector search.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    COSINE: Range [-1 to 1], higher values indicate greater similarity. Value 1</span>
+<span class="sd">      means vectors point in identical direction. Value 0 means vectors are</span>
+<span class="sd">      perpendicular to each other (no relationship). Value -1 means vectors</span>
+<span class="sd">      point in exactly opposite directions.</span>
+<span class="sd">    EUCLIDEAN_DISTANCE (L2): Range [0 to ∞), lower values indicate greater</span>
+<span class="sd">      similarity. Value 0 means vectors are identical. Larger values mean more</span>
+<span class="sd">      dissimilarity between vectors.</span>
+<span class="sd">    INNER_PRODUCT (IP): Range varies based on vector magnitudes, higher values</span>
+<span class="sd">      indicate greater similarity. Value 0 means vectors are perpendicular to</span>
+<span class="sd">      each other. Positive values mean vectors share some directional component.</span>
+<span class="sd">      Negative values mean vectors point in opposing directions.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">COSINE</span> <span class="o">=</span> <span class="s2">&quot;COSINE&quot;</span>
+  <span class="n">EUCLIDEAN_DISTANCE</span> <span class="o">=</span> <span class="s2">&quot;L2&quot;</span>
+  <span class="n">INNER_PRODUCT</span> <span class="o">=</span> <span class="s2">&quot;IP&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusBaseRanker">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusBaseRanker">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusBaseRanker</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Base class for ranking algorithms in Milvus hybrid search strategy.&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__int__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span>
+
+<div class="viewcode-block" id="MilvusBaseRanker.dict">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusBaseRanker.dict">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{}</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusConnectionParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusConnectionParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusConnectionParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters for establishing connections to Milvus servers.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    uri: URI endpoint for connecting to Milvus server in the format</span>
+<span class="sd">      &quot;http(s)://hostname:port&quot;.</span>
+<span class="sd">    user: Username for authentication. Required if authentication is enabled and</span>
+<span class="sd">      not using token authentication.</span>
+<span class="sd">    password: Password for authentication. Required if authentication is enabled</span>
+<span class="sd">      and not using token authentication.</span>
+<span class="sd">    db_id: Database ID to connect to. Specifies which Milvus database to use.</span>
+<span class="sd">      Defaults to &#39;default&#39;.</span>
+<span class="sd">    token: Authentication token as an alternative to username/password.</span>
+<span class="sd">    timeout: Connection timeout in seconds. Uses client default if None.</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional connection parameters.</span>
+<span class="sd">      Enables forward compatibility.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">db_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+  <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;URI must be provided for Milvus connection&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="BaseSearchParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.BaseSearchParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseSearchParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Base parameters for both vector and keyword search operations.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    anns_field: Approximate nearest neighbor search field indicates field name</span>
+<span class="sd">      containing the embedding to search. Required for both vector and keyword</span>
+<span class="sd">      search.</span>
+<span class="sd">    limit: Maximum number of results to return per query. Must be positive.</span>
+<span class="sd">      Defaults to 3 search results.</span>
+<span class="sd">    filter: Boolean expression string for filtering search results.</span>
+<span class="sd">      Example: &#39;price &lt;= 1000 AND category == &quot;electronics&quot;&#39;.</span>
+<span class="sd">    search_params: Additional search parameters specific to the search type.</span>
+<span class="sd">      Example: {&quot;metric_type&quot;: VectorSearchMetrics.EUCLIDEAN_DISTANCE}.</span>
+<span class="sd">    consistency_level: Consistency level for read operations.</span>
+<span class="sd">      Options: &quot;Strong&quot;, &quot;Session&quot;, &quot;Bounded&quot;, &quot;Eventually&quot;. Defaults to</span>
+<span class="sd">      &quot;Bounded&quot; if not specified when creating the collection.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">anns_field</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+  <span class="nb">filter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">search_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+  <span class="n">consistency_level</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">anns_field</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;Approximate Nearest Neighbor Search (ANNS) field must be provided&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Search limit must be positive, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VectorSearchParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.VectorSearchParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VectorSearchParameters</span><span class="p">(</span><span class="n">BaseSearchParameters</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters for vector similarity search operations.</span>
+
+<span class="sd">  Inherits all parameters from BaseSearchParameters with the same semantics.</span>
+<span class="sd">  The anns_field should contain dense vector embeddings for this search type.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional vector search parameters.</span>
+<span class="sd">      Enables forward compatibility.</span>
+
+<span class="sd">  Note:</span>
+<span class="sd">    For inherited parameters documentation, see BaseSearchParameters.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KeywordSearchParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.KeywordSearchParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KeywordSearchParameters</span><span class="p">(</span><span class="n">BaseSearchParameters</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters for keyword/text search operations.</span>
+
+<span class="sd">  This class inherits all parameters from BaseSearchParameters with the same</span>
+<span class="sd">  semantics. The anns_field should contain sparse vector embeddings content for</span>
+<span class="sd">  this search type.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional keyword search parameters.</span>
+<span class="sd">      Enables forward compatibility.</span>
+
+<span class="sd">  Note:</span>
+<span class="sd">    For inherited parameters documentation, see BaseSearchParameters.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="HybridSearchParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.HybridSearchParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HybridSearchParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters for hybrid (vector + keyword) search operations.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    vector: Parameters for the vector search component.</span>
+<span class="sd">    keyword: Parameters for the keyword search component.</span>
+<span class="sd">    ranker: Ranker for combining vector and keyword search results.</span>
+<span class="sd">      Example: RRFRanker(k=100).</span>
+<span class="sd">    limit: Maximum number of results to return per query. Defaults to 3 search</span>
+<span class="sd">      results.</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional hybrid search parameters.</span>
+<span class="sd">      Enables forward compatibility.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">vector</span><span class="p">:</span> <span class="n">VectorSearchParameters</span>
+  <span class="n">keyword</span><span class="p">:</span> <span class="n">KeywordSearchParameters</span>
+  <span class="n">ranker</span><span class="p">:</span> <span class="n">MilvusBaseRanker</span>
+  <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vector</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">keyword</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;Vector and keyword search parameters must be provided for &quot;</span>
+          <span class="s2">&quot;hybrid search&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranker</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Ranker must be provided for hybrid search&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">limit</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Search limit must be positive, got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">limit</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="n">SearchStrategyType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">VectorSearchParameters</span><span class="p">,</span>
+                           <span class="n">KeywordSearchParameters</span><span class="p">,</span>
+                           <span class="n">HybridSearchParameters</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="MilvusSearchParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusSearchParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusSearchParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters configuring Milvus search operations.</span>
+
+<span class="sd">  This class encapsulates all parameters needed to execute searches against</span>
+<span class="sd">  Milvus collections, supporting vector, keyword, and hybrid search strategies.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    collection_name: Name of the collection to search in.</span>
+<span class="sd">    search_strategy: Type of search to perform (VECTOR, KEYWORD, or HYBRID).</span>
+<span class="sd">    partition_names: List of partition names to restrict the search to. If</span>
+<span class="sd">      empty, all partitions will be searched.</span>
+<span class="sd">    output_fields: List of field names to include in search results. If empty,</span>
+<span class="sd">      only primary fields including distances will be returned.</span>
+<span class="sd">    timeout: Search operation timeout in seconds. If not specified, the client&#39;s</span>
+<span class="sd">      default timeout is used.</span>
+<span class="sd">    round_decimal: Number of decimal places for distance/similarity scores.</span>
+<span class="sd">      Defaults to -1 means no rounding.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">collection_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">search_strategy</span><span class="p">:</span> <span class="n">SearchStrategyType</span>
+  <span class="n">partition_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">output_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">round_decimal</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Collection name must be provided&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Search strategy must be provided&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusCollectionLoadParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusCollectionLoadParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusCollectionLoadParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Parameters that control how Milvus loads a collection into memory.</span>
+
+<span class="sd">  This class provides fine-grained control over collection loading, which is</span>
+<span class="sd">  particularly important in resource-constrained environments. Proper</span>
+<span class="sd">  configuration can significantly reduce memory usage and improve query</span>
+<span class="sd">  performance by loading only necessary data.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    refresh: If True, forces a reload of the collection even if already loaded.</span>
+<span class="sd">      Ensures the most up-to-date data is in memory.</span>
+<span class="sd">    resource_groups: List of resource groups to load the collection into. Can be</span>
+<span class="sd">      used for load balancing across multiple query nodes.</span>
+<span class="sd">    load_fields: Specify which fields to load into memory. Loading only</span>
+<span class="sd">      necessary fields reduces memory usage. If empty, all fields loaded.</span>
+<span class="sd">    skip_load_dynamic_field: If True, dynamic/growing fields will not be loaded</span>
+<span class="sd">      into memory. Saves memory when dynamic fields aren&#39;t needed.</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional collection load</span>
+<span class="sd">      parameters. Enables forward compatibility.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">refresh</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+  <span class="n">resource_groups</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">load_fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">skip_load_dynamic_field</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusSearchResult">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusSearchResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusSearchResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Search result from Milvus per chunk.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    id: List of entity IDs returned from the search. Can be either string or</span>
+<span class="sd">      integer IDs.</span>
+<span class="sd">    distance: List of distances/similarity scores for each returned entity.</span>
+<span class="sd">    fields: List of dictionaries containing additional field values for each</span>
+<span class="sd">      entity. Each dictionary corresponds to one returned entity.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="nb">id</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">distance</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+  <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<span class="n">InputT</span><span class="p">,</span> <span class="n">OutputT</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Chunk</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]],</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Chunk</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span>
+
+
+<div class="viewcode-block" id="MilvusSearchEnrichmentHandler">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusSearchEnrichmentHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusSearchEnrichmentHandler</span><span class="p">(</span><span class="n">EnrichmentSourceHandler</span><span class="p">[</span><span class="n">InputT</span><span class="p">,</span> <span class="n">OutputT</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Enrichment handler for Milvus vector database searches.</span>
+
+<span class="sd">  This handler is designed to work with the</span>
+<span class="sd">  :class:`apache_beam.transforms.enrichment.EnrichmentSourceHandler` transform.</span>
+<span class="sd">  It enables enriching data through vector similarity, keyword, or hybrid</span>
+<span class="sd">  searches against Milvus collections.</span>
+
+<span class="sd">  The handler supports different search strategies:</span>
+<span class="sd">  * Vector search - For finding similar embeddings based on vector similarity</span>
+<span class="sd">  * Keyword search - For text-based retrieval using BM25 or other text metrics</span>
+<span class="sd">  * Hybrid search - For combining vector and keyword search results</span>
+
+<span class="sd">  This handler queries the Milvus database per element by default. To enable</span>
+<span class="sd">  batching for improved performance, set the `min_batch_size` and</span>
+<span class="sd">  `max_batch_size` parameters. These control the batching behavior in the</span>
+<span class="sd">  :class:`apache_beam.transforms.utils.BatchElements` transform.</span>
+
+<span class="sd">  For memory-intensive operations, the handler allows fine-grained control over</span>
+<span class="sd">  collection loading through the `collection_load_parameters`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_parameters</span><span class="p">:</span> <span class="n">MilvusConnectionParameters</span><span class="p">,</span>
+      <span class="n">search_parameters</span><span class="p">:</span> <span class="n">MilvusSearchParameters</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">collection_load_parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MilvusCollectionLoadParameters</span><span class="p">],</span>
+      <span class="n">min_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example Usage:</span>
+<span class="sd">      connection_paramters = MilvusConnectionParameters(</span>
+<span class="sd">        uri=&quot;http://localhost:19530&quot;)</span>
+<span class="sd">      search_parameters = MilvusSearchParameters(</span>
+<span class="sd">        collection_name=&quot;my_collection&quot;,</span>
+<span class="sd">        search_strategy=VectorSearchParameters(anns_field=&quot;embedding&quot;))</span>
+<span class="sd">      collection_load_parameters = MilvusCollectionLoadParameters(</span>
+<span class="sd">        load_fields=[&quot;embedding&quot;, &quot;metadata&quot;]),</span>
+<span class="sd">      milvus_handler = MilvusSearchEnrichmentHandler(</span>
+<span class="sd">        connection_paramters,</span>
+<span class="sd">        search_parameters,</span>
+<span class="sd">        collection_load_parameters=collection_load_parameters,</span>
+<span class="sd">        min_batch_size=10,</span>
+<span class="sd">        max_batch_size=100)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      connection_parameters (MilvusConnectionParameters): Configuration for</span>
+<span class="sd">        connecting to the Milvus server, including URI, credentials, and</span>
+<span class="sd">        connection options.</span>
+<span class="sd">      search_parameters (MilvusSearchParameters): Configuration for search</span>
+<span class="sd">        operations, including collection name, search strategy, and output</span>
+<span class="sd">        fields.</span>
+<span class="sd">      collection_load_parameters (Optional[MilvusCollectionLoadParameters]):</span>
+<span class="sd">        Parameters controlling how collections are loaded into memory, which can</span>
+<span class="sd">        significantly impact resource usage and performance.</span>
+<span class="sd">      min_batch_size (int): Minimum number of elements to batch together when</span>
+<span class="sd">        querying Milvus. Default is 1 (no batching when max_batch_size is 1).</span>
+<span class="sd">      max_batch_size (int): Maximum number of elements to batch together.Default</span>
+<span class="sd">        is 1000. Higher values may improve throughput but increase memory usage.</span>
+<span class="sd">      **kwargs: Additional keyword arguments for Milvus Enrichment Handler.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      * For large collections, consider setting appropriate values in</span>
+<span class="sd">        collection_load_parameters to reduce memory usage.</span>
+<span class="sd">      * The search_strategy in search_parameters determines the type of search</span>
+<span class="sd">        (vector, keyword, or hybrid) and associated parameters.</span>
+<span class="sd">      * Batching can significantly improve performance but requires more memory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_connection_parameters</span> <span class="o">=</span> <span class="n">connection_parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span> <span class="o">=</span> <span class="n">search_parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_collection_load_parameters</span> <span class="o">=</span> <span class="n">collection_load_parameters</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collection_load_parameters</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_collection_load_parameters</span> <span class="o">=</span> <span class="n">MilvusCollectionLoadParameters</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;min_batch_size&#39;</span><span class="p">:</span> <span class="n">min_batch_size</span><span class="p">,</span> <span class="s1">&#39;max_batch_size&#39;</span><span class="p">:</span> <span class="n">max_batch_size</span>
+    <span class="p">}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">join_fn</span> <span class="o">=</span> <span class="n">join_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">use_custom_types</span> <span class="o">=</span> <span class="kc">True</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">connection_params</span> <span class="o">=</span> <span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_parameters</span><span class="p">)</span>
+    <span class="n">collection_load_params</span> <span class="o">=</span> <span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_collection_load_parameters</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">MilvusClient</span><span class="p">(</span><span class="o">**</span><span class="n">connection_params</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">load_collection</span><span class="p">(</span>
+        <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+        <span class="n">partition_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_names</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">collection_load_params</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Chunk</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Chunk</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+    <span class="n">reqs</span> <span class="o">=</span> <span class="n">request</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="n">request</span><span class="p">]</span>
+    <span class="n">search_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_documents</span><span class="p">(</span><span class="n">reqs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_call_response</span><span class="p">(</span><span class="n">reqs</span><span class="p">,</span> <span class="n">search_result</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_search_documents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">,</span> <span class="n">HybridSearchParameters</span><span class="p">):</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_hybrid_search_data</span><span class="p">(</span><span class="n">chunks</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">hybrid_search</span><span class="p">(</span>
+          <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+          <span class="n">partition_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_names</span><span class="p">,</span>
+          <span class="n">output_fields</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_fields</span><span class="p">,</span>
+          <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+          <span class="n">round_decimal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">round_decimal</span><span class="p">,</span>
+          <span class="n">reqs</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+          <span class="n">ranker</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">ranker</span><span class="p">,</span>
+          <span class="n">limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span>
+          <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">,</span> <span class="n">VectorSearchParameters</span><span class="p">):</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_vector_search_data</span><span class="p">,</span> <span class="n">chunks</span><span class="p">))</span>
+      <span class="n">vector_search_params</span> <span class="o">=</span> <span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+          <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+          <span class="n">partition_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_names</span><span class="p">,</span>
+          <span class="n">output_fields</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_fields</span><span class="p">,</span>
+          <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+          <span class="n">round_decimal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">round_decimal</span><span class="p">,</span>
+          <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+          <span class="o">**</span><span class="n">vector_search_params</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">,</span> <span class="n">KeywordSearchParameters</span><span class="p">):</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_keyword_search_data</span><span class="p">,</span> <span class="n">chunks</span><span class="p">))</span>
+      <span class="n">keyword_search_params</span> <span class="o">=</span> <span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">search</span><span class="p">(</span>
+          <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+          <span class="n">partition_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">partition_names</span><span class="p">,</span>
+          <span class="n">output_fields</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_fields</span><span class="p">,</span>
+          <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+          <span class="n">round_decimal</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">round_decimal</span><span class="p">,</span>
+          <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+          <span class="o">**</span><span class="n">keyword_search_params</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;Not supported search strategy yet: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_hybrid_search_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]):</span>
+    <span class="n">vector_search_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_vector_search_data</span><span class="p">,</span> <span class="n">chunks</span><span class="p">))</span>
+    <span class="n">keyword_search_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_keyword_search_data</span><span class="p">,</span> <span class="n">chunks</span><span class="p">))</span>
+
+    <span class="n">vector_search_req</span> <span class="o">=</span> <span class="n">AnnSearchRequest</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">vector_search_data</span><span class="p">,</span>
+        <span class="n">anns_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">anns_field</span><span class="p">,</span>
+        <span class="n">param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">search_params</span><span class="p">,</span>
+        <span class="n">limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span>
+        <span class="n">expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">vector</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+
+    <span class="n">keyword_search_req</span> <span class="o">=</span> <span class="n">AnnSearchRequest</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">keyword_search_data</span><span class="p">,</span>
+        <span class="n">anns_field</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">keyword</span><span class="o">.</span><span class="n">anns_field</span><span class="p">,</span>
+        <span class="n">param</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">keyword</span><span class="o">.</span><span class="n">search_params</span><span class="p">,</span>
+        <span class="n">limit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">keyword</span><span class="o">.</span><span class="n">limit</span><span class="p">,</span>
+        <span class="n">expr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">search_strategy</span><span class="o">.</span><span class="n">keyword</span><span class="o">.</span><span class="n">filter</span><span class="p">)</span>
+
+    <span class="n">reqs</span> <span class="o">=</span> <span class="p">[</span><span class="n">vector_search_req</span><span class="p">,</span> <span class="n">keyword_search_req</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">reqs</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_vector_search_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="n">Chunk</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="o">.</span><span class="n">dense_embedding</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;Chunk </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> missing dense embedding required for vector search&quot;</span>
+      <span class="p">)</span>
+    <span class="k">return</span> <span class="n">chunk</span><span class="o">.</span><span class="n">dense_embedding</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_keyword_search_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chunk</span><span class="p">:</span> <span class="n">Chunk</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">text</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">chunk</span><span class="o">.</span><span class="n">sparse_embedding</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;Chunk </span><span class="si">{</span><span class="n">chunk</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> missing both text content and sparse embedding &quot;</span>
+          <span class="s2">&quot;required for keyword search&quot;</span><span class="p">)</span>
+
+    <span class="n">sparse_embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_sparse_embedding_to_milvus_format</span><span class="p">(</span>
+        <span class="n">chunk</span><span class="o">.</span><span class="n">sparse_embedding</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content</span><span class="o">.</span><span class="n">text</span> <span class="ow">or</span> <span class="n">sparse_embedding</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_call_response</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">chunks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Chunk</span><span class="p">],</span> <span class="n">search_result</span><span class="p">:</span> <span class="n">SearchResult</span><span class="p">[</span><span class="n">Hits</span><span class="p">]):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chunks</span><span class="p">)):</span>
+      <span class="n">chunk</span> <span class="o">=</span> <span class="n">chunks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">hits</span><span class="p">:</span> <span class="n">Hits</span> <span class="o">=</span> <span class="n">search_result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">MilvusSearchResult</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hits</span><span class="p">)):</span>
+        <span class="n">hit</span><span class="p">:</span> <span class="n">Hit</span> <span class="o">=</span> <span class="n">hits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">normalized_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_milvus_fields</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">fields</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hit</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">normalized_fields</span><span class="p">)</span>
+      <span class="n">response</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">chunk</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_milvus_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fields</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="n">normalized_fields</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">field</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normalize_milvus_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="n">normalized_fields</span><span class="p">[</span><span class="n">field</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">return</span> <span class="n">normalized_fields</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_milvus_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="c1"># Convert Milvus-specific types to Python native types.</span>
+    <span class="n">neither_str_nor_dict_nor_bytes</span> <span class="o">=</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">)</span> <span class="ow">and</span> <span class="n">neither_str_nor_dict_nor_bytes</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="s1">&#39;DESCRIPTOR&#39;</span><span class="p">):</span>
+      <span class="c1"># Handle protobuf messages.</span>
+      <span class="k">return</span> <span class="n">MessageToDict</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Keep other types as they are.</span>
+      <span class="k">return</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="MilvusSearchEnrichmentHandler.convert_sparse_embedding_to_milvus_format">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusSearchEnrichmentHandler.convert_sparse_embedding_to_milvus_format">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">convert_sparse_embedding_to_milvus_format</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">sparse_vector</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sparse_vector</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># Converts sparse embedding from (indices, values) tuple format to</span>
+    <span class="c1"># Milvus-compatible values dict format {dimension_index: value, ...}.</span>
+    <span class="n">indices</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">sparse_vector</span>
+    <span class="k">return</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">)}</span></div>
+
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">collection_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for collection_name property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">collection_name</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">search_strategy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for search_strategy property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">search_strategy</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">partition_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for partition_names property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">partition_names</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">output_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for output_fields property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">output_fields</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for search timeout property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">timeout</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">round_decimal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Getter method for search round_decimal property&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_search_parameters</span><span class="o">.</span><span class="n">round_decimal</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">release_collection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="MilvusSearchEnrichmentHandler.batch_elements_kwargs">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.MilvusSearchEnrichmentHandler.batch_elements_kwargs">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">batch_elements_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns kwargs for beam.BatchElements.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="join_fn">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.join_fn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join_fn</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">right</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Embedding</span><span class="p">:</span>
+  <span class="n">left</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;enrichment_data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">right</span>
+  <span class="k">return</span> <span class="n">left</span></div>
+
+
+
+<div class="viewcode-block" id="unpack_dataclass_with_kwargs">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.enrichment.milvus_search.html#apache_beam.ml.rag.enrichment.milvus_search.unpack_dataclass_with_kwargs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="n">dataclass_instance</span><span class="p">):</span>
+  <span class="c1"># Create a copy of the dataclass&#39;s __dict__.</span>
+  <span class="n">params_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">dataclass_instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+  <span class="c1"># Extract the nested kwargs dictionary.</span>
+  <span class="n">nested_kwargs</span> <span class="o">=</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+  <span class="c1"># Merge the dictionaries, with nested_kwargs taking precedence</span>
+  <span class="c1"># in case of duplicate keys.</span>
+  <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">params_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">nested_kwargs</span><span class="p">}</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
