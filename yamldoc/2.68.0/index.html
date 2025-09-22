@@ -79,7 +79,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
 .codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666 } /* Literal.Number.Integer.Long */
-                
+
           * {
             box-sizing: border-box;
           }
@@ -209,7 +209,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
               font-weight: bold;
               padding: 2px 5px;
           }
-          
+
                 </style>
               </head>
               <body class="body-for-nav">
@@ -287,7 +287,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                   <section class="transform-content-wrap">
                     <div class="transform-content">
                       <h1>Beam YAML Transform Index</h1>
-                      
+
                       <hr><h2 id="anomalydetection">AnomalyDetection</h2>
 <p>Performs anomaly detection on a PCollection of data.</p>
 <p>This PTransform applies an <code>AnomalyDetector</code> or <code>EnsembleAnomalyDetector</code> to
@@ -616,15 +616,28 @@ in which case the fields will be named according to the requested values.</p>
 <h3 id="configuration_8">Configuration</h3>
 <ul>
 <li>
-<p><strong>keep</strong> <code>?</code> (Optional)  : An expression evaluating to true for those records that should be kept.</p>
+<p><strong>language</strong> <code>string</code> (Optional)  </p>
 </li>
 <li>
-<p><strong>language</strong> <code>string</code> (Optional)  : The language of the above expression.
-    Defaults to generic.</p>
+<p><strong>keep</strong> <code>Row</code>      </p>
+<p>Row fields:</p>
+<ul>
+<li>
+<p><strong>callable</strong> <code>string</code> (Optional)  : Source code of a public class implementing Function<Row, T> for some schema-compatible T.</p>
 </li>
 <li>
-<p><strong>error_handling</strong> <code>Row</code> (Optional)  : Whether and where to output records that throw errors when
-    the above expressions are evaluated.    </p>
+<p><strong>expression</strong> <code>string</code> (Optional)  : Source code of a java expression in terms of the schema fields.</p>
+</li>
+<li>
+<p><strong>name</strong> <code>string</code> (Optional)  : Fully qualified name of either a class implementing Function<Row, T> (e.g. com.pkg.MyFunction), or a method taking a single Row argument (e.g. com.pkg.MyClass::methodName). If a method is passed, it must either be static or belong to a class with a public nullary constructor.</p>
+</li>
+<li>
+<p><strong>path</strong> <code>string</code> (Optional)  : Path to a jar file implementing the function referenced in name.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output error rows.    </p>
 <p>Row fields:</p>
 <ul>
 <li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
@@ -635,8 +648,12 @@ in which case the fields will be named according to the requested values.</p>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Filter</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="nt">config</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">keep</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keep</span>
 <span class="w">  </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;language&quot;</span>
+<span class="w">  </span><span class="nt">keep</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">callable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;callable&quot;</span>
+<span class="w">    </span><span class="nt">expression</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;expression&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;name&quot;</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path&quot;</span>
 <span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
 </code></pre></div>
@@ -652,7 +669,6 @@ be implicitly flattened.</p>
 <h3 id="usage_9">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Flatten</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
 
 <hr><h2 id="join">Join</h2>
@@ -819,20 +835,24 @@ chain-style pipelines.</p>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MapToFields</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="nt">config</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">fields</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fields_value_a</span>
-<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fields_value_b</span>
-<span class="w">    </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;language&quot;</span>
 <span class="w">  </span><span class="nt">append</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
 <span class="w">  </span><span class="nt">drop</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;drop&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;drop&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="w">  </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;language&quot;</span>
-<span class="w">  </span><span class="nt">dependencies</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;dependencies&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;dependencies&quot;</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">fields</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;name&quot;</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path&quot;</span>
+<span class="w">      </span><span class="nt">expression</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;expression&quot;</span>
+<span class="w">      </span><span class="nt">callable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;callable&quot;</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;name&quot;</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path&quot;</span>
+<span class="w">      </span><span class="nt">expression</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;expression&quot;</span>
+<span class="w">      </span><span class="nt">callable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;callable&quot;</span>
+<span class="w">    </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
 </code></pre></div>
@@ -1255,54 +1275,112 @@ If query is set, neither row_restriction nor fields should be set.</p>
 <h3 id="configuration_23">Configuration</h3>
 <ul>
 <li>
-<p><strong>table</strong> <code>string</code> (Optional)  : The table to read from, specified as <code>DATASET.TABLE</code>
-    or <code>PROJECT:DATASET.TABLE</code>.</p>
+<p><strong>query</strong> <code>string</code> (Optional)  : The SQL query to be executed to read from the BigQuery table.</p>
 </li>
 <li>
-<p><strong>query</strong> <code>string</code> (Optional)  : A query to be used instead of the table argument.</p>
+<p><strong>table</strong> <code>string</code> (Optional)  : The fully-qualified name of the BigQuery table to read from. Format: [${PROJECT}:]${DATASET}.${TABLE}</p>
 </li>
 <li>
-<p><strong>row_restriction</strong> <code>string</code> (Optional)  : Optional SQL text filtering statement, similar to a
-    WHERE clause in a query. Aggregates are not supported. Restricted to a
-    maximum length for 1 MB.</p>
+<p><strong>fields</strong> <code>Array[string]</code> (Optional)  : Read only the specified fields (columns) from a BigQuery table. Fields may not be returned in the order specified. If no value is specified, then all fields are returned. Example: "col1, col2, col3"</p>
 </li>
 <li>
-<p><strong>fields</strong> <code>Array[string]</code> (Optional)</p>
+<p><strong>row_restriction</strong> <code>string</code> (Optional)  : Read only rows that match this filter, which must be compatible with Google standard SQL. This is not supported when reading via query.</p>
 </li>
 </ul>
 <h3 id="usage_23">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromBigQuery</span>
 <span class="nt">config</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
 <span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
-<span class="w">  </span><span class="nt">row_restriction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;row_restriction&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
 <span class="w">  </span><span class="nt">fields</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;field&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;field&quot;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">row_restriction</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;row_restriction&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetobigquery">WriteToBigQuery</h2>
+<p>Writes data to BigQuery using the Storage Write API (https://cloud.google.com/bigquery/docs/write-api).</p>
+<p>This expects a single PCollection of Beam Rows and outputs two dead-letter queues (DLQ) that contain failed rows. The first DLQ has tag [FailedRows] and contains the failed rows. The second DLQ has tag [FailedRowsWithErrors] and contains failed rows and along with their respective errors.</p>
 <h3 id="configuration_24">Configuration</h3>
+<ul>
+<li>
+<p><strong>table</strong> <code>string</code>  : The bigquery table to write to. Format: [${PROJECT}:]${DATASET}.${TABLE}</p>
+</li>
+<li>
+<p><strong>create_disposition</strong> <code>string</code> (Optional)  : Optional field that specifies whether the job is allowed to create new tables. The following values are supported: CREATE_IF_NEEDED (the job may create the table), CREATE_NEVER (the job must fail if the table does not exist already).</p>
+</li>
+<li>
+<p><strong>write_disposition</strong> <code>string</code> (Optional)  : Specifies the action that occurs if the destination table already exists. The following values are supported: WRITE_TRUNCATE (overwrites the table data), WRITE_APPEND (append the data to the table), WRITE_EMPTY (job must fail if the table is not empty).</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+<li>
+<p><strong>num_streams</strong> <code>int32</code> (Optional)  : Specifies the number of write streams that the Storage API sink will use. This parameter is only applicable when writing unbounded data.</p>
+</li>
+</ul>
 <h3 id="usage_24">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToBigQuery</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">create_disposition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;create_disposition&quot;</span>
+<span class="w">  </span><span class="nt">write_disposition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;write_disposition&quot;</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
+<span class="w">  </span><span class="nt">num_streams</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_streams</span>
 </code></pre></div>
 
 <hr><h2 id="readfrombigtable">ReadFromBigTable</h2>
 <h3 id="configuration_25">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>instance</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>flatten</strong> <code>boolean</code> (Optional)</p>
+</li>
+</ul>
 <h3 id="usage_25">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromBigTable</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;instance&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">flatten</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
 </code></pre></div>
 
 <hr><h2 id="writetobigtable">WriteToBigTable</h2>
 <h3 id="configuration_26">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>instance</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code></p>
+</li>
+</ul>
 <h3 id="usage_26">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToBigTable</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;instance&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromcsv">ReadFromCsv</h2>
@@ -1352,8 +1430,8 @@ comma-separated values (csv) files.</p>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToCsv</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">delimiter</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;delimiter&quot;</span>
 <span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path&quot;</span>
-<span class="w">  </span><span class="nt">delimiter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delimiter</span>
 </code></pre></div>
 
 <hr><h2 id="readfromiceberg">ReadFromIceberg</h2>
@@ -1514,18 +1592,214 @@ https://iceberg.apache.org/spec/#partition-transforms.</li>
 </code></pre></div>
 
 <hr><h2 id="readfromjdbc">ReadFromJdbc</h2>
+<p>Read from a JDBC source using a SQL query or by directly accessing a single table.</p>
+<p>This transform can be used to read from a JDBC source using either a given JDBC driver jar and class name, or by using one of the default packaged drivers given a <code>jdbc_type</code>.</p>
+<h4 id="using-a-default-driver">Using a default driver</h4>
+<p>This transform comes packaged with drivers for several popular JDBC distributions. The following distributions can be declared as the <code>jdbc_type</code>: mysql, oracle, postgres, mssql.</p>
+<p>For example, reading a MySQL source using a SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">jdbc_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&quot;</span>
+</code></pre></div>
+
+<p><strong>Note</strong>: See the following transforms which are built on top of this transform and simplify this logic for several popular JDBC distributions:</p>
+<ul>
+<li><a href="#readfrommysql">ReadFromMySql</a></li>
+<li><a href="#readfrompostgres">ReadFromPostgres</a></li>
+<li><a href="#readfromoracle">ReadFromOracle</a></li>
+<li><a href="#readfromsqlserver">ReadFromSqlServer</a></li>
+</ul>
+<h4 id="declaring-custom-jdbc-drivers">Declaring custom JDBC drivers</h4>
+<p>If reading from a JDBC source not listed above, or if it is necessary to use a custom driver not packaged with Beam, one must define a JDBC driver and class name.</p>
+<p>For example, reading a MySQL source table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver_jars</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/some/jdbc.jar&quot;</span>
+<span class="w">    </span><span class="nt">driver_class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.mysql.jdbc.Driver&quot;</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="connection-properties">Connection Properties</h4>
+<p>Connection properties are properties sent to the Driver used to connect to the JDBC source. For example, to set the character encoding to UTF-8, one could write: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">connectionProperties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;characterEncoding=UTF-8;&quot;</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+
+<p>All properties should be semi-colon-delimited (e.g. "key1=value1;key2=value2;")</p>
 <h3 id="configuration_31">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC source.</p>
+</li>
+<li>
+<p><strong>connection_init_sql</strong> <code>Array[string]</code> (Optional)  : Sets the connection init sql statements used by the Driver. Only MySQL and MariaDB support this.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>disable_auto_commit</strong> <code>boolean</code> (Optional)  : Whether to disable auto commit on read. Defaults to true if not provided. The need for this config varies depending on the database platform. Informix requires this to be set to false while Postgres requires this to be set to true.</p>
+</li>
+<li>
+<p><strong>driver_class_name</strong> <code>string</code> (Optional)  : Name of a Java Driver class to use to connect to the JDBC source. For example, "com.mysql.jdbc.Driver".</p>
+</li>
+<li>
+<p><strong>driver_jars</strong> <code>string</code> (Optional)  : Comma separated path(s) for the JDBC driver jar(s). This can be a local path or GCS (gs://) path.</p>
+</li>
+<li>
+<p><strong>fetch_size</strong> <code>int32</code> (Optional)  : This method is used to override the size of the data that is going to be fetched and loaded in memory per every database call. It should ONLY be used if the default value throws memory errors.</p>
+</li>
+<li>
+<p><strong>output_parallelization</strong> <code>boolean</code> (Optional)  : Whether to reshuffle the resulting PCollection so results are distributed to all workers.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to query the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to read from.</p>
+</li>
+<li>
+<p><strong>partition_column</strong> <code>string</code> (Optional)  : Name of a column of numeric type that will be used for partitioning.</p>
+</li>
+<li>
+<p><strong>num_partitions</strong> <code>int32</code> (Optional)  : The number of partitions</p>
+</li>
+<li>
+<p><strong>type</strong> <code>string</code> (Optional)  : Type of JDBC source. When specified, an appropriate default Driver will be packaged with the transform. One of mysql, postgres, oracle, or mssql.</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+</ul>
 <h3 id="usage_31">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromJdbc</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">connection_init_sql</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">disable_auto_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">driver_class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;driver_class_name&quot;</span>
+<span class="w">  </span><span class="nt">driver_jars</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;driver_jars&quot;</span>
+<span class="w">  </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fetch_size</span>
+<span class="w">  </span><span class="nt">output_parallelization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">partition_column</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;partition_column&quot;</span>
+<span class="w">  </span><span class="nt">num_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_partitions</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;type&quot;</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetojdbc">WriteToJdbc</h2>
+<p>Write to a JDBC sink using a SQL query or by directly accessing a single table.</p>
+<p>This transform can be used to write to a JDBC sink using either a given JDBC driver jar and class name, or by using one of the default packaged drivers given a <code>jdbc_type</code>.</p>
+<h4 id="using-a-default-driver_1">Using a default driver</h4>
+<p>This transform comes packaged with drivers for several popular JDBC distributions. The following distributions can be declared as the <code>jdbc_type</code>: mysql, oracle, postgres, mssql.</p>
+<p>For example, writing to a MySQL sink using a SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">jdbc_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mysql</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INSERT</span><span class="nv"> </span><span class="s">INTO</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">VALUES(?,</span><span class="nv"> </span><span class="s">?)&quot;</span>
+</code></pre></div>
+
+<p><strong>Note</strong>: See the following transforms which are built on top of this transform and simplify this logic for several popular JDBC distributions:</p>
+<ul>
+<li><a href="#writetomysql">WriteToMySql</a></li>
+<li><a href="#writetopostgres">WriteToPostgres</a></li>
+<li><a href="#writetooracle">WriteToOracle</a></li>
+<li><a href="#writetosqlserver">WriteToSqlServer</a></li>
+</ul>
+<h4 id="declaring-custom-jdbc-drivers_1">Declaring custom JDBC drivers</h4>
+<p>If writing to a JDBC sink not listed above, or if it is necessary to use a custom driver not packaged with Beam, one must define a JDBC driver and class name.</p>
+<p>For example, writing to a MySQL table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">driver_jars</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;path/to/some/jdbc.jar&quot;</span>
+<span class="w">    </span><span class="nt">driver_class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;com.mysql.jdbc.Driver&quot;</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="connection-properties_1">Connection Properties</h4>
+<p>Connection properties are properties sent to the Driver used to connect to the JDBC source. For example, to set the character encoding to UTF-8, one could write: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToJdbc</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">connectionProperties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;characterEncoding=UTF-8;&quot;</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+
+<p>All properties should be semi-colon-delimited (e.g. "key1=value1;key2=value2;")</p>
 <h3 id="configuration_32">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC sink.</p>
+</li>
+<li>
+<p><strong>auto_sharding</strong> <code>boolean</code> (Optional)  : If true, enables using a dynamically determined number of shards to write.</p>
+</li>
+<li>
+<p><strong>connection_init_sql</strong> <code>Array[string]</code> (Optional)  : Sets the connection init sql statements used by the Driver. Only MySQL and MariaDB support this.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>driver_class_name</strong> <code>string</code> (Optional)  : Name of a Java Driver class to use to connect to the JDBC source. For example, "com.mysql.jdbc.Driver".</p>
+</li>
+<li>
+<p><strong>driver_jars</strong> <code>string</code> (Optional)  : Comma separated path(s) for the JDBC driver jar(s). This can be a local path or GCS (gs://) path.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to write to.</p>
+</li>
+<li>
+<p><strong>batch_size</strong> <code>int64</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>type</strong> <code>string</code> (Optional)  : Type of JDBC source. When specified, an appropriate default Driver will be packaged with the transform. One of mysql, postgres, oracle, or mssql.</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to insert records into the JDBC sink.</p>
+</li>
+</ul>
 <h3 id="usage_32">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToJdbc</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">auto_sharding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">connection_init_sql</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">driver_class_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;driver_class_name&quot;</span>
+<span class="w">  </span><span class="nt">driver_jars</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;driver_jars&quot;</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch_size</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;type&quot;</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromjson">ReadFromJson</h2>
@@ -1558,47 +1832,389 @@ https://iceberg.apache.org/spec/#partition-transforms.</li>
 
 <hr><h2 id="readfromkafka">ReadFromKafka</h2>
 <h3 id="configuration_35">Configuration</h3>
+<ul>
+<li>
+<p><strong>schema</strong> <code>string</code> (Optional)  : The schema in which the data is encoded in the Kafka topic. For AVRO data, this is a schema defined with AVRO schema syntax (https://avro.apache.org/docs/1.10.2/spec.html#schemas). For JSON data, this is a schema defined with JSON-schema syntax (https://json-schema.org/). If a URL to Confluent Schema Registry is provided, then this field is ignored, and the schema is fetched from Confluent Schema Registry.</p>
+</li>
+<li>
+<p><strong>consumer_config</strong> <code>Map[string, string]</code> (Optional)  : A list of key-value pairs that act as configuration parameters for Kafka consumers. Most of these configurations will not be needed, but if you need to customize your Kafka consumer, you may use this. See a detailed list: https://docs.confluent.io/platform/current/installation/configuration/consumer-configs.html</p>
+</li>
+<li>
+<p><strong>format</strong> <code>string</code> (Optional)  : The encoding format for the data stored in Kafka. Valid options are: RAW,STRING,AVRO,JSON,PROTO</p>
+</li>
+<li>
+<p><strong>topic</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>bootstrap_servers</strong> <code>string</code>  : A list of host/port pairs to use for establishing the initial connection to the Kafka cluster. The client will make use of all servers irrespective of which servers are specified here for bootstrapping—this list only impacts the initial hosts used to discover the full set of servers. This list should be in the form <code>host1:port1,host2:port2,...</code></p>
+</li>
+<li>
+<p><strong>confluent_schema_registry_url</strong> <code>string</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>confluent_schema_registry_subject</strong> <code>string</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>auto_offset_reset_config</strong> <code>string</code> (Optional)  : What to do when there is no initial offset in Kafka or if the current offset does not exist any more on the server. (1) earliest: automatically reset the offset to the earliest offset. (2) latest: automatically reset the offset to the latest offset (3) none: throw exception to the consumer if no previous offset is found for the consumer’s group</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+<li>
+<p><strong>file_descriptor_path</strong> <code>string</code> (Optional)  : The path to the Protocol Buffer File Descriptor Set file. This file is used for schema definition and message serialization.</p>
+</li>
+<li>
+<p><strong>message_name</strong> <code>string</code> (Optional)  : The name of the Protocol Buffer message to be used for schema extraction and data conversion.</p>
+</li>
+</ul>
 <h3 id="usage_35">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromKafka</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;schema&quot;</span>
+<span class="w">  </span><span class="nt">consumer_config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;consumer_config_value_a&quot;</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;consumer_config_value_b&quot;</span>
+<span class="w">    </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;format&quot;</span>
+<span class="w">  </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;topic&quot;</span>
+<span class="w">  </span><span class="nt">bootstrap_servers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bootstrap_servers&quot;</span>
+<span class="w">  </span><span class="nt">confluent_schema_registry_url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;confluent_schema_registry_url&quot;</span>
+<span class="w">  </span><span class="nt">confluent_schema_registry_subject</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;confluent_schema_registry_subject&quot;</span>
+<span class="w">  </span><span class="nt">auto_offset_reset_config</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;auto_offset_reset_config&quot;</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
+<span class="w">  </span><span class="nt">file_descriptor_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;file_descriptor_path&quot;</span>
+<span class="w">  </span><span class="nt">message_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;message_name&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetokafka">WriteToKafka</h2>
 <h3 id="configuration_36">Configuration</h3>
+<ul>
+<li>
+<p><strong>format</strong> <code>string</code>  : The encoding format for the data stored in Kafka. Valid options are: RAW,JSON,AVRO,PROTO</p>
+</li>
+<li>
+<p><strong>topic</strong> <code>string</code>  </p>
+</li>
+<li>
+<p><strong>bootstrap_servers</strong> <code>string</code>  : A list of host/port pairs to use for establishing the initial connection to the Kafka cluster. The client will make use of all servers irrespective of which servers are specified here for bootstrapping—this list only impacts the initial hosts used to discover the full set of servers. | Format: host1:port1,host2:port2,...</p>
+</li>
+<li>
+<p><strong>producer_config_updates</strong> <code>Map[string, string]</code> (Optional)  : A list of key-value pairs that act as configuration parameters for Kafka producers. Most of these configurations will not be needed, but if you need to customize your Kafka producer, you may use this. See a detailed list: https://docs.confluent.io/platform/current/installation/configuration/producer-configs.html</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+<li>
+<p><strong>file_descriptor_path</strong> <code>string</code> (Optional)  : The path to the Protocol Buffer File Descriptor Set file. This file is used for schema definition and message serialization.</p>
+</li>
+<li>
+<p><strong>message_name</strong> <code>string</code> (Optional)  : The name of the Protocol Buffer message to be used for schema extraction and data conversion.</p>
+</li>
+<li>
+<p><strong>schema</strong> <code>string</code> (Optional)</p>
+</li>
+</ul>
 <h3 id="usage_36">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToKafka</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;format&quot;</span>
+<span class="w">  </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;topic&quot;</span>
+<span class="w">  </span><span class="nt">bootstrap_servers</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;bootstrap_servers&quot;</span>
+<span class="w">  </span><span class="nt">producer_config_updates</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;producer_config_updates_value_a&quot;</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;producer_config_updates_value_b&quot;</span>
+<span class="w">    </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
+<span class="w">  </span><span class="nt">file_descriptor_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;file_descriptor_path&quot;</span>
+<span class="w">  </span><span class="nt">message_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;message_name&quot;</span>
+<span class="w">  </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;schema&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfrommysql">ReadFromMySql</h2>
+<p>Read from a MySQL source using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#readfromjdbc">ReadFromJdbc</a> that includes the necessary MySQL Driver and classes.</p>
+<p>An example of using ReadFromMySql with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromMySql</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromMySql</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#readfromjdbc">ReadFromJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_37">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC source.</p>
+</li>
+<li>
+<p><strong>connection_init_sql</strong> <code>Array[string]</code> (Optional)  : Sets the connection init sql statements used by the Driver. Only MySQL and MariaDB support this.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>disable_auto_commit</strong> <code>boolean</code> (Optional)  : Whether to disable auto commit on read. Defaults to true if not provided. The need for this config varies depending on the database platform. Informix requires this to be set to false while Postgres requires this to be set to true.</p>
+</li>
+<li>
+<p><strong>fetch_size</strong> <code>int32</code> (Optional)  : This method is used to override the size of the data that is going to be fetched and loaded in memory per every database call. It should ONLY be used if the default value throws memory errors.</p>
+</li>
+<li>
+<p><strong>output_parallelization</strong> <code>boolean</code> (Optional)  : Whether to reshuffle the resulting PCollection so results are distributed to all workers.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to query the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to read from.</p>
+</li>
+<li>
+<p><strong>partition_column</strong> <code>string</code> (Optional)  : Name of a column of numeric type that will be used for partitioning.</p>
+</li>
+<li>
+<p><strong>num_partitions</strong> <code>int32</code> (Optional)  : The number of partitions</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+</ul>
 <h3 id="usage_37">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromMySql</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">connection_init_sql</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">disable_auto_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fetch_size</span>
+<span class="w">  </span><span class="nt">output_parallelization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">partition_column</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;partition_column&quot;</span>
+<span class="w">  </span><span class="nt">num_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_partitions</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetomysql">WriteToMySql</h2>
+<p>Write to a MySQL sink using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#writetojdbc">WriteToJdbc</a> that includes the necessary MySQL Driver and classes.</p>
+<p>An example of using WriteToMySql with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToMySql</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INSERT</span><span class="nv"> </span><span class="s">INTO</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">VALUES(?,</span><span class="nv"> </span><span class="s">?)&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToMySql</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:mysql://my-host:3306/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_1">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#writetojdbc">WriteToJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_38">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC sink.</p>
+</li>
+<li>
+<p><strong>auto_sharding</strong> <code>boolean</code> (Optional)  : If true, enables using a dynamically determined number of shards to write.</p>
+</li>
+<li>
+<p><strong>connection_init_sql</strong> <code>Array[string]</code> (Optional)  : Sets the connection init sql statements used by the Driver. Only MySQL and MariaDB support this.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to write to.</p>
+</li>
+<li>
+<p><strong>batch_size</strong> <code>int64</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to insert records into the JDBC sink.</p>
+</li>
+</ul>
 <h3 id="usage_38">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToMySql</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">auto_sharding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">connection_init_sql</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;connection_init_sql&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch_size</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromoracle">ReadFromOracle</h2>
+<p>Read from a Oracle source using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#readfromjdbc">ReadFromJdbc</a> that includes the necessary Oracle Driver and classes.</p>
+<p>An example of using ReadFromOracle with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromOracle</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:oracle://my-host:1521/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromOracle</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:oracle://my-host:1521/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_2">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#readfromjdbc">ReadFromJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_39">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC source.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>disable_auto_commit</strong> <code>boolean</code> (Optional)  : Whether to disable auto commit on read. Defaults to true if not provided. The need for this config varies depending on the database platform. Informix requires this to be set to false while Postgres requires this to be set to true.</p>
+</li>
+<li>
+<p><strong>fetch_size</strong> <code>int32</code> (Optional)  : This method is used to override the size of the data that is going to be fetched and loaded in memory per every database call. It should ONLY be used if the default value throws memory errors.</p>
+</li>
+<li>
+<p><strong>output_parallelization</strong> <code>boolean</code> (Optional)  : Whether to reshuffle the resulting PCollection so results are distributed to all workers.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to query the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to read from.</p>
+</li>
+<li>
+<p><strong>partition_column</strong> <code>string</code> (Optional)  : Name of a column of numeric type that will be used for partitioning.</p>
+</li>
+<li>
+<p><strong>num_partitions</strong> <code>int32</code> (Optional)  : The number of partitions</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+</ul>
 <h3 id="usage_39">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromOracle</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">disable_auto_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fetch_size</span>
+<span class="w">  </span><span class="nt">output_parallelization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">partition_column</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;partition_column&quot;</span>
+<span class="w">  </span><span class="nt">num_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_partitions</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetooracle">WriteToOracle</h2>
+<p>Write to a Oracle sink using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#writetojdbc">WriteToJdbc</a> that includes the necessary Oracle Driver and classes.</p>
+<p>An example of using WriteToOracle with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToOracle</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:oracle://my-host:1521/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INSERT</span><span class="nv"> </span><span class="s">INTO</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">VALUES(?,</span><span class="nv"> </span><span class="s">?)&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToOracle</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:oracle://my-host:1521/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_3">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#writetojdbc">WriteToJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_40">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC sink.</p>
+</li>
+<li>
+<p><strong>auto_sharding</strong> <code>boolean</code> (Optional)  : If true, enables using a dynamically determined number of shards to write.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to write to.</p>
+</li>
+<li>
+<p><strong>batch_size</strong> <code>int64</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to insert records into the JDBC sink.</p>
+</li>
+</ul>
 <h3 id="usage_40">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToOracle</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">auto_sharding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch_size</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromparquet">ReadFromParquet</h2>
@@ -1627,18 +2243,134 @@ https://iceberg.apache.org/spec/#partition-transforms.</li>
 </code></pre></div>
 
 <hr><h2 id="readfrompostgres">ReadFromPostgres</h2>
+<p>Read from a Postgres source using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#readfromjdbc">ReadFromJdbc</a> that includes the necessary Postgres Driver and classes.</p>
+<p>An example of using ReadFromPostgres with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromPostgres</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:postgresql://my-host:5432/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromPostgres</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:postgresql://my-host:5432/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_4">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#readfromjdbc">ReadFromJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_43">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC source.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>disable_auto_commit</strong> <code>boolean</code> (Optional)  : Whether to disable auto commit on read. Defaults to true if not provided. The need for this config varies depending on the database platform. Informix requires this to be set to false while Postgres requires this to be set to true.</p>
+</li>
+<li>
+<p><strong>fetch_size</strong> <code>int32</code> (Optional)  : This method is used to override the size of the data that is going to be fetched and loaded in memory per every database call. It should ONLY be used if the default value throws memory errors.</p>
+</li>
+<li>
+<p><strong>output_parallelization</strong> <code>boolean</code> (Optional)  : Whether to reshuffle the resulting PCollection so results are distributed to all workers.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to query the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to read from.</p>
+</li>
+<li>
+<p><strong>partition_column</strong> <code>string</code> (Optional)  : Name of a column of numeric type that will be used for partitioning.</p>
+</li>
+<li>
+<p><strong>num_partitions</strong> <code>int32</code> (Optional)  : The number of partitions</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+</ul>
 <h3 id="usage_43">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromPostgres</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">disable_auto_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fetch_size</span>
+<span class="w">  </span><span class="nt">output_parallelization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">partition_column</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;partition_column&quot;</span>
+<span class="w">  </span><span class="nt">num_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_partitions</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetopostgres">WriteToPostgres</h2>
+<p>Write to a Postgres sink using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#writetojdbc">WriteToJdbc</a> that includes the necessary Postgres Driver and classes.</p>
+<p>An example of using WriteToPostgres with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToPostgres</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:postgresql://my-host:5432/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INSERT</span><span class="nv"> </span><span class="s">INTO</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">VALUES(?,</span><span class="nv"> </span><span class="s">?)&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToPostgres</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:postgresql://my-host:5432/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_5">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#writetojdbc">WriteToJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_44">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC sink.</p>
+</li>
+<li>
+<p><strong>auto_sharding</strong> <code>boolean</code> (Optional)  : If true, enables using a dynamically determined number of shards to write.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to write to.</p>
+</li>
+<li>
+<p><strong>batch_size</strong> <code>int64</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to insert records into the JDBC sink.</p>
+</li>
+</ul>
 <h3 id="usage_44">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToPostgres</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">auto_sharding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch_size</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfrompubsub">ReadFromPubSub</h2>
@@ -1796,48 +2528,395 @@ https://iceberg.apache.org/spec/#partition-transforms.</li>
 </code></pre></div>
 
 <hr><h2 id="readfrompubsublite">ReadFromPubSubLite</h2>
+<p>Performs a read from Google Pub/Sub Lite.</p>
+<p><strong>Note</strong>: This provider is deprecated. See Pub/Sub Lite <a href="https://cloud.google.com/pubsub/lite/docs">documentation</a> for more information.</p>
 <h3 id="configuration_47">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code> (Optional)  : The GCP project where the Pubsub Lite reservation resides. This can be a project number of a project ID.</p>
+</li>
+<li>
+<p><strong>schema</strong> <code>string</code> (Optional)  : The schema in which the data is encoded in the Pubsub Lite topic. For AVRO data, this is a schema defined with AVRO schema syntax (https://avro.apache.org/docs/1.10.2/spec.html#schemas). For JSON data, this is a schema defined with JSON-schema syntax (https://json-schema.org/).</p>
+</li>
+<li>
+<p><strong>format</strong> <code>string</code>  : The encoding format for the data stored in Pubsub Lite. Valid options are: RAW,AVRO,JSON,PROTO</p>
+</li>
+<li>
+<p><strong>subscription_name</strong> <code>string</code>  : The name of the subscription to consume data. This will be concatenated with the project and location parameters to build a full subscription path.</p>
+</li>
+<li>
+<p><strong>location</strong> <code>string</code>  : The region or zone where the Pubsub Lite reservation resides.</p>
+</li>
+<li>
+<p><strong>attributes</strong> <code>Array[string]</code> (Optional)  : List of attribute keys whose values will be flattened into the output message as additional fields.  For example, if the format is <code>RAW</code> and attributes is <code>["a", "b"]</code> then this read will produce elements of the form <code>Row(payload=..., a=..., b=...)</code></p>
+</li>
+<li>
+<p><strong>attribute_map</strong> <code>string</code> (Optional)  : Name of a field in which to store the full set of attributes associated with this message.  For example, if the format is <code>RAW</code> and <code>attribute_map</code> is set to <code>"attrs"</code> then this read will produce elements of the form <code>Row(payload=..., attrs=...)</code> where <code>attrs</code> is a Map type of string to string. If both <code>attributes</code> and <code>attribute_map</code> are set, the overlapping attribute values will be present in both the flattened structure and the attribute map.</p>
+</li>
+<li>
+<p><strong>attribute_id</strong> <code>string</code> (Optional)  : The attribute on incoming Pubsub Lite messages to use as a unique record identifier. When specified, the value of this attribute (which can be any string that uniquely identifies the record) will be used for deduplication of messages. If not provided, we cannot guarantee that no duplicate data will be delivered on the Pub/Sub stream. In this case, deduplication of the stream will be strictly best effort.</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+<li>
+<p><strong>file_descriptor_path</strong> <code>string</code> (Optional)  : The path to the Protocol Buffer File Descriptor Set file. This file is used for schema definition and message serialization.</p>
+</li>
+<li>
+<p><strong>message_name</strong> <code>string</code> (Optional)  : The name of the Protocol Buffer message to be used for schema extraction and data conversion.</p>
+</li>
+</ul>
 <h3 id="usage_47">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromPubSubLite</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;schema&quot;</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;format&quot;</span>
+<span class="w">  </span><span class="nt">subscription_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;subscription_name&quot;</span>
+<span class="w">  </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;location&quot;</span>
+<span class="w">  </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;attribute&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;attribute&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">attribute_map</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_map&quot;</span>
+<span class="w">  </span><span class="nt">attribute_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_id&quot;</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
+<span class="w">  </span><span class="nt">file_descriptor_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;file_descriptor_path&quot;</span>
+<span class="w">  </span><span class="nt">message_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;message_name&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetopubsublite">WriteToPubSubLite</h2>
+<p>Performs a write to Google Pub/Sub Lite.</p>
+<p><strong>Note</strong>: This provider is deprecated. See Pub/Sub Lite <a href="https://cloud.google.com/pubsub/lite/docs">documentation</a> for more information.</p>
 <h3 id="configuration_48">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code>  : The GCP project where the Pubsub Lite reservation resides. This can be a project number of a project ID.</p>
+</li>
+<li>
+<p><strong>format</strong> <code>string</code>  : The encoding format for the data stored in Pubsub Lite. Valid options are: RAW,JSON,AVRO,PROTO</p>
+</li>
+<li>
+<p><strong>topic_name</strong> <code>string</code>  : The name of the topic to publish data into. This will be concatenated with the project and location parameters to build a full topic path.</p>
+</li>
+<li>
+<p><strong>location</strong> <code>string</code>  : The region or zone where the Pubsub Lite reservation resides.</p>
+</li>
+<li>
+<p><strong>attributes</strong> <code>Array[string]</code> (Optional)  : List of attribute keys whose values will be pulled out as Pubsub Lite message attributes.  For example, if the format is <code>JSON</code> and attributes is <code>["a", "b"]</code> then elements of the form <code>Row(any_field=..., a=..., b=...)</code> will result in Pubsub Lite messages whose payload has the contents of any_field and whose attribute will be populated with the values of <code>a</code> and <code>b</code>.</p>
+</li>
+<li>
+<p><strong>attribute_id</strong> <code>string</code> (Optional)  : If set, will set an attribute for each Pubsub Lite message with the given name and a unique value. This attribute can then be used in a ReadFromPubSubLite PTransform to deduplicate messages.</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+<li>
+<p><strong>file_descriptor_path</strong> <code>string</code> (Optional)  : The path to the Protocol Buffer File Descriptor Set file. This file is used for schema definition and message serialization.</p>
+</li>
+<li>
+<p><strong>message_name</strong> <code>string</code> (Optional)  : The name of the Protocol Buffer message to be used for schema extraction and data conversion.</p>
+</li>
+<li>
+<p><strong>schema</strong> <code>string</code> (Optional)</p>
+</li>
+</ul>
 <h3 id="usage_48">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToPubSubLite</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;format&quot;</span>
+<span class="w">  </span><span class="nt">topic_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;topic_name&quot;</span>
+<span class="w">  </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;location&quot;</span>
+<span class="w">  </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;attribute&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;attribute&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">attribute_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;attribute_id&quot;</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
+<span class="w">  </span><span class="nt">file_descriptor_path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;file_descriptor_path&quot;</span>
+<span class="w">  </span><span class="nt">message_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;message_name&quot;</span>
+<span class="w">  </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;schema&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromspanner">ReadFromSpanner</h2>
+<p>Performs a Bulk read from Google Cloud Spanner using a specified SQL query or by directly accessing a single table and its columns.</p>
+<p>Both Query and Read APIs are supported. See more information about <a href="https://cloud.google.com/spanner/docs/reads">reading from Cloud Spanner</a>.</p>
+<p>Example configuration for performing a read using a SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-instance-id&#39;</span>
+<span class="w">    </span><span class="nt">database_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-database&#39;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&#39;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name and a list of columns. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-instance-id&#39;</span>
+<span class="w">    </span><span class="nt">database_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-database&#39;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-table&#39;</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;col1&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;col2&#39;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<p>Additionally, to read using a <a href="https://cloud.google.com/spanner/docs/secondary-indexes">Secondary Index</a>, specify the index name: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-instance-id&#39;</span>
+<span class="w">    </span><span class="nt">database_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-database&#39;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-table&#39;</span>
+<span class="w">    </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-index&#39;</span>
+<span class="w">    </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;col1&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;col2&#39;</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_6">Advanced Usage</h4>
+<p>Reads by default use the <a href="https://cloud.google.com/spanner/docs/reads#read_data_in_parallel">PartitionQuery API</a> which enforces some limitations on the type of queries that can be used so that the data can be read in parallel. If the query is not supported by the PartitionQuery API, then you can specify a non-partitioned read by setting batching to false.</p>
+<p>For example: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">batching</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+
+<p>Note: See <a href="https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/io/gcp/spanner/SpannerIO.html">SpannerIO</a> for more advanced information.</p>
 <h3 id="configuration_49">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code> (Optional)  : Specifies the GCP project ID.</p>
+</li>
+<li>
+<p><strong>instance</strong> <code>string</code>  : Specifies the Cloud Spanner instance.</p>
+</li>
+<li>
+<p><strong>database</strong> <code>string</code>  : Specifies the Cloud Spanner database.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Specifies the Cloud Spanner table.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : Specifies the SQL query to execute.</p>
+</li>
+<li>
+<p><strong>columns</strong> <code>Array[string]</code> (Optional)  : Specifies the columns to read from the table. This parameter is required when table is specified.</p>
+</li>
+<li>
+<p><strong>index</strong> <code>string</code> (Optional)  : Specifies the Index to read from. This parameter can only be specified when using table.</p>
+</li>
+<li>
+<p><strong>batching</strong> <code>boolean</code> (Optional)  : Set to false to disable batching. Useful when using a query that is not compatible with the PartitionQuery API. Defaults to true.</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : This option specifies whether and where to output unwritable rows.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+</ul>
 <h3 id="usage_49">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;instance&quot;</span>
+<span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;database&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">columns</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;columns&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;columns&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">index</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;index&quot;</span>
+<span class="w">  </span><span class="nt">batching</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetospanner">WriteToSpanner</h2>
+<p>Performs a bulk write to a Google Cloud Spanner table.</p>
+<p>Example configuration for performing a write to a single table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSpanner</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">project_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-project-id&#39;</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-instance-id&#39;</span>
+<span class="w">    </span><span class="nt">database_id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-database&#39;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;my-table&#39;</span>
+</code></pre></div>
+
+<p>Note: See <a href="https://beam.apache.org/releases/javadoc/current/org/apache/beam/sdk/io/gcp/spanner/SpannerIO.html">SpannerIO</a> for more advanced information.</p>
 <h3 id="configuration_50">Configuration</h3>
+<ul>
+<li>
+<p><strong>project</strong> <code>string</code> (Optional)  : Specifies the GCP project.</p>
+</li>
+<li>
+<p><strong>instance</strong> <code>string</code>  : Specifies the Cloud Spanner instance.</p>
+</li>
+<li>
+<p><strong>database</strong> <code>string</code>  : Specifies the Cloud Spanner database.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code>  : Specifies the Cloud Spanner table.</p>
+</li>
+<li>
+<p><strong>error_handling</strong> <code>Row</code> (Optional)  : Whether and how to handle write errors.    </p>
+<p>Row fields:</p>
+<ul>
+<li><strong>output</strong> <code>string</code>  : Name to use for the output error collection</li>
+</ul>
+</li>
+</ul>
 <h3 id="usage_50">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToSpanner</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;project&quot;</span>
+<span class="w">  </span><span class="nt">instance</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;instance&quot;</span>
+<span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;database&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">error_handling</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">output</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;output&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromsqlserver">ReadFromSqlServer</h2>
+<p>Read from a SQL Server source using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#readfromjdbc">ReadFromJdbc</a> that includes the necessary SQL Server Driver and classes.</p>
+<p>An example of using ReadFromSqlServer with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSqlServer</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:sqlserver://my-host:1433/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">table&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSqlServer</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:sqlserver://my-host:1433/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_7">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#readfromjdbc">ReadFromJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_51">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC source.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>disable_auto_commit</strong> <code>boolean</code> (Optional)  : Whether to disable auto commit on read. Defaults to true if not provided. The need for this config varies depending on the database platform. Informix requires this to be set to false while Postgres requires this to be set to true.</p>
+</li>
+<li>
+<p><strong>fetch_size</strong> <code>int32</code> (Optional)  : This method is used to override the size of the data that is going to be fetched and loaded in memory per every database call. It should ONLY be used if the default value throws memory errors.</p>
+</li>
+<li>
+<p><strong>output_parallelization</strong> <code>boolean</code> (Optional)  : Whether to reshuffle the resulting PCollection so results are distributed to all workers.</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to query the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to read from.</p>
+</li>
+<li>
+<p><strong>partition_column</strong> <code>string</code> (Optional)  : Name of a column of numeric type that will be used for partitioning.</p>
+</li>
+<li>
+<p><strong>num_partitions</strong> <code>int32</code> (Optional)  : The number of partitions</p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+</ul>
 <h3 id="usage_51">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadFromSqlServer</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">disable_auto_commit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">fetch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fetch_size</span>
+<span class="w">  </span><span class="nt">output_parallelization</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">partition_column</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;partition_column&quot;</span>
+<span class="w">  </span><span class="nt">num_partitions</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">num_partitions</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="writetosqlserver">WriteToSqlServer</h2>
+<p>Write to a SQL Server sink using a SQL query or by directly accessing a single table.</p>
+<p>This is a special case of <a href="#writetojdbc">WriteToJdbc</a> that includes the necessary SQL Server Driver and classes.</p>
+<p>An example of using WriteToSqlServer with SQL query: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToSqlServer</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:sqlserver://my-host:1433/database&quot;</span>
+<span class="w">    </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;INSERT</span><span class="nv"> </span><span class="s">INTO</span><span class="nv"> </span><span class="s">table</span><span class="nv"> </span><span class="s">VALUES(?,</span><span class="nv"> </span><span class="s">?)&quot;</span>
+</code></pre></div>
+
+<p>It is also possible to read a table by specifying a table name. For example, the following configuration will perform a read on an entire table: </p>
+<div class="codehilite"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToSqlServer</span>
+<span class="w">  </span><span class="nt">config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;jdbc:sqlserver://my-host:1433/database&quot;</span>
+<span class="w">    </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-table&quot;</span>
+</code></pre></div>
+
+<h4 id="advanced-usage_8">Advanced Usage</h4>
+<p>It might be necessary to use a custom JDBC driver that is not packaged with this transform. If that is the case, see <a href="#writetojdbc">WriteToJdbc</a> which allows for more custom configuration.</p>
 <h3 id="configuration_52">Configuration</h3>
+<ul>
+<li>
+<p><strong>url</strong> <code>string</code>  : Connection URL for the JDBC sink.</p>
+</li>
+<li>
+<p><strong>auto_sharding</strong> <code>boolean</code> (Optional)  : If true, enables using a dynamically determined number of shards to write.</p>
+</li>
+<li>
+<p><strong>connection_properties</strong> <code>string</code> (Optional)  : Used to set connection properties passed to the JDBC driver not already defined as standalone parameter (e.g. username and password can be set using parameters above accordingly). Format of the string must be "key1=value1;key2=value2;".</p>
+</li>
+<li>
+<p><strong>password</strong> <code>string</code> (Optional)  : Password for the JDBC source.</p>
+</li>
+<li>
+<p><strong>table</strong> <code>string</code> (Optional)  : Name of the table to write to.</p>
+</li>
+<li>
+<p><strong>batch_size</strong> <code>int64</code> (Optional)  </p>
+</li>
+<li>
+<p><strong>username</strong> <code>string</code> (Optional)  : Username for the JDBC source.</p>
+</li>
+<li>
+<p><strong>query</strong> <code>string</code> (Optional)  : SQL query used to insert records into the JDBC sink.</p>
+</li>
+</ul>
 <h3 id="usage_52">Usage</h3>
 <div class="codehilite"><pre><span></span><code><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">WriteToSqlServer</span>
 <span class="nt">input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
-<span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="nt">config</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;url&quot;</span>
+<span class="w">  </span><span class="nt">auto_sharding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true|false</span>
+<span class="w">  </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;connection_properties&quot;</span>
+<span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;password&quot;</span>
+<span class="w">  </span><span class="nt">table</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;table&quot;</span>
+<span class="w">  </span><span class="nt">batch_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">batch_size</span>
+<span class="w">  </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;username&quot;</span>
+<span class="w">  </span><span class="nt">query</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;query&quot;</span>
 </code></pre></div>
 
 <hr><h2 id="readfromtfrecord">ReadFromTFRecord</h2>
@@ -1856,7 +2935,7 @@ https://iceberg.apache.org/spec/#partition-transforms.</li>
     extension will be used to detect the compression.</p>
 </li>
 <li>
-<p><strong>validate</strong> <code>boolean</code> (Optional)  : Boolean flag to verify that the files exist during the 
+<p><strong>validate</strong> <code>boolean</code> (Optional)  : Boolean flag to verify that the files exist during the
     pipeline creation time.</p>
 </li>
 </ul>
