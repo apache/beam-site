@@ -1,0 +1,813 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.anomaly.transforms &mdash; Apache Beam 2.70.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=0906826a"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.anomaly.transforms</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.anomaly.transforms</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">CloudpickleCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly</span><span class="w"> </span><span class="kn">import</span> <span class="n">aggregations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AggregationFn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnomalyDetector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnomalyPrediction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnomalyResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleAnomalyDetector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThresholdFn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.detectors.offline</span><span class="w"> </span><span class="kn">import</span> <span class="n">OfflineDetector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.specifiable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Spec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.anomaly.specifiable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Specifiable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">RunInference</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.userstate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReadModifyWriteStateSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.typehints.typehints</span><span class="w"> </span><span class="kn">import</span> <span class="n">TupleConstraint</span>
+
+<span class="n">KeyT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;KeyT&#39;</span><span class="p">)</span>
+<span class="n">TempKeyT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;TempKeyT&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">InputT</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span>
+<span class="n">OutputT</span> <span class="o">=</span> <span class="n">AnomalyResult</span>
+<span class="n">KeyedInputT</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">KeyT</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]</span>
+<span class="n">KeyedOutputT</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">KeyT</span><span class="p">,</span> <span class="n">AnomalyResult</span><span class="p">]</span>
+<span class="n">NestedKeyedInputT</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">KeyT</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TempKeyT</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]]</span>
+<span class="n">NestedKeyedOutputT</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">KeyT</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TempKeyT</span><span class="p">,</span> <span class="n">AnomalyResult</span><span class="p">]]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ScoreAndLearnDoFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Scores and learns from incoming data using an anomaly detection model.</span>
+
+<span class="sd">  This DoFn applies an anomaly detection model to score incoming data and</span>
+<span class="sd">  then updates the model with the same data. It maintains the model state</span>
+<span class="sd">  using Beam&#39;s state management.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">MODEL_STATE_INDEX</span> <span class="o">=</span> <span class="n">ReadModifyWriteStateSpec</span><span class="p">(</span>
+      <span class="s1">&#39;saved_model&#39;</span><span class="p">,</span> <span class="n">CloudpickleCoder</span><span class="p">())</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detector_spec</span><span class="p">:</span> <span class="n">Spec</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_detector_spec</span> <span class="o">=</span> <span class="n">detector_spec</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_spec</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_detector_spec</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;_run_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">score_and_learn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Scores and learns from a single data point.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      data: A `beam.Row` representing the input data point.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      float: The anomaly score predicted by the model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="o">.</span><span class="n">_features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">f</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="o">.</span><span class="n">_features</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="o">.</span><span class="n">_asdict</span><span class="p">())</span>
+
+    <span class="c1"># score the incoming data using the existing model</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="o">.</span><span class="n">score_one</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># then update the model with the same data</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="o">.</span><span class="n">learn_one</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">y_pred</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">:</span> <span class="n">NestedKeyedInputT</span><span class="p">,</span>
+      <span class="n">model_state</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">MODEL_STATE_INDEX</span><span class="p">),</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+
+    <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="o">=</span> <span class="n">element</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="p">:</span> <span class="n">AnomalyDetector</span> <span class="o">=</span> <span class="n">model_state</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector_spec</span><span class="p">)</span>
+
+    <span class="k">yield</span> <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span>
+               <span class="n">AnomalyResult</span><span class="p">(</span>
+                   <span class="n">example</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+                   <span class="n">predictions</span><span class="o">=</span><span class="p">[</span>
+                       <span class="n">AnomalyPrediction</span><span class="p">(</span>
+                           <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="o">.</span><span class="n">_model_id</span><span class="p">,</span>
+                           <span class="n">score</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">score_and_learn</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+                   <span class="p">]))</span>
+
+    <span class="n">model_state</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_underlying</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RunScoreAndLearn">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunScoreAndLearn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunScoreAndLearn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">],</span>
+                                       <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies the _ScoreAndLearnDoFn to a PCollection of data.</span>
+
+<span class="sd">  This PTransform scores and learns from data points using an anomaly</span>
+<span class="sd">  detection model.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    detector: The anomaly detection model to use.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detector</span><span class="p">:</span> <span class="n">AnomalyDetector</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span> <span class="o">=</span> <span class="n">detector</span>
+
+<div class="viewcode-block" id="RunScoreAndLearn.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunScoreAndLearn.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">input</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_ScoreAndLearnDoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">to_spec</span><span class="p">()))</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_BaseThresholdDoFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a ThresholdFn to anomaly detection results.</span>
+
+<span class="sd">  This abstract base class defines the structure for DoFns that use a</span>
+<span class="sd">  `ThresholdFn` to convert anomaly scores into anomaly labels (e.g., normal</span>
+<span class="sd">  or outlier). It handles the core logic of applying the threshold function</span>
+<span class="sd">  and updating the prediction labels within `AnomalyResult` objects.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    threshold_fn_spec (Spec): Specification defining the `ThresholdFn` to be</span>
+<span class="sd">      used.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold_fn_spec</span><span class="p">:</span> <span class="n">Spec</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn_spec</span> <span class="o">=</span> <span class="n">threshold_fn_spec</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_apply_threshold_to_predictions</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">AnomalyResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnomalyResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Updates the prediction labels in an AnomalyResult using the ThresholdFn.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      result (AnomalyResult): The input `AnomalyResult` containing anomaly</span>
+<span class="sd">        scores.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      AnomalyResult: A new `AnomalyResult` with updated prediction labels</span>
+<span class="sd">        and threshold values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="n">p</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">score</span><span class="p">),</span>
+            <span class="n">threshold</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">predictions</span>
+    <span class="p">]</span>
+    <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="n">predictions</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StatelessThresholdDoFn</span><span class="p">(</span><span class="n">_BaseThresholdDoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a stateless ThresholdFn to anomaly detection results.</span>
+
+<span class="sd">  This DoFn is designed for stateless `ThresholdFn` implementations. It</span>
+<span class="sd">  initializes the `ThresholdFn` once during setup and applies it to each</span>
+<span class="sd">  incoming element without maintaining any state across elements.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    threshold_fn_spec (Spec): Specification defining the `ThresholdFn` to be</span>
+<span class="sd">      used.</span>
+
+<span class="sd">  Raises:</span>
+<span class="sd">    AssertionError: If the provided `threshold_fn_spec` leads to the</span>
+<span class="sd">      creation of a stateful `ThresholdFn`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold_fn_spec</span><span class="p">:</span> <span class="n">Spec</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_fn_spec</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="n">threshold_fn_spec</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;_run_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="n">threshold_fn_spec</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="p">,</span> <span class="n">ThresholdFn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">is_stateful</span><span class="p">,</span> \
+      <span class="s2">&quot;This DoFn can only take stateless function as threshold_fn&quot;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">NestedKeyedOutputT</span><span class="p">,</span>
+              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes a batch of anomaly results using a stateless ThresholdFn.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element (tuple[Any, tuple[Any, AnomalyResult]]): A tuple representing</span>
+<span class="sd">        an element in the Beam pipeline. It is expected to be in the format</span>
+<span class="sd">        `(key1, (key2, AnomalyResult))`, where key1 is the original input key,</span>
+<span class="sd">        and key2 is a disambiguating key for distinct data points.</span>
+<span class="sd">      **kwargs:  Additional keyword arguments passed to the `process` method</span>
+<span class="sd">        in Beam DoFns.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">      Iterable[tuple[Any, tuple[Any, AnomalyResult]]]: An iterable containing</span>
+<span class="sd">        a single output element with the same structure as the input, but with</span>
+<span class="sd">        the `AnomalyResult` having updated prediction labels based on the</span>
+<span class="sd">        stateless `ThresholdFn`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">element</span>
+    <span class="k">yield</span> <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold_to_predictions</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StatefulThresholdDoFn</span><span class="p">(</span><span class="n">_BaseThresholdDoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a stateful ThresholdFn to anomaly detection results.</span>
+
+<span class="sd">  This DoFn is designed for stateful `ThresholdFn` implementations. It leverages</span>
+<span class="sd">  Beam&#39;s state management to persist and update the state of the `ThresholdFn`</span>
+<span class="sd">  across multiple elements. This is necessary for `ThresholdFn`s that need to</span>
+<span class="sd">  accumulate information or adapt over time, such as quantile-based thresholds.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    threshold_fn_spec (Spec): Specification defining the `ThresholdFn` to be</span>
+<span class="sd">      used.</span>
+
+<span class="sd">  Raises:</span>
+<span class="sd">    AssertionError: If the provided `threshold_fn_spec` leads to the</span>
+<span class="sd">      creation of a stateless `ThresholdFn`.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">THRESHOLD_STATE_INDEX</span> <span class="o">=</span> <span class="n">ReadModifyWriteStateSpec</span><span class="p">(</span>
+      <span class="s1">&#39;saved_tracker&#39;</span><span class="p">,</span> <span class="n">CloudpickleCoder</span><span class="p">())</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold_fn_spec</span><span class="p">:</span> <span class="n">Spec</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_fn_spec</span><span class="o">.</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+    <span class="n">threshold_fn_spec</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;_run_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">threshold_fn</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="n">threshold_fn_spec</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">threshold_fn</span><span class="p">,</span> <span class="n">ThresholdFn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">threshold_fn</span><span class="o">.</span><span class="n">is_stateful</span><span class="p">,</span> \
+      <span class="s2">&quot;This DoFn can only take stateful function as threshold_fn&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn_spec</span> <span class="o">=</span> <span class="n">threshold_fn_spec</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">:</span> <span class="n">NestedKeyedOutputT</span><span class="p">,</span>
+      <span class="n">threshold_state</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">THRESHOLD_STATE_INDEX</span><span class="p">),</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes a batch of anomaly results using a stateful ThresholdFn.</span>
+
+<span class="sd">    For each input element, this DoFn retrieves the stateful `ThresholdFn` from</span>
+<span class="sd">    Beam state, initializes it if it&#39;s the first time, applies it to update</span>
+<span class="sd">    the prediction labels in the `AnomalyResult`, and then updates the state in</span>
+<span class="sd">    Beam for future elements.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element (tuple[Any, tuple[Any, AnomalyResult]]): A tuple representing</span>
+<span class="sd">        an element in the Beam pipeline. It is expected to be in the format</span>
+<span class="sd">        `(key1, (key2, AnomalyResult))`, where key1 is the original input key,</span>
+<span class="sd">        and key2 is a disambiguating key for distinct data points.</span>
+<span class="sd">      threshold_state: A Beam state parameter that provides access to the</span>
+<span class="sd">        persisted state of the `ThresholdFn`. It is automatically managed by</span>
+<span class="sd">        Beam.</span>
+<span class="sd">      **kwargs: Additional keyword arguments passed to the `process` method</span>
+<span class="sd">        in Beam DoFns.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">      Iterable[tuple[Any, tuple[Any, AnomalyResult]]]: An iterable containing</span>
+<span class="sd">        a single output element with the same structure as the input, but</span>
+<span class="sd">        with the `AnomalyResult` having updated prediction labels based on</span>
+<span class="sd">        the stateful `ThresholdFn`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">element</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span> <span class="o">=</span> <span class="n">threshold_state</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn_spec</span><span class="p">)</span>
+
+    <span class="k">yield</span> <span class="n">k1</span><span class="p">,</span> <span class="p">(</span><span class="n">k2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_threshold_to_predictions</span><span class="p">(</span><span class="n">result</span><span class="p">))</span>
+
+    <span class="n">threshold_state</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="RunThresholdCriterion">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunThresholdCriterion">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunThresholdCriterion</span><span class="p">(</span>
+    <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">],</span>
+                    <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies a threshold criterion to anomaly detection results.</span>
+
+<span class="sd">  This PTransform applies a `ThresholdFn` to the anomaly scores in</span>
+<span class="sd">  `AnomalyResult` objects, updating the prediction labels. It handles both</span>
+<span class="sd">  stateful and stateless `ThresholdFn` implementations.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    threshold_criterion: The `ThresholdFn` to apply.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold_criterion</span><span class="p">:</span> <span class="n">ThresholdFn</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span> <span class="o">=</span> <span class="n">threshold_criterion</span>
+
+<div class="viewcode-block" id="RunThresholdCriterion.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunThresholdCriterion.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">is_stateful</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="nb">input</span>
+          <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_StatefulThresholdDoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">to_spec</span><span class="p">())))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="nb">input</span>
+          <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_StatelessThresholdDoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_threshold_fn</span><span class="o">.</span><span class="n">to_spec</span><span class="p">())))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RunAggregationStrategy">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunAggregationStrategy">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunAggregationStrategy</span><span class="p">(</span>
+    <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">],</span>
+                    <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Applies an aggregation strategy to grouped anomaly detection results.</span>
+
+<span class="sd">  This PTransform aggregates anomaly predictions from multiple models or</span>
+<span class="sd">  data points using an `AggregationFn`. It handles both custom and simple</span>
+<span class="sd">  aggregation strategies.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    aggregation_strategy: The `AggregationFn` to use.</span>
+<span class="sd">    agg_model_id: The model ID for aggregation.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">aggregation_strategy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AggregationFn</span><span class="p">],</span> <span class="n">agg_model_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_aggregation_fn</span> <span class="o">=</span> <span class="n">aggregation_strategy</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span> <span class="o">=</span> <span class="n">agg_model_id</span>
+
+<div class="viewcode-block" id="RunAggregationStrategy.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunAggregationStrategy.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+    <span class="n">post_gbk</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">input</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">MapTuple</span><span class="p">(</span><span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">GroupByKey</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregation_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># simply put predictions into an iterable (list)</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">post_gbk</span>
+          <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">MapTuple</span><span class="p">(</span>
+              <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="p">(</span>
+                  <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span>
+                      <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">AnomalyResult</span><span class="p">(</span>
+                          <span class="n">example</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">example</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="p">[</span>
+                              <span class="n">prediction</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">v</span>
+                              <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">predictions</span>
+                          <span class="p">])))))</span>
+      <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="c1"># create a new aggregation_fn from spec and make sure it is initialized</span>
+    <span class="n">aggregation_fn_spec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_aggregation_fn</span><span class="o">.</span><span class="n">to_spec</span><span class="p">()</span>
+    <span class="n">aggregation_fn_spec</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;_run_init&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">aggregation_fn</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="n">aggregation_fn_spec</span><span class="p">)</span>
+
+    <span class="c1"># if no _agg_model_id is set in the aggregation function, use</span>
+    <span class="c1"># model id from the ensemble instance</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_fn</span><span class="p">,</span> <span class="n">aggregations</span><span class="o">.</span><span class="n">_AggModelIdMixin</span><span class="p">)):</span>
+      <span class="n">aggregation_fn</span><span class="o">.</span><span class="n">_set_agg_model_id_if_unset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_agg_model_id</span><span class="p">)</span>
+
+    <span class="c1"># post_gbk is a PCollection of ((original_key, temp_key), AnomalyResult).</span>
+    <span class="c1"># We use (original_key, temp_key) as the key for GroupByKey() so that</span>
+    <span class="c1"># scores from multiple detectors per data point are grouped.</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">post_gbk</span>
+        <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">MapTuple</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">agg</span><span class="o">=</span><span class="n">aggregation_fn</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span>
+                    <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">AnomalyResult</span><span class="p">(</span>
+                        <span class="n">example</span><span class="o">=</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">example</span><span class="p">,</span> <span class="n">predictions</span><span class="o">=</span><span class="p">[</span>
+                            <span class="n">agg</span><span class="o">.</span><span class="n">apply</span><span class="p">([</span>
+                                <span class="n">prediction</span> <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">v</span>
+                                <span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">predictions</span>
+                            <span class="p">])</span>
+                        <span class="p">])))))</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RunOneDetector">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunOneDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunOneDetector</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">],</span>
+                                     <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Runs a single anomaly detector on a PCollection of data.</span>
+
+<span class="sd">  This PTransform applies a single `AnomalyDetector` to the input data,</span>
+<span class="sd">  including scoring, learning, and thresholding.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    detector: The `AnomalyDetector` to run.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">detector</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span> <span class="o">=</span> <span class="n">detector</span>
+
+<div class="viewcode-block" id="RunOneDetector.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunOneDetector.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+    <span class="n">model_id</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">,</span>
+        <span class="s2">&quot;_model_id&quot;</span><span class="p">,</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">,</span> <span class="s2">&quot;_key&quot;</span><span class="p">,</span> <span class="s2">&quot;unknown_model&quot;</span><span class="p">))</span>
+    <span class="n">model_uuid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="nb">input</span>
+        <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Reshuffle</span><span class="p">()</span>
+        <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Score and Learn (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">RunScoreAndLearn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">:</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">ret</span> <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run Threshold Criterion (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+          <span class="n">RunThresholdCriterion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RunOfflineDetector">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunOfflineDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunOfflineDetector</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">],</span>
+                                         <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Runs a offline anomaly detector on a PCollection of data.</span>
+
+<span class="sd">  This PTransform applies a `OfflineDetector` to the input data, handling</span>
+<span class="sd">  custom input/output conversion and inference.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    offline_detector: The `OfflineDetector` to run.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offline_detector</span><span class="p">:</span> <span class="n">OfflineDetector</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span> <span class="o">=</span> <span class="n">offline_detector</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_restore_and_convert</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">NestedKeyedOutputT</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts the model output to AnomalyResult.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      elem: A tuple containing the combined key (original key, temp key, row)</span>
+<span class="sd">        and the output from RunInference.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A tuple containing the keyed AnomalyResult.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="p">(</span><span class="n">orig_key</span><span class="p">,</span> <span class="n">temp_key</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="n">prediction</span> <span class="o">=</span> <span class="n">elem</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prediction</span><span class="p">,</span> <span class="n">AnomalyPrediction</span><span class="p">),</span> <span class="p">(</span>
+      <span class="s2">&quot;Wrong model handler output type.&quot;</span> <span class="o">+</span>
+      <span class="sa">f</span><span class="s2">&quot;Expected: &#39;AnomalyPrediction&#39;, but got &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39;. &quot;</span> <span class="o">+</span>  <span class="c1"># pylint: disable=line-too-long</span>
+      <span class="s2">&quot;Consider adding a post-processing function via `with_postprocess_fn` &quot;</span> <span class="o">+</span>
+      <span class="sa">f</span><span class="s2">&quot;to convert from &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">prediction</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; to &#39;AnomalyPrediction&#39;, &quot;</span> <span class="o">+</span>  <span class="c1"># pylint: disable=line-too-long</span>
+      <span class="s2">&quot;or use `score_prediction_adapter` or `label_prediction_adapter` to &quot;</span> <span class="o">+</span>
+      <span class="s2">&quot;perform the conversion.&quot;</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">AnomalyResult</span><span class="p">(</span>
+        <span class="n">example</span><span class="o">=</span><span class="n">row</span><span class="p">,</span>
+        <span class="n">predictions</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                <span class="n">prediction</span><span class="p">,</span> <span class="n">model_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_model_id</span><span class="p">)</span>
+        <span class="p">])</span>
+    <span class="k">return</span> <span class="n">orig_key</span><span class="p">,</span> <span class="p">(</span><span class="n">temp_key</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_select_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span>
+                                         <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]:</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">elem</span>
+    <span class="n">row_dict</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">k</span><span class="p">,</span>
+        <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">row_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_features</span><span class="p">}))</span>
+
+<div class="viewcode-block" id="RunOfflineDetector.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunOfflineDetector.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+    <span class="n">model_uuid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Call RunInference Transform with the keyed model handler</span>
+    <span class="n">run_inference</span> <span class="o">=</span> <span class="n">RunInference</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_keyed_model_handler</span><span class="p">,</span>
+        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_run_inference_args</span><span class="p">)</span>
+
+    <span class="c1"># ((orig_key, temp_key, beam.Row), beam.Row)</span>
+    <span class="n">rekeyed_model_input</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">|</span> <span class="s2">&quot;Rekey&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_features</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">rekeyed_model_input</span> <span class="o">=</span> <span class="n">rekeyed_model_input</span> <span class="o">|</span> <span class="s2">&quot;Select Features&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_select_features</span><span class="p">)</span>
+
+    <span class="c1"># ((orig_key, temp_key, beam.Row), AnomalyPrediction)</span>
+    <span class="n">rekeyed_model_output</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">rekeyed_model_input</span>
+        <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Call RunInference (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">run_inference</span><span class="p">)</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">rekeyed_model_output</span> <span class="o">|</span> <span class="s2">&quot;Restore keys and convert model output&quot;</span> <span class="o">&gt;&gt;</span>
+        <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restore_and_convert</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">:</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">ret</span> <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run Threshold Criterion (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+          <span class="n">RunThresholdCriterion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_offline_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RunEnsembleDetector">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunEnsembleDetector">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunEnsembleDetector</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">],</span>
+                                          <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]]</span>
+                          <span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Runs an ensemble of anomaly detectors on a PCollection of data.</span>
+
+<span class="sd">  This PTransform applies an `EnsembleAnomalyDetector` to the input data,</span>
+<span class="sd">  running each sub-detector and aggregating the results.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    ensemble_detector: The `EnsembleAnomalyDetector` to run.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ensemble_detector</span><span class="p">:</span> <span class="n">EnsembleAnomalyDetector</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span> <span class="o">=</span> <span class="n">ensemble_detector</span>
+
+<div class="viewcode-block" id="RunEnsembleDetector.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.RunEnsembleDetector.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedInputT</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">NestedKeyedOutputT</span><span class="p">]:</span>
+    <span class="n">model_uuid</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_model_id</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">6</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_sub_detectors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_sub_detectors</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No detectors found at </span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">detector</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_sub_detectors</span><span class="p">):</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">EnsembleAnomalyDetector</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">input</span>
+            <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run Ensemble Detector at index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+            <span class="n">RunEnsembleDetector</span><span class="p">(</span><span class="n">detector</span><span class="p">))</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">detector</span><span class="p">,</span> <span class="n">OfflineDetector</span><span class="p">):</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">input</span>
+            <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run Offline Detector at index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+            <span class="n">RunOfflineDetector</span><span class="p">(</span><span class="n">detector</span><span class="p">))</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="nb">input</span>
+            <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run One Detector at index </span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+            <span class="n">RunOneDetector</span><span class="p">(</span><span class="n">detector</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_aggregation_strategy</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">aggregation_type</span> <span class="o">=</span> <span class="s2">&quot;Simple&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">aggregation_type</span> <span class="o">=</span> <span class="s2">&quot;Custom&quot;</span>
+
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">results</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Flatten</span><span class="p">()</span>
+        <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">aggregation_type</span><span class="si">}</span><span class="s2"> Aggregation Strategy (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+        <span class="n">RunAggregationStrategy</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_aggregation_strategy</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_model_id</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">:</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">ret</span> <span class="o">|</span> <span class="sa">f</span><span class="s2">&quot;Run Threshold Criterion (</span><span class="si">{</span><span class="n">model_uuid</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="o">&gt;&gt;</span>
+          <span class="n">RunThresholdCriterion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ensemble_detector</span><span class="o">.</span><span class="n">_threshold_criterion</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AnomalyDetection">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.AnomalyDetection">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnomalyDetection</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">InputT</span><span class="p">,</span>
+                                                              <span class="n">KeyedInputT</span><span class="p">]],</span>
+                                       <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">OutputT</span><span class="p">,</span>
+                                                              <span class="n">KeyedOutputT</span><span class="p">]]]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Performs anomaly detection on a PCollection of data.</span>
+
+<span class="sd">  This PTransform applies an `AnomalyDetector` or `EnsembleAnomalyDetector` to</span>
+<span class="sd">  the input data and returns a PCollection of `AnomalyResult` objects.</span>
+
+<span class="sd">  Examples::</span>
+
+<span class="sd">      # Run a single anomaly detector</span>
+<span class="sd">      p | AnomalyDetection(ZScore(features=[&quot;x1&quot;]))</span>
+
+<span class="sd">      # Run an ensemble anomaly detector</span>
+<span class="sd">      sub_detectors = [ZScore(features=[&quot;x1&quot;]), IQR(features=[&quot;x2&quot;])]</span>
+<span class="sd">      p | AnomalyDetection(EnsembleAnomalyDetector(</span>
+<span class="sd">          sub_detectors, aggregation_strategy=AnyVote()))</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    detector: The `AnomalyDetector` or `EnsembleAnomalyDetector` to use.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">detector</span><span class="p">:</span> <span class="n">AnomalyDetector</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span> <span class="o">=</span> <span class="n">detector</span>
+
+<div class="viewcode-block" id="AnomalyDetection.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.transforms.html#apache_beam.ml.anomaly.transforms.AnomalyDetection.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="nb">input</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">InputT</span><span class="p">,</span> <span class="n">KeyedInputT</span><span class="p">]],</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">OutputT</span><span class="p">,</span> <span class="n">KeyedOutputT</span><span class="p">]]:</span>
+
+    <span class="c1"># Add a temporary unique key per data point to facilitate grouping the</span>
+    <span class="c1"># outputs from multiple anomaly detectors for the same data point.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Unique key generation options:</span>
+    <span class="c1"># (1) Timestamp-based methods: https://docs.python.org/3/library/time.html</span>
+    <span class="c1"># (2) UUID module: https://docs.python.org/3/library/uuid.html</span>
+    <span class="c1">#</span>
+    <span class="c1"># Timestamp precision on Windows can lead to key collisions (see PEP 564:</span>
+    <span class="c1"># https://peps.python.org/pep-0564/#windows). Only time.perf_counter_ns()</span>
+    <span class="c1"># provides sufficient precision for our needs.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Performance note:</span>
+    <span class="c1"># $ python -m timeit -n 100000 &quot;import uuid; uuid.uuid1()&quot;</span>
+    <span class="c1"># 100000 loops, best of 5: 806 nsec per loop</span>
+    <span class="c1"># $ python -m timeit -n 100000 &quot;import uuid; uuid.uuid4()&quot;</span>
+    <span class="c1"># 100000 loops, best of 5: 1.53 usec per loop</span>
+    <span class="c1"># $ python -m timeit -n 100000 &quot;import time; time.perf_counter_ns()&quot;</span>
+    <span class="c1"># 100000 loops, best of 5: 82.3 nsec per loop</span>
+    <span class="c1">#</span>
+    <span class="c1"># We select uuid.uuid1() for its inclusion of node information, making it</span>
+    <span class="c1"># more suitable for parallel execution environments.</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">element_type</span><span class="p">,</span> <span class="n">TupleConstraint</span><span class="p">):</span>
+      <span class="n">keyed_input</span> <span class="o">=</span> <span class="nb">input</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Add a default key 0 if the input is unkeyed.</span>
+      <span class="n">keyed_input</span> <span class="o">=</span> <span class="nb">input</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">WithKeys</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">add_temp_key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">KeyedInputT</span><span class="p">],</span> <span class="n">NestedKeyedInputT</span><span class="p">]</span>
+    <span class="n">run_detector</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span><span class="p">,</span> <span class="n">EnsembleAnomalyDetector</span><span class="p">):</span>
+      <span class="n">add_temp_key_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid1</span><span class="p">()),</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+      <span class="n">run_detector</span> <span class="o">=</span> <span class="n">RunEnsembleDetector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># If there is only one non-ensemble detector, temp key can be the same</span>
+      <span class="c1"># because we don&#39;t need it to identify each input during result</span>
+      <span class="c1"># aggregation.</span>
+      <span class="n">add_temp_key_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span><span class="p">,</span> <span class="n">OfflineDetector</span><span class="p">):</span>
+        <span class="n">run_detector</span> <span class="o">=</span> <span class="n">RunOfflineDetector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">run_detector</span> <span class="o">=</span> <span class="n">RunOneDetector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_root_detector</span><span class="p">)</span>
+
+    <span class="n">nested_keyed_input</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">keyed_input</span> <span class="o">|</span> <span class="s2">&quot;Add temp key&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">add_temp_key_fn</span><span class="p">))</span>
+
+    <span class="n">nested_keyed_output</span> <span class="o">=</span> <span class="n">nested_keyed_input</span> <span class="o">|</span> <span class="n">run_detector</span>
+
+    <span class="c1"># Remove the temporary key and simplify the output.</span>
+    <span class="n">remove_temp_key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">NestedKeyedOutputT</span><span class="p">],</span> <span class="n">KeyedOutputT</span><span class="p">]</span> \
+        <span class="o">=</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">keyed_output</span> <span class="o">=</span> <span class="n">nested_keyed_output</span> <span class="o">|</span> <span class="s2">&quot;Remove temp key&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+        <span class="n">remove_temp_key_fn</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">input</span><span class="o">.</span><span class="n">element_type</span><span class="p">,</span> <span class="n">TupleConstraint</span><span class="p">):</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="n">keyed_output</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># Remove the default key if the input is unkeyed.</span>
+      <span class="n">ret</span> <span class="o">=</span> <span class="n">keyed_output</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Values</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">ret</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
