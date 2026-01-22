@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.milvus_search &mdash; Apache Beam 2.71.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=78d3c833"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.milvus_search</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.milvus_search</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus</span><span class="w"> </span><span class="kn">import</span> <span class="n">MilvusClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymilvus.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">MilvusException</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorDatabaseWriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.jdbc_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.postgres_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.postgres_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnSpecsBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chunk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_WRITE_BATCH_SIZE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MilvusConnectionParameters</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">MilvusHelpers</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">retry_with_backoff</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">unpack_dataclass_with_kwargs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoFn</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="MilvusWriteConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.milvus_search.html#apache_beam.ml.rag.ingestion.milvus_search.MilvusWriteConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusWriteConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration parameters for writing data to Milvus collections.</span>
+
+<span class="sd">  This class defines the parameters needed to write data to a Milvus collection,</span>
+<span class="sd">  including collection targeting, batching behavior, and operation timeouts.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    collection_name: Name of the target Milvus collection to write data to.</span>
+<span class="sd">      Must be a non-empty string.</span>
+<span class="sd">    partition_name: Name of the specific partition within the collection to</span>
+<span class="sd">      write to. If empty, writes to the default partition.</span>
+<span class="sd">    timeout: Maximum time in seconds to wait for write operations to complete.</span>
+<span class="sd">      If None, uses the client&#39;s default timeout.</span>
+<span class="sd">    write_config: Configuration for write operations including batch size and</span>
+<span class="sd">      other write-specific settings.</span>
+<span class="sd">    kwargs: Additional keyword arguments for write operations. Enables forward</span>
+<span class="sd">      compatibility with future Milvus client parameters.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">collection_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">partition_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">write_config</span><span class="p">:</span> <span class="n">WriteConfig</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="n">WriteConfig</span><span class="p">)</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Collection name must be provided&quot;</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">write_batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the batch size for write operations.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      The configured batch size, or DEFAULT_WRITE_BATCH_SIZE if not specified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_config</span><span class="o">.</span><span class="n">write_batch_size</span> <span class="ow">or</span> <span class="n">DEFAULT_WRITE_BATCH_SIZE</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusVectorWriterConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.milvus_search.html#apache_beam.ml.rag.ingestion.milvus_search.MilvusVectorWriterConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusVectorWriterConfig</span><span class="p">(</span><span class="n">VectorDatabaseWriteConfig</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for writing vector data to Milvus collections.</span>
+
+<span class="sd">  This class extends VectorDatabaseWriteConfig to provide Milvus-specific</span>
+<span class="sd">  configuration for ingesting vector embeddings and associated metadata.</span>
+<span class="sd">  It defines how Apache Beam chunks are converted to Milvus records and</span>
+<span class="sd">  handles the write operation parameters.</span>
+
+<span class="sd">  The configuration includes connection parameters, write settings, and</span>
+<span class="sd">  column specifications that determine how chunk data is mapped to Milvus</span>
+<span class="sd">  fields.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    connection_params: Configuration for connecting to the Milvus server,</span>
+<span class="sd">      including URI, credentials, and connection options.</span>
+<span class="sd">    write_config: Configuration for write operations including collection name,</span>
+<span class="sd">      partition, batch size, and timeouts.</span>
+<span class="sd">    column_specs: List of column specifications defining how chunk fields are</span>
+<span class="sd">      mapped to Milvus collection fields. Defaults to standard RAG fields</span>
+<span class="sd">      (id, embedding, sparse_embedding, content, metadata).</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">    config = MilvusVectorWriterConfig(</span>
+<span class="sd">      connection_params=MilvusConnectionParameters(</span>
+<span class="sd">        uri=&quot;http://localhost:19530&quot;),</span>
+<span class="sd">      write_config=MilvusWriteConfig(collection_name=&quot;my_collection&quot;),</span>
+<span class="sd">      column_specs=MilvusVectorWriterConfig.default_column_specs())</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">connection_params</span><span class="p">:</span> <span class="n">MilvusConnectionParameters</span>
+  <span class="n">write_config</span><span class="p">:</span> <span class="n">MilvusWriteConfig</span>
+  <span class="n">column_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
+      <span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">MilvusVectorWriterConfig</span><span class="o">.</span><span class="n">default_column_specs</span><span class="p">())</span>
+
+<div class="viewcode-block" id="MilvusVectorWriterConfig.create_converter">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.milvus_search.html#apache_beam.ml.rag.ingestion.milvus_search.MilvusVectorWriterConfig.create_converter">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Chunk</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a function to convert Apache Beam Chunks to Milvus records.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A function that takes a Chunk and returns a dictionary representing</span>
+<span class="sd">      a Milvus record with fields mapped according to column_specs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">Chunk</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">:</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">convert</span></div>
+
+
+<div class="viewcode-block" id="MilvusVectorWriterConfig.create_write_transform">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.milvus_search.html#apache_beam.ml.rag.ingestion.milvus_search.MilvusVectorWriterConfig.create_write_transform">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_write_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates the Apache Beam transform for writing to Milvus.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A PTransform that can be applied to a PCollection of Chunks to write</span>
+<span class="sd">      them to the configured Milvus collection.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_WriteToMilvusVectorDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MilvusVectorWriterConfig.default_column_specs">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.milvus_search.html#apache_beam.ml.rag.ingestion.milvus_search.MilvusVectorWriterConfig.default_column_specs">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_column_specs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns default column specifications for RAG use cases.</span>
+
+<span class="sd">    Creates column mappings for standard RAG fields: id, dense embedding,</span>
+<span class="sd">    sparse embedding, content text, and metadata. These specifications</span>
+<span class="sd">    define how Chunk fields are converted to Milvus-compatible formats.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      List of ColumnSpec objects defining the default field mappings.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">column_specs</span> <span class="o">=</span> <span class="n">ColumnSpecsBuilder</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">column_specs</span>\
+      <span class="o">.</span><span class="n">with_id_spec</span><span class="p">()</span>\
+      <span class="o">.</span><span class="n">with_embedding_spec</span><span class="p">(</span><span class="n">convert_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>\
+      <span class="o">.</span><span class="n">with_sparse_embedding_spec</span><span class="p">(</span><span class="n">conv_fn</span><span class="o">=</span><span class="n">MilvusHelpers</span><span class="o">.</span><span class="n">sparse_embedding</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">with_content_spec</span><span class="p">()</span>\
+      <span class="o">.</span><span class="n">with_metadata_spec</span><span class="p">(</span><span class="n">convert_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>\
+      <span class="o">.</span><span class="n">build</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WriteToMilvusVectorDatabase</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Apache Beam PTransform for writing vector data to Milvus.</span>
+
+<span class="sd">  This transform handles the conversion of Apache Beam Chunks to Milvus records</span>
+<span class="sd">  and coordinates the write operations. It applies the configured converter</span>
+<span class="sd">  function and uses a DoFn for batched writes to optimize performance.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    config: MilvusVectorWriterConfig containing all necessary parameters for</span>
+<span class="sd">      the write operation.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MilvusVectorWriterConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Expands the PTransform to convert chunks and write to Milvus.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      pcoll: PCollection of Chunk objects to write to Milvus.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      PCollection of dictionaries representing the records written to Milvus.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">pcoll</span>
+        <span class="o">|</span> <span class="s2">&quot;Convert to Records&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">create_converter</span><span class="p">())</span>
+        <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+            <span class="n">_WriteMilvusFn</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">connection_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">write_config</span><span class="p">)))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WriteMilvusFn</span><span class="p">(</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;DoFn that handles batched writes to Milvus.</span>
+
+<span class="sd">  This DoFn accumulates records in batches and flushes them to Milvus when</span>
+<span class="sd">  the batch size is reached or when the bundle finishes. This approach</span>
+<span class="sd">  optimizes performance by reducing the number of individual write operations.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    connection_params: Configuration for connecting to the Milvus server.</span>
+<span class="sd">    write_config: Configuration for write operations including batch size</span>
+<span class="sd">      and collection details.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_params</span><span class="p">:</span> <span class="n">MilvusConnectionParameters</span><span class="p">,</span>
+      <span class="n">write_config</span><span class="p">:</span> <span class="n">MilvusWriteConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span> <span class="o">=</span> <span class="n">connection_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span> <span class="o">=</span> <span class="n">write_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Processes individual records, batching them for efficient writes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: A dictionary representing a Milvus record to write.</span>
+<span class="sd">      *args: Additional positional arguments.</span>
+<span class="sd">      **kwargs: Additional keyword arguments.</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">      The original element after adding it to the batch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span>  <span class="c1"># Unused parameters</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">write_batch_size</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+    <span class="k">yield</span> <span class="n">element</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Called when a bundle finishes processing.</span>
+
+<span class="sd">    Flushes any remaining records in the batch to ensure all data is written.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flushes the current batch of records to Milvus.</span>
+
+<span class="sd">    Creates a MilvusSink connection and writes all batched records,</span>
+<span class="sd">    then clears the batch for the next set of records.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">with</span> <span class="n">_MilvusSink</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="p">)</span> <span class="k">as</span> <span class="n">sink</span><span class="p">:</span>
+      <span class="n">sink</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns display data for monitoring and debugging.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Dictionary containing database, collection, and batch size information</span>
+<span class="sd">      for display in the Apache Beam monitoring UI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">display_data</span><span class="p">()</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;database&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span><span class="o">.</span><span class="n">db_name</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">collection_name</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">write_batch_size</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_MilvusSink</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Low-level sink for writing data directly to Milvus.</span>
+
+<span class="sd">  This class handles the direct interaction with the Milvus client for</span>
+<span class="sd">  upsert operations. It manages the connection lifecycle and provides</span>
+<span class="sd">  context manager support for proper resource cleanup.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    connection_params: Configuration for connecting to the Milvus server.</span>
+<span class="sd">    write_config: Configuration for write operations including collection</span>
+<span class="sd">      and partition targeting.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_params</span><span class="p">:</span> <span class="n">MilvusConnectionParameters</span><span class="p">,</span>
+      <span class="n">write_config</span><span class="p">:</span> <span class="n">MilvusWriteConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span> <span class="o">=</span> <span class="n">connection_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span> <span class="o">=</span> <span class="n">write_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">documents</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes a batch of documents to the Milvus collection.</span>
+
+<span class="sd">    Performs an upsert operation to insert new documents or update existing</span>
+<span class="sd">    ones based on primary key. After the upsert, flushes the collection to</span>
+<span class="sd">    ensure data persistence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      documents: List of dictionaries representing Milvus records to write.</span>
+<span class="sd">        Each dictionary should contain fields matching the collection schema.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">MilvusClient</span><span class="p">(</span>
+        <span class="o">**</span><span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span><span class="p">))</span>
+
+    <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">upsert</span><span class="p">(</span>
+        <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+        <span class="n">partition_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">partition_name</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">documents</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_write_config</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+        <span class="s2">&quot;Upserted into Milvus: upsert_count=</span><span class="si">%d</span><span class="s2">, cost=</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;upsert_count&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cost&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enters the context manager and establishes Milvus connection.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Self, enabling use in &#39;with&#39; statements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+      <span class="n">connection_params</span> <span class="o">=</span> <span class="n">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_params</span><span class="p">)</span>
+
+      <span class="c1"># Extract retry parameters from connection_params.</span>
+      <span class="n">max_retries</span> <span class="o">=</span> <span class="n">connection_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;max_retries&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+      <span class="n">retry_delay</span> <span class="o">=</span> <span class="n">connection_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;retry_delay&#39;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+      <span class="n">retry_backoff_factor</span> <span class="o">=</span> <span class="n">connection_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;retry_backoff_factor&#39;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+
+      <span class="k">def</span><span class="w"> </span><span class="nf">create_client</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">MilvusClient</span><span class="p">(</span><span class="o">**</span><span class="n">connection_params</span><span class="p">)</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">retry_with_backoff</span><span class="p">(</span>
+          <span class="n">create_client</span><span class="p">,</span>
+          <span class="n">max_retries</span><span class="o">=</span><span class="n">max_retries</span><span class="p">,</span>
+          <span class="n">retry_delay</span><span class="o">=</span><span class="n">retry_delay</span><span class="p">,</span>
+          <span class="n">retry_backoff_factor</span><span class="o">=</span><span class="n">retry_backoff_factor</span><span class="p">,</span>
+          <span class="n">operation_name</span><span class="o">=</span><span class="s2">&quot;Milvus connection&quot;</span><span class="p">,</span>
+          <span class="n">exception_types</span><span class="o">=</span><span class="p">(</span><span class="n">MilvusException</span><span class="p">,</span> <span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exits the context manager and closes the Milvus connection.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      exc_type: Exception type if an exception was raised.</span>
+<span class="sd">      exc_val: Exception value if an exception was raised.</span>
+<span class="sd">      exc_tb: Exception traceback if an exception was raised.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_</span> <span class="o">=</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_val</span><span class="p">,</span> <span class="n">exc_tb</span>  <span class="c1"># Unused parameters</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
