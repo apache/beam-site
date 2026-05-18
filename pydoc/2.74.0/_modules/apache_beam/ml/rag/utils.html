@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.utils &mdash; Apache Beam 2.74.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=1522ad4f"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.utils</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Chunk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Content</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Embedding</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Default batch size for writing data to Milvus, matching</span>
+<span class="c1"># JdbcIO.DEFAULT_BATCH_SIZE.</span>
+<span class="n">DEFAULT_WRITE_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<div class="viewcode-block" id="MilvusConnectionParameters">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.MilvusConnectionParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusConnectionParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configurations for establishing connections to Milvus servers.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    uri: URI endpoint for connecting to Milvus server in the format</span>
+<span class="sd">      &quot;http(s)://hostname:port&quot;.</span>
+<span class="sd">    user: Username for authentication. Required if authentication is enabled and</span>
+<span class="sd">      not using token authentication.</span>
+<span class="sd">    password: Password for authentication. Required if authentication is enabled</span>
+<span class="sd">      and not using token authentication.</span>
+<span class="sd">    db_name: Database Name to connect to. Specifies which Milvus database to</span>
+<span class="sd">      use. Defaults to &#39;default&#39;.</span>
+<span class="sd">    token: Authentication token as an alternative to username/password.</span>
+<span class="sd">    timeout: Connection timeout in seconds. Uses client default if None.</span>
+<span class="sd">    kwargs: Optional keyword arguments for additional connection parameters.</span>
+<span class="sd">      Enables forward compatibility.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">uri</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">db_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+  <span class="n">token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">uri</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;URI must be provided for Milvus connection&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Generate unique alias if not provided. One-to-one mapping between alias</span>
+    <span class="c1"># and connection - each alias represents exactly one Milvus connection.</span>
+    <span class="k">if</span> <span class="s2">&quot;alias&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span>
+      <span class="n">alias</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;milvus_conn_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;alias&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alias</span></div>
+
+
+
+<div class="viewcode-block" id="MilvusHelpers">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.MilvusHelpers">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MilvusHelpers</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Utility class providing helper methods for Milvus vector db operations.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MilvusHelpers.sparse_embedding">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.MilvusHelpers.sparse_embedding">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sparse_embedding</span><span class="p">(</span>
+      <span class="n">sparse_vector</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sparse_vector</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="c1"># Converts sparse embedding from (indices, values) tuple format to</span>
+    <span class="c1"># Milvus-compatible values dict format {dimension_index: value, ...}.</span>
+    <span class="n">indices</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">sparse_vector</span>
+    <span class="k">return</span> <span class="p">{</span><span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">)}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="parse_chunk_strings">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.parse_chunk_strings">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_chunk_strings</span><span class="p">(</span><span class="n">chunk_str_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Chunk</span><span class="p">]:</span>
+  <span class="n">parsed_chunks</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="c1"># Define safe globals and disable built-in functions for safety.</span>
+  <span class="n">safe_globals</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s1">&#39;Chunk&#39;</span><span class="p">:</span> <span class="n">Chunk</span><span class="p">,</span>
+      <span class="s1">&#39;Content&#39;</span><span class="p">:</span> <span class="n">Content</span><span class="p">,</span>
+      <span class="s1">&#39;Embedding&#39;</span><span class="p">:</span> <span class="n">Embedding</span><span class="p">,</span>
+      <span class="s1">&#39;defaultdict&#39;</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">,</span>
+      <span class="s1">&#39;list&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span>
+      <span class="s1">&#39;__builtins__&#39;</span><span class="p">:</span> <span class="p">{}</span>
+  <span class="p">}</span>
+
+  <span class="k">for</span> <span class="n">raw_str</span> <span class="ow">in</span> <span class="n">chunk_str_list</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="c1"># replace &quot;&lt;class &#39;list&#39;&gt;&quot; with actual list reference.</span>
+      <span class="n">cleaned_str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
+          <span class="sa">r</span><span class="s2">&quot;defaultdict\(&lt;class &#39;list&#39;&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;defaultdict(list&quot;</span><span class="p">,</span> <span class="n">raw_str</span><span class="p">)</span>
+
+      <span class="c1"># Evaluate string in restricted environment.</span>
+      <span class="n">chunk</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">cleaned_str</span><span class="p">,</span> <span class="n">safe_globals</span><span class="p">)</span>  <span class="c1"># pylint: disable=eval-used</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span> <span class="n">Chunk</span><span class="p">):</span>
+        <span class="n">parsed_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parsed object is not a Chunk instance&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing string:</span><span class="se">\n</span><span class="si">{</span><span class="n">raw_str</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">parsed_chunks</span></div>
+
+
+
+<div class="viewcode-block" id="unpack_dataclass_with_kwargs">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.unpack_dataclass_with_kwargs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack_dataclass_with_kwargs</span><span class="p">(</span><span class="n">dataclass_instance</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Unpacks dataclass fields into a flat dict, merging kwargs with precedence.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    dataclass_instance: Dataclass instance to unpack.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    dict: Flattened dictionary with kwargs taking precedence over fields.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="c1"># Create a copy of the dataclass&#39;s __dict__.</span>
+  <span class="n">params_dict</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">dataclass_instance</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+  <span class="c1"># Extract the nested kwargs dictionary.</span>
+  <span class="n">nested_kwargs</span> <span class="o">=</span> <span class="n">params_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kwargs&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+  <span class="c1"># Merge the dictionaries, with nested_kwargs taking precedence</span>
+  <span class="c1"># in case of duplicate keys.</span>
+  <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">params_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">nested_kwargs</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="retry_with_backoff">
+<a class="viewcode-back" href="../../../../apache_beam.ml.rag.utils.html#apache_beam.ml.rag.utils.retry_with_backoff">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">retry_with_backoff</span><span class="p">(</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">max_retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">retry_delay</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">retry_backoff_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">operation_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;operation&quot;</span><span class="p">,</span>
+    <span class="n">exception_types</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="ne">BaseException</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="p">)</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Executes an operation with retry logic and exponential backoff.</span>
+
+<span class="sd">  This is a generic retry utility that can be used for any operation that may</span>
+<span class="sd">  fail transiently. It retries the operation with exponential backoff between</span>
+<span class="sd">  attempts.</span>
+
+<span class="sd">  Note:</span>
+<span class="sd">    This utility is designed for one-time setup operations and complements</span>
+<span class="sd">    Apache Beam&#39;s RequestResponseIO pattern. Use retry_with_backoff() for:</span>
+
+<span class="sd">    * Establishing client connections in __enter__() methods (e.g., creating</span>
+<span class="sd">      MilvusClient instances, database connections) before processing elements</span>
+<span class="sd">    * One-time setup/teardown operations in DoFn lifecycle methods</span>
+<span class="sd">    * Operations outside of per-element processing where retry is needed</span>
+
+<span class="sd">    For per-element operations (e.g., API calls within Caller.__call__),</span>
+<span class="sd">    use RequestResponseIO which already provides automatic retry with</span>
+<span class="sd">    exponential backoff, failure handling, caching, and other features.</span>
+<span class="sd">    See: https://beam.apache.org/documentation/io/built-in/webapis/</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    operation: Callable that performs the operation to retry. Should return</span>
+<span class="sd">      the result of the operation.</span>
+<span class="sd">    max_retries: Maximum number of retry attempts. Default is 3.</span>
+<span class="sd">    retry_delay: Initial delay in seconds between retries. Default is 1.0.</span>
+<span class="sd">    retry_backoff_factor: Multiplier for the delay after each retry. Default</span>
+<span class="sd">      is 2.0 (exponential backoff).</span>
+<span class="sd">    operation_name: Name of the operation for logging purposes. Default is</span>
+<span class="sd">      &quot;operation&quot;.</span>
+<span class="sd">    exception_types: Tuple of exception types to catch and retry. Default is</span>
+<span class="sd">      (Exception,) which catches all exceptions.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    The result of the operation if successful.</span>
+
+<span class="sd">  Raises:</span>
+<span class="sd">    The last exception encountered if all retry attempts fail.</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">    &gt;&gt;&gt; def connect_to_service():</span>
+<span class="sd">    ...     return service.connect(host=&quot;localhost&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; client = retry_with_backoff(</span>
+<span class="sd">    ...     connect_to_service,</span>
+<span class="sd">    ...     max_retries=5,</span>
+<span class="sd">    ...     retry_delay=2.0,</span>
+<span class="sd">    ...     operation_name=&quot;service connection&quot;)</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="n">last_exception</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_retries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">operation</span><span class="p">()</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s2">&quot;Successfully completed </span><span class="si">%s</span><span class="s2"> on attempt </span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">,</span>
+          <span class="n">operation_name</span><span class="p">,</span>
+          <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="n">exception_types</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">last_exception</span> <span class="o">=</span> <span class="n">e</span>
+      <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="n">max_retries</span><span class="p">:</span>
+        <span class="n">delay</span> <span class="o">=</span> <span class="n">retry_delay</span> <span class="o">*</span> <span class="p">(</span><span class="n">retry_backoff_factor</span><span class="o">**</span><span class="n">attempt</span><span class="p">)</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> attempt </span><span class="si">%d</span><span class="s2"> failed: </span><span class="si">%s</span><span class="s2">. Retrying in </span><span class="si">%.2f</span><span class="s2"> seconds...&quot;</span><span class="p">,</span>
+            <span class="n">operation_name</span><span class="p">,</span>
+            <span class="n">attempt</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">e</span><span class="p">,</span>
+            <span class="n">delay</span><span class="p">)</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">delay</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="s2">&quot;Failed </span><span class="si">%s</span><span class="s2"> after </span><span class="si">%d</span><span class="s2"> attempts&quot;</span><span class="p">,</span> <span class="n">operation_name</span><span class="p">,</span> <span class="n">max_retries</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">last_exception</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
