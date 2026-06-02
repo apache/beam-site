@@ -1,0 +1,720 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.async_dofn &mdash; Apache Beam 2.74.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=1522ad4f"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.async_dofn</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.transforms.async_dofn</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncIterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">floor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">threading</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeneratorType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimeDomain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">coders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.userstate</span><span class="w"> </span><span class="kn">import</span> <span class="n">BagStateSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.userstate</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReadModifyWriteStateSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.userstate</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimerSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.userstate</span><span class="w"> </span><span class="kn">import</span> <span class="n">on_timer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.shared</span><span class="w"> </span><span class="kn">import</span> <span class="n">Shared</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timestamp</span>
+
+
+<span class="c1"># A wrapper around a dofn that processes that dofn in an asynchronous manner.</span>
+<div class="viewcode-block" id="AsyncWrapper">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncWrapper</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Class that wraps a dofn and converts it from one which process elements</span>
+<span class="sd">  synchronously to one which processes them asynchronously.</span>
+
+<span class="sd">  For synchronous dofns the default settings mean that many (100s) of elements</span>
+<span class="sd">  will be processed in parallel and that processing an element will block all</span>
+<span class="sd">  other work on that key.  In addition runners are optimized for latencies less</span>
+<span class="sd">  than a few seconds and longer operations can result in high retry rates. Async</span>
+<span class="sd">  should be considered when the default parallelism is not correct and/or items</span>
+<span class="sd">  are expected to take longer than a few seconds to process.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">TIMER</span> <span class="o">=</span> <span class="n">TimerSpec</span><span class="p">(</span><span class="s1">&#39;timer&#39;</span><span class="p">,</span> <span class="n">TimeDomain</span><span class="o">.</span><span class="n">REAL_TIME</span><span class="p">)</span>
+  <span class="n">TIMER_SET</span> <span class="o">=</span> <span class="n">ReadModifyWriteStateSpec</span><span class="p">(</span><span class="s1">&#39;timer_set&#39;</span><span class="p">,</span> <span class="n">coders</span><span class="o">.</span><span class="n">BooleanCoder</span><span class="p">())</span>
+  <span class="n">TO_PROCESS</span> <span class="o">=</span> <span class="n">BagStateSpec</span><span class="p">(</span>
+      <span class="s1">&#39;to_process&#39;</span><span class="p">,</span>
+      <span class="n">coders</span><span class="o">.</span><span class="n">TupleCoder</span><span class="p">(</span>
+          <span class="p">[</span><span class="n">coders</span><span class="o">.</span><span class="n">FastPrimitivesCoder</span><span class="p">(),</span> <span class="n">coders</span><span class="o">.</span><span class="n">FastPrimitivesCoder</span><span class="p">()]))</span>
+  <span class="c1"># The below items are one per dofn (not instance) so are maps of UUID to</span>
+  <span class="c1"># value.</span>
+  <span class="n">_event_loop</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">_event_loop_thread</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">_loop_started</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">_processing_elements</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">_items_in_buffer</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">_pool</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="c1"># Must be reentrant lock so that callbacks can either be called by a pool</span>
+  <span class="c1"># thread OR the thread submitting the callback which must already hold this</span>
+  <span class="c1"># lock.</span>
+  <span class="n">_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+  <span class="n">_verbose_logging</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">sync_fn</span><span class="p">,</span>
+      <span class="n">parallelism</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+      <span class="n">callback_frequency</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+      <span class="n">max_items_to_buffer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+      <span class="n">max_wait_time</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+      <span class="n">id_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">use_asyncio</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wraps the sync_fn to create an asynchronous version.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      sync_fn: The dofn to wrap.  Must take (K, V) as input.</span>
+<span class="sd">      parallelism: The maximum number of elements to process in parallel per</span>
+<span class="sd">        worker for this dofn.  By default this is set to 1 as the most common</span>
+<span class="sd">        case for async dofns are heavy CPU or GPU dofns where the dofn requires</span>
+<span class="sd">        the a signficant fraction of the CPU/GPU.</span>
+<span class="sd">      callback_frequency: The frequency with which the runner will check for</span>
+<span class="sd">        elements to commit.  A short callback frequency will mean items are</span>
+<span class="sd">        commited shortly after processing but cause additional work for the</span>
+<span class="sd">        worker.  A large callback frequency will result in slower commits but</span>
+<span class="sd">        less busy work.  The default of 5s will result in a maximum added</span>
+<span class="sd">        latency of 5s while requiring relatively few resources.  If your</span>
+<span class="sd">        messages take significantly longer than 5s to process it is recommended</span>
+<span class="sd">        to raise this.</span>
+<span class="sd">      max_items_to_buffer: We should ideally buffer enough to always be busy but</span>
+<span class="sd">        not so much that the worker ooms.  By default will be 2x the parallelism</span>
+<span class="sd">        which should be good for most pipelines.</span>
+<span class="sd">      timeout: The maximum amount of time an item should try to be scheduled</span>
+<span class="sd">        locally before it goes in the queue of waiting work.</span>
+<span class="sd">      max_wait_time: The maximum amount of sleep time while attempting to</span>
+<span class="sd">        schedule an item.  Used in testing to ensure timeouts are met.</span>
+<span class="sd">      id_fn: A function that returns a hashable object from an element. This</span>
+<span class="sd">        will be used to track items instead of the element&#39;s default hash.</span>
+<span class="sd">      use_asyncio: If true, use asyncio and coroutines to process items. If</span>
+<span class="sd">        false, use ThreadPoolExecutor. Use asyncio when the work being done</span>
+<span class="sd">        is not CPU intensive and heavily waits on network or IO which can</span>
+<span class="sd">        benefit from higher parallelism.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span> <span class="o">=</span> <span class="n">sync_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span> <span class="o">=</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_parallelism</span> <span class="o">=</span> <span class="n">parallelism</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span> <span class="o">=</span> <span class="n">timeout</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_wait_time</span> <span class="o">=</span> <span class="n">max_wait_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timer_frequency</span> <span class="o">=</span> <span class="n">callback_frequency</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_id_fn</span> <span class="o">=</span> <span class="n">id_fn</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_use_asyncio</span> <span class="o">=</span> <span class="n">use_asyncio</span>
+    <span class="k">if</span> <span class="n">max_items_to_buffer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_max_items_to_buffer</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">parallelism</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_max_items_to_buffer</span> <span class="o">=</span> <span class="n">max_items_to_buffer</span>
+
+    <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_wait_time</span> <span class="o">=</span> <span class="n">max_wait_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_shared_handle</span> <span class="o">=</span> <span class="n">Shared</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AsyncWrapper.initialize_pool">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.initialize_pool">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initialize_pool</span><span class="p">(</span><span class="n">parallelism</span><span class="p">):</span>
+    <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="n">parallelism</span><span class="p">)</span></div>
+
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_run_event_loop</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sets up and runs the asyncio event loop in a background thread.&quot;&quot;&quot;</span>
+    <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">new_event_loop</span><span class="p">()</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">set_event_loop</span><span class="p">(</span><span class="n">loop</span><span class="p">)</span>
+    <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span> <span class="o">=</span> <span class="n">loop</span>
+    <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_loop_started</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">run_forever</span><span class="p">()</span>
+    <span class="n">loop</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AsyncWrapper.reset_state">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.reset_state">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset_state</span><span class="p">():</span>
+    <span class="n">event_loop_thread_to_join</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span><span class="p">:</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span><span class="o">.</span><span class="n">call_soon_threadsafe</span><span class="p">(</span>
+            <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span><span class="p">:</span>
+        <span class="n">event_loop_thread_to_join</span> <span class="o">=</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span>
+
+      <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="k">if</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_loop_started</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_loop_started</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+      <span class="n">pools</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_pool</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+    <span class="c1"># We must join the asyncio event loop thread outside of the lock block.</span>
+    <span class="c1"># If joined inside the lock, the waiting thread holds the lock while blocking,</span>
+    <span class="c1"># preventing active coroutines&#39; done callbacks from acquiring the lock on the</span>
+    <span class="c1"># event loop thread, resulting in a deadlock.</span>
+    <span class="k">if</span> <span class="n">event_loop_thread_to_join</span><span class="p">:</span>
+      <span class="n">event_loop_thread_to_join</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+
+    <span class="c1"># We must acquire and shut down the thread pools outside of the lock block.</span>
+    <span class="c1"># If shutdown(wait=True) is called inside the lock, the caller blocks holding</span>
+    <span class="c1"># the lock, preventing active worker threads from acquiring the lock to run</span>
+    <span class="c1"># their done callbacks, resulting in a deadlock.</span>
+    <span class="n">pools_to_shutdown</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">initialize_pool</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools</span>
+    <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">pool</span> <span class="ow">in</span> <span class="n">pools_to_shutdown</span><span class="p">:</span>
+      <span class="n">pool</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cancel_futures</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_pool</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.setup">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.setup">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forwards to the wrapped dofn&#39;s setup method.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_asyncio</span> <span class="ow">and</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_loop_started</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_run_event_loop</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_loop_started</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span> <span class="ow">in</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_pool</span><span class="p">:</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_pool</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="n">Shared</span><span class="p">()</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.teardown">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.teardown">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forwards to the wrapped dofn&#39;s teardown method.&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">teardown</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.sync_fn_process">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.sync_fn_process">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">sync_fn_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes the call to the wrapped dofn&#39;s start_bundle, process</span>
+
+<span class="sd">    methods.  It will then combine the results into a single generator.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: The element to process.</span>
+<span class="sd">      *args: Any additional arguments to pass to the wrapped dofn&#39;s process</span>
+<span class="sd">        method.  Will be the same args that the async wrapper is called with.</span>
+<span class="sd">      **kwargs: Any additional keyword arguments to pass to the wrapped dofn&#39;s</span>
+<span class="sd">        process method.  Will be the same kwargs that the async wrapper is</span>
+<span class="sd">        called with.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A generator of elements produced by the input element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">start_bundle</span><span class="p">()</span>
+    <span class="n">process_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">bundle_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">finish_bundle</span><span class="p">()</span>
+
+    <span class="c1"># both process and finish bundle may or may not return generators. We want</span>
+    <span class="c1"># to combine whatever results have been returned into a single generator. If</span>
+    <span class="c1"># they are single elements then wrap them in lists so that we can combine</span>
+    <span class="c1"># them.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">process_result</span><span class="p">:</span>
+      <span class="n">process_result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">process_result</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+      <span class="n">process_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">process_result</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">bundle_result</span><span class="p">:</span>
+      <span class="n">bundle_result</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bundle_result</span><span class="p">,</span> <span class="n">GeneratorType</span><span class="p">):</span>
+      <span class="n">bundle_result</span> <span class="o">=</span> <span class="p">[</span><span class="n">bundle_result</span><span class="p">]</span>
+
+    <span class="n">to_return</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">process_result</span><span class="p">:</span>
+      <span class="n">to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">bundle_result</span><span class="p">:</span>
+      <span class="n">to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">to_return</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.async_fn_process">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.async_fn_process">[docs]</a>
+  <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_fn_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Makes the call to the wrapped dofn&#39;s start_bundle, process</span>
+<span class="sd">    and finish_bundle methods for asynchronous DoFns.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: The element to process.</span>
+<span class="sd">      *args: Any additional arguments to pass to the wrapped dofn&#39;s process</span>
+<span class="sd">        method.</span>
+<span class="sd">      **kwargs: Any additional keyword arguments to pass to the wrapped dofn&#39;s</span>
+<span class="sd">        process method.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A list of elements produced by the input element.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_collect</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+      <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isawaitable</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">result</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">AsyncIterable</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">async</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span>
+                    <span class="p">(</span><span class="n">GeneratorType</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span>
+                                                                  <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+      <span class="k">return</span> <span class="p">[</span><span class="n">result</span><span class="p">]</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">start_bundle</span><span class="p">()</span>
+    <span class="n">process_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">process</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+    <span class="n">bundle_result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_collect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sync_fn</span><span class="o">.</span><span class="n">finish_bundle</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">process_result</span> <span class="o">+</span> <span class="n">bundle_result</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.decrement_items_in_buffer">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.decrement_items_in_buffer">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">decrement_items_in_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">future</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span> <span class="ow">in</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">:</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.schedule_if_room">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.schedule_if_room">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">schedule_if_room</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">ignore_buffer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules an item to be processed asynchronously if there is room.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: The element to process.</span>
+<span class="sd">      ignore_buffer: If true will ignore the buffer limit and schedule the item</span>
+<span class="sd">        regardless of the buffer size.  Used when an item needs to skip to the</span>
+<span class="sd">        front such as retries.</span>
+<span class="sd">      *args: arguments that the wrapped dofn requires.</span>
+<span class="sd">      **kwargs: keyword arguments that the wrapped dofn requires.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      True if the item was scheduled False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">element_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_fn</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+      <span class="k">if</span> <span class="n">element_id</span> <span class="ow">in</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;item </span><span class="si">%s</span><span class="s1"> already in processing elements&#39;</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">accepting_items</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ignore_buffer</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_asyncio</span><span class="p">:</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">run_coroutine_threadsafe</span><span class="p">(</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">async_fn_process</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
+              <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_event_loop</span><span class="p">,</span>
+          <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_pool</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span>
+              <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">initialize_pool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parallelism</span><span class="p">))</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+                  <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_fn_process</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span>
+              <span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">add_done_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decrement_items_in_buffer</span><span class="p">)</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">][</span><span class="n">element_id</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">element</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">True</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+  <span class="c1"># Add an item to the processing pool. Add the future returned by that item to</span>
+  <span class="c1"># processing_elements_.</span>
+<div class="viewcode-block" id="AsyncWrapper.schedule_item">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.schedule_item">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">schedule_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">ignore_buffer</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Schedules an item to be processed asynchronously.</span>
+
+<span class="sd">    If the queue is full will block until room opens up.</span>
+
+<span class="sd">    After calling AsyncWrapper will hold a future pointing to the</span>
+<span class="sd">    result of this processing</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: The element to process.</span>
+<span class="sd">      ignore_buffer: If true will ignore the buffer limit and schedule the item</span>
+<span class="sd">        regardless of the buffer size.  Used when an item needs to skip to the</span>
+<span class="sd">        front such as retries.</span>
+<span class="sd">      *args: arguments that the wrapped dofn requires.</span>
+<span class="sd">      **kwargs: keyword arguments that the wrapped dofn requires.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">sleep_time</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">total_sleep</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span> <span class="ow">and</span> <span class="n">total_sleep</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeout</span><span class="p">:</span>
+      <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_if_room</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">ignore_buffer</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
+        <span class="n">sleep_time</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_wait_time</span><span class="p">,</span> <span class="n">sleep_time</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose_logging</span> <span class="ow">or</span> <span class="n">total_sleep</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="p">:</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+              <span class="s1">&#39;buffer is full for item </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1"> waiting </span><span class="si">%s</span><span class="s1"> seconds.  Have waited&#39;</span>
+              <span class="s1">&#39; for </span><span class="si">%s</span><span class="s1"> seconds.&#39;</span><span class="p">,</span>
+              <span class="n">element</span><span class="p">,</span>
+              <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">],</span>
+              <span class="n">sleep_time</span><span class="p">,</span>
+              <span class="n">total_sleep</span><span class="p">,</span>
+          <span class="p">)</span>
+        <span class="n">total_sleep</span> <span class="o">+=</span> <span class="n">sleep_time</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="n">sleep_time</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.next_time_to_fire">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.next_time_to_fire">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">next_time_to_fire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">floor</span><span class="p">((</span><span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_frequency</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_frequency</span><span class="p">)</span> <span class="o">*</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer_frequency</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timer_frequency</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.accepting_items">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.accepting_items">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">accepting_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_items_to_buffer</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.is_empty">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.is_empty">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+  <span class="c1"># Add the incoming element to a pool of elements to process asynchronously.</span>
+<div class="viewcode-block" id="AsyncWrapper.process">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.process">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">,</span>
+      <span class="n">timer</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">TimerParam</span><span class="p">(</span><span class="n">TIMER</span><span class="p">),</span>
+      <span class="n">to_process</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">TO_PROCESS</span><span class="p">),</span>
+      <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add the elements to the list of items to be processed asynchronously.</span>
+
+<span class="sd">    Performs additional bookkeeping to maintain exactly once and set timers to</span>
+<span class="sd">    commit item after it has finished processing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      element: The element to process.</span>
+<span class="sd">      timer: Callback timer that will commit elements.</span>
+<span class="sd">      to_process: State that keeps track of queued items for exactly once.</span>
+<span class="sd">      *args: arguments that the wrapped dofn requires.</span>
+<span class="sd">      **kwargs: keyword arguments that the wrapped dofn requires.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      An empty list. The elements will be output asynchronously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">schedule_item</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+    <span class="n">to_process</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+
+    <span class="c1"># Set a timer to fire on the next round increment of timer_frequency_. Note</span>
+    <span class="c1"># we do this so that each messages timer doesn&#39;t get overwritten by the</span>
+    <span class="c1"># next.</span>
+    <span class="n">time_to_fire</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_time_to_fire</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">timer</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">time_to_fire</span><span class="p">)</span>
+
+    <span class="c1"># Don&#39;t output any elements.  This will be done in commit_finished_items.</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+
+  <span class="c1"># Synchronises local state (processing_elements_) with SE state (to_process).</span>
+  <span class="c1"># Then outputs all finished elements. Finally, sets a timer to fire on the</span>
+  <span class="c1"># next round increment of timer_frequency_.</span>
+<div class="viewcode-block" id="AsyncWrapper.commit_finished_items">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.commit_finished_items">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">commit_finished_items</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">to_process</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">TO_PROCESS</span><span class="p">),</span>
+      <span class="n">timer</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">TimerParam</span><span class="p">(</span><span class="n">TIMER</span><span class="p">),</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Commits finished items and synchronizes local state with runner state.</span>
+
+<span class="sd">    Note timer firings are per key while local state contains messages for all</span>
+<span class="sd">    keys.  Only messages for the given key will be output/cleaned up.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      to_process: State that keeps track of queued messagees for this key.</span>
+<span class="sd">      timer: Timer that initiated this commit and can be reset if not all items</span>
+<span class="sd">        have finished..</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A list of elements that have finished processing for this key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># For all elements that are in processing state:</span>
+    <span class="c1"># If the element is done processing, delete it from all state and yield the</span>
+    <span class="c1"># output.</span>
+    <span class="c1"># If the element is not yet done, print it. If the element is not in</span>
+    <span class="c1"># local state, schedule it for processing.</span>
+    <span class="n">items_finished</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">items_not_yet_finished</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">items_rescheduled</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">items_cancelled</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">items_in_processing_state</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">items_in_se_state</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">to_process_local</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">to_process</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+
+    <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">to_reschedule</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">to_process_local</span><span class="p">:</span>
+      <span class="n">key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">to_process_local</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+          <span class="s1">&#39;no elements in state during timer callback. Timer should not have&#39;</span>
+          <span class="s1">&#39; been set.&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose_logging</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;procesing timer for key: </span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="c1"># processing state is per key so we expect this state to only contain a</span>
+    <span class="c1"># given key.  Skip items in processing_elements which are for a different</span>
+    <span class="c1"># key.</span>
+    <span class="k">with</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">processing_elements</span> <span class="o">=</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_processing_elements</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">]</span>
+      <span class="n">to_process_local_ids</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_id_fn</span><span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">to_process_local</span><span class="p">}</span>
+      <span class="n">to_remove_ids</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">element_id</span><span class="p">,</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">future</span><span class="p">)</span> <span class="ow">in</span> <span class="n">processing_elements</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">element_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">to_process_local_ids</span><span class="p">:</span>
+          <span class="n">items_cancelled</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="n">future</span><span class="o">.</span><span class="n">cancel</span><span class="p">()</span>
+          <span class="n">to_remove_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element_id</span><span class="p">)</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+              <span class="s1">&#39;cancelling item </span><span class="si">%s</span><span class="s1"> which is no longer in processing state&#39;</span><span class="p">,</span>
+              <span class="n">element</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">element_id</span> <span class="ow">in</span> <span class="n">to_remove_ids</span><span class="p">:</span>
+        <span class="n">processing_elements</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">element_id</span><span class="p">)</span>
+
+      <span class="c1"># For all elements which have finished processing output their result.</span>
+      <span class="n">to_return</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">finished_items</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_process_local</span><span class="p">:</span>
+        <span class="n">items_in_se_state</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">x_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_id_fn</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">x_id</span> <span class="ow">in</span> <span class="n">processing_elements</span><span class="p">:</span>
+          <span class="n">_</span><span class="p">,</span> <span class="n">future</span> <span class="o">=</span> <span class="n">processing_elements</span><span class="p">[</span><span class="n">x_id</span><span class="p">]</span>
+          <span class="k">if</span> <span class="n">future</span><span class="o">.</span><span class="n">done</span><span class="p">():</span>
+            <span class="n">to_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">future</span><span class="o">.</span><span class="n">result</span><span class="p">())</span>
+            <span class="n">finished_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">processing_elements</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">x_id</span><span class="p">)</span>
+            <span class="n">items_finished</span> <span class="o">+=</span> <span class="mi">1</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="n">items_not_yet_finished</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+              <span class="s1">&#39;item </span><span class="si">%s</span><span class="s1"> found in processing state but not local state,&#39;</span>
+              <span class="s1">&#39; scheduling now&#39;</span><span class="p">,</span>
+              <span class="n">x</span><span class="p">)</span>
+          <span class="n">to_reschedule</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+          <span class="n">items_rescheduled</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Reschedule the items not under a lock</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_reschedule</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">schedule_item</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ignore_buffer</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Update processing state to remove elements we&#39;ve finished</span>
+    <span class="n">to_process</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_process_local</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">finished_items</span><span class="p">:</span>
+        <span class="n">items_in_processing_state</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">to_process</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;items finished </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items_finished</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;items not yet finished </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items_not_yet_finished</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;items rescheduled </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items_rescheduled</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;items cancelled </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items_cancelled</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;items in processing state </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">items_in_processing_state</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">&#39;items in buffer </span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">AsyncWrapper</span><span class="o">.</span><span class="n">_items_in_buffer</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_uuid</span><span class="p">])</span>
+
+    <span class="c1"># If there are items not yet finished then set a timer to fire in the</span>
+    <span class="c1"># future.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_next_time_to_fire</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">items_in_processing_state</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">time_to_fire</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_time_to_fire</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+      <span class="n">timer</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">time_to_fire</span><span class="p">)</span>
+
+    <span class="c1"># Each result is a list. We want to combine them into a single</span>
+    <span class="c1"># list of all elements we wish to output.</span>
+    <span class="n">merged_return</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">to_return</span><span class="p">:</span>
+      <span class="n">merged_return</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged_return</span></div>
+
+
+<div class="viewcode-block" id="AsyncWrapper.timer_callback">
+<a class="viewcode-back" href="../../../apache_beam.transforms.async_dofn.html#apache_beam.transforms.async_dofn.AsyncWrapper.timer_callback">[docs]</a>
+  <span class="nd">@on_timer</span><span class="p">(</span><span class="n">TIMER</span><span class="p">)</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">timer_callback</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">to_process</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">TO_PROCESS</span><span class="p">),</span>
+      <span class="n">timer</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">TimerParam</span><span class="p">(</span><span class="n">TIMER</span><span class="p">),</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper method to commit finished items in response to timer firing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      to_process: State that keeps track of queued items for exactly once.</span>
+<span class="sd">      timer: Timer that initiated this commit and can be reset if not all items</span>
+<span class="sd">        have finished.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      A generator of elements that have finished processing for this key.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">commit_finished_items</span><span class="p">(</span><span class="n">to_process</span><span class="p">,</span> <span class="n">timer</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
