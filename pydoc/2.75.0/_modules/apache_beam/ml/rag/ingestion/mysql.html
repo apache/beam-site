@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.mysql &mdash; Apache Beam 2.75.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=64f7e716"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.mysql</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.mysql</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.row_coder</span><span class="w"> </span><span class="kn">import</span> <span class="n">RowCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.jdbc</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteToJdbc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorDatabaseWriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.jdbc_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConnectionConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.jdbc_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.mysql_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.mysql_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnSpecsBuilder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.mysql_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConflictResolution</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddableItem</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ConflictResolutionStrategy</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Abstract base class for conflict resolution strategies.&quot;&quot;&quot;</span>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_conflict_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate the MySQL conflict clause.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_NoConflictStrategy</span><span class="p">(</span><span class="n">_ConflictResolutionStrategy</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Strategy for when no conflict resolution is needed.&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_conflict_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_UpdateStrategy</span><span class="p">(</span><span class="n">_ConflictResolutionStrategy</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Strategy for UPDATE action on conflict.&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span> <span class="o">=</span> <span class="n">update_fields</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_conflict_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="c1"># Use provided fields or default to all columns</span>
+    <span class="n">fields_to_update</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span> <span class="ow">or</span> <span class="n">all_columns</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields_to_update</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="n">updates</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> = VALUES(</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">)&quot;</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields_to_update</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ON DUPLICATE KEY UPDATE </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_IgnoreStrategy</span><span class="p">(</span><span class="n">_ConflictResolutionStrategy</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Strategy for IGNORE action on conflict.&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary_key_field</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">primary_key_field</span> <span class="o">=</span> <span class="n">primary_key_field</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_conflict_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ON DUPLICATE KEY UPDATE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key_field</span><span class="si">}</span><span class="s2">&quot;</span>\
+       <span class="sa">f</span><span class="s2">&quot; = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">primary_key_field</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_conflict_strategy</span><span class="p">(</span>
+    <span class="n">conflict_resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConflictResolution</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ConflictResolutionStrategy</span><span class="p">:</span>
+  <span class="k">if</span> <span class="n">conflict_resolution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_NoConflictStrategy</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">conflict_resolution</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;UPDATE&quot;</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_UpdateStrategy</span><span class="p">(</span><span class="n">conflict_resolution</span><span class="o">.</span><span class="n">update_fields</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">conflict_resolution</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;IGNORE&quot;</span><span class="p">:</span>
+    <span class="k">assert</span> <span class="n">conflict_resolution</span><span class="o">.</span><span class="n">primary_key_field</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">_IgnoreStrategy</span><span class="p">(</span><span class="n">conflict_resolution</span><span class="o">.</span><span class="n">primary_key_field</span><span class="p">)</span>
+  <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown conflict resolution </span><span class="si">{</span><span class="n">conflict_resolution</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_MySQLQueryBuilder</span><span class="p">:</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">column_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">],</span>
+      <span class="n">conflict_resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConflictResolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Builds SQL queries for writing EmbeddableItems with Embeddings to MySQL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span> <span class="o">=</span> <span class="n">column_specs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolution_strategy</span> <span class="o">=</span> <span class="n">_create_conflict_strategy</span><span class="p">(</span>
+        <span class="n">conflict_resolution</span><span class="p">)</span>
+
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">]</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">duplicates</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duplicate column names found: </span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[(</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">python_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">]</span>
+    <span class="n">type_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;VectorRecord_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="n">registry</span><span class="o">.</span><span class="n">register_coder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">,</span> <span class="n">RowCoder</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">build_insert</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">]</span>
+    <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">placeholder</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">]</span>
+
+    <span class="c1"># Build base query</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        INSERT INTO </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">table_name</span><span class="si">}</span>
+<span class="s2">        (</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">        VALUES (</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">placeholders</span><span class="p">)</span><span class="si">}</span><span class="s2">)</span>
+<span class="s2">    &quot;&quot;&quot;</span>
+    <span class="n">conflict_clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conflict_resolution_strategy</span><span class="o">.</span><span class="n">get_conflict_clause</span><span class="p">(</span>
+        <span class="n">all_columns</span><span class="o">=</span><span class="n">fields</span><span class="p">)</span>
+    <span class="n">query</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">conflict_clause</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;MySQL Query with placeholders </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">query</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">query</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">NamedTuple</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates a function to convert EmbeddableItems to records.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">(</span>
+          <span class="o">**</span><span class="p">{</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span><span class="p">})</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">return</span> <span class="n">convert</span>
+
+
+<div class="viewcode-block" id="MySQLVectorWriterConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.mysql.html#apache_beam.ml.rag.ingestion.mysql.MySQLVectorWriterConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MySQLVectorWriterConfig</span><span class="p">(</span><span class="n">VectorDatabaseWriteConfig</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_config</span><span class="p">:</span> <span class="n">ConnectionConfig</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="c1"># pylint: disable=dangerous-default-value</span>
+      <span class="n">write_config</span><span class="p">:</span> <span class="n">WriteConfig</span> <span class="o">=</span> <span class="n">WriteConfig</span><span class="p">(),</span>
+      <span class="n">column_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">ColumnSpecsBuilder</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">(</span>
+      <span class="p">),</span>
+      <span class="n">conflict_resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ConflictResolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configuration for writing vectors to MySQL using jdbc.</span>
+<span class="sd">    </span>
+<span class="sd">    Supports flexible schema configuration through column specifications and</span>
+<span class="sd">    conflict resolution strategies with MySQL-specific syntax.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        connection_config:</span>
+<span class="sd">          :class:`~apache_beam.ml.rag.ingestion.jdbc_common.ConnectionConfig`.</span>
+<span class="sd">        table_name: Target table name.</span>
+<span class="sd">        write_config: JdbcIO :class:`~.jdbc_common.WriteConfig` to control</span>
+<span class="sd">          batch sizes, authosharding, etc.</span>
+<span class="sd">        column_specs:</span>
+<span class="sd">            Use :class:`~.mysql_common.ColumnSpecsBuilder` to configure how</span>
+<span class="sd">            embeddings and metadata are written to the database</span>
+<span class="sd">            schema. If None, uses default EmbeddableItem</span>
+<span class="sd">            schema with MySQL vector</span>
+<span class="sd">            functions.</span>
+<span class="sd">        conflict_resolution: Optional</span>
+<span class="sd">            :class:`~.mysql_common.ConflictResolution`</span>
+<span class="sd">            strategy for handling insert conflicts. ON DUPLICATE KEY UPDATE.</span>
+<span class="sd">            None by default, meaning errors are thrown when attempting to insert</span>
+<span class="sd">            duplicates.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Simple case with default schema:</span>
+
+<span class="sd">        &gt;&gt;&gt; config = MySQLVectorWriterConfig(</span>
+<span class="sd">        ...     connection_config=ConnectionConfig(...),</span>
+<span class="sd">        ...     table_name=&#39;embeddings&#39;</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        Custom schema with metadata fields and MySQL functions:</span>
+
+<span class="sd">        &gt;&gt;&gt; specs = (ColumnSpecsBuilder()</span>
+<span class="sd">        ...         .with_id_spec(column_name=&quot;my_id_column&quot;)</span>
+<span class="sd">        ...         .with_embedding_spec(</span>
+<span class="sd">        ...             column_name=&quot;embedding_vec&quot;,</span>
+<span class="sd">        ...             placeholder=&quot;string_to_vector(?)&quot;</span>
+<span class="sd">        ...         )</span>
+<span class="sd">        ...         .add_metadata_field(field=&quot;source&quot;, column_name=&quot;src&quot;)</span>
+<span class="sd">        ...         .add_metadata_field(</span>
+<span class="sd">        ...             &quot;timestamp&quot;,</span>
+<span class="sd">        ...             column_name=&quot;created_at&quot;,</span>
+<span class="sd">        ...             placeholder=&quot;STR_TO_DATE(?, &#39;%Y-%m-%d %H:%i:%s&#39;)&quot;</span>
+<span class="sd">        ...         )</span>
+<span class="sd">        ...         .build())</span>
+
+<span class="sd">        Minimal schema (only ID + embedding written):</span>
+
+<span class="sd">        &gt;&gt;&gt; column_specs = (ColumnSpecsBuilder()</span>
+<span class="sd">        ...     .with_id_spec()</span>
+<span class="sd">        ...     .with_embedding_spec()</span>
+<span class="sd">        ...     .build())</span>
+
+<span class="sd">        &gt;&gt;&gt; config = MySQLVectorWriterConfig(</span>
+<span class="sd">        ...     connection_config=ConnectionConfig(...),</span>
+<span class="sd">        ...     table_name=&#39;embeddings&#39;,</span>
+<span class="sd">        ...     column_specs=specs,</span>
+<span class="sd">        ...     conflict_resolution=ConflictResolution(</span>
+<span class="sd">        ...         on_conflict_fields=[&quot;id&quot;],</span>
+<span class="sd">        ...         action=&quot;UPDATE&quot;,</span>
+<span class="sd">        ...         update_fields=[&quot;embedding&quot;, &quot;content&quot;]</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        Using MySQL JSON functions:</span>
+
+<span class="sd">        &gt;&gt;&gt; specs = (ColumnSpecsBuilder()</span>
+<span class="sd">        ...     .with_id_spec()</span>
+<span class="sd">        ...     .with_embedding_spec()</span>
+<span class="sd">        ...     .with_metadata_spec(</span>
+<span class="sd">        ...         column_name=&quot;metadata_json&quot;,</span>
+<span class="sd">        ...         placeholder=&quot;CAST(? AS JSON)&quot;</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ...     .build())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span> <span class="o">=</span> <span class="n">connection_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">write_config</span> <span class="o">=</span> <span class="n">write_config</span>
+    <span class="c1"># NamedTuple is created and registered here during pipeline construction</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">query_builder</span> <span class="o">=</span> <span class="n">_MySQLQueryBuilder</span><span class="p">(</span>
+        <span class="n">table_name</span><span class="p">,</span>
+        <span class="n">column_specs</span><span class="o">=</span><span class="n">column_specs</span><span class="p">,</span>
+        <span class="n">conflict_resolution</span><span class="o">=</span><span class="n">conflict_resolution</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MySQLVectorWriterConfig.create_write_transform">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.mysql.html#apache_beam.ml.rag.ingestion.mysql.MySQLVectorWriterConfig.create_write_transform">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_write_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_WriteToMySQLVectorDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WriteToMySQLVectorDatabase</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Implementation of MySQL vector database write.&quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">MySQLVectorWriterConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">query_builder</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">query_builder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">connection_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">write_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">write_config</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">EmbeddableItem</span><span class="p">]):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">pcoll</span>
+        <span class="o">|</span>
+        <span class="s2">&quot;Convert to Records&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">query_builder</span><span class="o">.</span><span class="n">create_converter</span><span class="p">())</span>
+        <span class="o">|</span> <span class="s2">&quot;Write to MySQL&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">WriteToJdbc</span><span class="p">(</span>
+            <span class="n">table_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_builder</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">driver_class_name</span><span class="o">=</span><span class="s2">&quot;com.mysql.cj.jdbc.Driver&quot;</span><span class="p">,</span>
+            <span class="n">jdbc_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">jdbc_url</span><span class="p">,</span>
+            <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+            <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+            <span class="n">statement</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">query_builder</span><span class="o">.</span><span class="n">build_insert</span><span class="p">(),</span>
+            <span class="n">connection_properties</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">connection_properties</span><span class="p">,</span>
+            <span class="n">connection_init_sqls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">connection_init_sqls</span><span class="p">,</span>
+            <span class="n">autosharding</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">write_config</span><span class="o">.</span><span class="n">autosharding</span><span class="p">,</span>
+            <span class="n">max_connections</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">write_config</span><span class="o">.</span><span class="n">max_connections</span><span class="p">,</span>
+            <span class="n">write_batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">write_config</span><span class="o">.</span><span class="n">write_batch_size</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_config</span><span class="o">.</span><span class="n">additional_jdbc_args</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

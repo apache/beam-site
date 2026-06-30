@@ -1,0 +1,834 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.enrichment_handlers.cloudsql &mdash; Apache Beam 2.75.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=64f7e716"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.enrichment_handlers.cloudsql</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.transforms.enrichment_handlers.cloudsql</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pg8000</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pymysql</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytds</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.cloud.sql.connector</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connector</span> <span class="k">as</span> <span class="n">CloudSQLConnector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">google.cloud.sql.connector.enums</span><span class="w"> </span><span class="kn">import</span> <span class="n">RefreshStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_engine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy</span><span class="w"> </span><span class="kn">import</span> <span class="n">text</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sqlalchemy.engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">Connection</span> <span class="k">as</span> <span class="n">DBAPIConnection</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.enrichment</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnrichmentSourceHandler</span>
+
+<span class="n">QueryFn</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span>
+<span class="n">ConditionValueFn</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="CustomQueryConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CustomQueryConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomQueryConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for using a custom query function.&quot;&quot;&quot;</span>
+  <span class="n">query_fn</span><span class="p">:</span> <span class="n">QueryFn</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_fn</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;CustomQueryConfig must provide a valid query_fn&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TableFieldsQueryConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.TableFieldsQueryConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TableFieldsQueryConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for using table name, where clause, and field names.&quot;&quot;&quot;</span>
+  <span class="n">table_id</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">where_clause_template</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">where_clause_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">where_clause_template</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;TableFieldsQueryConfig must provide table_id and &quot;</span> <span class="o">+</span>
+          <span class="s2">&quot;where_clause_template&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">where_clause_fields</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;TableFieldsQueryConfig must provide non-empty &quot;</span> <span class="o">+</span>
+          <span class="s2">&quot;where_clause_fields&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TableFunctionQueryConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.TableFunctionQueryConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TableFunctionQueryConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for using table name, where clause, and a value function.&quot;&quot;&quot;</span>
+  <span class="n">table_id</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">where_clause_template</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">where_clause_value_fn</span><span class="p">:</span> <span class="n">ConditionValueFn</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_id</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">where_clause_template</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;TableFunctionQueryConfig must provide table_id and &quot;</span> <span class="o">+</span>
+          <span class="s2">&quot;where_clause_template&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">where_clause_value_fn</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;TableFunctionQueryConfig must provide &quot;</span> <span class="o">+</span> <span class="s2">&quot;where_clause_value_fn&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DatabaseTypeAdapter">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.DatabaseTypeAdapter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatabaseTypeAdapter</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+  <span class="n">POSTGRESQL</span> <span class="o">=</span> <span class="s2">&quot;pg8000&quot;</span>
+  <span class="n">MYSQL</span> <span class="o">=</span> <span class="s2">&quot;pymysql&quot;</span>
+  <span class="n">SQLSERVER</span> <span class="o">=</span> <span class="s2">&quot;pytds&quot;</span>
+
+<div class="viewcode-block" id="DatabaseTypeAdapter.to_sqlalchemy_dialect">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.DatabaseTypeAdapter.to_sqlalchemy_dialect">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">to_sqlalchemy_dialect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map the adapter type to its corresponding SQLAlchemy dialect.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: SQLAlchemy dialect string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">POSTGRESQL</span><span class="p">:</span>
+      <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;postgresql+</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">MYSQL</span><span class="p">:</span>
+      <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;mysql+</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">elif</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">SQLSERVER</span><span class="p">:</span>
+      <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;mssql+</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported database adapter type: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConnectionConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ConnectionConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConnectionConfig</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="ConnectionConfig.get_connector_handler">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ConnectionConfig.get_connector_handler">[docs]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_connector_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">DBAPIConnection</span><span class="p">]:</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ConnectionConfig.get_db_url">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ConnectionConfig.get_db_url">[docs]</a>
+  <span class="nd">@abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_db_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="CloudSQLConnectionConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLConnectionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudSQLConnectionConfig</span><span class="p">(</span><span class="n">ConnectionConfig</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Connects to Google Cloud SQL using Cloud SQL Python Connector.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_adapter: The database adapter type (PostgreSQL, MySQL, SQL Server).</span>
+<span class="sd">        instance_connection_uri: URI for connecting to the Cloud SQL instance.</span>
+<span class="sd">        user: Username for authentication.</span>
+<span class="sd">        password: Password for authentication. Defaults to None.</span>
+<span class="sd">        db_id: Database identifier/name.</span>
+<span class="sd">        refresh_strategy: Strategy for refreshing connection (default: LAZY).</span>
+<span class="sd">        connector_kwargs: Additional keyword arguments for the</span>
+<span class="sd">          Cloud SQL Python Connector. Enables forward compatibility.</span>
+<span class="sd">        connect_kwargs: Additional keyword arguments for the client connect</span>
+<span class="sd">          method. Enables forward compatibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">db_adapter</span><span class="p">:</span> <span class="n">DatabaseTypeAdapter</span>
+  <span class="n">instance_connection_uri</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">db_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">refresh_strategy</span><span class="p">:</span> <span class="n">RefreshStrategy</span> <span class="o">=</span> <span class="n">RefreshStrategy</span><span class="o">.</span><span class="n">LAZY</span>
+  <span class="n">connector_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+  <span class="n">connect_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_connection_uri</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Instance connection URI cannot be empty&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CloudSQLConnectionConfig.get_connector_handler">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLConnectionConfig.get_connector_handler">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_connector_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">DBAPIConnection</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function that creates a new database connection.</span>
+
+<span class="sd">      The returned connector function creates database connections that should</span>
+<span class="sd">      be properly closed by the caller when no longer needed.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+    <span class="n">cloudsql_client</span> <span class="o">=</span> <span class="n">CloudSQLConnector</span><span class="p">(</span>
+        <span class="n">refresh_strategy</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_strategy</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connector_kwargs</span><span class="p">)</span>
+
+    <span class="n">cloudsql_connector</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">cloudsql_client</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+        <span class="n">instance_connection_string</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">instance_connection_uri</span><span class="p">,</span> <span class="n">driver</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span>
+        <span class="n">db_adapter</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_id</span><span class="p">,</span>
+        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cloudsql_connector</span></div>
+
+
+<div class="viewcode-block" id="CloudSQLConnectionConfig.get_db_url">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLConnectionConfig.get_db_url">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_db_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span><span class="o">.</span><span class="n">to_sqlalchemy_dialect</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ExternalSQLDBConnectionConfig">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ExternalSQLDBConnectionConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExternalSQLDBConnectionConfig</span><span class="p">(</span><span class="n">ConnectionConfig</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Connects to External SQL DBs (PostgreSQL, MySQL, SQL Server) over TCP.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        db_adapter: The database adapter type (PostgreSQL, MySQL, SQL Server).</span>
+<span class="sd">        host: Hostname or IP address of the database server.</span>
+<span class="sd">        port: Port number for the database connection.</span>
+<span class="sd">        user: Username for authentication.</span>
+<span class="sd">        password: Password for authentication.</span>
+<span class="sd">        db_id: Database identifier/name.</span>
+<span class="sd">        connect_kwargs: Additional keyword arguments for the client connect</span>
+<span class="sd">          method. Enables forward compatibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  <span class="n">db_adapter</span><span class="p">:</span> <span class="n">DatabaseTypeAdapter</span>
+  <span class="n">host</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">port</span><span class="p">:</span> <span class="nb">int</span>
+  <span class="n">user</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">db_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+  <span class="n">connect_kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Database host cannot be empty&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ExternalSQLDBConnectionConfig.get_connector_handler">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ExternalSQLDBConnectionConfig.get_connector_handler">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_connector_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">DBAPIConnection</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a function that creates a new database connection.</span>
+
+<span class="sd">      The returned connector function creates database connections that should</span>
+<span class="sd">      be properly closed by the caller when no longer needed.</span>
+<span class="sd">      &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">POSTGRESQL</span><span class="p">:</span>
+      <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">pg8000</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+          <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+          <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">MYSQL</span><span class="p">:</span>
+      <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">pymysql</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+          <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+          <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span> <span class="o">==</span> <span class="n">DatabaseTypeAdapter</span><span class="o">.</span><span class="n">SQLSERVER</span><span class="p">:</span>
+      <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">pytds</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+          <span class="n">dsn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">host</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">database</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">db_id</span><span class="p">,</span> <span class="n">user</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+          <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">connect_kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported database adapter: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ExternalSQLDBConnectionConfig.get_db_url">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.ExternalSQLDBConnectionConfig.get_db_url">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_db_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_adapter</span><span class="o">.</span><span class="n">to_sqlalchemy_dialect</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;://&quot;</span></div>
+</div>
+
+
+
+<span class="n">QueryConfig</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">CustomQueryConfig</span><span class="p">,</span>
+                    <span class="n">TableFieldsQueryConfig</span><span class="p">,</span>
+                    <span class="n">TableFunctionQueryConfig</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="CloudSQLEnrichmentHandler">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLEnrichmentHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudSQLEnrichmentHandler</span><span class="p">(</span><span class="n">EnrichmentSourceHandler</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Enrichment handler for Cloud SQL databases.</span>
+
+<span class="sd">  This handler is designed to work with the</span>
+<span class="sd">  :class:`apache_beam.transforms.enrichment.Enrichment` transform.</span>
+
+<span class="sd">  To use this handler, you need to provide one of the following query configs:</span>
+<span class="sd">    * CustomQueryConfig - For providing a custom query function</span>
+<span class="sd">    * TableFieldsQueryConfig - For specifying table, where clause, and fields</span>
+<span class="sd">    * TableFunctionQueryConfig - For specifying table, where clause, and val fn</span>
+
+<span class="sd">  By default, the handler retrieves all columns from the specified table.</span>
+<span class="sd">  To limit the columns, use the `column_names` parameter to specify</span>
+<span class="sd">  the desired column names.</span>
+
+<span class="sd">  This handler queries the Cloud SQL database per element by default.</span>
+<span class="sd">  To enable batching, set the `min_batch_size`, `max_batch_size`, and</span>
+<span class="sd">  `max_batch_duration_secs` parameters. These values control batching behavior</span>
+<span class="sd">  in the</span>
+<span class="sd">  :class:`apache_beam.transforms.utils.BatchElements` transform.</span>
+
+<span class="sd">  NOTE: Batching is not supported when using the CustomQueryConfig.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_config</span><span class="p">:</span> <span class="n">ConnectionConfig</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">query_config</span><span class="p">:</span> <span class="n">QueryConfig</span><span class="p">,</span>
+      <span class="n">column_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">min_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+      <span class="n">max_batch_duration_secs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Example usage::</span>
+
+<span class="sd">      connection_config = CloudSQLConnectionConfig(</span>
+<span class="sd">        db_adapter=DatabaseTypeAdapter.POSTGRESQL,</span>
+<span class="sd">        instance_connection_uri=&quot;apache-beam-testing:us-central1:itests&quot;,</span>
+<span class="sd">        user=&#39;postgres&#39;,</span>
+<span class="sd">        password= os.getenv(&quot;CLOUDSQL_PG_PASSWORD&quot;))</span>
+<span class="sd">      query_config=TableFieldsQueryConfig(&#39;my_table&#39;,&quot;id = :param0&quot;,[&#39;id&#39;]),</span>
+<span class="sd">      cloudsql_handler = CloudSQLEnrichmentHandler(</span>
+<span class="sd">        connection_config=connection_config,</span>
+<span class="sd">        query_config=query_config,</span>
+<span class="sd">        min_batch_size=2,</span>
+<span class="sd">        max_batch_size=100)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      connection_config (ConnectionConfig): Configuration for connecting to</span>
+<span class="sd">        the SQL database. Must be an instance of a subclass of</span>
+<span class="sd">        `ConnectionConfig`, such as `CloudSQLConnectionConfig` or</span>
+<span class="sd">        `ExternalSQLDBConnectionConfig`. This determines how the handler</span>
+<span class="sd">        connects to the target SQL database.</span>
+<span class="sd">      query_config: Configuration for database queries. Must be one of:</span>
+<span class="sd">      * CustomQueryConfig: For providing a custom query function</span>
+<span class="sd">      * TableFieldsQueryConfig: specifies table, where clause, and field names</span>
+<span class="sd">      * TableFunctionQueryConfig: specifies table, where clause, and val func</span>
+<span class="sd">      column_names (Optional[list[str]]): List of column names to select from</span>
+<span class="sd">        the Cloud SQL table. If not provided, all columns (`*`) are selected.</span>
+<span class="sd">      min_batch_size (int): Minimum number of rows to batch together when</span>
+<span class="sd">        querying the database. Defaults to 1 if `query_fn` is not used.</span>
+<span class="sd">      max_batch_size (int): Maximum number of rows to batch together. Defaults</span>
+<span class="sd">        to 10,000 if `query_fn` is not used.</span>
+<span class="sd">      max_batch_duration_secs (float): Maximum amount of time in seconds to</span>
+<span class="sd">        buffer a batch before emitting it. If not provided, batching duration</span>
+<span class="sd">        is determined by `BatchElements` defaults.</span>
+<span class="sd">      **kwargs: Additional keyword arguments for database connection or query</span>
+<span class="sd">        handling.</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">      * `min_batch_size`, `max_batch_size`, and `max_batch_duration_secs`</span>
+<span class="sd">        are not used with `query_fn`.</span>
+<span class="sd">      * Either `where_clause_fields` or `where_clause_value_fn` must be provided</span>
+<span class="sd">        for query construction if `query_fn` is not provided.</span>
+<span class="sd">      * Ensure that the database user has the necessary permissions to query the</span>
+<span class="sd">        specified table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_connection_config</span> <span class="o">=</span> <span class="n">connection_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span> <span class="o">=</span> <span class="n">query_config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">column_names</span><span class="p">)</span> <span class="k">if</span> <span class="n">column_names</span> <span class="k">else</span> <span class="s2">&quot;*&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">table_query_configs</span> <span class="o">=</span> <span class="p">(</span><span class="n">TableFieldsQueryConfig</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">query_template</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;SELECT </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="si">}</span><span class="s2"> &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;FROM </span><span class="si">{</span><span class="n">query_config</span><span class="o">.</span><span class="n">table_id</span><span class="si">}</span><span class="s2"> &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;WHERE </span><span class="si">{</span><span class="n">query_config</span><span class="o">.</span><span class="n">where_clause_template</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s1">&#39;min_batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_batch_size</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s1">&#39;max_batch_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_batch_size</span>
+      <span class="k">if</span> <span class="n">max_batch_duration_secs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span>
+            <span class="s1">&#39;max_batch_duration_secs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_batch_duration_secs</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">connector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_config</span><span class="o">.</span><span class="n">get_connector_handler</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">create_engine</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection_config</span><span class="o">.</span><span class="n">get_db_url</span><span class="p">(),</span> <span class="n">creator</span><span class="o">=</span><span class="n">connector</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]],</span> <span class="o">*</span><span class="n">_args</span><span class="p">,</span> <span class="o">**</span><span class="n">_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle requests by delegating to single or batch processing.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_single_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_process_single_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process a single request and return with its response.&quot;&quot;&quot;</span>
+    <span class="n">response</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">CustomQueryConfig</span><span class="p">):</span>
+      <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">query_fn</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_query</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_values_from_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+      <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_single_param_dict</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_query</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">query_template</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">request</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requests</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process batch requests and match responses to original requests.&quot;&quot;&quot;</span>
+    <span class="n">values</span><span class="p">,</span> <span class="n">responses</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="n">requests_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">requests</span><span class="p">)</span>
+
+    <span class="c1"># Build the appropriate query (single or batched).</span>
+    <span class="n">raw_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_batch_query</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+
+    <span class="c1"># Extract where_clause_fields values and map the generated request key to</span>
+    <span class="c1"># the original request object..</span>
+    <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">requests</span><span class="p">:</span>
+      <span class="n">current_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_values_from_request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+      <span class="n">values</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">current_values</span><span class="p">)</span>
+      <span class="n">requests_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">create_row_key</span><span class="p">(</span><span class="n">req</span><span class="p">)]</span> <span class="o">=</span> <span class="n">req</span>
+
+    <span class="c1"># Build named parameters dictionary for parameterized query.</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_parameters_dict</span><span class="p">(</span><span class="n">requests</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span>
+
+    <span class="c1"># Execute the parameterized query with validated parameters.</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_query</span><span class="p">(</span>
+        <span class="n">raw_query</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">param_dict</span><span class="p">,</span> <span class="n">is_batch</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+      <span class="n">response_row</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">(</span><span class="o">**</span><span class="n">response</span><span class="p">)</span>  <span class="c1"># type: ignore[arg-type]</span>
+      <span class="n">response_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_row_key</span><span class="p">(</span><span class="n">response_row</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">response_key</span> <span class="ow">in</span> <span class="n">requests_map</span><span class="p">:</span>
+        <span class="n">responses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">requests_map</span><span class="p">[</span><span class="n">response_key</span><span class="p">],</span> <span class="n">response_row</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">responses</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_execute_query</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">is_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+    <span class="n">connection</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+      <span class="n">transaction</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">begin</span><span class="p">()</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">params</span><span class="p">:</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">query</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">text</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="c1"># Materialize results while transaction is active.</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">is_batch</span><span class="p">:</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">result_row</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="n">result_row</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span> <span class="k">if</span> <span class="n">result_row</span> <span class="k">else</span> <span class="p">{}</span>
+        <span class="c1"># Explicitly commit the transaction.</span>
+        <span class="n">transaction</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">data</span>
+      <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">transaction</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Database operation failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s1">&#39;Could not execute the query. Please check if the query is properly &#39;</span>
+          <span class="sa">f</span><span class="s1">&#39;formatted and the table exists. </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">connection</span><span class="p">:</span>
+        <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_build_batch_query</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">requests</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build batched query with unique parameter names for multiple requests.</span>
+
+<span class="sd">    This method extracts parameter placeholders from the where_clause_template</span>
+<span class="sd">    using regex and creates unique parameter names for each batch item. The</span>
+<span class="sd">    parameter names in the template can be any valid identifiers (e.g., :id,</span>
+<span class="sd">    :param_0, :user_name) and don&#39;t need to match field names exactly.</span>
+
+<span class="sd">    For batch queries, placeholders are replaced with unique names like</span>
+<span class="sd">    :batch_0_id, :batch_1_param_0, etc., based on the actual parameter names</span>
+<span class="sd">    found in the template.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      requests: List of beam.Row requests to process</span>
+<span class="sd">      batch_size: Number of requests in the batch</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      SQL query string with batched WHERE clauses using unique parameter names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Single request - return original query.</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_template</span>
+
+    <span class="c1"># Only batch table-based query configs.</span>
+    <span class="n">table_query_configs</span> <span class="o">=</span> <span class="p">(</span><span class="n">TableFieldsQueryConfig</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_template</span>
+
+    <span class="c1"># Build batched WHERE clauses.</span>
+    <span class="n">where_clauses</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_create_batch_clause</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)]</span>
+
+    <span class="c1"># Combine clauses and update query.</span>
+    <span class="n">where_clause_batched</span> <span class="o">=</span> <span class="s1">&#39; OR &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">where_clauses</span><span class="p">)</span>
+    <span class="c1"># We know this is a table-based config from the check above.</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_template</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_template</span><span class="p">,</span> <span class="n">where_clause_batched</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_create_batch_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a WHERE clause for a single batch item with unique parameter</span>
+<span class="sd">    names.&quot;&quot;&quot;</span>
+    <span class="c1"># This method is only called for table-based query configs</span>
+    <span class="n">table_query_configs</span> <span class="o">=</span> <span class="p">(</span><span class="n">TableFieldsQueryConfig</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">)</span>
+    <span class="n">clause</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_template</span>
+
+    <span class="c1"># Extract parameter names from the template using regex.</span>
+    <span class="n">param_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_parameter_names</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_template</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">param_names</span><span class="p">:</span>
+      <span class="n">old_param</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;:</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&#39;</span>
+      <span class="n">new_param</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;:batch_</span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&#39;</span>
+      <span class="n">clause</span> <span class="o">=</span> <span class="n">clause</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">old_param</span><span class="p">,</span> <span class="n">new_param</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">clause</span><span class="si">}</span><span class="s1">)&#39;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_build_parameters_dict</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">requests</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">],</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build named parameters dictionary for parameterized queries.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      requests: List of beam.Row requests to process</span>
+<span class="sd">      batch_size: Number of requests in the batch</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Dictionary mapping parameter names to validated values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">req</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">requests</span><span class="p">):</span>
+      <span class="n">current_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_values_from_request</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+
+      <span class="c1"># For batched queries, use unique parameter names per batch item.</span>
+      <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Batching is only used with table-based query configs.</span>
+        <span class="n">table_query_configs</span> <span class="o">=</span> <span class="p">(</span><span class="n">TableFieldsQueryConfig</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">)</span>
+        <span class="n">batch_param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_single_param_dict</span><span class="p">(</span><span class="n">current_values</span><span class="p">)</span>
+        <span class="c1"># Prefix batch parameters to make them globally unique.</span>
+        <span class="k">for</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">batch_param_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+          <span class="n">param_dict</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;batch_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">single_param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_single_param_dict</span><span class="p">(</span><span class="n">current_values</span><span class="p">)</span>
+        <span class="n">param_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">single_param_dict</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">param_dict</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_build_single_param_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build parameter dictionary for single request processing.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      values: List of parameter values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Dictionary mapping parameter names to values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">table_query_configs</span> <span class="o">=</span> <span class="p">(</span><span class="n">TableFieldsQueryConfig</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">table_query_configs</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">&quot;Parameter binding not supported for &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">param_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unique_template_and_params</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_template</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">param_dict</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_template_and_params</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate unique binding parameter names for duplicate templates.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      template: SQL template with potentially duplicate binding parameter names</span>
+<span class="sd">      values: List of parameter values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Tuple of (updated_template, param_dict) with unique binding names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">param_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_parameter_names</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+    <span class="n">unique_param_names</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">param_names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">param_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">param_name</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span>
+    <span class="p">]</span>
+
+    <span class="c1"># Update template by replacing each parameter occurrence in order.</span>
+    <span class="n">updated_template</span> <span class="o">=</span> <span class="n">template</span>
+    <span class="n">param_positions</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Find all parameter positions.</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">,</span> <span class="n">template</span><span class="p">):</span>
+      <span class="n">param_positions</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">(),</span> <span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)))</span>
+
+    <span class="c1"># Replace parameters from right to left to avoid position shifts.</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">param_positions</span><span class="p">))):</span>
+      <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">param_positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">unique_name</span> <span class="o">=</span> <span class="n">unique_param_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">updated_template</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">updated_template</span><span class="p">[:</span><span class="n">start</span><span class="p">]</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;:</span><span class="si">{</span><span class="n">unique_name</span><span class="si">}</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">updated_template</span><span class="p">[</span><span class="n">end</span><span class="p">:])</span>
+
+    <span class="c1"># Build parameter dictionary.</span>
+    <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">unique_name</span><span class="p">:</span> <span class="n">val</span>
+        <span class="k">for</span> <span class="n">unique_name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique_param_names</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">updated_template</span><span class="p">,</span> <span class="n">param_dict</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_extract_values_from_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract parameter values from a request based on query configuration.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      request: The beam.Row request to extract values from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      List of parameter values</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">      KeyError: If required fields are missing from the request</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_value_fn</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="p">]</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFieldsQueryConfig</span><span class="p">):</span>
+        <span class="n">request_dict</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">request_dict</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_fields</span>
+        <span class="p">]</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported query configuration type&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+          <span class="s2">&quot;Make sure the values passed in `where_clause_fields` are &quot;</span>
+          <span class="s2">&quot;the keys in the input `beam.Row`.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_extract_parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">template</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract parameter names from a SQL template string.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      template: SQL template string with named parameters (e.g., &quot;id = :id&quot;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      List of parameter names found in the template (e.g., [&quot;id&quot;])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:(\w+)&#39;</span><span class="p">,</span> <span class="n">template</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CloudSQLEnrichmentHandler.create_row_key">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLEnrichmentHandler.create_row_key">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_row_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">):</span>
+      <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_value_fn</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFieldsQueryConfig</span><span class="p">):</span>
+      <span class="n">row_dict</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="nb">tuple</span><span class="p">(</span>
+              <span class="n">row_dict</span><span class="p">[</span><span class="n">where_clause_field</span><span class="p">]</span>
+              <span class="k">for</span> <span class="n">where_clause_field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_fields</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;Either where_clause_fields or where_clause_value_fn must be specified&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CloudSQLEnrichmentHandler.get_cache_key">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLEnrichmentHandler.get_cache_key">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_cache_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">Row</span><span class="p">]]):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">CustomQueryConfig</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+          <span class="s2">&quot;Caching is not supported for CustomQueryConfig. &quot;</span>
+          <span class="s2">&quot;Consider using TableFieldsQueryConfig or &quot;</span> <span class="o">+</span>
+          <span class="s2">&quot;TableFunctionQueryConfig instead.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+      <span class="n">cache_keys</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">request</span><span class="p">:</span>
+        <span class="n">req_dict</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">):</span>
+            <span class="n">current_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_value_fn</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFieldsQueryConfig</span><span class="p">):</span>
+            <span class="n">current_values</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">req_dict</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_fields</span>
+            <span class="p">]</span>
+          <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">repr</span><span class="p">,</span> <span class="n">current_values</span><span class="p">))</span>
+          <span class="n">cache_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+          <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+              <span class="s2">&quot;Make sure the values passed in `where_clause_fields` are the &quot;</span>
+              <span class="s2">&quot;keys in the input `beam.Row`.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">cache_keys</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">req_dict</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">_asdict</span><span class="p">()</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="p">,</span> <span class="n">TableFunctionQueryConfig</span><span class="p">):</span>
+          <span class="n">current_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_value_fn</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># TableFieldsQueryConfig.</span>
+          <span class="n">current_values</span> <span class="o">=</span> <span class="p">[</span>
+              <span class="n">req_dict</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+              <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_config</span><span class="o">.</span><span class="n">where_clause_fields</span>
+          <span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">current_values</span><span class="p">))</span>
+        <span class="n">cache_key</span> <span class="o">=</span> <span class="n">key</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">current_values</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
+            <span class="s2">&quot;Make sure the values passed in `where_clause_fields` are the &quot;</span>
+            <span class="s2">&quot;keys in the input `beam.Row`.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+      <span class="k">return</span> <span class="n">cache_key</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_exc_type</span><span class="p">,</span> <span class="n">_exc_val</span><span class="p">,</span> <span class="n">_exc_tb</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="o">.</span><span class="n">dispose</span><span class="p">(</span><span class="n">close</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="CloudSQLEnrichmentHandler.batch_elements_kwargs">
+<a class="viewcode-back" href="../../../../apache_beam.transforms.enrichment_handlers.cloudsql.html#apache_beam.transforms.enrichment_handlers.cloudsql.CloudSQLEnrichmentHandler.batch_elements_kwargs">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">batch_elements_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a kwargs suitable for `beam.BatchElements`.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
