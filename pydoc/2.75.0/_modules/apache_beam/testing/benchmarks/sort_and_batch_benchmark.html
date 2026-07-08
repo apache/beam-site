@@ -1,0 +1,808 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.testing.benchmarks.sort_and_batch_benchmark &mdash; Apache Beam 2.75.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=64f7e716"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.testing.benchmarks.sort_and_batch_benchmark</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.testing.benchmarks.sort_and_batch_benchmark</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;Benchmark: BatchElements vs SortAndBatchElements on real Beam pipelines.</span>
+
+<span class="sd">Compares two batching strategies for variable-length inference workloads by</span>
+<span class="sd">running the actual Beam transforms under DirectRunner:</span>
+
+<span class="sd">- Baseline (BatchElements): fixed-count batching by setting</span>
+<span class="sd">  ``min_batch_size == max_batch_size``.</span>
+<span class="sd">- Stateless (SortAndBatchElements): sorts elements by size within each runner</span>
+<span class="sd">  bundle, then splits batches using ``max_batch_weight``.</span>
+
+<span class="sd">The benchmark materializes per-batch summaries through a temporary Beam sink and</span>
+<span class="sd">analyzes them after the pipeline completes. This keeps the benchmark on the</span>
+<span class="sd">normal Beam execution path rather than relying on InteractiveRunner-specific</span>
+<span class="sd">result materialization or local side effects.</span>
+
+<span class="sd">Bundle boundaries are runner-defined. As a result, these measurements are meant</span>
+<span class="sd">to compare the actual DirectRunner behavior of the two transforms rather than a</span>
+<span class="sd">synthetic, user-configurable bundle model.</span>
+
+<span class="sd">Padding ratio::</span>
+
+<span class="sd">  padding_ratio = sum(max_len_in_batch * batch_size) / sum(actual_lengths)</span>
+<span class="sd">  Lower is better.  1.0 = no padding waste.</span>
+
+<span class="sd">Methodology:</span>
+
+<span class="sd">- N=20 independent trials per condition (3 warmup trials excluded).</span>
+<span class="sd">- Same input corpus (seed=42) for A/B comparison.</span>
+<span class="sd">- DirectRunner with in-memory execution and one worker for reproducibility.</span>
+<span class="sd">- Percentile method: linear interpolation between adjacent ranks</span>
+<span class="sd">  (equivalent to numpy.percentile with method=&#39;linear&#39;).</span>
+<span class="sd">  For N=20 trials: P50 interpolates ranks 10-11 (0-indexed 9-10),</span>
+<span class="sd">  P95 interpolates ranks 19-20 (0-indexed 18-19),</span>
+<span class="sd">  P99 interpolates near rank 20 (0-indexed 18.81).</span>
+<span class="sd">- Reports median [IQR] and P95 for each metric.</span>
+<span class="sd">- Inference model: latency = batch_size * (max_seq_len / 50)^1.5 ms</span>
+<span class="sd">  (simulates downstream transformer-like scaling).</span>
+
+<span class="sd">Run::</span>
+
+<span class="sd">  python3 -m apache_beam.testing.benchmarks.sort_and_batch_benchmark</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statistics</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.options.pipeline_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">util</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Data generators</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="generate_highly_skewed_data">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.generate_highly_skewed_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_highly_skewed_data</span><span class="p">(</span>
+    <span class="n">num_elements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Pareto(alpha=1.2) -- most short, few very long.&quot;&quot;&quot;</span>
+  <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">paretovariate</span><span class="p">(</span><span class="mf">1.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">min_length</span><span class="p">)</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_length</span><span class="p">),</span> <span class="n">max_length</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;x&#39;</span> <span class="o">*</span> <span class="n">length</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="generate_lognormal_data">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.generate_lognormal_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_lognormal_data</span><span class="p">(</span>
+    <span class="n">num_elements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">mean_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="n">std_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Log-normal -- moderate skew, typical NLP.&quot;&quot;&quot;</span>
+  <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+  <span class="n">mu</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_length</span><span class="p">)</span>
+  <span class="n">sigma</span> <span class="o">=</span> <span class="n">std_factor</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">lognormvariate</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_length</span><span class="p">),</span> <span class="n">max_length</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;x&#39;</span> <span class="o">*</span> <span class="n">length</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="generate_bimodal_data">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.generate_bimodal_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_bimodal_data</span><span class="p">(</span>
+    <span class="n">num_elements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">mode1_mean</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">mode2_mean</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
+    <span class="n">mode1_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Bimodal -- two distinct length groups.&quot;&quot;&quot;</span>
+  <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">mode1_ratio</span><span class="p">:</span>
+      <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">mode1_mean</span><span class="p">,</span> <span class="n">mode1_mean</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">mode2_mean</span><span class="p">,</span> <span class="n">mode2_mean</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">))</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_length</span><span class="p">),</span> <span class="n">max_length</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;x&#39;</span> <span class="o">*</span> <span class="n">length</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="generate_low_variance_data">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.generate_low_variance_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_low_variance_data</span><span class="p">(</span>
+    <span class="n">num_elements</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">mean_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">cv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Low-variance control (CV=10%).&quot;&quot;&quot;</span>
+  <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+  <span class="n">std</span> <span class="o">=</span> <span class="n">mean_length</span> <span class="o">*</span> <span class="n">cv</span>
+  <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_elements</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">gauss</span><span class="p">(</span><span class="n">mean_length</span><span class="p">,</span> <span class="n">std</span><span class="p">))</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">min_length</span><span class="p">),</span> <span class="n">max_length</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;x&#39;</span> <span class="o">*</span> <span class="n">length</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Real Beam batching</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_direct_runner_options</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">PipelineOptions</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">PipelineOptions</span><span class="p">([</span>
+      <span class="s1">&#39;--runner=DirectRunner&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;--direct_running_mode=in_memory&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;--direct_num_workers=1&#39;</span><span class="p">,</span>
+  <span class="p">])</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_batch_to_json</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">)</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">({</span>
+      <span class="s1">&#39;batch_size&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span>
+      <span class="s1">&#39;actual_total_length&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+      <span class="s1">&#39;max_len&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="k">if</span> <span class="n">lengths</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="p">})</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_read_batch_summaries</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+  <span class="n">summaries</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">output_prefix</span><span class="si">}</span><span class="s1">*&#39;</span><span class="p">)):</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.crc&#39;</span><span class="p">):</span>
+      <span class="k">continue</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+          <span class="n">summaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">summaries</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_run_batching_pipeline</span><span class="p">(</span>
+    <span class="n">strategy</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_batch_weight</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Runs one Beam pipeline and returns batch summaries plus runtime.&quot;&quot;&quot;</span>
+  <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;beam_batch_benchmark_&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">temp_dir</span><span class="p">:</span>
+    <span class="n">output_prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">temp_dir</span><span class="p">,</span> <span class="n">strategy</span><span class="p">)</span>
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">_direct_runner_options</span><span class="p">())</span>
+    <span class="n">batched</span> <span class="o">=</span> <span class="n">pipeline</span> <span class="o">|</span> <span class="s1">&#39;CreateInput&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">reshuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;baseline&#39;</span><span class="p">:</span>
+      <span class="n">batched</span> <span class="o">=</span> <span class="n">batched</span> <span class="o">|</span> <span class="s1">&#39;BatchElements&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">util</span><span class="o">.</span><span class="n">BatchElements</span><span class="p">(</span>
+          <span class="n">min_batch_size</span><span class="o">=</span><span class="n">max_batch_size</span><span class="p">,</span> <span class="n">max_batch_size</span><span class="o">=</span><span class="n">max_batch_size</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">strategy</span> <span class="o">==</span> <span class="s1">&#39;stateless&#39;</span><span class="p">:</span>
+      <span class="n">batched</span> <span class="o">=</span> <span class="n">batched</span> <span class="o">|</span> <span class="s1">&#39;SortAndBatchElements&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">util</span><span class="o">.</span><span class="n">SortAndBatchElements</span><span class="p">(</span>
+          <span class="n">min_batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+          <span class="n">max_batch_size</span><span class="o">=</span><span class="n">max_batch_size</span><span class="p">,</span>
+          <span class="n">max_batch_weight</span><span class="o">=</span><span class="n">max_batch_weight</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unknown strategy: </span><span class="si">{</span><span class="n">strategy</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">batched</span>
+        <span class="o">|</span> <span class="s1">&#39;SerializeBatchSummary&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">_batch_to_json</span><span class="p">)</span>
+        <span class="o">|</span> <span class="s1">&#39;WriteBatchSummary&#39;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToText</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">))</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">wait_until_finish</span><span class="p">()</span>
+    <span class="n">runtime_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+
+    <span class="k">return</span> <span class="n">_read_batch_summaries</span><span class="p">(</span><span class="n">output_prefix</span><span class="p">),</span> <span class="n">runtime_ms</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Simulated inference</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="simulate_inference_latency">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.simulate_inference_latency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_inference_latency</span><span class="p">(</span>
+    <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base_latency_ms</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Simulate downstream inference: O(batch_size * seq_len^1.5).&quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">batch_size</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">max_len</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mf">0.0</span>
+  <span class="k">return</span> <span class="n">base_latency_ms</span> <span class="o">*</span> <span class="n">batch_size</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_len</span> <span class="o">/</span> <span class="mi">50</span><span class="p">)</span><span class="o">**</span><span class="mf">1.5</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Stats helpers</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="percentile">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.percentile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">percentile</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Percentile via linear interpolation between adjacent ranks.</span>
+
+<span class="sd">  Equivalent to numpy.percentile(data, p, method=&#39;linear&#39;).</span>
+<span class="sd">  For N=20: P50 interpolates ranks 10-11, P95 ranks 19-20,</span>
+<span class="sd">  P99 near rank 20 (fractional index 18.81).</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mf">0.0</span>
+  <span class="n">s</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="n">k</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">p</span> <span class="o">/</span> <span class="mi">100</span>
+  <span class="n">f</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">f</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">f</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">-</span> <span class="n">s</span><span class="p">[</span><span class="n">f</span><span class="p">])</span></div>
+
+
+
+<div class="viewcode-block" id="compute_padding_stats">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.compute_padding_stats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_padding_stats</span><span class="p">(</span>
+    <span class="n">batch_summaries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Padding-efficiency statistics for materialized batch summaries.&quot;&quot;&quot;</span>
+  <span class="n">total_actual</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;actual_total_length&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">batch_summaries</span><span class="p">)</span>
+  <span class="n">total_padded</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;max_len&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">batch_summaries</span><span class="p">)</span>
+  <span class="n">batch_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">batch_summaries</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]]</span>
+  <span class="n">max_lengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;max_len&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">batch_summaries</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]]</span>
+
+  <span class="n">efficiency</span> <span class="o">=</span> <span class="n">total_actual</span> <span class="o">/</span> <span class="n">total_padded</span> <span class="k">if</span> <span class="n">total_padded</span> <span class="k">else</span> <span class="mf">0.0</span>
+  <span class="n">padding_ratio</span> <span class="o">=</span> <span class="n">total_padded</span> <span class="o">/</span> <span class="n">total_actual</span> <span class="k">if</span> <span class="n">total_actual</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">{</span>
+      <span class="s1">&#39;efficiency&#39;</span><span class="p">:</span> <span class="n">efficiency</span><span class="p">,</span>
+      <span class="s1">&#39;padding_ratio&#39;</span><span class="p">:</span> <span class="n">padding_ratio</span><span class="p">,</span>
+      <span class="s1">&#39;num_batches&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_summaries</span><span class="p">),</span>
+      <span class="s1">&#39;avg_batch_size&#39;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">batch_sizes</span><span class="p">)</span> <span class="k">if</span> <span class="n">batch_sizes</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">&#39;total_actual_length&#39;</span><span class="p">:</span> <span class="n">total_actual</span><span class="p">,</span>
+      <span class="s1">&#39;total_padded_length&#39;</span><span class="p">:</span> <span class="n">total_padded</span><span class="p">,</span>
+      <span class="s1">&#39;padding_overhead&#39;</span><span class="p">:</span> <span class="n">total_padded</span> <span class="o">-</span> <span class="n">total_actual</span><span class="p">,</span>
+      <span class="s1">&#39;batch_size_p50&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">batch_sizes</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="k">if</span> <span class="n">batch_sizes</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">&#39;batch_size_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">batch_sizes</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span> <span class="k">if</span> <span class="n">batch_sizes</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">&#39;batch_size_max&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">batch_sizes</span><span class="p">)</span> <span class="k">if</span> <span class="n">batch_sizes</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">&#39;max_len_p50&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">max_lengths</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lengths</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="s1">&#39;max_len_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">max_lengths</span><span class="p">,</span> <span class="mi">95</span><span class="p">)</span> <span class="k">if</span> <span class="n">max_lengths</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+  <span class="p">}</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Invariant validation</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="validate_invariants">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.validate_invariants">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_invariants</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">baseline_summaries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="n">stateless_summaries</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Validate element/token counts and batch-size equality.&quot;&quot;&quot;</span>
+  <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+  <span class="n">b_n</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">baseline_summaries</span><span class="p">)</span>
+  <span class="n">s_n</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stateless_summaries</span><span class="p">)</span>
+  <span class="n">tok</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
+  <span class="n">b_tok</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;actual_total_length&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">baseline_summaries</span><span class="p">)</span>
+  <span class="n">s_tok</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;actual_total_length&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">stateless_summaries</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">{</span>
+      <span class="s1">&#39;input_elements&#39;</span><span class="p">:</span> <span class="n">n</span><span class="p">,</span>
+      <span class="s1">&#39;baseline_elements&#39;</span><span class="p">:</span> <span class="n">b_n</span><span class="p">,</span>
+      <span class="s1">&#39;stateless_elements&#39;</span><span class="p">:</span> <span class="n">s_n</span><span class="p">,</span>
+      <span class="s1">&#39;elements_match&#39;</span><span class="p">:</span> <span class="n">n</span> <span class="o">==</span> <span class="n">b_n</span> <span class="o">==</span> <span class="n">s_n</span><span class="p">,</span>
+      <span class="s1">&#39;input_tokens&#39;</span><span class="p">:</span> <span class="n">tok</span><span class="p">,</span>
+      <span class="s1">&#39;baseline_tokens&#39;</span><span class="p">:</span> <span class="n">b_tok</span><span class="p">,</span>
+      <span class="s1">&#39;stateless_tokens&#39;</span><span class="p">:</span> <span class="n">s_tok</span><span class="p">,</span>
+      <span class="s1">&#39;tokens_match&#39;</span><span class="p">:</span> <span class="n">tok</span> <span class="o">==</span> <span class="n">b_tok</span> <span class="o">==</span> <span class="n">s_tok</span><span class="p">,</span>
+      <span class="s1">&#39;baseline_num_batches&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">baseline_summaries</span><span class="p">),</span>
+      <span class="s1">&#39;stateless_num_batches&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">stateless_summaries</span><span class="p">),</span>
+  <span class="p">}</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Performance benchmark (N=20 trials)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="run_performance_benchmark">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.run_performance_benchmark">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_performance_benchmark</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">max_batch_weight</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">num_trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">warmup_trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+    <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+<span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Run N=20 trials for baseline and stateless.&quot;&quot;&quot;</span>
+  <span class="n">total_tokens</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
+
+  <span class="n">baseline_trials</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">stateless_trials</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">baseline_sample_summaries</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">stateless_sample_summaries</span> <span class="o">=</span> <span class="p">[]</span>
+
+  <span class="k">for</span> <span class="n">trial_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">warmup_trials</span> <span class="o">+</span> <span class="n">num_trials</span><span class="p">):</span>
+    <span class="n">is_warmup</span> <span class="o">=</span> <span class="n">trial_idx</span> <span class="o">&lt;</span> <span class="n">warmup_trials</span>
+    <span class="n">trial_results</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">trial_idx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">trial_order</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;baseline&#39;</span><span class="p">,</span> <span class="s1">&#39;stateless&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">trial_order</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;stateless&#39;</span><span class="p">,</span> <span class="s1">&#39;baseline&#39;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">strategy</span> <span class="ow">in</span> <span class="n">trial_order</span><span class="p">:</span>
+      <span class="n">summaries</span><span class="p">,</span> <span class="n">runtime_ms</span> <span class="o">=</span> <span class="n">_run_batching_pipeline</span><span class="p">(</span>
+          <span class="n">strategy</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">max_batch_size</span><span class="p">,</span> <span class="n">max_batch_weight</span><span class="p">)</span>
+      <span class="n">batch_latencies</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="n">simulate_inference_latency</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_size&#39;</span><span class="p">],</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;max_len&#39;</span><span class="p">])</span>
+          <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">summaries</span>
+      <span class="p">]</span>
+      <span class="n">trial_results</span><span class="p">[</span><span class="n">strategy</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="s1">&#39;runtime_ms&#39;</span><span class="p">:</span> <span class="n">runtime_ms</span><span class="p">,</span>
+          <span class="s1">&#39;inference_ms&#39;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">batch_latencies</span><span class="p">),</span>
+          <span class="s1">&#39;e2e_ms&#39;</span><span class="p">:</span> <span class="n">runtime_ms</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">batch_latencies</span><span class="p">),</span>
+          <span class="s1">&#39;batch_latencies&#39;</span><span class="p">:</span> <span class="n">batch_latencies</span><span class="p">,</span>
+          <span class="s1">&#39;num_batches&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">summaries</span><span class="p">),</span>
+          <span class="s1">&#39;summaries&#39;</span><span class="p">:</span> <span class="n">summaries</span><span class="p">,</span>
+      <span class="p">}</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_warmup</span><span class="p">:</span>
+      <span class="n">baseline_trials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;baseline&#39;</span><span class="p">])</span>
+      <span class="n">stateless_trials</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;stateless&#39;</span><span class="p">])</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">baseline_sample_summaries</span><span class="p">:</span>
+        <span class="n">baseline_sample_summaries</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;baseline&#39;</span><span class="p">][</span><span class="s1">&#39;summaries&#39;</span><span class="p">]</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">stateless_sample_summaries</span><span class="p">:</span>
+        <span class="n">stateless_sample_summaries</span> <span class="o">=</span> <span class="n">trial_results</span><span class="p">[</span><span class="s1">&#39;stateless&#39;</span><span class="p">][</span><span class="s1">&#39;summaries&#39;</span><span class="p">]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_stats</span><span class="p">(</span><span class="n">trials</span><span class="p">):</span>
+    <span class="n">e2e</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;e2e_ms&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">]</span>
+    <span class="n">tput</span> <span class="o">=</span> <span class="p">[</span><span class="n">total_tokens</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;e2e_ms&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">]</span>
+    <span class="n">runtime</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="s1">&#39;runtime_ms&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span><span class="p">]</span>
+    <span class="n">all_lat</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">trials</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">t</span><span class="p">[</span><span class="s1">&#39;batch_latencies&#39;</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;e2e_median&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">e2e</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="s1">&#39;e2e_p25&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">e2e</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+        <span class="s1">&#39;e2e_p75&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">e2e</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span>
+        <span class="s1">&#39;e2e_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">e2e</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s1">&#39;tput_median&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">tput</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="s1">&#39;tput_p25&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">tput</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+        <span class="s1">&#39;tput_p75&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">tput</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span>
+        <span class="s1">&#39;tput_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">tput</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s1">&#39;runtime_median&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="s1">&#39;runtime_p25&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+        <span class="s1">&#39;runtime_p75&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="mi">75</span><span class="p">),</span>
+        <span class="s1">&#39;runtime_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">runtime</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s1">&#39;batch_lat_p50&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">all_lat</span><span class="p">,</span> <span class="mi">50</span><span class="p">),</span>
+        <span class="s1">&#39;batch_lat_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">all_lat</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s1">&#39;batch_lat_p99&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">all_lat</span><span class="p">,</span> <span class="mi">99</span><span class="p">),</span>
+        <span class="s1">&#39;inf_p95&#39;</span><span class="p">:</span> <span class="n">percentile</span><span class="p">(</span><span class="n">all_lat</span><span class="p">,</span> <span class="mi">95</span><span class="p">),</span>
+        <span class="s1">&#39;num_trials&#39;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">trials</span><span class="p">),</span>
+        <span class="s1">&#39;num_batches&#39;</span><span class="p">:</span> <span class="n">trials</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;num_batches&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">trials</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+
+  <span class="k">return</span> <span class="p">(</span>
+      <span class="n">_stats</span><span class="p">(</span><span class="n">baseline_trials</span><span class="p">),</span>
+      <span class="n">_stats</span><span class="p">(</span><span class="n">stateless_trials</span><span class="p">),</span>
+      <span class="n">baseline_sample_summaries</span><span class="p">,</span>
+      <span class="n">stateless_sample_summaries</span><span class="p">,</span>
+  <span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Single benchmark run</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="run_benchmark">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.run_benchmark">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_benchmark</span><span class="p">(</span>
+    <span class="n">num_elements</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+    <span class="n">min_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">max_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="n">max_batch_weight</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2000</span><span class="p">,</span>
+    <span class="n">distribution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;pareto&#39;</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Run baseline vs stateless comparison.&quot;&quot;&quot;</span>
+  <span class="n">generators</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="s1">&#39;pareto&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">generate_highly_skewed_data</span><span class="p">(</span>
+          <span class="n">num_elements</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">max_length</span><span class="p">,</span> <span class="n">seed</span><span class="p">),</span>
+      <span class="s1">&#39;lognormal&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">generate_lognormal_data</span><span class="p">(</span>
+          <span class="n">num_elements</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">max_length</span><span class="p">,</span> <span class="n">seed</span><span class="p">),</span>
+      <span class="s1">&#39;bimodal&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">generate_bimodal_data</span><span class="p">(</span>
+          <span class="n">num_elements</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">max_length</span><span class="p">,</span> <span class="n">seed</span><span class="p">),</span>
+      <span class="s1">&#39;low_variance&#39;</span><span class="p">:</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">generate_low_variance_data</span><span class="p">(</span>
+          <span class="n">num_elements</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">min_length</span><span class="p">,</span> <span class="n">max_length</span><span class="p">,</span> <span class="n">seed</span><span class="p">),</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="n">distribution</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown distribution: </span><span class="si">{</span><span class="n">distribution</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+  <span class="n">data</span> <span class="o">=</span> <span class="n">generators</span><span class="p">[</span><span class="n">distribution</span><span class="p">]()</span>
+  <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+
+  <span class="n">baseline_perf</span><span class="p">,</span> <span class="n">stateless_perf</span><span class="p">,</span> <span class="n">baseline_summaries</span><span class="p">,</span> <span class="n">stateless_summaries</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">run_performance_benchmark</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">max_batch_size</span><span class="p">,</span> <span class="n">max_batch_weight</span><span class="p">))</span>
+  <span class="n">baseline_pad</span> <span class="o">=</span> <span class="n">compute_padding_stats</span><span class="p">(</span><span class="n">baseline_summaries</span><span class="p">)</span>
+  <span class="n">stateless_pad</span> <span class="o">=</span> <span class="n">compute_padding_stats</span><span class="p">(</span><span class="n">stateless_summaries</span><span class="p">)</span>
+  <span class="n">baseline_pad</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">baseline_perf</span><span class="p">)</span>
+  <span class="n">stateless_pad</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">stateless_perf</span><span class="p">)</span>
+
+  <span class="n">validation</span> <span class="o">=</span> <span class="n">validate_invariants</span><span class="p">(</span>
+      <span class="n">data</span><span class="p">,</span> <span class="n">baseline_summaries</span><span class="p">,</span> <span class="n">stateless_summaries</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="p">{</span>
+      <span class="s1">&#39;config&#39;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s1">&#39;num_elements&#39;</span><span class="p">:</span> <span class="n">num_elements</span><span class="p">,</span>
+          <span class="s1">&#39;max_batch_size&#39;</span><span class="p">:</span> <span class="n">max_batch_size</span><span class="p">,</span>
+          <span class="s1">&#39;max_batch_weight&#39;</span><span class="p">:</span> <span class="n">max_batch_weight</span><span class="p">,</span>
+          <span class="s1">&#39;distribution&#39;</span><span class="p">:</span> <span class="n">distribution</span><span class="p">,</span>
+          <span class="s1">&#39;runner&#39;</span><span class="p">:</span> <span class="s1">&#39;DirectRunner&#39;</span><span class="p">,</span>
+      <span class="p">},</span>
+      <span class="s1">&#39;data_stats&#39;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+          <span class="s1">&#39;max&#39;</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+          <span class="s1">&#39;mean&#39;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+          <span class="s1">&#39;median&#39;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+          <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">statistics</span><span class="o">.</span><span class="n">stdev</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span>
+      <span class="p">},</span>
+      <span class="s1">&#39;baseline&#39;</span><span class="p">:</span> <span class="n">baseline_pad</span><span class="p">,</span>
+      <span class="s1">&#39;stateless&#39;</span><span class="p">:</span> <span class="n">stateless_pad</span><span class="p">,</span>
+      <span class="s1">&#39;validation&#39;</span><span class="p">:</span> <span class="n">validation</span><span class="p">,</span>
+  <span class="p">}</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Printing</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fmt_iqr</span><span class="p">(</span><span class="n">median</span><span class="p">,</span> <span class="n">p25</span><span class="p">,</span> <span class="n">p75</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+  <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">median</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> [</span><span class="si">{</span><span class="n">p25</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">p75</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]</span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<div class="viewcode-block" id="print_results">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.print_results">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_results</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="n">cfg</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;config&#39;</span><span class="p">]</span>
+  <span class="n">ds</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data_stats&#39;</span><span class="p">]</span>
+  <span class="n">bl</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;baseline&#39;</span><span class="p">]</span>
+  <span class="n">st</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;stateless&#39;</span><span class="p">]</span>
+  <span class="n">val</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;validation&#39;</span><span class="p">]</span>
+
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span>
+      <span class="sa">f</span><span class="s2">&quot;Distribution: </span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  |  &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;N=</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;num_elements&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  |  &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;runner=</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;runner&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  |  &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;max_batch_size=</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;max_batch_size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  |  &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;max_batch_weight=</span><span class="si">{</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;max_batch_weight&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span>
+      <span class="sa">f</span><span class="s2">&quot;Input lengths: min=</span><span class="si">{</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;min&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  max=</span><span class="si">{</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">  &quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;mean=</span><span class="si">{</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">  median=</span><span class="si">{</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.0f</span><span class="si">}</span><span class="s2">  std=</span><span class="si">{</span><span class="n">ds</span><span class="p">[</span><span class="s1">&#39;std&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_arm</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Num batches:    </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;num_batches&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    Padding ratio:  </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;padding_ratio&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Throughput (Ktok/s):&quot;</span><span class="p">)</span>
+    <span class="n">med</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;tput_median&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">p25</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;tput_p25&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="n">p75</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="s1">&#39;tput_p75&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      Median [IQR]: </span><span class="si">{</span><span class="n">med</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="n">p25</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">p75</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P95:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;tput_p95&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    E2E latency (ms):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;      Median [IQR]: </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;e2e_median&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;e2e_p25&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;e2e_p75&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P95:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;e2e_p95&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Pipeline runtime (ms):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">&quot;      Median [IQR]:&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;runtime_median&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot; [</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;runtime_p25&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;runtime_p75&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P95:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;runtime_p95&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    &quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    Batch latency (ms):&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P50:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_lat_p50&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P95:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_lat_p95&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;      P99:          </span><span class="si">{</span><span class="n">s</span><span class="p">[</span><span class="s1">&#39;batch_lat_p99&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+  <span class="n">_arm</span><span class="p">(</span><span class="s2">&quot;Baseline (BatchElements)&quot;</span><span class="p">,</span> <span class="n">bl</span><span class="p">)</span>
+  <span class="n">_arm</span><span class="p">(</span><span class="s2">&quot;Stateless (SortAndBatchElements w/ weight-based splitting)&quot;</span><span class="p">,</span> <span class="n">st</span><span class="p">)</span>
+
+  <span class="c1"># Explicit arrows so direction is unambiguous.</span>
+  <span class="c1">#   down arrow = value decreased (good for latency/padding)</span>
+  <span class="c1">#   up arrow = value increased (good for throughput)</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_delta_lower</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For metrics where lower is better (latency, padding).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="s1">&#39;N/A&#39;</span>
+    <span class="n">pct</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">-</span> <span class="n">new</span><span class="p">)</span> <span class="o">/</span> <span class="n">base</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">arrow</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2193</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">pct</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\u2191</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arrow</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">pct</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_delta_higher</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For metrics where higher is better (throughput).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="s1">&#39;N/A&#39;</span>
+    <span class="n">pct</span> <span class="o">=</span> <span class="p">(</span><span class="n">new</span> <span class="o">-</span> <span class="n">base</span><span class="p">)</span> <span class="o">/</span> <span class="n">base</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="n">arrow</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2191</span><span class="s1">&#39;</span> <span class="k">if</span> <span class="n">pct</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\u2193</span><span class="s1">&#39;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">arrow</span><span class="si">}{</span><span class="nb">abs</span><span class="p">(</span><span class="n">pct</span><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span>
+
+  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="s1">&#39;_&#39;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">76</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  DELTA (Baseline -&gt; Stateless):&quot;</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_line</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">bv</span><span class="p">,</span> <span class="n">sv</span><span class="p">,</span> <span class="n">delta_fn</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.1f&#39;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">delta_fn</span><span class="p">(</span><span class="n">bv</span><span class="p">,</span> <span class="n">sv</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">bv</span><span class="si">:{</span><span class="n">fmt</span><span class="si">}}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">&quot;</span>
+          <span class="sa">f</span><span class="s2">&quot; -&gt; </span><span class="si">{</span><span class="n">sv</span><span class="si">:{</span><span class="n">fmt</span><span class="si">}}{</span><span class="n">unit</span><span class="si">}</span><span class="s2">  (</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+  <span class="n">bl_tmed</span> <span class="o">=</span> <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;tput_median&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+  <span class="n">st_tmed</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="s1">&#39;tput_median&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+  <span class="n">bl_tp95</span> <span class="o">=</span> <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;tput_p95&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+  <span class="n">st_tp95</span> <span class="o">=</span> <span class="n">st</span><span class="p">[</span><span class="s1">&#39;tput_p95&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">1000</span>
+
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;Padding ratio    &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;padding_ratio&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;padding_ratio&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.2f&#39;</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span><span class="s1">&#39;Throughput median&#39;</span><span class="p">,</span> <span class="n">bl_tmed</span><span class="p">,</span> <span class="n">st_tmed</span><span class="p">,</span> <span class="n">_delta_higher</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; Ktok/s&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span><span class="s1">&#39;Throughput p95   &#39;</span><span class="p">,</span> <span class="n">bl_tp95</span><span class="p">,</span> <span class="n">st_tp95</span><span class="p">,</span> <span class="n">_delta_higher</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; Ktok/s&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;E2E latency med  &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;e2e_median&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;e2e_median&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; ms&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;E2E latency p95  &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;e2e_p95&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;e2e_p95&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; ms&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;Pipeline runtime &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;runtime_median&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;runtime_median&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; ms&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;Batch lat p95    &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;batch_lat_p95&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;batch_lat_p95&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; ms&#39;</span><span class="p">)</span>
+  <span class="n">_line</span><span class="p">(</span>
+      <span class="s1">&#39;Batch lat p99    &#39;</span><span class="p">,</span>
+      <span class="n">bl</span><span class="p">[</span><span class="s1">&#39;batch_lat_p99&#39;</span><span class="p">],</span>
+      <span class="n">st</span><span class="p">[</span><span class="s1">&#39;batch_lat_p99&#39;</span><span class="p">],</span>
+      <span class="n">_delta_lower</span><span class="p">,</span>
+      <span class="n">unit</span><span class="o">=</span><span class="s1">&#39; ms&#39;</span><span class="p">)</span>
+
+  <span class="c1"># Invariants</span>
+  <span class="n">e_ok</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span> <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;elements_match&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;X&quot;</span>
+  <span class="n">t_ok</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span> <span class="k">if</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;tokens_match&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="s2">&quot;X&quot;</span>
+  <span class="n">b_nb</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;baseline_num_batches&#39;</span><span class="p">]</span>
+  <span class="n">s_nb</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s1">&#39;stateless_num_batches&#39;</span><span class="p">]</span>
+  <span class="nb">print</span><span class="p">(</span>
+      <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  Invariants: elements </span><span class="si">{</span><span class="n">e_ok</span><span class="si">}</span><span class="s2">  tokens </span><span class="si">{</span><span class="n">t_ok</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="sa">f</span><span class="s2">&quot;  (baseline </span><span class="si">{</span><span class="n">b_nb</span><span class="si">}</span><span class="s2"> -&gt; stateless </span><span class="si">{</span><span class="n">s_nb</span><span class="si">}</span><span class="s2">&quot;</span>
+      <span class="sa">f</span><span class="s2">&quot; batches)&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Main</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../apache_beam.testing.benchmarks.sort_and_batch_benchmark.html#apache_beam.testing.benchmarks.sort_and_batch_benchmark.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BASELINE (BatchElements) vs STATELESS (SortAndBatchElements)&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment design:&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  A = Baseline  : BatchElements with min=max=32&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  B = Stateless : SortAndBatchElements with max_batch_weight=2000&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;                  (sort within runner bundle, then split by weight)&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Implementation notes:&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Runs beam.Create(...) pipelines on DirectRunner&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Materializes per-batch summaries through a temporary text sink&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Uses runner-defined bundle boundaries rather than a synthetic&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    bundle_size knob&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">()</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Methodology:&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - N=20 trials, 3 warmup excluded&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - DirectRunner, in_memory mode, single worker&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Percentiles: linear interpolation (= numpy default)&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Same seed=42 for both arms&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  - Inference model: latency = batch_size * (max_seq_len/50)^1.5 ms&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">()</span>
+
+  <span class="n">dist</span> <span class="o">=</span> <span class="s1">&#39;pareto&#39;</span>
+  <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Running: </span><span class="si">{</span><span class="n">dist</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">run_benchmark</span><span class="p">(</span>
+      <span class="n">num_elements</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+      <span class="n">max_batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+      <span class="n">max_batch_weight</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+      <span class="n">distribution</span><span class="o">=</span><span class="n">dist</span><span class="p">,</span>
+      <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+  <span class="n">print_results</span><span class="p">(</span><span class="n">r</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

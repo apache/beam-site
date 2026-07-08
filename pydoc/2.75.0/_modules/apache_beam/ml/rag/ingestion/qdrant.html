@@ -1,0 +1,472 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.qdrant &mdash; Apache Beam 2.75.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=64f7e716"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.qdrant</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.qdrant</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the &quot;License&quot;); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">grpc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">objsize</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_deep_size</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">qdrant_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">QdrantClient</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">qdrant_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">models</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">qdrant_client.common.client_exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResourceExhaustedResponse</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">qdrant_client.http.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResponseHandlingException</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">qdrant_client.http.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnexpectedResponse</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Qdrant client library is not installed.&quot;</span><span class="p">)</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorDatabaseWriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddableItem</span>
+
+<span class="n">DEFAULT_WRITE_BATCH_SIZE</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">DEFAULT_MAX_BATCH_BYTE_SIZE</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">&lt;&lt;</span> <span class="mi">20</span>
+
+
+<div class="viewcode-block" id="QdrantConnectionParameters">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QdrantConnectionParameters</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration parameters for connecting to Qdrant service.</span>
+
+<span class="sd">  Either `location`, `url`, `host`, or `path` must be provided to establish</span>
+<span class="sd">  a connection.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    location:</span>
+<span class="sd">      If `str` - use it as a `url` parameter.</span>
+<span class="sd">      If `None` - use default values for `host` and `port`.</span>
+<span class="sd">    url: either host or str of &quot;&lt;scheme&gt;//&lt;host&gt;:&lt;port&gt;/&lt;prefix&gt;&quot;.</span>
+<span class="sd">      Default: `None`</span>
+<span class="sd">    port: Port of the REST API interface. Default: 6333</span>
+<span class="sd">    grpc_port: Port of the gRPC interface. Default: 6334</span>
+<span class="sd">    prefer_grpc: If `true` - use gPRC interface whenever possible.</span>
+<span class="sd">    https: If `true` - use HTTPS(SSL) protocol. Default: `None`</span>
+<span class="sd">    api_key: API key for authentication in Qdrant Cloud. Default: `None`</span>
+<span class="sd">    prefix:</span>
+<span class="sd">      If not `None` - add `prefix` to the REST URL path.</span>
+<span class="sd">      Example: `service/v1` will result in</span>
+<span class="sd">      `http://localhost:6333/service/v1/{qdrant-endpoint}` for REST API.</span>
+<span class="sd">      Default: `None`</span>
+<span class="sd">    timeout:</span>
+<span class="sd">      Timeout for REST and gRPC API requests.</span>
+<span class="sd">      Default: 5 seconds for REST and unlimited for gRPC</span>
+<span class="sd">    host:</span>
+<span class="sd">      Host name of Qdrant service.</span>
+<span class="sd">      If url and host are None, set to &#39;localhost&#39;.</span>
+<span class="sd">      Default: `None`</span>
+<span class="sd">    path: Persistence path for QdrantLocal. Default: `None`</span>
+<span class="sd">    **kwargs: Additional arguments passed directly into client initialization</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">port</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">6333</span>
+  <span class="n">grpc_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6334</span>
+  <span class="n">prefer_grpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+  <span class="n">https</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">&quot;One of location, url, host, or path must be provided for Qdrant&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QdrantConnectionParameters.for_cloud">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters.for_cloud">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_cloud</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">prefer_grpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QdrantConnectionParameters&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to Qdrant Cloud. Requires the cluster URL and an API key.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+        <span class="n">https</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefer_grpc</span><span class="o">=</span><span class="n">prefer_grpc</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantConnectionParameters.for_host">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters.for_host">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_host</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">host</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6333</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">grpc_port</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6334</span><span class="p">,</span>
+      <span class="n">prefer_grpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">https</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QdrantConnectionParameters&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect to a self-hosted Qdrant instance by host and port.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">grpc_port</span><span class="o">=</span><span class="n">grpc_port</span><span class="p">,</span>
+        <span class="n">prefer_grpc</span><span class="o">=</span><span class="n">prefer_grpc</span><span class="p">,</span>
+        <span class="n">https</span><span class="o">=</span><span class="n">https</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantConnectionParameters.for_url">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters.for_url">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_url</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">prefer_grpc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QdrantConnectionParameters&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Connect using a full URL like &#39;https://my-qdrant.example.com:6333&#39;.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">api_key</span><span class="p">,</span>
+        <span class="n">prefer_grpc</span><span class="o">=</span><span class="n">prefer_grpc</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantConnectionParameters.local">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters.local">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">local</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QdrantConnectionParameters&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use an embedded Qdrant instance persisted to the given path.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantConnectionParameters.in_memory">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantConnectionParameters.in_memory">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">in_memory</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;QdrantConnectionParameters&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use an embedded in-memory Qdrant instance. Useful for tests.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="s2">&quot;:memory:&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QdrantWriteConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantWriteConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QdrantWriteConfig</span><span class="p">(</span><span class="n">VectorDatabaseWriteConfig</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">&quot;&quot;&quot;Configuration for writing to Qdrant vector database.</span>
+
+<span class="sd">  This class defines the parameters needed to write data to a qdrant collection,</span>
+<span class="sd">  including collection targeting, batching behavior, and operation timeouts.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    connection_params: QdrantConnectionParameters with connection settings.</span>
+<span class="sd">    collection_name: Name of the Qdrant collection to write to.</span>
+<span class="sd">    timeout: Optional timeout for write operations in seconds. Default is None.</span>
+<span class="sd">    batch_size: Number of points to write in each batch. Default is 1000.</span>
+<span class="sd">    kwargs: Additional keyword arguments to pass to the client&#39;s upsert method.</span>
+<span class="sd">    dense_embedding_key: name for the dense vector in the qdrant collection.</span>
+<span class="sd">    sparse_embedding_key: name for the sparse vector in the qdrant collection.</span>
+<span class="sd">  &quot;&quot;&quot;</span>
+
+  <span class="n">connection_params</span><span class="p">:</span> <span class="n">QdrantConnectionParameters</span>
+  <span class="n">collection_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_WRITE_BATCH_SIZE</span>
+  <span class="n">max_batch_byte_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_BATCH_BYTE_SIZE</span>
+  <span class="n">kwargs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+  <span class="n">dense_embedding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;dense&quot;</span>
+  <span class="n">sparse_embedding_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;sparse&quot;</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">collection_name</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Collection name must be provided&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Batch size must be a positive integer&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QdrantWriteConfig.create_write_transform">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantWriteConfig.create_write_transform">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_write_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">EmbeddableItem</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="n">_QdrantWriteTransform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QdrantWriteConfig.create_converter">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.qdrant.html#apache_beam.ml.rag.ingestion.qdrant.QdrantWriteConfig.create_converter">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_converter</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="s2">&quot;models.PointStruct&quot;</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;models.PointStruct&quot;</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">dense_embedding</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">sparse_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;EmbeddableItem must have at least one embedding (dense or sparse)&quot;</span><span class="p">)</span>
+      <span class="n">vector</span> <span class="o">=</span> <span class="p">{}</span>
+      <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">dense_embedding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">vector</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dense_embedding_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">dense_embedding</span>
+      <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">sparse_embedding</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sparse_indices</span><span class="p">,</span> <span class="n">sparse_values</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">sparse_embedding</span>
+        <span class="n">vector</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sparse_embedding_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SparseVector</span><span class="p">(</span>
+            <span class="n">indices</span><span class="o">=</span><span class="n">sparse_indices</span><span class="p">,</span>
+            <span class="n">values</span><span class="o">=</span><span class="n">sparse_values</span><span class="p">,</span>
+        <span class="p">)</span>
+      <span class="nb">id</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">models</span><span class="o">.</span><span class="n">PointStruct</span><span class="p">(</span>
+          <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
+          <span class="n">vector</span><span class="o">=</span><span class="n">vector</span><span class="p">,</span>
+          <span class="n">payload</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">metadata</span> <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">metadata</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">convert</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_QdrantWriteTransform</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">QdrantWriteConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_or_inputs</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">EmbeddableItem</span><span class="p">]):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">input_or_inputs</span>
+        <span class="o">|</span> <span class="s2">&quot;Convert to Records&quot;</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">create_converter</span><span class="p">())</span>
+        <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_QdrantWriteFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">)))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_QdrantWriteFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">QdrantWriteConfig</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span> <span class="s2">&quot;Optional[QdrantClient]&quot;</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">start_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_byte_size</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">element_byte_size</span> <span class="o">=</span> <span class="n">get_deep_size</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="n">new_batch_byte_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_byte_size</span> <span class="o">+</span> <span class="n">element_byte_size</span>
+
+    <span class="n">is_batch_full</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="n">is_batch_too_large</span> <span class="o">=</span> <span class="n">new_batch_byte_size</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_batch_byte_size</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">is_batch_full</span> <span class="ow">or</span> <span class="n">is_batch_too_large</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_byte_size</span> <span class="o">+=</span> <span class="n">element_byte_size</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">connection_params</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="n">QdrantClient</span><span class="p">(</span>
+        <span class="n">location</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+        <span class="n">url</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">url</span><span class="p">,</span>
+        <span class="n">port</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+        <span class="n">grpc_port</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">grpc_port</span><span class="p">,</span>
+        <span class="n">prefer_grpc</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">prefer_grpc</span><span class="p">,</span>
+        <span class="n">https</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">https</span><span class="p">,</span>
+        <span class="n">api_key</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">api_key</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">prefix</span><span class="p">,</span>
+        <span class="n">timeout</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+        <span class="n">host</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+        <span class="n">path</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+        <span class="n">check_compatibility</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">params</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="k">finally</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">finish_bundle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_flush</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_flush</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Qdrant client is not initialized&quot;</span><span class="p">)</span>
+
+    <span class="n">max_retries</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">attempt</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">upsert</span><span class="p">(</span>
+            <span class="n">collection_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">collection_name</span><span class="p">,</span>
+            <span class="n">points</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch</span><span class="p">,</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">break</span>
+      <span class="k">except</span> <span class="n">ResourceExhaustedResponse</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">retry_after_s</span><span class="p">)</span>
+        <span class="c1"># don&#39;t count rate-limit against max_retries</span>
+        <span class="k">continue</span>
+      <span class="k">except</span> <span class="p">(</span><span class="n">UnexpectedResponse</span><span class="p">,</span> <span class="n">ResponseHandlingException</span><span class="p">,</span>
+              <span class="n">grpc</span><span class="o">.</span><span class="n">RpcError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">attempt</span> <span class="o">&gt;</span> <span class="n">max_retries</span><span class="p">:</span>
+          <span class="k">raise</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">attempt</span><span class="p">)</span>
+        <span class="n">attempt</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_byte_size</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">display_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">display_data</span><span class="p">()</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;collection&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">collection_name</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;max_batch_byte_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_batch_byte_size</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
