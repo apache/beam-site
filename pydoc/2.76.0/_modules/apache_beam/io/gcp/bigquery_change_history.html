@@ -1,0 +1,1473 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.gcp.bigquery_change_history &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.gcp.bigquery_change_history</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.io.gcp.bigquery_change_history</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Streaming source for BigQuery change history (APPENDS/CHANGES functions).</span>
+
+<span class="sd">This module provides ``ReadBigQueryChangeHistory``, a streaming PTransform</span>
+<span class="sd">that continuously polls BigQuery APPENDS() or CHANGES() functions and emits</span>
+<span class="sd">changed rows as an unbounded PCollection.</span>
+
+<span class="sd">**Status: Experimental**: API may change without notice.</span>
+
+<span class="sd">Usage::</span>
+
+<span class="sd">    import apache_beam as beam</span>
+<span class="sd">    from apache_beam.io.gcp.bigquery_change_history import ReadBigQueryChangeHistory</span>
+
+<span class="sd">    with beam.Pipeline(options=pipeline_options) as p:</span>
+<span class="sd">        changes = (</span>
+<span class="sd">            p</span>
+<span class="sd">            | ReadBigQueryChangeHistory(</span>
+<span class="sd">                table='my-project:my_dataset.my_table',</span>
+<span class="sd">                change_function='APPENDS',</span>
+<span class="sd">                poll_interval_sec=60))</span>
+
+<span class="sd">Architecture:</span>
+<span class="sd">  Poll:    Polling SDF emits lightweight _QueryRange instructions.</span>
+<span class="sd">  Query:   _ExecuteQueryFn runs the BQ query, writes to a temp table.</span>
+<span class="sd">  Read:    SDF reads temp table via Storage Read API with dynamic splitting.</span>
+<span class="sd">  Cleanup: Stateful DoFn tracks stream completion, deletes temp tables.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.gcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">bigquery_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.gcp.internal.clients</span><span class="w"> </span><span class="kn">import</span> <span class="n">bigquery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.iobase</span><span class="w"> </span><span class="kn">import</span> <span class="n">WatermarkEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.restriction_trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetRange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.restriction_trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetRestrictionTracker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.watermark_estimators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManualWatermarkEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metrics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">WatermarkEstimatorProvider</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.window</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampedValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">retry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timestamp</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">google.cloud</span><span class="w"> </span><span class="kn">import</span> <span class="n">bigquery_storage_v1</span> <span class="k">as</span> <span class="n">bq_storage</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">bq_storage</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">pyarrow</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'ReadBigQueryChangeHistory'</span><span class="p">]</span>
+
+<span class="c1"># Max time range for CHANGES() queries: 1 day.</span>
+<span class="n">_MAX_CHANGES_RANGE</span> <span class="o">=</span> <span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">86400</span><span class="p">)</span>
+
+<span class="c1"># Side output tag for cleanup signals between the Read SDF and Cleanup DoFn.</span>
+<span class="n">_CLEANUP_TAG</span> <span class="o">=</span> <span class="s1">'cleanup'</span>
+
+<span class="c1"># Default number of Storage Read API streams to request.</span>
+<span class="c1"># Matches ReadFromBigQuery's MIN_SPLIT_COUNT to enable parallelism.</span>
+<span class="c1"># The server may return fewer streams if the table is small.</span>
+<span class="n">_DEFAULT_MAX_STREAMS</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="c1"># Default table expiration for auto-created temp datasets: 24 hours in ms.</span>
+<span class="c1"># Tables created in the dataset auto-expire after this duration if not</span>
+<span class="c1"># explicitly deleted, acting as a safety net for orphaned temp tables</span>
+<span class="c1"># (e.g. pipeline crash before cleanup runs).</span>
+<span class="n">_DEFAULT_TABLE_EXPIRATION_MS</span> <span class="o">=</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_QueryResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Bridges the Query step (query execution) to the Read SDF.</span>
+
+<span class="sd">  After _ExecuteQueryFn runs a CHANGES/APPENDS query, it emits a _QueryResult</span>
+<span class="sd">  pointing to the temp table containing query results. The Read SDF reads</span>
+<span class="sd">  rows from that temp table via the Storage Read API.</span>
+
+<span class="sd">  range_start/range_end define the time window this query covers as Beam</span>
+<span class="sd">  Timestamps (int microseconds internally). The Read SDF uses range_start</span>
+<span class="sd">  to set an initial watermark hold so the runner doesn't advance the</span>
+<span class="sd">  watermark past the data's timestamps.</span>
+<span class="sd">  """</span>
+  <span class="n">temp_table_ref</span><span class="p">:</span> <span class="s1">'bigquery.TableReference'</span>
+  <span class="n">range_start</span><span class="p">:</span> <span class="n">Timestamp</span>
+  <span class="n">range_end</span><span class="p">:</span> <span class="n">Timestamp</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_PollConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Input element for the polling SDF.</span>
+
+<span class="sd">  Only contains start_time (Beam Timestamp), which</span>
+<span class="sd">  _PollWatermarkEstimatorProvider uses to initialize the watermark hold.</span>
+<span class="sd">  All other config is passed via _PollChangeHistoryFn.__init__.</span>
+<span class="sd">  """</span>
+  <span class="n">start_time</span><span class="p">:</span> <span class="n">Timestamp</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_QueryRange</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Lightweight instruction emitted by the polling SDF.</span>
+
+<span class="sd">  Contains only the time range to query as Beam Timestamps (int microseconds</span>
+<span class="sd">  internally). Static config (table, project, etc.) is held by</span>
+<span class="sd">  _ExecuteQueryFn which receives these after a Reshuffle commit boundary,</span>
+<span class="sd">  preventing duplicate queries on SDF re-dispatch.</span>
+<span class="sd">  """</span>
+  <span class="n">chunk_start</span><span class="p">:</span> <span class="n">Timestamp</span>
+  <span class="n">chunk_end</span><span class="p">:</span> <span class="n">Timestamp</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StreamRestriction</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Restriction carrying BQ Storage stream names for cross-worker safety.</span>
+
+<span class="sd">  Unlike a plain OffsetRange(0, N), this restriction is self-contained:</span>
+<span class="sd">  each split carries the actual stream name strings so it can be processed</span>
+<span class="sd">  on any worker. Composes an OffsetRange for offset logic.</span>
+<span class="sd">  """</span>
+  <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'stream_names'</span><span class="p">,</span> <span class="s1">'range'</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">stream_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">stop</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stream_names</span> <span class="o">=</span> <span class="n">stream_names</span>  <span class="c1"># tuple of BQ stream name strings</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">=</span> <span class="n">OffsetRange</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">)</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">start</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">stop</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_StreamRestriction</span><span class="p">):</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_names</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stream_names</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s1">'_StreamRestriction(streams=</span><span class="si">%d</span><span class="s1">, start=</span><span class="si">%d</span><span class="s1">, stop=</span><span class="si">%d</span><span class="s1">)'</span> <span class="o">%</span>
+        <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream_names</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">range</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StreamRestrictionTracker</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionTracker</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Tracker for _StreamRestriction, delegating offset logic to</span>
+<span class="sd">  OffsetRestrictionTracker."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">_StreamRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stream_names</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">stream_names</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span> <span class="o">=</span> <span class="n">OffsetRestrictionTracker</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">range</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_StreamRestriction</span><span class="p">:</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">_StreamRestriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stream_names</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_claim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_split</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">fraction_of_remainder</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">_StreamRestriction</span><span class="p">,</span> <span class="n">_StreamRestriction</span><span class="p">]]:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span><span class="o">.</span><span class="n">try_split</span><span class="p">(</span><span class="n">fraction_of_remainder</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">primary</span><span class="p">,</span> <span class="n">residual</span> <span class="o">=</span> <span class="n">result</span>
+      <span class="k">return</span> <span class="p">(</span>
+          <span class="n">_StreamRestriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stream_names</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">stop</span><span class="p">),</span>
+          <span class="n">_StreamRestriction</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stream_names</span><span class="p">,</span> <span class="n">residual</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">residual</span><span class="o">.</span><span class="n">stop</span><span class="p">))</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">check_done</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span><span class="o">.</span><span class="n">check_done</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_offset_tracker</span><span class="o">.</span><span class="n">current_progress</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_NonSplittableOffsetTracker</span><span class="p">(</span><span class="n">OffsetRestrictionTracker</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""OffsetRestrictionTracker that allows checkpointing but prevents splitting.</span>
+
+<span class="sd">  Checkpointing (fraction=0) is required for defer_remainder(). All other</span>
+<span class="sd">  split fractions are refused, ensuring the polling SDF runs as a singleton.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_split</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">fraction_of_remainder</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">OffsetRange</span><span class="p">,</span> <span class="n">OffsetRange</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="n">fraction_of_remainder</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">try_split</span><span class="p">(</span><span class="n">fraction_of_remainder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_PollWatermarkEstimator</span><span class="p">(</span><span class="n">WatermarkEstimator</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Watermark estimator that tracks both a watermark hold and poll cursor.</span>
+
+<span class="sd">  The watermark hold (reported via current_watermark) is set to start_ts:</span>
+<span class="sd">  the earliest data timestamp emitted by the current poll. This prevents</span>
+<span class="sd">  downstream stages from seeing data as late.</span>
+
+<span class="sd">  The poll cursor (last_end) tracks where the next poll should start.</span>
+<span class="sd">  This is separate from the watermark so we can hold the watermark back</span>
+<span class="sd">  at start_ts while still advancing the poll cursor to end_ts.</span>
+
+<span class="sd">  All timestamps are Beam Timestamps (int microseconds internally).</span>
+
+<span class="sd">  State is checkpointed as (watermark_hold, last_end) so</span>
+<span class="sd">  both values survive SDF re-dispatch.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_end</span> <span class="o">=</span> <span class="n">state</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">observe_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_estimator_state</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_end</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'set_watermark expects a Timestamp as input'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span> <span class="o">&gt;</span> <span class="n">timestamp</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'Watermark must be monotonically increasing. '</span>
+          <span class="s1">'Provided </span><span class="si">%s</span><span class="s1"> &lt; current </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">timestamp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_watermark_hold</span> <span class="o">=</span> <span class="n">timestamp</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">advance_poll_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Record end so the next poll starts from here.</span>
+
+<span class="sd">    Only advances forward: if end is earlier than the current cursor</span>
+<span class="sd">    (e.g. BQ clock regression), the cursor stays put so the next poll</span>
+<span class="sd">    doesn't re-query an already-covered range.</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_end</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_last_end</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">poll_cursor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return the start Timestamp for the next poll."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_end</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_PollWatermarkEstimatorProvider</span><span class="p">(</span><span class="n">WatermarkEstimatorProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Provider for _PollWatermarkEstimator.</span>
+
+<span class="sd">  Initializes with watermark hold at start_time and poll cursor at</span>
+<span class="sd">  start_time (first poll will query from start_time).</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_estimator_state</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">,</span>
+      <span class="n">restriction</span><span class="p">:</span> <span class="n">OffsetRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">start_time</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_watermark_estimator</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">estimator_state</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">,</span>
+                                   <span class="n">Timestamp</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">_PollWatermarkEstimator</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_PollWatermarkEstimator</span><span class="p">(</span><span class="n">estimator_state</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_changes_query</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+    <span class="n">end</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+    <span class="n">change_function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">change_type_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_type'</span><span class="p">,</span>
+    <span class="n">change_timestamp_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_timestamp'</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">row_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Build a CHANGES() or APPENDS() SQL query.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    table: Table name as 'project.dataset.table' or 'project:dataset.table'.</span>
+<span class="sd">    start: Start timestamp (Beam Timestamp). Inclusive.</span>
+<span class="sd">    end: End timestamp (Beam Timestamp). Exclusive.</span>
+<span class="sd">    change_function: 'CHANGES' or 'APPENDS'.</span>
+<span class="sd">    change_type_column: Output column name for _CHANGE_TYPE pseudo-column.</span>
+<span class="sd">    change_timestamp_column: Output column name for _CHANGE_TIMESTAMP</span>
+<span class="sd">        pseudo-column.</span>
+<span class="sd">    columns: Optional list of column names to select. If None, selects all</span>
+<span class="sd">        columns. Pseudo-columns are always appended regardless.</span>
+<span class="sd">    row_filter: Optional SQL WHERE clause (without the WHERE keyword).</span>
+<span class="sd">        Applied after the CHANGES/APPENDS function.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    SQL string.</span>
+<span class="sd">  """</span>
+  <span class="c1"># Normalize 'project:dataset.table' to 'project.dataset.table'</span>
+  <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">':'</span><span class="p">,</span> <span class="s1">'.'</span><span class="p">)</span>
+  <span class="n">start_iso</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">to_rfc3339</span><span class="p">()</span>
+  <span class="n">end_iso</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">to_rfc3339</span><span class="p">()</span>
+  <span class="c1"># Pseudo-columns (_CHANGE_TYPE, _CHANGE_TIMESTAMP) can't be written to</span>
+  <span class="c1"># destination tables with their original names. Rename them so they can</span>
+  <span class="c1"># be persisted to the temp table for Storage Read API reading.</span>
+  <span class="n">pseudo</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="sa">f</span><span class="s2">"_CHANGE_TYPE AS </span><span class="si">{</span><span class="n">change_type_column</span><span class="si">}</span><span class="s2">, "</span>
+      <span class="sa">f</span><span class="s2">"_CHANGE_TIMESTAMP AS </span><span class="si">{</span><span class="n">change_timestamp_column</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">select</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT * EXCEPT(_CHANGE_TYPE, _CHANGE_TIMESTAMP), </span><span class="si">{</span><span class="n">pseudo</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">select</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">pseudo</span><span class="si">}</span><span class="s2">"</span>
+  <span class="n">from_clause</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="sa">f</span><span class="s2">"FROM </span><span class="si">{</span><span class="n">change_function</span><span class="si">}</span><span class="s2">"</span>
+      <span class="sa">f</span><span class="s2">"(TABLE `</span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">`, "</span>
+      <span class="sa">f</span><span class="s2">"TIMESTAMP '</span><span class="si">{</span><span class="n">start_iso</span><span class="si">}</span><span class="s2">', "</span>
+      <span class="sa">f</span><span class="s2">"TIMESTAMP '</span><span class="si">{</span><span class="n">end_iso</span><span class="si">}</span><span class="s2">')"</span><span class="p">)</span>
+  <span class="n">where</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">" WHERE </span><span class="si">{</span><span class="n">row_filter</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="n">row_filter</span> <span class="k">else</span> <span class="s2">""</span>
+  <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">select</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">from_clause</span><span class="si">}{</span><span class="n">where</span><span class="si">}</span><span class="s2">"</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ranges</span><span class="p">(</span><span class="n">start</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+                   <span class="n">change_function</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">]]:</span>
+<span class="w">  </span><span class="sd">"""Split [start, end) into query-safe chunks.</span>
+
+<span class="sd">  CHANGES() has a max 1-day range. APPENDS() has no limit.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    start: Start Timestamp. Inclusive.</span>
+<span class="sd">    end: End Timestamp. Exclusive.</span>
+<span class="sd">    change_function: 'CHANGES' or 'APPENDS'.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    List of (start, end) Timestamp tuples. Empty if end &lt;= start.</span>
+<span class="sd">  """</span>
+  <span class="k">if</span> <span class="n">end</span> <span class="o">&lt;=</span> <span class="n">start</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">[]</span>
+
+  <span class="k">if</span> <span class="n">change_function</span> <span class="o">!=</span> <span class="s1">'CHANGES'</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)]</span>
+
+  <span class="c1"># CHANGES: chunk into &lt;=1-day ranges</span>
+  <span class="n">ranges</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">current</span> <span class="o">=</span> <span class="n">start</span>
+  <span class="k">while</span> <span class="n">current</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+    <span class="n">chunk_end</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">current</span> <span class="o">+</span> <span class="n">_MAX_CHANGES_RANGE</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    <span class="n">ranges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">current</span><span class="p">,</span> <span class="n">chunk_end</span><span class="p">))</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="n">chunk_end</span>
+  <span class="k">return</span> <span class="n">ranges</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_utc</span><span class="p">(</span><span class="n">ts</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Format a Beam Timestamp as a concise UTC string for logging."""</span>
+  <span class="k">return</span> <span class="n">ts</span><span class="o">.</span><span class="n">to_utc_datetime</span><span class="p">(</span><span class="n">has_tz</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S.</span><span class="si">%f</span><span class="s1">'</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Poll: _PollChangeHistoryFn (Polling SDF)</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_PollChangeHistoryFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">RestrictionProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""SDF that periodically emits _QueryRange instructions.</span>
+
+<span class="sd">  Uses defer_remainder() for poll timing and _PollWatermarkEstimator to</span>
+<span class="sd">  control the watermark. The watermark is initially held at start_time, then</span>
+<span class="sd">  advanced to start_ts of each poll.</span>
+
+<span class="sd">  All timestamps are Beam Timestamps (int microseconds internally).</span>
+<span class="sd">  Durations (buffer, poll_interval) are Beam Durations.</span>
+
+<span class="sd">  Derives start_ts from the poll cursor. On each poll:</span>
+<span class="sd">  1. start_ts = poll cursor (last end_ts, or start_time on first poll)</span>
+<span class="sd">  2. end_ts = bq_now - buffer</span>
+<span class="sd">  3. Computes query chunks, yields _QueryRange per chunk</span>
+<span class="sd">  4. Advances poll cursor to end_ts (for next poll's start)</span>
+<span class="sd">  5. Advances watermark to start_ts (earliest data in this poll)</span>
+<span class="sd">  6. Defers to next poll interval</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">change_function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">buffer</span><span class="p">:</span> <span class="n">Duration</span><span class="p">,</span>
+      <span class="n">start_time</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+      <span class="n">stop_time</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="n">Duration</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">table</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span> <span class="o">=</span> <span class="n">change_function</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">buffer</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="o">=</span> <span class="n">stop_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">location</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">BigQueryWrapper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">table_ref</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">parse_table_reference</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">get_table_location</span><span class="p">(</span>
+          <span class="n">table_ref</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">table_ref</span><span class="o">.</span><span class="n">datasetId</span><span class="p">,</span> <span class="n">table_ref</span><span class="o">.</span><span class="n">tableId</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Poll] Inferred location=</span><span class="si">%s</span><span class="s1"> from source table </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">)</span>
+
+  <span class="nd">@retry</span><span class="o">.</span><span class="n">with_exponential_backoff</span><span class="p">(</span>
+      <span class="n">num_retries</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+      <span class="n">retry_filter</span><span class="o">=</span><span class="n">retry</span><span class="o">.</span><span class="n">retry_on_server_errors_and_timeout_filter</span><span class="p">)</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_bq_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Query BigQuery for the current server timestamp.</span>
+
+<span class="sd">    Returns a Beam Timestamp created from integer microseconds.</span>
+<span class="sd">    Uses BQ's CURRENT_TIMESTAMP instead of the local clock to avoid</span>
+<span class="sd">    data loss from clock skew between the worker VM and BigQuery.</span>
+<span class="sd">    """</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">BigqueryJobsQueryRequest</span><span class="p">(</span>
+        <span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">,</span>
+        <span class="n">queryRequest</span><span class="o">=</span><span class="n">bigquery</span><span class="o">.</span><span class="n">QueryRequest</span><span class="p">(</span>
+            <span class="n">query</span><span class="o">=</span><span class="s1">'SELECT UNIX_MICROS(CURRENT_TIMESTAMP()) AS ts'</span><span class="p">,</span>
+            <span class="n">useLegacySql</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">))</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">Query</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Timestamp</span><span class="p">(</span><span class="n">micros</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">rows</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">string_value</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OffsetRange</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">OffsetRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_tracker</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">OffsetRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_NonSplittableOffsetTracker</span><span class="p">:</span>
+    <span class="c1"># Guarantee at least one poll cycle: restriction.start == 0 on the first</span>
+    <span class="c1"># invocation (from initial_restriction).  After the first try_claim(0) +</span>
+    <span class="c1"># defer_remainder, subsequent invocations arrive with start &gt;= 1.</span>
+    <span class="k">if</span> <span class="n">restriction</span><span class="o">.</span><span class="n">start</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">):</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Poll] create_tracker: stop_time reached, '</span>
+          <span class="s1">'returning empty range to terminate SDF'</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_NonSplittableOffsetTracker</span><span class="p">(</span>
+          <span class="n">OffsetRange</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">restriction</span><span class="o">.</span><span class="n">start</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_NonSplittableOffsetTracker</span><span class="p">(</span><span class="n">restriction</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_size</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">OffsetRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">1</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">,</span>
+            <span class="n">restriction</span><span class="p">:</span> <span class="n">OffsetRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">OffsetRange</span><span class="p">]:</span>
+    <span class="k">yield</span> <span class="n">restriction</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">truncate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">OffsetRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_next_poll_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_ts</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+                      <span class="n">now</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Return a Timestamp to defer to, or None if we should poll now."""</span>
+    <span class="n">earliest</span> <span class="o">=</span> <span class="n">start_ts</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span>
+    <span class="k">if</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="nb">float</span><span class="p">(</span><span class="n">earliest</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">earliest</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_emit_query_ranges</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">start_ts</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+      <span class="n">end_ts</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span>
+      <span class="n">watermark_estimator</span><span class="p">:</span> <span class="n">_PollWatermarkEstimator</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">TimestampedValue</span><span class="p">[</span><span class="n">_QueryRange</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Compute and yield _QueryRange elements, advancing estimator state."""</span>
+    <span class="n">ranges</span> <span class="o">=</span> <span class="n">compute_ranges</span><span class="p">(</span><span class="n">start_ts</span><span class="p">,</span> <span class="n">end_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Poll] </span><span class="si">%d</span><span class="s1"> chunks for [</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)'</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">ranges</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">start_ts</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">end_ts</span><span class="p">))</span>
+    <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span> <span class="s1">'polls'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+
+    <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">advance_poll_cursor</span><span class="p">(</span><span class="n">end_ts</span><span class="p">)</span>
+    <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">start_ts</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Poll] Watermark=</span><span class="si">%s</span><span class="s1"> (start_ts), cursor=</span><span class="si">%s</span><span class="s1"> (end_ts)'</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">start_ts</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">end_ts</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">chunk_start</span><span class="p">,</span> <span class="n">chunk_end</span> <span class="ow">in</span> <span class="n">ranges</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">(</span>
+          <span class="n">_QueryRange</span><span class="p">(</span><span class="n">chunk_start</span><span class="o">=</span><span class="n">chunk_start</span><span class="p">,</span> <span class="n">chunk_end</span><span class="o">=</span><span class="n">chunk_end</span><span class="p">),</span> <span class="n">start_ts</span><span class="p">)</span>
+
+  <span class="nd">@beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">unbounded_per_element</span><span class="p">()</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">_</span><span class="p">:</span> <span class="n">_PollConfig</span><span class="p">,</span>
+      <span class="n">restriction_tracker</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">RestrictionParam</span><span class="p">(),</span>
+      <span class="n">watermark_estimator</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">WatermarkEstimatorParam</span><span class="p">(</span>
+          <span class="n">_PollWatermarkEstimatorProvider</span><span class="p">())</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">TimestampedValue</span><span class="p">[</span><span class="n">_QueryRange</span><span class="p">]]:</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">start_ts</span> <span class="o">=</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">poll_cursor</span><span class="p">()</span>
+
+    <span class="n">defer_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_poll_time</span><span class="p">(</span><span class="n">start_ts</span><span class="p">,</span> <span class="n">now</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">defer_to</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">(</span><span class="n">defer_to</span><span class="p">)</span>
+      <span class="k">return</span>
+
+    <span class="c1"># Use BQ server time instead of local clock to avoid data loss</span>
+    <span class="c1"># from clock skew between the worker VM and BigQuery.</span>
+    <span class="n">bq_now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_bq_timestamp</span><span class="p">()</span>
+    <span class="n">end_ts</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">bq_now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">)</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Poll] Polling: start=</span><span class="si">%s</span><span class="s1">, end=</span><span class="si">%s</span><span class="s1">, watermark=</span><span class="si">%s</span><span class="s1">, '</span>
+        <span class="s1">'clock_skew=</span><span class="si">%.3f</span><span class="s1">s'</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">start_ts</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">end_ts</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">bq_now</span><span class="p">)</span> <span class="o">-</span> <span class="n">now</span><span class="p">)</span>
+
+    <span class="n">current_index</span> <span class="o">=</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">current_index</span><span class="p">):</span>
+      <span class="k">return</span>
+    <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">(</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">now</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">)</span>
+
+    <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit_query_ranges</span><span class="p">(</span><span class="n">start_ts</span><span class="p">,</span> <span class="n">end_ts</span><span class="p">,</span> <span class="n">watermark_estimator</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ExecuteQueryFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Executes a BQ CHANGES/APPENDS query from a _QueryRange instruction.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">change_function</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">temp_dataset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+      <span class="n">change_type_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_type'</span><span class="p">,</span>
+      <span class="n">change_timestamp_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_timestamp'</span><span class="p">,</span>
+      <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">row_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">table</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span> <span class="o">=</span> <span class="n">change_function</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span> <span class="o">=</span> <span class="n">temp_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_type_column</span> <span class="o">=</span> <span class="n">change_type_column</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span> <span class="o">=</span> <span class="n">change_timestamp_column</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_row_filter</span> <span class="o">=</span> <span class="n">row_filter</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">BigQueryWrapper</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">table_ref</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">parse_table_reference</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span> <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">get_table_location</span><span class="p">(</span>
+          <span class="n">table_ref</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">table_ref</span><span class="o">.</span><span class="n">datasetId</span><span class="p">,</span> <span class="n">table_ref</span><span class="o">.</span><span class="n">tableId</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Query] Inferred location=</span><span class="si">%s</span><span class="s1"> from source table </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">get_or_create_dataset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span><span class="p">,</span>
+        <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">,</span>
+        <span class="n">default_table_expiration_ms</span><span class="o">=</span><span class="n">_DEFAULT_TABLE_EXPIRATION_MS</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qr</span><span class="p">:</span> <span class="n">_QueryRange</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_QueryResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Execute the BQ query described by a _QueryRange and yield _QueryResult.</span>
+<span class="sd">    """</span>
+
+    <span class="n">sql</span> <span class="o">=</span> <span class="n">build_changes_query</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span>
+        <span class="n">qr</span><span class="o">.</span><span class="n">chunk_start</span><span class="p">,</span>
+        <span class="n">qr</span><span class="o">.</span><span class="n">chunk_end</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_type_column</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_row_filter</span><span class="p">)</span>
+    <span class="n">temp_table_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'beam_ch_temp_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
+    <span class="n">job_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'beam_ch_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Query] job_id=</span><span class="si">%s</span><span class="s1">, temp_table=</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">, range=[</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">)'</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span><span class="p">,</span>
+        <span class="n">temp_table_id</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">qr</span><span class="o">.</span><span class="n">chunk_start</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">qr</span><span class="o">.</span><span class="n">chunk_end</span><span class="p">))</span>
+
+    <span class="n">temp_table_ref</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">TableReference</span><span class="p">(</span>
+        <span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">,</span>
+        <span class="n">datasetId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span><span class="p">,</span>
+        <span class="n">tableId</span><span class="o">=</span><span class="n">temp_table_id</span><span class="p">)</span>
+
+    <span class="n">reference</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">JobReference</span><span class="p">(</span>
+        <span class="n">jobId</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span> <span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">)</span>
+
+    <span class="n">request</span> <span class="o">=</span> <span class="n">bigquery</span><span class="o">.</span><span class="n">BigqueryJobsInsertRequest</span><span class="p">(</span>
+        <span class="n">projectId</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_project</span><span class="p">,</span>
+        <span class="n">job</span><span class="o">=</span><span class="n">bigquery</span><span class="o">.</span><span class="n">Job</span><span class="p">(</span>
+            <span class="n">configuration</span><span class="o">=</span><span class="n">bigquery</span><span class="o">.</span><span class="n">JobConfiguration</span><span class="p">(</span>
+                <span class="n">query</span><span class="o">=</span><span class="n">bigquery</span><span class="o">.</span><span class="n">JobConfigurationQuery</span><span class="p">(</span>
+                    <span class="n">query</span><span class="o">=</span><span class="n">sql</span><span class="p">,</span>
+                    <span class="n">useLegacySql</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                    <span class="n">destinationTable</span><span class="o">=</span><span class="n">temp_table_ref</span><span class="p">,</span>
+                    <span class="n">writeDisposition</span><span class="o">=</span><span class="s1">'WRITE_TRUNCATE'</span><span class="p">,</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">jobReference</span><span class="o">=</span><span class="n">reference</span><span class="p">))</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Query] Submitting BQ job </span><span class="si">%s</span><span class="s1">...'</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">_start_job</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Query] BQ job </span><span class="si">%s</span><span class="s1"> submitted, waiting...'</span><span class="p">,</span> <span class="n">job_id</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">wait_for_bq_job</span><span class="p">(</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">jobReference</span><span class="p">,</span> <span class="n">sleep_duration_sec</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Query] BQ job </span><span class="si">%s</span><span class="s1"> DONE. Results in </span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span><span class="p">,</span>
+        <span class="n">temp_table_id</span><span class="p">)</span>
+    <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span> <span class="s1">'queries'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+
+    <span class="k">yield</span> <span class="n">_QueryResult</span><span class="p">(</span>
+        <span class="n">temp_table_ref</span><span class="o">=</span><span class="n">temp_table_ref</span><span class="p">,</span>
+        <span class="n">range_start</span><span class="o">=</span><span class="n">qr</span><span class="o">.</span><span class="n">chunk_start</span><span class="p">,</span>
+        <span class="n">range_end</span><span class="o">=</span><span class="n">qr</span><span class="o">.</span><span class="n">chunk_end</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_CDCWatermarkEstimatorProvider</span><span class="p">(</span><span class="n">WatermarkEstimatorProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""WatermarkEstimatorProvider that initializes the hold from _QueryResult.</span>
+
+<span class="sd">  Uses range_start from the element to set the initial watermark hold.</span>
+<span class="sd">  This prevents the runner from advancing the watermark past the data's</span>
+<span class="sd">  timestamps before any rows are emitted.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_estimator_state</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_QueryResult</span><span class="p">,</span>
+      <span class="n">restriction</span><span class="p">:</span> <span class="n">_StreamRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">element</span><span class="o">.</span><span class="n">range_start</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_watermark_estimator</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">estimator_state</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ManualWatermarkEstimator</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">ManualWatermarkEstimator</span><span class="p">(</span><span class="n">estimator_state</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Read: _ReadStorageStreamsSDF</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReadStorageStreamsSDF</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">,</span>
+                             <span class="n">beam</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">RestrictionProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""SDF that reads a temp table via BigQuery Storage Read API.</span>
+
+<span class="sd">  Note on SDF lifecycle: the runner decomposes this SDF into three internal</span>
+<span class="sd">  wrapper DoFns, each a separately deserialized copy:</span>
+<span class="sd">    - Stage A (PairWithRestriction): calls initial_restriction(): no setup()</span>
+<span class="sd">    - Stage B (SplitAndSizeRestrictions): calls split(), restriction_size()</span>
+<span class="sd">    - Stage C (ProcessSizedElements): calls setup(), then process()</span>
+<span class="sd">  Because initial_restriction() runs on a different copy than process(),</span>
+<span class="sd">  _ensure_client() lazily creates a gRPC client on whichever copy needs one.</span>
+<span class="sd">  The _StreamRestriction carries stream names directly so no shared state</span>
+<span class="sd">  is needed between copies.</span>
+
+<span class="sd">  Each element is a _QueryResult pointing to a temp table.</span>
+
+<span class="sd">  Watermark: Uses ManualWatermarkEstimator so the watermark only advances</span>
+<span class="sd">  as fast as the change-timestamp values we emit.</span>
+
+<span class="sd">  Emits:</span>
+<span class="sd">    Main output: TimestampedValue(row_dict, event_timestamp)</span>
+<span class="sd">    Side output (_CLEANUP_TAG): (table_key, (streams_read, total_streams))</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch_arrow_read</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+      <span class="n">change_timestamp_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_timestamp'</span><span class="p">,</span>
+      <span class="n">max_split_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">emit_raw_batches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_arrow_read</span> <span class="o">=</span> <span class="n">batch_arrow_read</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span> <span class="o">=</span> <span class="n">change_timestamp_column</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_split_rounds</span> <span class="o">=</span> <span class="n">max_split_rounds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_emit_raw_batches</span> <span class="o">=</span> <span class="n">emit_raw_batches</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Lazily initialize the Storage client.</span>
+
+<span class="sd">    Called from both setup() and initial_restriction() because the runner</span>
+<span class="sd">    may invoke initial_restriction on the RestrictionProvider instance</span>
+<span class="sd">    before setup() runs (or on a separately deserialized copy).</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Read] creating BigQueryReadClient'</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span> <span class="o">=</span> <span class="n">bq_storage</span><span class="o">.</span><span class="n">BigQueryReadClient</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_client</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_split_all_streams</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">stream_names</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+      <span class="n">max_split_rounds</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Split each stream at fraction=0.5 for up to max_split_rounds rounds.</span>
+
+<span class="sd">    Each round attempts to split every stream in the current list. A</span>
+<span class="sd">    successful split replaces the original stream with primary + remainder.</span>
+<span class="sd">    A refused split (both fields empty) keeps the original stream intact.</span>
+<span class="sd">    Stops when max_split_rounds is reached or a full round produces zero</span>
+<span class="sd">    new splits.</span>
+
+<span class="sd">    BQ's server-side granularity controls how many splits are possible.</span>
+<span class="sd">    Small tables may not split at all; large tables may allow multiple</span>
+<span class="sd">    rounds of doubling.</span>
+<span class="sd">    """</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stream_names</span><span class="p">)</span>
+    <span class="n">no_split</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">round_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_split_rounds</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="n">new_result</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">made_progress</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">no_split</span><span class="p">:</span>
+          <span class="n">new_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+          <span class="k">continue</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span><span class="o">.</span><span class="n">split_read_stream</span><span class="p">(</span>
+            <span class="n">request</span><span class="o">=</span><span class="n">bq_storage</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">SplitReadStreamRequest</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
+        <span class="n">primary</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">primary_stream</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">remainder</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">remainder_stream</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="n">primary</span> <span class="ow">and</span> <span class="n">remainder</span><span class="p">:</span>
+          <span class="n">new_result</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">primary</span><span class="p">,</span> <span class="n">remainder</span><span class="p">])</span>
+          <span class="n">made_progress</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">new_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+          <span class="n">no_split</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">new_result</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Read] _split_all_streams round </span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">: </span><span class="si">%d</span><span class="s1"> streams '</span>
+          <span class="s1">'(progress=</span><span class="si">%s</span><span class="s1">)'</span><span class="p">,</span>
+          <span class="n">round_num</span><span class="p">,</span>
+          <span class="n">max_split_rounds</span><span class="p">,</span>
+          <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">),</span>
+          <span class="n">made_progress</span><span class="p">)</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">made_progress</span><span class="p">:</span>
+        <span class="k">break</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_QueryResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_StreamRestriction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create ReadSession and return _StreamRestriction with stream names.</span>
+
+<span class="sd">    When max_split_rounds &gt; 0, uses SplitReadStream to subdivide each</span>
+<span class="sd">    stream at fraction=0.5 for up to max_split_rounds rounds, maximizing</span>
+<span class="sd">    parallelism beyond what CreateReadSession provides.</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_client</span><span class="p">()</span>
+    <span class="n">table_key</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">get_hashable_destination</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">temp_table_ref</span><span class="p">)</span>
+    <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_read_session</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">temp_table_ref</span><span class="p">)</span>
+    <span class="n">stream_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">streams</span><span class="p">)</span>
+    <span class="n">original_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream_names</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] initial_restriction for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%d</span><span class="s1"> streams from CreateReadSession'</span><span class="p">,</span>
+        <span class="n">table_key</span><span class="p">,</span>
+        <span class="n">original_count</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_split_rounds</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">stream_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_all_streams</span><span class="p">(</span>
+          <span class="n">stream_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_split_rounds</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Read] initial_restriction for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%d</span><span class="s1"> -&gt; </span><span class="si">%d</span><span class="s1"> streams '</span>
+          <span class="s1">'after SplitReadStream'</span><span class="p">,</span>
+          <span class="n">table_key</span><span class="p">,</span>
+          <span class="n">original_count</span><span class="p">,</span>
+          <span class="nb">len</span><span class="p">(</span><span class="n">stream_names</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">_StreamRestriction</span><span class="p">(</span><span class="n">stream_names</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream_names</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_tracker</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">_StreamRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_StreamRestrictionTracker</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_StreamRestrictionTracker</span><span class="p">(</span><span class="n">restriction</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_size</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_QueryResult</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">_StreamRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">restriction</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">_QueryResult</span><span class="p">,</span>
+            <span class="n">restriction</span><span class="p">:</span> <span class="n">_StreamRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_StreamRestriction</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Yield one _StreamRestriction per stream for parallel distribution."""</span>
+    <span class="k">if</span> <span class="n">restriction</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">restriction</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">restriction</span><span class="o">.</span><span class="n">stop</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">_StreamRestriction</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">stream_names</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">:</span> <span class="n">_QueryResult</span><span class="p">,</span>
+      <span class="n">restriction_tracker</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">RestrictionParam</span><span class="p">(),</span>
+      <span class="n">watermark_estimator</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">WatermarkEstimatorParam</span><span class="p">(</span>
+          <span class="n">_CDCWatermarkEstimatorProvider</span><span class="p">())):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_client</span><span class="p">()</span>
+    <span class="n">table_key</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">get_hashable_destination</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">temp_table_ref</span><span class="p">)</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] Processing </span><span class="si">%s</span><span class="s1">, range=[</span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">), '</span>
+        <span class="s1">'initial watermark=</span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">table_key</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">range_start</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">range_end</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()))</span>
+
+    <span class="n">restriction</span> <span class="o">=</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span>
+    <span class="n">stream_names</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">stream_names</span>
+    <span class="n">total_streams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stream_names</span><span class="p">)</span>
+
+    <span class="n">streams_read</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] Reading streams [</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">) of </span><span class="si">%d</span><span class="s1"> total for </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">restriction</span><span class="o">.</span><span class="n">start</span><span class="p">,</span>
+        <span class="n">restriction</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span>
+        <span class="n">total_streams</span><span class="p">,</span>
+        <span class="n">table_key</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="n">restriction</span><span class="o">.</span><span class="n">stop</span><span class="p">):</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s1">'[Read] try_claim(</span><span class="si">%d</span><span class="s1">) FAILED for </span><span class="si">%s</span><span class="s1">: '</span>
+            <span class="s1">'runner split or checkpoint, breaking'</span><span class="p">,</span>
+            <span class="n">i</span><span class="p">,</span>
+            <span class="n">table_key</span><span class="p">)</span>
+        <span class="k">break</span>
+
+      <span class="n">stream_name</span> <span class="o">=</span> <span class="n">stream_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Read] try_claim(</span><span class="si">%d</span><span class="s1">) succeeded: reading stream </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">)</span>
+
+      <span class="n">stream_rows</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_emit_raw_batches</span><span class="p">:</span>
+        <span class="n">stream_batches</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">raw_batch</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_stream_raw</span><span class="p">(</span><span class="n">stream_name</span><span class="p">):</span>
+          <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">raw_batch</span><span class="p">,</span> <span class="n">element</span><span class="o">.</span><span class="n">range_start</span><span class="p">)</span>
+          <span class="n">stream_batches</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span>
+                        <span class="s1">'batches_emitted'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">stream_batches</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_stream</span><span class="p">(</span><span class="n">stream_name</span><span class="p">):</span>
+          <span class="n">ts</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">ts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">'Row missing </span><span class="si">%r</span><span class="s1"> column. Row keys: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+          <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+            <span class="n">ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_utc_datetime</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+
+          <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ts</span><span class="p">)</span>
+          <span class="n">stream_rows</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span>
+                        <span class="s1">'rows_emitted'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="n">stream_rows</span><span class="p">)</span>
+
+      <span class="n">streams_read</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Read] Finished reading stream </span><span class="si">%d</span><span class="s1"> for </span><span class="si">%s</span><span class="s1">: </span><span class="si">%d</span><span class="s1"> rows'</span><span class="p">,</span>
+          <span class="n">i</span><span class="p">,</span>
+          <span class="n">table_key</span><span class="p">,</span>
+          <span class="n">stream_rows</span><span class="p">)</span>
+      <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span> <span class="s1">'streams_read'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+
+    <span class="c1"># Advance watermark to range_end after reading all streams. The</span>
+    <span class="c1"># initial hold was set to range_start by _CDCWatermarkEstimatorProvider.</span>
+    <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">range_end</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] Watermark advanced to </span><span class="si">%s</span><span class="s1"> (range_end) for </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">range_end</span><span class="p">),</span>
+        <span class="n">table_key</span><span class="p">)</span>
+
+    <span class="c1"># Release the storage client so the gRPC channel doesn't go stale</span>
+    <span class="c1"># between process() calls. _ensure_client() will create a fresh one.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Emit cleanup signal. Every split that reads at least one stream</span>
+    <span class="c1"># reports how many it read.</span>
+    <span class="k">if</span> <span class="n">streams_read</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Read] Emitting cleanup signal for </span><span class="si">%s</span><span class="s1">: '</span>
+          <span class="s1">'streams_read=</span><span class="si">%d</span><span class="s1">, total_streams=</span><span class="si">%d</span><span class="s1">'</span><span class="p">,</span>
+          <span class="n">table_key</span><span class="p">,</span>
+          <span class="n">streams_read</span><span class="p">,</span>
+          <span class="n">total_streams</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">TaggedOutput</span><span class="p">(</span>
+          <span class="n">_CLEANUP_TAG</span><span class="p">,</span> <span class="p">(</span><span class="n">table_key</span><span class="p">,</span> <span class="p">(</span><span class="n">streams_read</span><span class="p">,</span> <span class="n">total_streams</span><span class="p">)))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_create_read_session</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_ref</span><span class="p">:</span> <span class="s1">'bigquery.TableReference'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a BigQuery Storage ReadSession for the given table."""</span>
+    <span class="n">table_path</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="sa">f</span><span class="s1">'projects/</span><span class="si">{</span><span class="n">table_ref</span><span class="o">.</span><span class="n">projectId</span><span class="si">}</span><span class="s1">/'</span>
+        <span class="sa">f</span><span class="s1">'datasets/</span><span class="si">{</span><span class="n">table_ref</span><span class="o">.</span><span class="n">datasetId</span><span class="si">}</span><span class="s1">/'</span>
+        <span class="sa">f</span><span class="s1">'tables/</span><span class="si">{</span><span class="n">table_ref</span><span class="o">.</span><span class="n">tableId</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+    <span class="n">requested_session</span> <span class="o">=</span> <span class="n">bq_storage</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">ReadSession</span><span class="p">()</span>
+    <span class="n">requested_session</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">table_path</span>
+    <span class="n">requested_session</span><span class="o">.</span><span class="n">data_format</span> <span class="o">=</span> <span class="n">bq_storage</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">DataFormat</span><span class="o">.</span><span class="n">ARROW</span>
+    <span class="n">read_options</span> <span class="o">=</span> <span class="n">requested_session</span><span class="o">.</span><span class="n">read_options</span>
+    <span class="n">read_options</span><span class="o">.</span><span class="n">arrow_serialization_options</span><span class="o">.</span><span class="n">buffer_compression</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">bq_storage</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">ArrowSerializationOptions</span><span class="o">.</span><span class="n">CompressionCodec</span><span class="o">.</span><span class="n">ZSTD</span><span class="p">)</span>
+
+    <span class="n">session</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span><span class="o">.</span><span class="n">create_read_session</span><span class="p">(</span>
+        <span class="n">parent</span><span class="o">=</span><span class="sa">f</span><span class="s1">'projects/</span><span class="si">{</span><span class="n">table_ref</span><span class="o">.</span><span class="n">projectId</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">read_session</span><span class="o">=</span><span class="n">requested_session</span><span class="p">,</span>
+        <span class="n">max_stream_count</span><span class="o">=</span><span class="n">_DEFAULT_MAX_STREAMS</span><span class="p">)</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] _create_read_session: table=</span><span class="si">%s</span><span class="s1">, </span><span class="si">%d</span><span class="s1"> streams'</span><span class="p">,</span>
+        <span class="n">table_path</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">session</span><span class="o">.</span><span class="n">streams</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">session</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_read_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Read all rows from a single Storage API stream as dicts.</span>
+
+<span class="sd">    When batch_arrow_read is enabled, converts entire Arrow RecordBatches</span>
+<span class="sd">    at once using to_pylist() instead of calling .as_py() on each cell</span>
+<span class="sd">    individually. This is ~1.5x faster for large tables at the cost of ~2x</span>
+<span class="sd">    peak memory per batch.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_arrow_read</span><span class="p">:</span>
+      <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_stream_batch</span><span class="p">(</span><span class="n">stream_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_stream_row_by_row</span><span class="p">(</span><span class="n">stream_name</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_read_stream_row_by_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                              <span class="n">stream_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Row-by-row Arrow conversion (lower memory than batch mode)."""</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span><span class="o">.</span><span class="n">read_rows</span><span class="p">(</span><span class="n">stream_name</span><span class="p">)</span><span class="o">.</span><span class="n">rows</span><span class="p">():</span>
+      <span class="k">yield</span> <span class="nb">dict</span><span class="p">((</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">())</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+      <span class="n">row_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] row_by_row: </span><span class="si">%d</span><span class="s1"> rows in </span><span class="si">%.2f</span><span class="s1">s (</span><span class="si">%.0f</span><span class="s1"> rows/s)'</span><span class="p">,</span>
+        <span class="n">row_count</span><span class="p">,</span>
+        <span class="n">elapsed</span><span class="p">,</span>
+        <span class="n">row_count</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_read_stream_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Batch-convert Arrow RecordBatches for high throughput."""</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span><span class="o">.</span><span class="n">read_rows</span><span class="p">(</span><span class="n">stream_name</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">schema</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">arrow_schema</span><span class="o">.</span><span class="n">serialized_schema</span><span class="p">:</span>
+        <span class="n">schema</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">read_schema</span><span class="p">(</span>
+            <span class="n">pyarrow</span><span class="o">.</span><span class="n">py_buffer</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">arrow_schema</span><span class="o">.</span><span class="n">serialized_schema</span><span class="p">))</span>
+      <span class="n">batch_bytes</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">arrow_record_batch</span><span class="o">.</span><span class="n">serialized_record_batch</span>
+      <span class="k">if</span> <span class="n">batch_bytes</span> <span class="ow">and</span> <span class="n">schema</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">read_record_batch</span><span class="p">(</span>
+            <span class="n">pyarrow</span><span class="o">.</span><span class="n">py_buffer</span><span class="p">(</span><span class="n">batch_bytes</span><span class="p">),</span> <span class="n">schema</span><span class="p">)</span>
+        <span class="k">yield from</span> <span class="n">batch</span><span class="o">.</span><span class="n">to_pylist</span><span class="p">()</span>
+        <span class="n">row_count</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_rows</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Read] batch_read: </span><span class="si">%d</span><span class="s1"> rows in </span><span class="si">%.2f</span><span class="s1">s (</span><span class="si">%.0f</span><span class="s1"> rows/s)'</span><span class="p">,</span>
+        <span class="n">row_count</span><span class="p">,</span>
+        <span class="n">elapsed</span><span class="p">,</span>
+        <span class="n">row_count</span> <span class="o">/</span> <span class="n">elapsed</span> <span class="k">if</span> <span class="n">elapsed</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_read_stream_raw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Yield raw (schema_bytes, batch_bytes) without decompression.</span>
+
+<span class="sd">    Used when emit_raw_batches is enabled to defer decompression and</span>
+<span class="sd">    Arrow-to-Python conversion to a downstream DoFn after reshuffling.</span>
+<span class="sd">    Schema bytes are included in each tuple so each batch is</span>
+<span class="sd">    self-contained and can be decoded independently.</span>
+<span class="sd">    """</span>
+    <span class="n">schema_bytes</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">''</span>
+    <span class="n">batch_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">response</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage_client</span><span class="o">.</span><span class="n">read_rows</span><span class="p">(</span><span class="n">stream_name</span><span class="p">):</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">schema_bytes</span> <span class="ow">and</span> <span class="n">response</span><span class="o">.</span><span class="n">arrow_schema</span><span class="o">.</span><span class="n">serialized_schema</span><span class="p">:</span>
+        <span class="n">schema_bytes</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">arrow_schema</span><span class="o">.</span><span class="n">serialized_schema</span><span class="p">)</span>
+      <span class="n">batch_bytes</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">arrow_record_batch</span><span class="o">.</span><span class="n">serialized_record_batch</span>
+      <span class="k">if</span> <span class="n">batch_bytes</span> <span class="ow">and</span> <span class="n">schema_bytes</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="p">(</span><span class="n">schema_bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">batch_bytes</span><span class="p">))</span>
+        <span class="n">batch_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Read] raw_read: </span><span class="si">%d</span><span class="s1"> batches in </span><span class="si">%.2f</span><span class="s1">s'</span><span class="p">,</span> <span class="n">batch_count</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_DecompressArrowBatchesFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Decompress and convert raw Arrow batches to timestamped row dicts.</span>
+
+<span class="sd">  Receives individual (schema_bytes, batch_bytes) tuples after Reshuffle</span>
+<span class="sd">  and converts each batch to individual row dicts with event timestamps</span>
+<span class="sd">  extracted from the change_timestamp column.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">change_timestamp_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_timestamp'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span> <span class="o">=</span> <span class="n">change_timestamp_column</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span>
+                     <span class="nb">bytes</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">TimestampedValue</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+    <span class="n">schema_bytes</span><span class="p">,</span> <span class="n">batch_bytes</span> <span class="o">=</span> <span class="n">element</span>
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">read_schema</span><span class="p">(</span><span class="n">pyarrow</span><span class="o">.</span><span class="n">py_buffer</span><span class="p">(</span><span class="n">schema_bytes</span><span class="p">))</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">read_record_batch</span><span class="p">(</span>
+        <span class="n">pyarrow</span><span class="o">.</span><span class="n">py_buffer</span><span class="p">(</span><span class="n">batch_bytes</span><span class="p">),</span> <span class="n">schema</span><span class="p">)</span>
+
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">to_pylist</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+      <span class="n">ts</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">ts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s1">'Row missing </span><span class="si">%r</span><span class="s1"> column. Row keys: </span><span class="si">%s</span><span class="s1">'</span> <span class="o">%</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ts</span><span class="p">,</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">):</span>
+        <span class="n">ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">from_utc_datetime</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">ts</span><span class="p">)</span>
+    <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span> <span class="s1">'rows_emitted'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Cleanup: _CleanupTempTablesFn</span>
+<span class="c1"># =============================================================================</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_CleanupTempTablesFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Stateful DoFn that deletes temp tables after all streams are read.</span>
+
+<span class="sd">  Receives cleanup signals from the Read SDF as:</span>
+<span class="sd">    (table_key, (streams_read_count, total_streams))</span>
+
+<span class="sd">  Accumulates streams_read across all signals for the same table_key.</span>
+<span class="sd">  When streams_read &gt;= total_streams, deletes the temp table. The &gt;=</span>
+<span class="sd">  (rather than ==) guards against duplicate delivery in at-least-once runners.</span>
+<span class="sd">  """</span>
+  <span class="n">STREAMS_READ</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">userstate</span><span class="o">.</span><span class="n">CombiningValueStateSpec</span><span class="p">(</span>
+      <span class="s1">'streams_read'</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Cleanup] setup: creating BigQueryWrapper'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">BigQueryWrapper</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span>
+      <span class="n">streams_read</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">StateParam</span><span class="p">(</span><span class="n">STREAMS_READ</span><span class="p">)</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">table_key</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">split_count</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">total_streams</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Cleanup] Received cleanup signal for </span><span class="si">%s</span><span class="s1">: '</span>
+        <span class="s1">'split_count=</span><span class="si">%d</span><span class="s1">, total_streams=</span><span class="si">%d</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">table_key</span><span class="p">,</span>
+        <span class="n">split_count</span><span class="p">,</span>
+        <span class="n">total_streams</span><span class="p">)</span>
+
+    <span class="n">streams_read</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">split_count</span><span class="p">)</span>
+    <span class="n">current_read</span> <span class="o">=</span> <span class="n">streams_read</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[Cleanup] State for </span><span class="si">%s</span><span class="s1">: streams_read=</span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">'</span><span class="p">,</span>
+        <span class="n">table_key</span><span class="p">,</span>
+        <span class="n">current_read</span><span class="p">,</span>
+        <span class="n">total_streams</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">current_read</span> <span class="o">&gt;=</span> <span class="n">total_streams</span><span class="p">:</span>
+      <span class="n">parsed</span> <span class="o">=</span> <span class="n">bigquery_tools</span><span class="o">.</span><span class="n">parse_table_reference</span><span class="p">(</span><span class="n">table_key</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Cleanup] All streams read: DELETING temp table </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">table_key</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_bq_wrapper</span><span class="o">.</span><span class="n">_delete_table</span><span class="p">(</span>
+          <span class="n">parsed</span><span class="o">.</span><span class="n">projectId</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">datasetId</span><span class="p">,</span> <span class="n">parsed</span><span class="o">.</span><span class="n">tableId</span><span class="p">)</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">'[Cleanup] Deleted temp table </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">table_key</span><span class="p">)</span>
+      <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'BigQueryChangeHistory'</span><span class="p">,</span> <span class="s1">'temp_tables_deleted'</span><span class="p">)</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+      <span class="n">streams_read</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s1">'[Cleanup] Not yet complete for </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%d</span><span class="s1">/</span><span class="si">%d</span><span class="s1">), '</span>
+          <span class="s1">'waiting for more signals'</span><span class="p">,</span>
+          <span class="n">table_key</span><span class="p">,</span>
+          <span class="n">current_read</span><span class="p">,</span>
+          <span class="n">total_streams</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Public API: ReadBigQueryChangeHistory</span>
+<span class="c1"># =============================================================================</span>
+
+
+<div class="viewcode-block" id="ReadBigQueryChangeHistory">
+<a class="viewcode-back" href="../../../../apache_beam.io.gcp.bigquery_change_history.html#apache_beam.io.gcp.bigquery_change_history.ReadBigQueryChangeHistory">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadBigQueryChangeHistory</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Streaming source for BigQuery change history.</span>
+
+<span class="sd">  Continuously polls BigQuery APPENDS() or CHANGES() functions and emits</span>
+<span class="sd">  changed rows as an unbounded PCollection of dicts.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    table: BigQuery table to read changes from.</span>
+<span class="sd">        Format: 'project:dataset.table' or 'project.dataset.table'.</span>
+<span class="sd">    poll_interval_sec: Seconds between polls. Default 60.</span>
+<span class="sd">    start_time: Start reading from this timestamp (float, epoch seconds).</span>
+<span class="sd">        Default: current time when pipeline starts.</span>
+<span class="sd">    stop_time: Stop polling at this timestamp. Default: run forever.</span>
+<span class="sd">    change_function: 'CHANGES' or 'APPENDS'. Default 'APPENDS'.</span>
+<span class="sd">    buffer_sec: Safety buffer in seconds behind now(). Default 10. BQ does not</span>
+<span class="sd">        fail or wait if the query end_ts is less than BQ's CURRENT_TIMESTAMP.</span>
+<span class="sd">        This is an extra guardrail to protect against silent data.</span>
+<span class="sd">    project: GCP project ID. Default: from pipeline options.</span>
+<span class="sd">    temp_dataset: Dataset for temp tables. If None (default), a</span>
+<span class="sd">        per-pipeline dataset is auto-created with a 24-hour table</span>
+<span class="sd">        expiration as a safety net for orphaned tables. Set this to</span>
+<span class="sd">        use an existing dataset (e.g. if your service account lacks</span>
+<span class="sd">        bigquery.datasets.create permission).</span>
+<span class="sd">    location: BigQuery geographic location for query jobs and temp</span>
+<span class="sd">        dataset (e.g. 'US', 'us-central1'). If None (default), inferred</span>
+<span class="sd">        from the source table.</span>
+<span class="sd">    change_type_column: Output column name for the _CHANGE_TYPE</span>
+<span class="sd">        pseudo-column. Default 'change_type'. Change this if your source</span>
+<span class="sd">        table already has a column named 'change_type'.</span>
+<span class="sd">    change_timestamp_column: Output column name for the</span>
+<span class="sd">        _CHANGE_TIMESTAMP pseudo-column. Default 'change_timestamp'.</span>
+<span class="sd">        Change this if your source table already has a column named</span>
+<span class="sd">        'change_timestamp'. This column is also used internally to</span>
+<span class="sd">        extract event timestamps for watermark tracking.</span>
+<span class="sd">    columns: Optional list of column names to select from the source</span>
+<span class="sd">        table. If None (default), all columns are selected. The</span>
+<span class="sd">        pseudo-columns (change_type, change_timestamp) are always</span>
+<span class="sd">        included regardless of this setting.</span>
+<span class="sd">    row_filter: Optional SQL boolean expression used as a WHERE clause</span>
+<span class="sd">        on the CHANGES/APPENDS query. Do not include the WHERE keyword.</span>
+<span class="sd">        Example: ``'status = "active" AND region = "US"'``.</span>
+<span class="sd">    batch_arrow_read: If True (default), convert Arrow RecordBatches in</span>
+<span class="sd">        bulk using to_pylist() instead of per-cell .as_py() calls.</span>
+<span class="sd">        This is 1.5x faster for large tables at the cost of ~2x peak</span>
+<span class="sd">        memory per RecordBatch. Set to False for minimal memory usage.</span>
+<span class="sd">    max_split_rounds: Maximum number of recursive SplitReadStream</span>
+<span class="sd">        rounds. Each round splits every stream at fraction=0.5,</span>
+<span class="sd">        potentially doubling the stream count (if BQ allows). Default</span>
+<span class="sd">        1 (one round of splitting). Set 0 to disable splitting</span>
+<span class="sd">        entirely. Set higher for very large tables where more</span>
+<span class="sd">        parallelism is needed.</span>
+<span class="sd">    reshuffle_decompress: If True (default), the Read SDF emits raw</span>
+<span class="sd">        compressed Arrow batches instead of decoded rows. The batches</span>
+<span class="sd">        are reshuffled for fan-out and then decoded in a separate DoFn.</span>
+<span class="sd">        This spreads decompression and Arrow-to-Python conversion CPU</span>
+<span class="sd">        across more workers. Set to False to decode rows inline within</span>
+<span class="sd">        the Read SDF.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">poll_interval_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+      <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">stop_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">change_function</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'APPENDS'</span><span class="p">,</span>
+      <span class="n">buffer_sec</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">temp_dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">change_type_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_type'</span><span class="p">,</span>
+      <span class="n">change_timestamp_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'change_timestamp'</span><span class="p">,</span>
+      <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">row_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">batch_arrow_read</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+      <span class="n">max_split_rounds</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">reshuffle_decompress</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">bq_storage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+          <span class="s1">'google-cloud-bigquery-storage is required for '</span>
+          <span class="s1">'ReadBigQueryChangeHistory. Install it with: '</span>
+          <span class="s1">'pip install google-cloud-bigquery-storage'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pyarrow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+          <span class="s1">'pyarrow is required for ReadBigQueryChangeHistory. '</span>
+          <span class="s1">'Install it with: pip install pyarrow'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">change_function</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">'CHANGES'</span><span class="p">,</span> <span class="s1">'APPENDS'</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">"change_function must be 'CHANGES' or 'APPENDS', "</span>
+          <span class="sa">f</span><span class="s2">"got '</span><span class="si">{</span><span class="n">change_function</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">poll_interval_sec</span> <span class="o">&lt;</span> <span class="mi">15</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s1">'poll_interval_sec must be &gt;= 15, got </span><span class="si">{</span><span class="n">poll_interval_sec</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">buffer_sec</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'buffer_sec must be &gt;= 0, got </span><span class="si">{</span><span class="n">buffer_sec</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_table</span> <span class="o">=</span> <span class="n">table</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval_sec</span> <span class="o">=</span> <span class="n">poll_interval_sec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="o">=</span> <span class="n">stop_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span> <span class="o">=</span> <span class="n">change_function</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_sec</span> <span class="o">=</span> <span class="n">buffer_sec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span> <span class="o">=</span> <span class="n">temp_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_type_column</span> <span class="o">=</span> <span class="n">change_type_column</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span> <span class="o">=</span> <span class="n">change_timestamp_column</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span> <span class="o">=</span> <span class="n">columns</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_row_filter</span> <span class="o">=</span> <span class="n">row_filter</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batch_arrow_read</span> <span class="o">=</span> <span class="n">batch_arrow_read</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_split_rounds</span> <span class="o">=</span> <span class="n">max_split_rounds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reshuffle_decompress</span> <span class="o">=</span> <span class="n">reshuffle_decompress</span>
+
+<div class="viewcode-block" id="ReadBigQueryChangeHistory.expand">
+<a class="viewcode-back" href="../../../../apache_beam.io.gcp.bigquery_change_history.html#apache_beam.io.gcp.bigquery_change_history.ReadBigQueryChangeHistory.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">PBegin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">:</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_project</span>
+    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">project</span> <span class="o">=</span> <span class="n">pbegin</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span>
+          <span class="n">beam</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">pipeline_options</span><span class="o">.</span><span class="n">GoogleCloudOptions</span><span class="p">)</span><span class="o">.</span><span class="n">project</span>
+
+    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'project must be specified either in ReadBigQueryChangeHistory '</span>
+          <span class="s1">'or in pipeline options (--project)'</span><span class="p">)</span>
+
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+    <span class="n">stop_time</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">Timestamp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_time</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">MAX_TIMESTAMP</span><span class="p">)</span>
+    <span class="n">buffer</span> <span class="o">=</span> <span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer_sec</span><span class="p">)</span>
+    <span class="n">poll_interval</span> <span class="o">=</span> <span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval_sec</span><span class="p">)</span>
+
+    <span class="n">temp_dataset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temp_dataset</span>
+    <span class="k">if</span> <span class="n">temp_dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">temp_dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'beam_ch_temp_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="p">[:</span><span class="mi">12</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
+
+    <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+        <span class="s1">'[ReadBigQueryChangeHistory] expand: table=</span><span class="si">%s</span><span class="s1">, project=</span><span class="si">%s</span><span class="s1">, '</span>
+        <span class="s1">'change_function=</span><span class="si">%s</span><span class="s1">, poll_interval=</span><span class="si">%d</span><span class="s1"> sec, buffer=</span><span class="si">%d</span><span class="s1"> sec, '</span>
+        <span class="s1">'temp_dataset=</span><span class="si">%s</span><span class="s1">, start_time=</span><span class="si">%s</span><span class="s1">, stop_time=</span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span>
+        <span class="n">project</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval_sec</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer_sec</span><span class="p">,</span>
+        <span class="n">temp_dataset</span><span class="p">,</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">start_time</span><span class="p">),</span>
+        <span class="n">_utc</span><span class="p">(</span><span class="n">stop_time</span><span class="p">)</span> <span class="k">if</span> <span class="n">stop_time</span> <span class="o">!=</span> <span class="n">MAX_TIMESTAMP</span> <span class="k">else</span> <span class="s1">'INF'</span><span class="p">)</span>
+
+    <span class="c1"># Custom polling SDF emits lightweight _QueryRange instructions.</span>
+    <span class="c1"># The SDF uses defer_remainder() for poll timing and</span>
+    <span class="c1"># _PollWatermarkEstimator to hold the watermark at data timestamps.</span>
+    <span class="c1"># On the first invocation it handles the full historical range</span>
+    <span class="c1"># [start_time, now - buffer) in a single poll.</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">_PollConfig</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">)</span>
+
+    <span class="n">query_ranges</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pbegin</span>
+        <span class="o">|</span> <span class="s1">'CreatePollConfig'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">([</span><span class="n">config</span><span class="p">])</span>
+        <span class="o">|</span> <span class="s1">'PollChangeHistory'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+            <span class="n">_PollChangeHistoryFn</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span>
+                <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+                <span class="n">change_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span><span class="p">,</span>
+                <span class="n">buffer</span><span class="o">=</span><span class="n">buffer</span><span class="p">,</span>
+                <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">,</span>
+                <span class="n">stop_time</span><span class="o">=</span><span class="n">stop_time</span><span class="p">,</span>
+                <span class="n">poll_interval</span><span class="o">=</span><span class="n">poll_interval</span><span class="p">,</span>
+                <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">)))</span>
+
+    <span class="c1"># CommitQueryResults: Reshuffle commits _QueryResult (temp table ref)</span>
+    <span class="c1"># so that if the Read SDF retries, it re-reads the existing temp table</span>
+    <span class="c1"># instead of re-running the BQ query.</span>
+    <span class="c1"># Possible edge-case is that if ReadStorageStreams doesn't read the temp</span>
+    <span class="c1"># table within 24 hours (table expiration) it can end up in a bad state by</span>
+    <span class="c1"># trying to query a non-existing table.</span>
+    <span class="n">query_results</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">query_ranges</span>
+        <span class="o">|</span> <span class="s1">'CommitQueryRanges'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Reshuffle</span><span class="p">()</span>
+        <span class="o">|</span> <span class="s1">'ExecuteQueries'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+            <span class="n">_ExecuteQueryFn</span><span class="p">(</span>
+                <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_table</span><span class="p">,</span>
+                <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+                <span class="n">change_function</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_function</span><span class="p">,</span>
+                <span class="n">temp_dataset</span><span class="o">=</span><span class="n">temp_dataset</span><span class="p">,</span>
+                <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_location</span><span class="p">,</span>
+                <span class="n">change_type_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_type_column</span><span class="p">,</span>
+                <span class="n">change_timestamp_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">,</span>
+                <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">,</span>
+                <span class="n">row_filter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_row_filter</span><span class="p">))</span>
+        <span class="o">|</span> <span class="s1">'CommitQueryResults'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Reshuffle</span><span class="p">())</span>
+
+    <span class="n">emit_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reshuffle_decompress</span>
+
+    <span class="n">read_sdf</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+        <span class="n">_ReadStorageStreamsSDF</span><span class="p">(</span>
+            <span class="n">batch_arrow_read</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_arrow_read</span><span class="p">,</span>
+            <span class="n">change_timestamp_column</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">,</span>
+            <span class="n">max_split_rounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_split_rounds</span><span class="p">,</span>
+            <span class="n">emit_raw_batches</span><span class="o">=</span><span class="n">emit_raw</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">emit_raw</span><span class="p">:</span>
+      <span class="n">read_sdf</span> <span class="o">=</span> <span class="n">read_sdf</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">read_sdf</span> <span class="o">=</span> <span class="n">read_sdf</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span>
+
+    <span class="n">read_outputs</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">query_results</span>
+        <span class="o">|</span> <span class="s1">'ReadStorageStreams'</span> <span class="o">&gt;&gt;</span> <span class="n">read_sdf</span><span class="o">.</span><span class="n">with_outputs</span><span class="p">(</span>
+            <span class="n">_CLEANUP_TAG</span><span class="p">,</span> <span class="n">main</span><span class="o">=</span><span class="s1">'rows'</span><span class="p">))</span>
+
+    <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">read_outputs</span><span class="p">[</span><span class="n">_CLEANUP_TAG</span><span class="p">]</span>
+        <span class="o">|</span> <span class="s1">'CleanupTempTables'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_CleanupTempTablesFn</span><span class="p">()))</span>
+
+    <span class="k">if</span> <span class="n">emit_raw</span><span class="p">:</span>
+      <span class="c1"># Reshuffle raw Arrow batches for fan-out, then decompress and</span>
+      <span class="c1"># convert to timestamped row dicts in a separate DoFn.</span>
+      <span class="n">rows</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">read_outputs</span><span class="p">[</span><span class="s1">'rows'</span><span class="p">]</span>
+          <span class="o">|</span> <span class="s1">'ReshuffleForFanout'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Reshuffle</span><span class="p">()</span>
+          <span class="o">|</span> <span class="s1">'DecompressBatches'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+              <span class="n">_DecompressArrowBatchesFn</span><span class="p">(</span>
+                  <span class="n">change_timestamp_column</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_change_timestamp_column</span><span class="p">))))</span>
+      <span class="k">return</span> <span class="n">rows</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">read_outputs</span><span class="p">[</span><span class="s1">'rows'</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

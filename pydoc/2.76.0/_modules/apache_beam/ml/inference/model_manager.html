@@ -1,0 +1,998 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.inference.model_manager &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.inference.model_manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.inference.model_manager</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Module for managing ML models in Apache Beam pipelines.</span>
+
+<span class="sd">This module provides classes and functions to efficiently manage multiple</span>
+<span class="sd">machine learning models within Apache Beam pipelines. It includes functionality</span>
+<span class="sd">for loading, caching, and updating models using multi-process shared memory,</span>
+<span class="sd">ensuring that models are reused across different workers to optimize resource</span>
+<span class="sd">usage and performance.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">heapq</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">nnls</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.metrics.metric</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metrics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">multi_process_shared</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">_MODEL_MANAGER_METRICS_NAMESPACE</span> <span class="o">=</span> <span class="s2">"BeamML_ModelManager"</span>
+
+
+<div class="viewcode-block" id="GPUMonitor">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GPUMonitor</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Monitors GPU memory usage in a separate thread using nvidia-smi.</span>
+
+<span class="sd">  This class continuously polls GPU memory statistics to track current usage</span>
+<span class="sd">  and peak usage over a sliding time window. It serves as the source of truth</span>
+<span class="sd">  for the ModelManager's resource decisions.</span>
+
+<span class="sd">  Attributes:</span>
+<span class="sd">    fallback_memory_mb: Default total memory if hardware detection fails.</span>
+<span class="sd">    poll_interval: Seconds between memory checks.</span>
+<span class="sd">    peak_window_seconds: Duration to track peak memory usage.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">fallback_memory_mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">16000.0</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+      <span class="n">peak_window_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_peak_usage</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span> <span class="o">=</span> <span class="n">fallback_memory_mb</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_peak_window_seconds</span> <span class="o">=</span> <span class="n">peak_window_seconds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_detect_hardware</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="s2">"nvidia-smi"</span><span class="p">,</span>
+          <span class="s2">"--query-gpu=memory.total"</span><span class="p">,</span>
+          <span class="s2">"--format=csv,noheader,nounits"</span>
+      <span class="p">]</span>
+      <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">):</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s2">"nvidia-smi not found or failed. Defaulting total memory to </span><span class="si">%s</span><span class="s2"> MB"</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s2">"Error parsing nvidia-smi output: </span><span class="si">%s</span><span class="s2">. "</span>
+          <span class="s2">"Defaulting total memory to </span><span class="si">%s</span><span class="s2"> MB"</span><span class="p">,</span>
+          <span class="n">e</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span><span class="p">)</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="GPUMonitor.start">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor.start">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_gpu_available</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_detect_hardware</span><span class="p">()</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gpu_available</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_loop</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GPUMonitor.stop">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor.stop">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_running</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_thread</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GPUMonitor.reset_peak">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor.reset_peak">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">reset_peak</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">now</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_peak_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span></div>
+
+
+<div class="viewcode-block" id="GPUMonitor.get_stats">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor.get_stats">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_usage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span></div>
+
+
+<div class="viewcode-block" id="GPUMonitor.refresh">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.GPUMonitor.refresh">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Forces an immediate poll of the GPU."""</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nvidia_smi_used</span><span class="p">()</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span> <span class="o">=</span> <span class="n">usage</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">now</span><span class="p">,</span> <span class="n">usage</span><span class="p">))</span>
+      <span class="c1"># Recalculate peak immediately</span>
+      <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span> <span class="ow">and</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                      <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_window_seconds</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_peak_usage</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="nb">max</span><span class="p">(</span><span class="n">m</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="p">)</span>
+          <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span> <span class="k">else</span> <span class="n">usage</span><span class="p">)</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_nvidia_smi_used</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="s2">"nvidia-smi"</span><span class="p">,</span>
+          <span class="s2">"--query-gpu=memory.free"</span><span class="p">,</span>
+          <span class="s2">"--format=csv,noheader,nounits"</span>
+      <span class="p">]</span>
+      <span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+      <span class="n">free_memory</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_memory</span> <span class="o">-</span> <span class="n">free_memory</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">'Failed to get GPU memory usage: </span><span class="si">%s</span><span class="s1">'</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+      <span class="k">return</span> <span class="mf">0.0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_poll_loop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_running</span><span class="p">:</span>
+      <span class="n">usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nvidia_smi_used</span><span class="p">()</span>
+      <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_usage</span> <span class="o">=</span> <span class="n">usage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">now</span><span class="p">,</span> <span class="n">usage</span><span class="p">))</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span> <span class="ow">and</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                        <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_peak_window_seconds</span><span class="p">):</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_peak_usage</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">max</span><span class="p">(</span><span class="n">m</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_memory_history</span> <span class="k">else</span> <span class="n">usage</span><span class="p">)</span>
+      <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ResourceEstimator">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ResourceEstimator</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Estimates individual model memory usage using statistical observation.</span>
+
+<span class="sd">  Uses Non-Negative Least Squares (NNLS) to deduce the memory footprint of</span>
+<span class="sd">  individual models based on aggregate system memory readings and the</span>
+<span class="sd">  configuration of active models at that time.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">smoothing_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+      <span class="n">min_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="n">verbose_logging</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">smoothing_factor</span> <span class="o">=</span> <span class="n">smoothing_factor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">min_data_points</span> <span class="o">=</span> <span class="n">min_data_points</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">verbose_logging</span> <span class="o">=</span> <span class="n">verbose_logging</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">deque</span><span class="p">(</span><span class="n">maxlen</span><span class="o">=</span><span class="mi">20</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">known_models</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ResourceEstimator.logging_info">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator.logging_info">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">logging_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose_logging</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResourceEstimator.is_unknown">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator.is_unknown">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">model_tag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span></div>
+
+
+<div class="viewcode-block" id="ResourceEstimator.get_estimate">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator.get_estimate">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default_mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4000.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model_tag</span><span class="p">,</span> <span class="n">default_mb</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResourceEstimator.set_initial_estimate">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator.set_initial_estimate">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">set_initial_estimate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cost</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model_tag</span><span class="p">]</span> <span class="o">=</span> <span class="n">cost</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">known_models</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">model_tag</span><span class="p">)</span>
+      <span class="n">Metrics</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span>
+          <span class="n">_MODEL_MANAGER_METRICS_NAMESPACE</span><span class="p">,</span>
+          <span class="sa">f</span><span class="s2">"memory_estimate_mb_</span><span class="si">{</span><span class="n">model_tag</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+          <span class="n">process_wide</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cost</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Initial Profile for </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> MB"</span><span class="p">,</span> <span class="n">model_tag</span><span class="p">,</span> <span class="n">cost</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ResourceEstimator.add_observation">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ResourceEstimator.add_observation">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_observation</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">active_snapshot</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">peak_memory</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">active_snapshot</span><span class="p">:</span>
+      <span class="n">model_list</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="s2">- </span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">count</span><span class="si">}</span><span class="s2">"</span>
+          <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">active_snapshot</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">model_list</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">- None"</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+        <span class="s2">"Adding Observation:</span><span class="se">\n</span><span class="s2"> PeakMemory: </span><span class="si">%.1f</span><span class="s2"> MB</span><span class="se">\n</span><span class="s2">  Instances:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">peak_memory</span><span class="p">,</span>
+        <span class="n">model_list</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">active_snapshot</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">config_key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">active_snapshot</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">config_key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">peak_memory</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">active_snapshot</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">known_models</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_solve</span><span class="p">()</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Solves Ax=b using raw readings (no pre-averaging) and NNLS.</span>
+<span class="sd">    This creates a 'tall' matrix A where every memory reading is</span>
+<span class="sd">    a separate equation.</span>
+<span class="sd">    """</span>
+    <span class="n">unique</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">known_models</span><span class="p">))</span>
+
+    <span class="c1"># We need to build the matrix first to know if we have enough data points</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">config_key</span><span class="p">,</span> <span class="n">mem_values</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">mem_values</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+      <span class="c1"># 1. Create the feature row for this configuration ONCE</span>
+      <span class="c1"># (It represents the model counts + bias)</span>
+      <span class="n">counts</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">config_key</span><span class="p">)</span>
+      <span class="n">feature_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">]</span>
+      <span class="n">feature_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Bias column</span>
+
+      <span class="c1"># 2. Add a separate row to the matrix for EVERY individual reading</span>
+      <span class="c1"># Instead of averaging, we flatten the history into the matrix</span>
+      <span class="k">for</span> <span class="n">reading</span> <span class="ow">in</span> <span class="n">mem_values</span><span class="p">:</span>
+        <span class="n">A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">feature_row</span><span class="p">)</span>  <span class="c1"># The inputs (models) stay the same</span>
+        <span class="n">b</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">reading</span><span class="p">)</span>  <span class="c1"># The output (memory) varies due to noise</span>
+
+    <span class="c1"># Convert to numpy for SciPy</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_data_points</span><span class="p">:</span>
+      <span class="c1"># Not enough data to solve yet</span>
+      <span class="k">return</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+        <span class="s2">"Solving with </span><span class="si">%s</span><span class="s2"> total observations for </span><span class="si">%s</span><span class="s2"> models."</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">),</span>
+        <span class="nb">len</span><span class="p">(</span><span class="n">unique</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="c1"># Solve using Non-Negative Least Squares</span>
+      <span class="c1"># x will be &gt;= 0</span>
+      <span class="n">x</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nnls</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+      <span class="n">weights</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">bias</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+      <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique</span><span class="p">):</span>
+        <span class="n">calculated_cost</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">:</span>
+          <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model</span><span class="p">]</span>
+          <span class="n">new</span> <span class="o">=</span> <span class="p">(</span><span class="n">old</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing_factor</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span>
+              <span class="n">calculated_cost</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing_factor</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="n">new</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_cost</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+            <span class="s2">"Updated Estimate for </span><span class="si">%s</span><span class="s2">: </span><span class="si">%.1f</span><span class="s2"> MB"</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model</span><span class="p">])</span>
+
+        <span class="n">Metrics</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span>
+            <span class="n">_MODEL_MANAGER_METRICS_NAMESPACE</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">"memory_estimate_mb_</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">process_wide</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">estimates</span><span class="p">[</span><span class="n">model</span><span class="p">]))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"System Bias: </span><span class="si">%s</span><span class="s2"> MB"</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Solver failed: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QueueTicket">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.QueueTicket">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QueueTicket</span><span class="p">:</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">priority</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">priority</span> <span class="o">=</span> <span class="n">priority</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">ticket_num</span> <span class="o">=</span> <span class="n">ticket_num</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">wake_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ticket_num</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">priority</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">ticket_num</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ModelManager">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelManager</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Manages model lifecycles, caching, and resource arbitration.</span>
+
+<span class="sd">  This class acts as the central controller for acquiring model instances.</span>
+
+<span class="sd">  1. LRU Caching of idle models.</span>
+<span class="sd">  2. Resource estimation and admission control (preventing OOM).</span>
+<span class="sd">  3. Dynamic eviction of low-priority models, determined by count of </span>
+<span class="sd">     pending requests, when space is needed.</span>
+<span class="sd">  4. 'Isolation Mode' for safely profiling unknown models.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">monitor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">'GPUMonitor'</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">slack_percentage</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.10</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+      <span class="n">peak_window_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">30.0</span><span class="p">,</span>
+      <span class="n">min_data_points</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="n">smoothing_factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+      <span class="n">eviction_cooldown_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+      <span class="n">min_model_copies</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+      <span class="n">wait_timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span>
+      <span class="n">lock_timeout_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">60.0</span><span class="p">,</span>
+      <span class="n">verbose_logging</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span> <span class="o">=</span> <span class="n">ResourceEstimator</span><span class="p">(</span>
+        <span class="n">min_data_points</span><span class="o">=</span><span class="n">min_data_points</span><span class="p">,</span>
+        <span class="n">smoothing_factor</span><span class="o">=</span><span class="n">smoothing_factor</span><span class="p">,</span>
+        <span class="n">verbose_logging</span><span class="o">=</span><span class="n">verbose_logging</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span> <span class="o">=</span> <span class="n">monitor</span> <span class="k">if</span> <span class="n">monitor</span> <span class="k">else</span> <span class="n">GPUMonitor</span><span class="p">(</span>
+        <span class="n">poll_interval</span><span class="o">=</span><span class="n">poll_interval</span><span class="p">,</span> <span class="n">peak_window_seconds</span><span class="o">=</span><span class="n">peak_window_seconds</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_slack_percentage</span> <span class="o">=</span> <span class="n">slack_percentage</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_eviction_cooldown</span> <span class="o">=</span> <span class="n">eviction_cooldown_seconds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_min_model_copies</span> <span class="o">=</span> <span class="n">min_model_copies</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_wait_timeout_seconds</span> <span class="o">=</span> <span class="n">wait_timeout_seconds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lock_timeout_seconds</span> <span class="o">=</span> <span class="n">lock_timeout_seconds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_verbose_logging</span> <span class="o">=</span> <span class="n">verbose_logging</span>
+
+    <span class="c1"># Resource State</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="c1"># Idle LRU used to track released models that</span>
+    <span class="c1"># can be freed or reused upon request.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Isolation state used to profile unknown models,</span>
+    <span class="c1"># ensuring they run alone to get accurate readings.</span>
+    <span class="c1"># isolation_baseline represents the GPU usage before</span>
+    <span class="c1"># loading the unknown model.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Waiting Queue and Ticketing to make sure we have fair ordering</span>
+    <span class="c1"># and also priority for unknown models.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ticket_counter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cancelled_tickets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="c1"># TODO: Consider making the wait to be smarter, i.e.</span>
+    <span class="c1"># splitting read/write etc. to avoid potential contention.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_update_model_count_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">tag</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">Metrics</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span>
+          <span class="n">_MODEL_MANAGER_METRICS_NAMESPACE</span><span class="p">,</span>
+          <span class="sa">f</span><span class="s2">"num_loaded_models_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+          <span class="n">process_wide</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_clear_all_model_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">:</span>
+      <span class="n">Metrics</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span>
+          <span class="n">_MODEL_MANAGER_METRICS_NAMESPACE</span><span class="p">,</span>
+          <span class="sa">f</span><span class="s2">"num_loaded_models_</span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+          <span class="n">process_wide</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ModelManager.logging_info">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.logging_info">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">logging_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose_logging</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelManager.all_models">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.all_models">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">all_models</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span></div>
+
+
+  <span class="c1"># Should hold _cv lock when calling</span>
+<div class="viewcode-block" id="ModelManager.try_enter_isolation_mode">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.try_enter_isolation_mode">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_enter_isolation_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+          <span class="s2">"Waiting to enter isolation: tag=</span><span class="si">%s</span><span class="s2"> ticket num=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lock_timeout_seconds</span><span class="p">)</span>
+      <span class="c1"># return False since we have waited and need to re-evaluate</span>
+      <span class="c1"># in caller to make sure our priority is still valid.</span>
+      <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Unknown model </span><span class="si">%s</span><span class="s2"> detected. Flushing GPU."</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_all_models</span><span class="p">()</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">reset_peak</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+  <span class="c1"># Should hold _cv lock when calling</span>
+<div class="viewcode-block" id="ModelManager.should_spawn_model">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.should_spawn_model">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">should_spawn_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">total</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="n">est_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">get_estimate</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+    <span class="n">limit</span> <span class="o">=</span> <span class="n">total</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slack_percentage</span><span class="p">)</span>
+
+    <span class="c1"># Use current usage for capacity check (ignore old spikes)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">curr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">+</span> <span class="n">est_cost</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">limit</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">+=</span> <span class="n">est_cost</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Evict to make space (passing tag to check demand/existence)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evict_to_make_space</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="n">est_cost</span><span class="p">,</span> <span class="n">requesting_tag</span><span class="o">=</span><span class="n">tag</span><span class="p">):</span>
+      <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># Manually log status for debugging if we are going to wait</span>
+    <span class="n">idle_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">other_idle_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">tag</span><span class="p">:</span>
+        <span class="n">idle_count</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">other_idle_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">total_model_count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">total_model_count</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span>
+    <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+        <span class="s2">"Waiting for resources to free up: "</span>
+        <span class="s2">"tag=</span><span class="si">%s</span><span class="s2"> ticket num</span><span class="si">%s</span><span class="s2"> model count=</span><span class="si">%s</span><span class="s2"> "</span>
+        <span class="s2">"idle count=</span><span class="si">%s</span><span class="s2"> resource usage=</span><span class="si">%.1f</span><span class="s2"> MB "</span>
+        <span class="s2">"total models count=</span><span class="si">%s</span><span class="s2"> other idle=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">,</span>
+        <span class="n">ticket_num</span><span class="p">,</span>
+        <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">]),</span>
+        <span class="n">idle_count</span><span class="p">,</span>
+        <span class="n">curr</span><span class="p">,</span>
+        <span class="n">total_model_count</span><span class="p">,</span>
+        <span class="n">other_idle_count</span><span class="p">)</span>
+    <span class="c1"># Wait since we couldn't make space and</span>
+    <span class="c1"># added timeout to avoid missed notify call.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lock_timeout_seconds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_wake_next_in_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">:</span>
+      <span class="c1"># Clean up cancelled tickets at head of queue</span>
+      <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">[</span>
+          <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ticket_num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cancelled_tickets</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cancelled_tickets</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ticket_num</span><span class="p">)</span>
+        <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">)</span>
+      <span class="n">next_inline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="n">next_inline</span><span class="o">.</span><span class="n">wake_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_wait_in_queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticket</span><span class="p">:</span> <span class="n">QueueTicket</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">ticket</span><span class="o">.</span><span class="n">wake_event</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lock_timeout_seconds</span><span class="p">)</span>
+      <span class="n">ticket</span><span class="o">.</span><span class="n">wake_event</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
+
+<div class="viewcode-block" id="ModelManager.acquire_model">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.acquire_model">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">acquire_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loader_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">current_priority</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">is_unknown</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">ticket_num</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ticket_counter</span><span class="p">)</span>
+    <span class="n">my_ticket</span> <span class="o">=</span> <span class="n">QueueTicket</span><span class="p">(</span><span class="n">current_priority</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="p">:</span>
+      <span class="c1"># FAST PATH: Grab from idle LRU if available</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span><span class="p">:</span>
+        <span class="n">cached_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_grab_from_lru</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cached_instance</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">cached_instance</span>
+
+      <span class="c1"># SLOW PATH: Enqueue and wait for turn to acquire model,</span>
+      <span class="c1"># with unknown models having priority and order enforced</span>
+      <span class="c1"># by ticket number as FIFO.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+          <span class="s2">"Acquire Queued: tag=</span><span class="si">%s</span><span class="s2">, priority=</span><span class="si">%d</span><span class="s2"> "</span>
+          <span class="s2">"total models count=</span><span class="si">%s</span><span class="s2"> ticket num=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+          <span class="n">tag</span><span class="p">,</span>
+          <span class="n">current_priority</span><span class="p">,</span>
+          <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">]),</span>
+          <span class="n">ticket_num</span><span class="p">)</span>
+      <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">,</span> <span class="n">my_ticket</span><span class="p">)</span>
+
+      <span class="n">est_cost</span> <span class="o">=</span> <span class="mf">0.0</span>
+      <span class="n">is_unknown</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="n">wait_time_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+      <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+          <span class="n">wait_time_elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">wait_time_start</span>
+          <span class="k">if</span> <span class="n">wait_time_elapsed</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_timeout_seconds</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Timeout waiting to acquire model: </span><span class="si">{</span><span class="n">tag</span><span class="si">}</span><span class="s2"> "</span>
+                <span class="sa">f</span><span class="s2">"after </span><span class="si">{</span><span class="n">wait_time_elapsed</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> seconds."</span><span class="p">)</span>
+          <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">[</span>
+              <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ticket_num</span> <span class="o">!=</span> <span class="n">ticket_num</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+                <span class="s2">"Waiting for its turn: tag=</span><span class="si">%s</span><span class="s2"> ticket num=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wait_in_queue</span><span class="p">(</span><span class="n">my_ticket</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+          <span class="c1"># Re-evaluate priority in case model became known during wait</span>
+          <span class="n">is_unknown</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">is_unknown</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+          <span class="n">real_priority</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">is_unknown</span> <span class="k">else</span> <span class="mi">1</span>
+
+          <span class="c1"># If priority changed, reinsert into queue and wait</span>
+          <span class="k">if</span> <span class="n">current_priority</span> <span class="o">!=</span> <span class="n">real_priority</span><span class="p">:</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">)</span>
+            <span class="n">current_priority</span> <span class="o">=</span> <span class="n">real_priority</span>
+            <span class="n">my_ticket</span> <span class="o">=</span> <span class="n">QueueTicket</span><span class="p">(</span><span class="n">current_priority</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">,</span> <span class="n">my_ticket</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_wake_next_in_queue</span><span class="p">()</span>
+            <span class="k">continue</span>
+
+          <span class="c1"># Try grab from LRU again in case model was released during wait</span>
+          <span class="n">cached_instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_grab_from_lru</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+          <span class="k">if</span> <span class="n">cached_instance</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cached_instance</span>
+
+          <span class="c1"># Path A: Isolation</span>
+          <span class="k">if</span> <span class="n">is_unknown</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">try_enter_isolation_mode</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">):</span>
+              <span class="c1"># We got isolation, can proceed to spawn</span>
+              <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="c1"># We waited, need to re-evaluate our turn</span>
+              <span class="c1"># because priority may have changed during the wait</span>
+              <span class="k">continue</span>
+
+          <span class="c1"># Path B: Concurrent</span>
+          <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span><span class="p">:</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span>
+                  <span class="s2">"Waiting due to isolation in progress: tag=</span><span class="si">%s</span><span class="s2"> ticket num</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
+                  <span class="n">tag</span><span class="p">,</span>
+                  <span class="n">ticket_num</span><span class="p">)</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">_wait_in_queue</span><span class="p">(</span><span class="n">my_ticket</span><span class="p">)</span>
+              <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">should_spawn_model</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">ticket_num</span><span class="p">):</span>
+              <span class="n">est_cost</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">get_estimate</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+              <span class="c1"># We can proceed to spawn since we have resources</span>
+              <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+              <span class="c1"># We waited, need to re-evaluate our turn</span>
+              <span class="c1"># because priority may have changed during the wait</span>
+              <span class="k">continue</span>
+
+      <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Remove self from wait queue once done</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ticket_num</span> <span class="o">==</span> <span class="n">ticket_num</span><span class="p">:</span>
+          <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="c1"># Marked as cancelled so that we skip when we reach head later</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_cancelled_tickets</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ticket_num</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wake_next_in_queue</span><span class="p">()</span>
+
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spawn_new_model</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">loader_func</span><span class="p">,</span> <span class="n">is_unknown</span><span class="p">,</span> <span class="n">est_cost</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ModelManager.release_model">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.release_model">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">release_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">instance</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+
+        <span class="c1"># Update estimator with latest stats</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">peak_during_job</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="c1"># For isolation mode, we directly set the initial estimate</span>
+          <span class="c1"># so that we can quickly learn the model cost.</span>
+          <span class="n">cost</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">peak_during_job</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">set_initial_estimate</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">cost</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="o">=</span> <span class="kc">False</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="c1"># Regular update for known models</span>
+          <span class="n">snapshot</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="n">t</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span>
+              <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+          <span class="p">}</span>
+          <span class="k">if</span> <span class="n">snapshot</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">add_observation</span><span class="p">(</span><span class="n">snapshot</span><span class="p">,</span> <span class="n">peak_during_job</span><span class="p">)</span>
+
+      <span class="k">finally</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_wake_next_in_queue</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_try_grab_from_lru</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">target_key</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">target_instance</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+      <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="n">tag</span><span class="p">:</span>
+        <span class="n">target_key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">target_instance</span> <span class="o">=</span> <span class="n">instance</span>
+        <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">target_instance</span><span class="p">:</span>
+      <span class="c1"># Found an idle model, remove from LRU and return</span>
+      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="p">[</span><span class="n">target_key</span><span class="p">]</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">return</span> <span class="n">target_instance</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"No idle model found for tag: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_evict_to_make_space</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">est_cost</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">requesting_tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Evicts models based on Demand Magnitude + Tiers.</span>
+<span class="sd">    Crucially: If we have 0 active copies of 'requesting_tag', we FORCE eviction</span>
+<span class="sd">    of the lowest-demand candidate to avoid starvation.</span>
+<span class="sd">    Returns True if space was made, False otherwise.</span>
+<span class="sd">    """</span>
+    <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="n">projected_usage</span> <span class="o">=</span> <span class="n">curr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">+</span> <span class="n">est_cost</span>
+
+    <span class="k">if</span> <span class="n">projected_usage</span> <span class="o">&lt;=</span> <span class="n">limit</span><span class="p">:</span>
+      <span class="c1"># Memory usage changed and we are already under limit</span>
+      <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+    <span class="c1"># Calculate the demand from the wait queue</span>
+    <span class="c1"># TODO: Also factor in the active counts to avoid thrashing</span>
+    <span class="n">demand_map</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span><span class="p">:</span>
+      <span class="n">demand_map</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">tag</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">my_demand</span> <span class="o">=</span> <span class="n">demand_map</span><span class="p">[</span><span class="n">requesting_tag</span><span class="p">]</span>
+    <span class="n">am_i_starving</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">requesting_tag</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="n">candidates</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">release_time</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">candidate_demand</span> <span class="o">=</span> <span class="n">demand_map</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span>
+
+      <span class="c1"># TODO: Try to avoid churn if demand is similar</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">am_i_starving</span> <span class="ow">and</span> <span class="n">candidate_demand</span> <span class="o">&gt;=</span> <span class="n">my_demand</span><span class="p">:</span>
+        <span class="k">continue</span>
+
+      <span class="c1"># Attempts to score candidates based on hotness and manually</span>
+      <span class="c1"># specified minimum copies. Demand is weighted heavily to</span>
+      <span class="c1"># ensure we evict low-demand models first.</span>
+      <span class="n">age</span> <span class="o">=</span> <span class="n">now</span> <span class="o">-</span> <span class="n">release_time</span>
+      <span class="n">is_cold</span> <span class="o">=</span> <span class="n">age</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eviction_cooldown</span>
+
+      <span class="n">total_copies</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">])</span>
+      <span class="n">is_surplus</span> <span class="o">=</span> <span class="n">total_copies</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_model_copies</span>
+
+      <span class="k">if</span> <span class="n">is_cold</span> <span class="ow">and</span> <span class="n">is_surplus</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_cold</span> <span class="ow">and</span> <span class="n">is_surplus</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="mi">1</span>
+      <span class="k">elif</span> <span class="n">is_cold</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_surplus</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="mi">2</span>
+      <span class="k">else</span><span class="p">:</span> <span class="n">tier</span> <span class="o">=</span> <span class="mi">3</span>
+
+      <span class="n">score</span> <span class="o">=</span> <span class="p">(</span><span class="n">candidate_demand</span> <span class="o">*</span> <span class="mi">10</span><span class="p">)</span> <span class="o">+</span> <span class="n">tier</span>
+
+      <span class="n">candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">score</span><span class="p">,</span> <span class="n">release_time</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">instance</span><span class="p">))</span>
+
+    <span class="n">candidates</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1"># Evict candidates until we are under limit</span>
+    <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">projected_usage</span> <span class="o">&lt;=</span> <span class="n">limit</span><span class="p">:</span>
+        <span class="k">break</span>
+
+      <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="p">:</span> <span class="k">continue</span>
+
+      <span class="bp">self</span><span class="o">.</span><span class="n">_perform_eviction</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+
+      <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+      <span class="n">projected_usage</span> <span class="o">=</span> <span class="n">curr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">+</span> <span class="n">est_cost</span>
+
+    <span class="k">return</span> <span class="n">projected_usage</span> <span class="o">&lt;=</span> <span class="n">limit</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_delete_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+      <span class="c1"># If the instance is a string, it's a uuid used</span>
+      <span class="c1"># to retrieve the model from MultiProcessShared</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">multi_process_shared</span><span class="o">.</span><span class="n">MultiProcessShared</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="s2">"N/A"</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">instance</span><span class="p">)</span><span class="o">.</span><span class="n">unsafe_hard_delete</span><span class="p">()</span>
+      <span class="k">except</span> <span class="p">(</span><span class="ne">EOFError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">,</span> <span class="ne">BrokenPipeError</span><span class="p">):</span>
+        <span class="c1"># This can happen even in normal operation.</span>
+        <span class="k">pass</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s1">'mock_model_unsafe_hard_delete'</span><span class="p">):</span>
+      <span class="c1"># Call the mock unsafe hard delete method for testing</span>
+      <span class="n">instance</span><span class="o">.</span><span class="n">mock_model_unsafe_hard_delete</span><span class="p">()</span>
+    <span class="k">del</span> <span class="n">instance</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_perform_eviction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">instance</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">score</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Evicting Model: </span><span class="si">%s</span><span class="s2"> (Score </span><span class="si">%d</span><span class="s2">)"</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">score</span><span class="p">)</span>
+    <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Resource Usage Before Eviction: </span><span class="si">%.1f</span><span class="s2"> MB"</span><span class="p">,</span> <span class="n">curr</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="p">:</span>
+      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">inst</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">]):</span>
+      <span class="k">if</span> <span class="n">instance</span> <span class="o">==</span> <span class="n">inst</span><span class="p">:</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">break</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_instance</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">empty_cache</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">reset_peak</span><span class="p">()</span>
+    <span class="n">curr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Resource Usage After Eviction: </span><span class="si">%.1f</span><span class="s2"> MB"</span><span class="p">,</span> <span class="n">curr</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_update_model_count_metric</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_spawn_new_model</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">loader_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">],</span>
+      <span class="n">is_unknown</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+      <span class="n">est_cost</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logging_info</span><span class="p">(</span><span class="s2">"Loading Model: </span><span class="si">%s</span><span class="s2"> (Unknown: </span><span class="si">%s</span><span class="s2">)"</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">is_unknown</span><span class="p">)</span>
+        <span class="n">baseline_snap</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="n">loader_func</span><span class="p">()</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">peak_during_load</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+
+        <span class="n">snapshot</span> <span class="o">=</span> <span class="p">{</span><span class="n">tag</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimator</span><span class="o">.</span><span class="n">add_observation</span><span class="p">(</span>
+            <span class="n">snapshot</span><span class="p">,</span> <span class="n">peak_during_load</span> <span class="o">-</span> <span class="n">baseline_snap</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_unknown</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+              <span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">-</span> <span class="n">est_cost</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_model_count_metric</span><span class="p">()</span>
+      <span class="k">return</span> <span class="n">instance</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Load Failed: </span><span class="si">%s</span><span class="s2">. Error: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+      <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">is_unknown</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="o">=</span> <span class="kc">False</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+              <span class="mf">0.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">-</span> <span class="n">est_cost</span><span class="p">)</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="p">[</span><span class="n">tag</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
+      <span class="k">raise</span> <span class="n">e</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_delete_all_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_clear_all_model_metrics</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">instances</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="k">for</span> <span class="n">instance</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_delete_instance</span><span class="p">(</span><span class="n">instance</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_models</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">empty_cache</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">reset_peak</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_force_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Force Reset Triggered"</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_all_models</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_models</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_idle_lru</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_counts</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_wait_queue</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_total_active_jobs</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_pending_reservations</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_mode</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_isolation_baseline</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="ModelManager.shutdown">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.model_manager.html#apache_beam.ml.inference.model_manager.ModelManager.shutdown">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_delete_all_models</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_monitor</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

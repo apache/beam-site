@@ -1,0 +1,262 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.utils.byte_limited_queue module &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=f68839fd"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="apache_beam.utils.histogram module" href="apache_beam.utils.histogram.html" />
+    <link rel="prev" title="apache_beam.utils.annotations module" href="apache_beam.utils.annotations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="apache_beam.utils.html">apache_beam.utils package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="apache_beam.utils.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.annotations.html">apache_beam.utils.annotations module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">apache_beam.utils.byte_limited_queue module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue"><code class="docutils literal notranslate"><span class="pre">ByteLimitedQueue</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.histogram.html">apache_beam.utils.histogram module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.interactive_utils.html">apache_beam.utils.interactive_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.logger.html">apache_beam.utils.logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.multi_process_shared.html">apache_beam.utils.multi_process_shared module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.plugin.html">apache_beam.utils.plugin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.processes.html">apache_beam.utils.processes module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.profiler.html">apache_beam.utils.profiler module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.proto_utils.html">apache_beam.utils.proto_utils module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.python_callable.html">apache_beam.utils.python_callable module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.retry.html">apache_beam.utils.retry module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sentinel.html">apache_beam.utils.sentinel module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.sharded_key.html">apache_beam.utils.sharded_key module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.shared.html">apache_beam.utils.shared module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.subprocess_server.html">apache_beam.utils.subprocess_server module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.thread_pool_executor.html">apache_beam.utils.thread_pool_executor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.timestamp.html">apache_beam.utils.timestamp module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.transform_service_launcher.html">apache_beam.utils.transform_service_launcher module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="apache_beam.utils.urns.html">apache_beam.utils.urns module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="apache_beam.utils.html">apache_beam.utils package</a></li>
+      <li class="breadcrumb-item active">apache_beam.utils.byte_limited_queue module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/apache_beam.utils.byte_limited_queue.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-apache_beam.utils.byte_limited_queue">
+<span id="apache-beam-utils-byte-limited-queue-module"></span><h1>apache_beam.utils.byte_limited_queue module<a class="headerlink" href="#module-apache_beam.utils.byte_limited_queue" title="Link to this heading"></a></h1>
+<p>A thread-safe queue that limits capacity by total byte size.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">apache_beam.utils.byte_limited_queue.</span></span><span class="sig-name descname"><span class="pre">ByteLimitedQueue</span></span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A fair queue that limits by both element count and total byte size.</p>
+<p>A single element is allowed to exceed the maxbytes to avoid deadlock.</p>
+<p>Initializes a ByteLimitedQueue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxsize</strong> – The maximum number of items allowed in the queue. If 0 or
+negative, there is no limit on the number of elements.</p></li>
+<li><p><strong>maxbytes</strong> – The maximum accumulated bytes allowed in the queue. If 0 or
+negative, there is no limit on the total bytes of the elements.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.blocked_byte_size">
+<span class="sig-name descname"><span class="pre">blocked_byte_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.blocked_byte_size" title="Link to this definition"></a></dt>
+<dd><p>Return the total byte size of elements in the queue that are blocked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.byte_size">
+<span class="sig-name descname"><span class="pre">byte_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.byte_size" title="Link to this definition"></a></dt>
+<dd><p>Return the total byte size of elements in the queue.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.get" title="Link to this definition"></a></dt>
+<dd><p>Remove and return an item from the queue.</p>
+<p>If the queue is empty, block until an item is available, unless <cite>block</cite>
+is false or a timeout occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>block</strong> – If True, block until an item is available. If False, raise
+queue.Empty immediately if the queue is empty.</p></li>
+<li><p><strong>timeout</strong> – If block is True, wait for at most <cite>timeout</cite> seconds. If None,
+block indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The item removed from the queue.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If timeout is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/queue.html#queue.Empty" title="(in Python v3.14)"><strong>queue.Empty</strong></a> – If the queue is empty and block is False or the timeout
+    occurs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.get_nowait">
+<span class="sig-name descname"><span class="pre">get_nowait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.get_nowait" title="Link to this definition"></a></dt>
+<dd><p>Remove and return an item from the queue without blocking.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.max_bytes">
+<span class="sig-name descname"><span class="pre">max_bytes</span></span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.max_bytes" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.max_elements">
+<span class="sig-name descname"><span class="pre">max_elements</span></span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.max_elements" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item_bytes</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.put" title="Link to this definition"></a></dt>
+<dd><p>Put an item into the queue.</p>
+<p>If the queue is full, block until a free slot is available, unless <cite>block</cite>
+is false or a timeout occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – The item to put into the queue.</p></li>
+<li><p><strong>item_bytes</strong> – The size of the item.</p></li>
+<li><p><strong>block</strong> – If True, block until space is available. If False, raise queue.Full
+immediately if the queue is full.</p></li>
+<li><p><strong>timeout</strong> – If block is True, wait for at most <cite>timeout</cite> seconds. If None,
+block indefinitely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If timeout or item_bytes is negative.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/queue.html#queue.Full" title="(in Python v3.14)"><strong>queue.Full</strong></a> – If the queue is full and block is False or the timeout occurs.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="apache_beam.utils.byte_limited_queue.ByteLimitedQueue.qsize">
+<span class="sig-name descname"><span class="pre">qsize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#apache_beam.utils.byte_limited_queue.ByteLimitedQueue.qsize" title="Link to this definition"></a></dt>
+<dd><p>Return the total number of elements in the queue.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="apache_beam.utils.annotations.html" class="btn btn-neutral float-left" title="apache_beam.utils.annotations module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="apache_beam.utils.histogram.html" class="btn btn-neutral float-right" title="apache_beam.utils.histogram module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

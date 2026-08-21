@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.cloudsql &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.cloudsql</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.cloudsql</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">mysql</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">mysql_common</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">postgres</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion</span><span class="w"> </span><span class="kn">import</span> <span class="n">postgres_common</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.jdbc_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConnectionConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.jdbc_common</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteConfig</span>
+
+
+<div class="viewcode-block" id="LanguageConnectorConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.cloudsql.html#apache_beam.ml.rag.ingestion.cloudsql.LanguageConnectorConfig">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LanguageConnectorConfig</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Configuration options for CloudSQL Java language connector.</span>
+<span class="sd">    </span>
+<span class="sd">    Set parameters to connect connection to a CloudSQL instance using</span>
+<span class="sd">    Java language connector connector. For details see</span>
+<span class="sd">    https://github.com/GoogleCloudPlatform/cloud-sql-jdbc-socket-factory/blob/main/docs/jdbc.md</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        username: Database username.</span>
+<span class="sd">        password: Database password. Can be empty string when using IAM.</span>
+<span class="sd">        database_name: Name of the database to connect to.</span>
+<span class="sd">        instance_name: Instance connection name. Format: </span>
+<span class="sd">            '&lt;PROJECT&gt;:&lt;REGION&gt;:&lt;INSTANCE&gt;'</span>
+<span class="sd">        ip_type: Preferred order of IP types used to connect via a comma</span>
+<span class="sd">            list of strings.</span>
+<span class="sd">        enable_iam_auth: Whether to enable IAM authentication. Default is False</span>
+<span class="sd">        target_principal: Optional service account to impersonate for</span>
+<span class="sd">            connection.</span>
+<span class="sd">        delegates: Optional list of service accounts for delegated</span>
+<span class="sd">            impersonation.</span>
+<span class="sd">        admin_service_endpoint: Optional custom API service endpoint.</span>
+<span class="sd">        quota_project: Optional project ID for quota and billing.</span>
+<span class="sd">        connection_properties: Optional JDBC connection properties dict.</span>
+<span class="sd">            Example: {'ssl': 'true'}</span>
+<span class="sd">        additional_properties: Additional properties to be added to the JDBC</span>
+<span class="sd">            url. Example: {'someProperty': 'true'}</span>
+<span class="sd">    """</span>
+  <span class="n">username</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">password</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">database_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">instance_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">ip_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">enable_iam_auth</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+  <span class="n">target_principal</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">delegates</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">quota_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">connection_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">additional_properties</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_base_jdbc_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="n">properties</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"cloudSqlInstance"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_name</span><span class="p">}</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ip_types</span><span class="p">:</span>
+      <span class="n">properties</span><span class="p">[</span><span class="s2">"ipTypes"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ip_types</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">enable_iam_auth</span><span class="p">:</span>
+      <span class="n">properties</span><span class="p">[</span><span class="s2">"enableIamAuth"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"true"</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_principal</span><span class="p">:</span>
+      <span class="n">properties</span><span class="p">[</span><span class="s2">"cloudSqlTargetPrincipal"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_principal</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">delegates</span><span class="p">:</span>
+      <span class="n">properties</span><span class="p">[</span><span class="s2">"cloudSqlDelegates"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delegates</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quota_project</span><span class="p">:</span>
+      <span class="n">properties</span><span class="p">[</span><span class="s2">"cloudSqlAdminQuotaProject"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quota_project</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">additional_properties</span><span class="p">:</span>
+      <span class="n">properties</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_properties</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">properties</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_build_jdbc_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">socketFactory</span><span class="p">,</span> <span class="n">database_type</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"jdbc:</span><span class="si">{</span><span class="n">database_type</span><span class="si">}</span><span class="s2">:///</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">database_name</span><span class="si">}</span><span class="s2">?"</span>
+
+    <span class="n">properties</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_base_jdbc_properties</span><span class="p">()</span>
+    <span class="n">properties</span><span class="p">[</span><span class="s1">'socketFactory'</span><span class="p">]</span> <span class="o">=</span> <span class="n">socketFactory</span>
+
+    <span class="n">property_string</span> <span class="o">=</span> <span class="s2">"&amp;"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">properties</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">url</span> <span class="o">+</span> <span class="n">property_string</span>
+
+<div class="viewcode-block" id="LanguageConnectorConfig.to_connection_config">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.cloudsql.html#apache_beam.ml.rag.ingestion.cloudsql.LanguageConnectorConfig.to_connection_config">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">to_connection_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ConnectionConfig</span><span class="p">(</span>
+        <span class="n">jdbc_url</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">to_jdbc_url</span><span class="p">(),</span>
+        <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">connection_properties</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connection_properties</span><span class="p">,</span>
+        <span class="n">additional_jdbc_args</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">additional_jdbc_args</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="LanguageConnectorConfig.additional_jdbc_args">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.cloudsql.html#apache_beam.ml.rag.ingestion.cloudsql.LanguageConnectorConfig.additional_jdbc_args">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">additional_jdbc_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="p">{}</span></div>
+</div>
+
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_PostgresConnectorConfig</span><span class="p">(</span><span class="n">LanguageConnectorConfig</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">to_jdbc_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert options to a properly formatted JDBC URL.</span>
+<span class="sd">      </span>
+<span class="sd">      Returns:</span>
+<span class="sd">          JDBC URL string configured with all options.</span>
+<span class="sd">      """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_jdbc_url</span><span class="p">(</span>
+        <span class="n">socketFactory</span><span class="o">=</span><span class="s2">"com.google.cloud.sql.postgres.SocketFactory"</span><span class="p">,</span>
+        <span class="n">database_type</span><span class="o">=</span><span class="s2">"postgresql"</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">additional_jdbc_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'classpath'</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"org.postgresql:postgresql:42.2.16"</span><span class="p">,</span>
+            <span class="s2">"com.google.cloud.sql:postgres-socket-factory:1.25.0"</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">from_base_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">LanguageConnectorConfig</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="CloudSQLPostgresVectorWriterConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.cloudsql.html#apache_beam.ml.rag.ingestion.cloudsql.CloudSQLPostgresVectorWriterConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudSQLPostgresVectorWriterConfig</span><span class="p">(</span><span class="n">postgres</span><span class="o">.</span><span class="n">PostgresVectorWriterConfig</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_config</span><span class="p">:</span> <span class="n">LanguageConnectorConfig</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="c1"># pylint: disable=dangerous-default-value</span>
+      <span class="n">write_config</span><span class="p">:</span> <span class="n">WriteConfig</span> <span class="o">=</span> <span class="n">WriteConfig</span><span class="p">(),</span>
+      <span class="n">column_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">postgres_common</span><span class="o">.</span><span class="n">ColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">postgres_common</span><span class="o">.</span>
+      <span class="n">ColumnSpecsBuilder</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">(),</span>
+      <span class="n">conflict_resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+          <span class="n">postgres_common</span><span class="o">.</span><span class="n">ConflictResolution</span><span class="p">]</span> <span class="o">=</span> <span class="n">postgres_common</span><span class="o">.</span>
+      <span class="n">ConflictResolution</span><span class="p">(</span><span class="n">on_conflict_fields</span><span class="o">=</span><span class="p">[],</span> <span class="n">action</span><span class="o">=</span><span class="s1">'IGNORE'</span><span class="p">)):</span>
+<span class="w">    </span><span class="sd">"""Configuration for writing vectors to ClouSQL Postgres.</span>
+<span class="sd">    </span>
+<span class="sd">    Supports flexible schema configuration through column specifications and</span>
+<span class="sd">    conflict resolution strategies.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        connection_config: :class:`LanguageConnectorConfig`.</span>
+<span class="sd">        table_name: Target table name.</span>
+<span class="sd">        write_config: JdbcIO :class:`~.jdbc_common.WriteConfig` to control</span>
+<span class="sd">          batch sizes, authosharding, etc.</span>
+<span class="sd">        column_specs:</span>
+<span class="sd">            Use :class:`~.postgres_common.ColumnSpecsBuilder` to configure how</span>
+<span class="sd">            embeddings and metadata are written a database</span>
+<span class="sd">            schema. If None, uses default EmbeddableItem schema.</span>
+<span class="sd">        conflict_resolution: Optional</span>
+<span class="sd">            :class:`~.postgres_common.ConflictResolution`</span>
+<span class="sd">            strategy for handling insert conflicts. ON CONFLICT DO NOTHING by</span>
+<span class="sd">            default.</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Basic usage with default schema:</span>
+
+<span class="sd">        &gt;&gt;&gt; config = PostgresVectorWriterConfig(</span>
+<span class="sd">        ...     connection_config=PostgresConnectionConfig(...),</span>
+<span class="sd">        ...     table_name='embeddings'</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        Simple case with default schema:</span>
+
+<span class="sd">        &gt;&gt;&gt; config = PostgresVectorWriterConfig(</span>
+<span class="sd">        ...     connection_config=ConnectionConfig(...),</span>
+<span class="sd">        ...     table_name='embeddings'</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        Custom schema with metadata fields:</span>
+
+<span class="sd">        &gt;&gt;&gt; specs = (ColumnSpecsBuilder()</span>
+<span class="sd">        ...         .with_id_spec(column_name="my_id_column")</span>
+<span class="sd">        ...         .with_embedding_spec(column_name="embedding_vec")</span>
+<span class="sd">        ...         .add_metadata_field(field="source", column_name="src")</span>
+<span class="sd">        ...         .add_metadata_field(</span>
+<span class="sd">        ...             "timestamp",</span>
+<span class="sd">        ...             column_name="created_at",</span>
+<span class="sd">        ...             sql_typecast="::timestamp"</span>
+<span class="sd">        ...         )</span>
+<span class="sd">        ...         .build())</span>
+
+<span class="sd">        Minimal schema (only ID + embedding written)</span>
+
+<span class="sd">        &gt;&gt;&gt; column_specs = (ColumnSpecsBuilder()</span>
+<span class="sd">        ...     .with_id_spec()</span>
+<span class="sd">        ...     .with_embedding_spec()</span>
+<span class="sd">        ...     .build())</span>
+
+<span class="sd">        &gt;&gt;&gt; config = CloudSQLPostgresVectorWriterConfig(</span>
+<span class="sd">        ...     connection_config=PostgresConnectionConfig(...),</span>
+<span class="sd">        ...     table_name='embeddings',</span>
+<span class="sd">        ...     column_specs=specs</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connector_config</span> <span class="o">=</span> <span class="n">_PostgresConnectorConfig</span><span class="o">.</span><span class="n">from_base_config</span><span class="p">(</span>
+        <span class="n">connection_config</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">connection_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connector_config</span><span class="o">.</span><span class="n">to_connection_config</span><span class="p">(),</span>
+        <span class="n">write_config</span><span class="o">=</span><span class="n">write_config</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+        <span class="n">column_specs</span><span class="o">=</span><span class="n">column_specs</span><span class="p">,</span>
+        <span class="n">conflict_resolution</span><span class="o">=</span><span class="n">conflict_resolution</span><span class="p">)</span></div>
+
+
+
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_MySQLConnectorConfig</span><span class="p">(</span><span class="n">LanguageConnectorConfig</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">to_jdbc_url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert options to a properly formatted MySQL JDBC URL."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_jdbc_url</span><span class="p">(</span>
+        <span class="n">socketFactory</span><span class="o">=</span><span class="s2">"com.google.cloud.sql.mysql.SocketFactory"</span><span class="p">,</span>
+        <span class="n">database_type</span><span class="o">=</span><span class="s2">"mysql"</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">additional_jdbc_args</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'classpath'</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s2">"mysql:mysql-connector-java:8.0.22"</span><span class="p">,</span>
+            <span class="s2">"com.google.cloud.sql:mysql-socket-factory-connector-j-8:1.25.0"</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">from_base_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">LanguageConnectorConfig</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">asdict</span><span class="p">(</span><span class="n">config</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="CloudSQLMySQLVectorWriterConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.cloudsql.html#apache_beam.ml.rag.ingestion.cloudsql.CloudSQLMySQLVectorWriterConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CloudSQLMySQLVectorWriterConfig</span><span class="p">(</span><span class="n">mysql</span><span class="o">.</span><span class="n">MySQLVectorWriterConfig</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">connection_config</span><span class="p">:</span> <span class="n">LanguageConnectorConfig</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">write_config</span><span class="p">:</span> <span class="n">WriteConfig</span> <span class="o">=</span> <span class="n">WriteConfig</span><span class="p">(),</span>
+      <span class="c1"># pylint: disable=dangerous-default-value</span>
+      <span class="n">column_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">mysql_common</span><span class="o">.</span><span class="n">ColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="n">mysql_common</span><span class="o">.</span>
+      <span class="n">ColumnSpecsBuilder</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">(),</span>
+      <span class="n">conflict_resolution</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">mysql_common</span><span class="o">.</span><span class="n">ConflictResolution</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connector_config</span> <span class="o">=</span> <span class="n">_MySQLConnectorConfig</span><span class="o">.</span><span class="n">from_base_config</span><span class="p">(</span>
+        <span class="n">connection_config</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">connection_config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">connector_config</span><span class="o">.</span><span class="n">to_connection_config</span><span class="p">(),</span>
+        <span class="n">write_config</span><span class="o">=</span><span class="n">write_config</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span>
+        <span class="n">column_specs</span><span class="o">=</span><span class="n">column_specs</span><span class="p">,</span>
+        <span class="n">conflict_resolution</span><span class="o">=</span><span class="n">conflict_resolution</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
