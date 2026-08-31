@@ -1,0 +1,1307 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.unbounded_source &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.unbounded_source</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.io.unbounded_source</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Experimental ``UnboundedSource`` support for the Python SDK.</span>
+
+<span class="sd">``UnboundedSource`` support is currently experimental in the Python SDK; the</span>
+<span class="sd">API may change in backwards-incompatible ways.</span>
+
+<span class="sd">An unbounded source reads an effectively infinite stream of records (message</span>
+<span class="sd">queues, change-data-capture feeds, and similar) with checkpoint-based</span>
+<span class="sd">pause/resume, watermark reporting, and bundle finalization.</span>
+
+<span class="sd">To define a source, implement :class:`UnboundedSource`, an</span>
+<span class="sd">:class:`UnboundedReader`, and (when the reader has a resumable position) a</span>
+<span class="sd">:class:`CheckpointMark`::</span>
+
+<span class="sd">    import apache_beam as beam</span>
+<span class="sd">    from apache_beam.io.unbounded_source import (</span>
+<span class="sd">        CheckpointMark, UnboundedReader, UnboundedSource)</span>
+<span class="sd">    from apache_beam.utils.timestamp import MAX_TIMESTAMP</span>
+
+<span class="sd">    class MyCheckpointMark(CheckpointMark):</span>
+<span class="sd">      def __init__(self, position):</span>
+<span class="sd">        self.position = position</span>
+
+<span class="sd">      def finalize_checkpoint(self):</span>
+<span class="sd">        # Commit/acknowledge records up to ``position`` upstream, e.g. ack the</span>
+<span class="sd">        # consumed messages on a queue.</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    class MyReader(UnboundedReader):</span>
+<span class="sd">      def start(self):</span>
+<span class="sd">        # Position at the first record; return whether one is available.</span>
+<span class="sd">        ...</span>
+
+<span class="sd">      def advance(self):</span>
+<span class="sd">        # Move to the next record; ``False`` means no data is available now.</span>
+<span class="sd">        ...</span>
+
+<span class="sd">      def get_current(self):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">      def get_current_timestamp(self):</span>
+<span class="sd">        ...  # event time of the current record</span>
+
+<span class="sd">      def get_watermark(self):</span>
+<span class="sd">        # Lower bound on the timestamps of future records. Return</span>
+<span class="sd">        # ``MAX_TIMESTAMP`` to signal the reader has permanently finished.</span>
+<span class="sd">        ...</span>
+
+<span class="sd">      def get_checkpoint_mark(self):</span>
+<span class="sd">        return MyCheckpointMark(...)</span>
+
+<span class="sd">    class MySource(UnboundedSource):</span>
+<span class="sd">      def split(self, desired_num_splits, options=None):</span>
+<span class="sd">        # Return independent sub-sources, or ``[self]`` when not splittable.</span>
+<span class="sd">        return [self]</span>
+
+<span class="sd">      def create_reader(self, options, checkpoint_mark):</span>
+<span class="sd">        # Build a reader; resume after ``checkpoint_mark`` when it is not None.</span>
+<span class="sd">        return MyReader(...)</span>
+
+<span class="sd">      def get_checkpoint_mark_coder(self):</span>
+<span class="sd">        return ...  # a Coder for MyCheckpointMark</span>
+
+<span class="sd">Read the source in a pipeline with :class:`apache_beam.io.Read`::</span>
+
+<span class="sd">    with beam.Pipeline() as p:</span>
+<span class="sd">      p | beam.io.Read(MySource()) | beam.Map(print)</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">override</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="kn">import</span> <span class="n">coders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">BooleanCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">Coder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">NullableCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TupleCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">_MemoizingPickleCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">iobase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.watermark_estimators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManualWatermarkEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">sdf_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">PTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.window</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampedValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MIN_TIMESTAMP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timestamp</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'CheckpointMark'</span><span class="p">,</span>
+    <span class="s1">'UnboundedReader'</span><span class="p">,</span>
+    <span class="s1">'UnboundedSource'</span><span class="p">,</span>
+    <span class="s1">'ReadFromUnboundedSource'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Sentinel used when a reader has no data available right now.</span>
+<span class="c1"># This is distinct from end-of-stream.</span>
+<span class="n">_NO_DATA</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
+
+<span class="n">_DEFAULT_POLL_INTERVAL_SECONDS</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">_DEFAULT_DESIRED_NUM_SPLITS</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">_DEFAULT_MAX_RECORDS_PER_BUNDLE</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="n">_DEFAULT_MAX_READ_TIME_SECONDS</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="c1"># A reader parked by a residual that never resumes is closed once idle this</span>
+<span class="c1"># long; the cache also caps its entry count as a memory backstop.</span>
+<span class="n">_DEFAULT_READER_CACHE_IDLE_SECONDS</span> <span class="o">=</span> <span class="mf">60.0</span>
+<span class="n">_DEFAULT_READER_CACHE_MAX_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1"># Encodes a source to a structural cache key. Internally consistent across park</span>
+<span class="c1"># and acquire; need not match the restriction wire coder.</span>
+<span class="n">_SOURCE_KEY_CODER</span> <span class="o">=</span> <span class="n">_MemoizingPickleCoder</span><span class="p">()</span>
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Public abstract base classes.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="CheckpointMark">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.CheckpointMark">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointMark</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""A durable, serializable position in an :class:`UnboundedSource`.</span>
+
+<span class="sd">  Produced by :meth:`UnboundedReader.get_checkpoint_mark`, encoded with</span>
+<span class="sd">  :meth:`UnboundedSource.get_checkpoint_mark_coder`, and used to resume a reader</span>
+<span class="sd">  (see :meth:`UnboundedSource.create_reader`).</span>
+<span class="sd">  """</span>
+<div class="viewcode-block" id="CheckpointMark.finalize_checkpoint">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.CheckpointMark.finalize_checkpoint">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">finalize_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Called once the runner has durably committed work up to this mark.</span>
+
+<span class="sd">    Override to acknowledge/commit upstream (for example, ack the consumed</span>
+<span class="sd">    messages on a queue). The default is a no-op.</span>
+
+<span class="sd">    The runner calls this at most once for a committed checkpoint mark.</span>
+<span class="sd">    Finalization is best effort; a mark may never be finalized. An exception</span>
+<span class="sd">    raised here is logged. On bundle retry an uncommitted mark may be re-cut</span>
+<span class="sd">    over an overlapping span, so this method must be idempotent (acknowledge by</span>
+<span class="sd">    absolute position).</span>
+<span class="sd">    """</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UnboundedReader">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnboundedReader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Reads records from an :class:`UnboundedSource`.</span>
+
+<span class="sd">  Lifecycle: exactly one :meth:`start`, then any number of :meth:`advance`</span>
+<span class="sd">  calls; whenever one returns ``True`` the current record is available via</span>
+<span class="sd">  :meth:`get_current` / :meth:`get_current_timestamp`. A ``False`` return means</span>
+<span class="sd">  "no data available right now", which is distinct from end-of-stream: a reader</span>
+<span class="sd">  signals a permanent end by reporting a watermark of ``MAX_TIMESTAMP``.</span>
+<span class="sd">  """</span>
+<div class="viewcode-block" id="UnboundedReader.start">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.start">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Positions at the first record; returns whether one is available."""</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.advance">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.advance">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">advance</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Advances to the next record. ``False`` means no data is available now.</span>
+
+<span class="sd">    Should not block. The wrapper enforces the per-bundle record and time caps</span>
+<span class="sd">    only between records, so a blocking ``start``/``advance`` can overrun the</span>
+<span class="sd">    time cap and stall the bundle. Return ``False`` when no data is currently</span>
+<span class="sd">    available instead of waiting.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.get_current">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.get_current">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_current</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Returns the record claimed by the last successful start/advance."""</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.get_current_timestamp">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.get_current_timestamp">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_current_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Returns the event-time timestamp of the current record."""</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.get_watermark">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.get_watermark">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Timestamp</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""An approximate lower bound on timestamps of future records.</span>
+
+<span class="sd">    Treated as monotonic by the wrapper. Return ``MAX_TIMESTAMP`` to signal that</span>
+<span class="sd">    this reader has permanently finished.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.get_checkpoint_mark">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.get_checkpoint_mark">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_checkpoint_mark</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CheckpointMark</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Returns a durable mark to resume from. Call only at a bundle boundary."""</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedReader.close">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedReader.close">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Releases reader resources. Default no-op."""</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UnboundedSource">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnboundedSource</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">SourceBase</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""A source producing an unbounded stream of records with checkpointing.</span>
+
+<span class="sd">  Read it in a pipeline with :class:`apache_beam.io.Read`::</span>
+
+<span class="sd">      p | beam.io.Read(MyUnboundedSource())</span>
+<span class="sd">  """</span>
+<div class="viewcode-block" id="UnboundedSource.split">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource.split">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">desired_num_splits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+            <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="s1">'UnboundedSource'</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Splits into at most ``desired_num_splits`` independent sub-sources.</span>
+
+<span class="sd">    Each returned sub-source must be independent and must not share mutable</span>
+<span class="sd">    state with siblings (the runner may execute them concurrently across</span>
+<span class="sd">    workers). Return ``[self]`` if the source cannot be split. Splitting is</span>
+<span class="sd">    performed once, before any checkpoint exists; once a reader has</span>
+<span class="sd">    checkpointed, the restriction is kept intact.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedSource.create_reader">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource.create_reader">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_reader</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+      <span class="n">checkpoint_mark</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CheckpointMark</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">UnboundedReader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Creates a reader, optionally resuming from ``checkpoint_mark``.</span>
+
+<span class="sd">    Contract:</span>
+<span class="sd">      * When ``checkpoint_mark`` is ``None``, the returned reader's ``start()``</span>
+<span class="sd">        produces the very first record of the source (or returns ``False`` if</span>
+<span class="sd">        none yet).</span>
+<span class="sd">      * When ``checkpoint_mark`` is not ``None``, the returned reader's</span>
+<span class="sd">        ``start()`` produces the first record strictly after the position</span>
+<span class="sd">        encoded by ``checkpoint_mark``. The reader must not re-deliver records</span>
+<span class="sd">        already covered by the prior bundle.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="UnboundedSource.get_checkpoint_mark_coder">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource.get_checkpoint_mark_coder">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_checkpoint_mark_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Returns the coder for this source's :class:`CheckpointMark` instances.</span>
+
+<span class="sd">    The SDK may call this while encoding or decoding source restrictions.</span>
+<span class="sd">    Implementations should be deterministic, side-effect free, and should not</span>
+<span class="sd">    perform I/O.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s1">'</span><span class="si">%s</span><span class="s1"> must override get_checkpoint_mark_coder() to return a Coder for '</span>
+        <span class="s1">'its CheckpointMark subclass.'</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="UnboundedSource.is_bounded">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource.is_bounded">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># SourceBase.is_bounded raises; an unbounded source is, by definition, not.</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="UnboundedSource.default_output_coder">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.UnboundedSource.default_output_coder">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_output_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+    <span class="c1"># Permissive default; override for a tighter coder.</span>
+    <span class="k">return</span> <span class="n">coders</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_coder</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># SDF wrapper internals: a private implementation detail of</span>
+<span class="c1"># ReadFromUnboundedSource.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_UnboundedSourceRestriction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Durable SDF restriction describing where a reader should (re)start.</span>
+
+<span class="sd">  Holds only serializable state -- never a live reader. ``is_done`` marks the</span>
+<span class="sd">  terminal (MAX-watermark) transition. ``finalization_checkpoint_mark`` is kept</span>
+<span class="sd">  separate from ``checkpoint_mark`` so a done primary can carry a commit hook</span>
+<span class="sd">  without polluting the resume state.</span>
+
+<span class="sd">  Field roles:</span>
+<span class="sd">    * ``checkpoint_mark`` -- RESUME state. A reader rebuilt from this mark</span>
+<span class="sd">      must produce the first record strictly after it.</span>
+<span class="sd">    * ``finalization_checkpoint_mark`` -- COMMIT hook. Only set on a done</span>
+<span class="sd">      primary that was just cut this bundle. Registered with the runner's</span>
+<span class="sd">      bundle finalizer to acknowledge upstream. Independent of</span>
+<span class="sd">      ``checkpoint_mark`` so a residual's resume state can be ``None`` while</span>
+<span class="sd">      still recording what should be committed.</span>
+<span class="sd">  """</span>
+  <span class="n">source</span><span class="p">:</span> <span class="n">UnboundedSource</span>
+  <span class="n">checkpoint_mark</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CheckpointMark</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">watermark</span><span class="p">:</span> <span class="n">Timestamp</span> <span class="o">=</span> <span class="n">MIN_TIMESTAMP</span>
+  <span class="n">is_done</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+  <span class="n">finalization_checkpoint_mark</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CheckpointMark</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_UnboundedSourceRestrictionCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Encodes :class:`_UnboundedSourceRestriction` as a fixed 5-tuple.</span>
+
+<span class="sd">  Stateless: at encode time the source's own</span>
+<span class="sd">  :meth:`UnboundedSource.get_checkpoint_mark_coder` is looked up from the</span>
+<span class="sd">  restriction; at decode time the source is decoded first and its coder</span>
+<span class="sd">  drives the checkpoint-mark decoding. This avoids passing source-specific</span>
+<span class="sd">  coder state into the coder's constructor, which in turn lets</span>
+<span class="sd">  :class:`_UnboundedSourceRestrictionProvider` and</span>
+<span class="sd">  :class:`_ReadFromUnboundedSourceDoFn` be module-level classes.</span>
+
+<span class="sd">  Wire shape: source_bytes / checkpoint_bytes / watermark / done /</span>
+<span class="sd">  finalization_checkpoint_bytes -- the checkpoint and finalization bytes</span>
+<span class="sd">  are independently encoded with the (source-declared) checkpoint coder</span>
+<span class="sd">  wrapped in :class:`NullableCoder`.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_source_coder</span> <span class="o">=</span> <span class="n">_MemoizingPickleCoder</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_bytes_coder</span> <span class="o">=</span> <span class="n">coders</span><span class="o">.</span><span class="n">BytesCoder</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">((</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bytes_coder</span><span class="p">,</span>  <span class="c1"># source (pickled bytes)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bytes_coder</span><span class="p">,</span>  <span class="c1"># checkpoint_mark (nullable-encoded bytes)</span>
+        <span class="n">TimestampCoder</span><span class="p">(),</span>  <span class="c1"># watermark</span>
+        <span class="n">BooleanCoder</span><span class="p">(),</span>  <span class="c1"># is_done</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bytes_coder</span><span class="p">))</span>  <span class="c1"># finalization_checkpoint_mark (nullable-encoded)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_checkpoint_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">UnboundedSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">NullableCoder</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">get_checkpoint_mark_coder</span><span class="p">())</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="s1">'_UnboundedSourceRestriction'</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="n">source_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">cp_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_coder</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span>
+        <span class="n">source_bytes</span><span class="p">,</span>
+        <span class="n">cp_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">checkpoint_mark</span><span class="p">),</span>
+        <span class="n">restriction</span><span class="o">.</span><span class="n">watermark</span><span class="p">,</span>
+        <span class="n">restriction</span><span class="o">.</span><span class="n">is_done</span><span class="p">,</span>
+        <span class="n">cp_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">finalization_checkpoint_mark</span><span class="p">)))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'_UnboundedSourceRestriction'</span><span class="p">:</span>
+    <span class="p">(</span><span class="n">source_bytes</span><span class="p">,</span> <span class="n">checkpoint_bytes</span><span class="p">,</span> <span class="n">watermark</span><span class="p">,</span> <span class="n">is_done</span><span class="p">,</span>
+     <span class="n">finalization_bytes</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">source_bytes</span><span class="p">)</span>
+    <span class="n">cp_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_coder</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">(</span>
+        <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">checkpoint_mark</span><span class="o">=</span><span class="n">cp_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">checkpoint_bytes</span><span class="p">),</span>
+        <span class="n">watermark</span><span class="o">=</span><span class="n">watermark</span><span class="p">,</span>
+        <span class="n">is_done</span><span class="o">=</span><span class="n">is_done</span><span class="p">,</span>
+        <span class="n">finalization_checkpoint_mark</span><span class="o">=</span><span class="n">cp_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">finalization_bytes</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># Pickled source and checkpoint are not guaranteed deterministic.</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReaderCache</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Holds live readers between an SDF self-checkpoint and its resume.</span>
+
+<span class="sd">  A fresh tracker is built for every bundle, so a reader parked at a</span>
+<span class="sd">  self-checkpoint would otherwise be closed and rebuilt from its checkpoint</span>
+<span class="sd">  mark on the next bundle. Parking it here lets the resuming bundle reclaim the</span>
+<span class="sd">  same started reader, keyed by the residual's structural ``(source, checkpoint</span>
+<span class="sd">  mark)``. ``acquire`` removes the entry, so two trackers never drive one</span>
+<span class="sd">  reader.</span>
+
+<span class="sd">  A residual may be reassigned to another worker and never resume here; such a</span>
+<span class="sd">  reader is released once it falls idle past ``idle_seconds`` or when the entry</span>
+<span class="sd">  count exceeds ``max_size``, and the owning DoFn's teardown releases the rest.</span>
+<span class="sd">  One DoFn instance drives several trackers across threads, so access is locked.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">idle_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_READER_CACHE_IDLE_SECONDS</span><span class="p">,</span>
+      <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_DEFAULT_READER_CACHE_MAX_SIZE</span><span class="p">,</span>
+      <span class="n">now</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_idle_seconds</span> <span class="o">=</span> <span class="n">idle_seconds</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_size</span> <span class="o">=</span> <span class="n">max_size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="n">now</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="c1"># key -&gt; (reader, started, parked_at); ordered oldest-first for eviction.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span>
+    <span class="p">)</span>  <span class="c1"># type: collections.OrderedDict[Any, tuple[UnboundedReader, bool, float]]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="s1">'UnboundedReader'</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Removes and returns ``(reader, started)`` for ``key``, or None."""</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+      <span class="n">stale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evict_idle</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_close_readers</span><span class="p">(</span><span class="n">stale</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">entry</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">park</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">reader</span><span class="p">:</span> <span class="s1">'UnboundedReader'</span><span class="p">,</span> <span class="n">started</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Stores ``reader`` under ``key`` for a later bundle to reclaim. A reader</span>
+<span class="sd">    already parked under ``key`` is closed."""</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">replaced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">reader</span><span class="p">,</span> <span class="n">started</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">())</span>
+      <span class="n">stale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evict_idle</span><span class="p">()</span>
+      <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_size</span><span class="p">:</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">oldest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">stale</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">oldest</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">replaced</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">replaced</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">reader</span><span class="p">:</span>
+      <span class="n">stale</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replaced</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_close_readers</span><span class="p">(</span><span class="n">stale</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">close_all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Closes every parked reader. Called from the owning DoFn's teardown."""</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="n">entries</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_close_readers</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_evict_idle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+    <span class="c1"># Caller holds the lock. Pops entries idle past the window (oldest first)</span>
+    <span class="c1"># and returns their readers for the caller to close after unlocking.</span>
+    <span class="n">deadline</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idle_seconds</span>
+    <span class="n">stale</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">:</span>
+      <span class="n">key</span><span class="p">,</span> <span class="n">entry</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+      <span class="k">if</span> <span class="n">entry</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">deadline</span><span class="p">:</span>
+        <span class="k">break</span>
+      <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_entries</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+      <span class="n">stale</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">stale</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_close_readers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">reader</span> <span class="ow">in</span> <span class="n">readers</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+      <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">'Error closing UnboundedReader'</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_UnboundedSourceRestrictionTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionTracker</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Drives an :class:`UnboundedReader` for one SDF restriction.</span>
+
+<span class="sd">  Owns the live reader (lazily created, never serialized): both runner-initiated</span>
+<span class="sd">  ``defer_remainder`` self-checkpoints with ``try_split(0)``, which must</span>
+<span class="sd">  checkpoint the live reader.</span>
+
+<span class="sd">  A self-checkpoint parks the reader in the DoFn's :class:`_ReaderCache` for the</span>
+<span class="sd">  next bundle to reclaim, keeping one started reader alive across bundles. The</span>
+<span class="sd">  DoFn injects ``_reader_cache`` at the start of ``process()``; with no cache</span>
+<span class="sd">  the tracker builds a fresh reader each bundle.</span>
+
+<span class="sd">  ``process()`` only sees a ``RestrictionTrackerView``, which hides custom</span>
+<span class="sd">  methods and whose ``try_claim`` returns just a bool, so the freshly-read</span>
+<span class="sd">  record is handed back through a one-element holder list passed as the</span>
+<span class="sd">  ``try_claim`` *position* argument.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">restriction</span><span class="p">:</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">,</span>
+      <span class="n">options</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">restriction</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">options</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[UnboundedReader]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># True once a checkpoint has been cut this bundle (EOF or self-checkpoint).</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_taken</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="c1"># Cross-bundle reader cache, injected by the DoFn; None disables caching.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[_ReaderCache]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_ensure_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">cached</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_acquire_cached_reader</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">cached</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># A parked reader is already started and positioned past its checkpoint.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="n">cached</span>
+      <span class="k">return</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">create_reader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_options</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">checkpoint_mark</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_cache_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">restriction</span><span class="p">:</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Structural ``(source, checkpoint)`` key, or None when uncacheable.</span>
+
+<span class="sd">    Built from the source pickle and the source's own checkpoint coder so a</span>
+<span class="sd">    parked reader and its resuming restriction map to the same entry. A None</span>
+<span class="sd">    key disables caching for that restriction; the resume then rebuilds from</span>
+<span class="sd">    the checkpoint mark under the source's ``create_reader`` contract.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">source_bytes</span> <span class="o">=</span> <span class="n">_SOURCE_KEY_CODER</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+      <span class="n">cp_coder</span> <span class="o">=</span> <span class="n">NullableCoder</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_checkpoint_mark_coder</span><span class="p">())</span>
+      <span class="k">return</span> <span class="n">source_bytes</span><span class="p">,</span> <span class="n">cp_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">checkpoint_mark</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_acquire_cached_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="s1">'UnboundedReader'</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_park_or_close_reader</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">residual</span><span class="p">:</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Hands the live reader to the cache for ``residual`` to reclaim, or</span>
+<span class="sd">    closes it when no cache is available or the restriction is uncacheable."""</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cache_key</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_close_reader_if_open</span><span class="p">()</span>
+      <span class="k">return</span>
+    <span class="n">reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span><span class="o">.</span><span class="n">park</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">reader</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_clone_checkpoint</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CheckpointMark</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CheckpointMark</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Returns an independent copy of a mark via the source's checkpoint coder.</span>
+
+<span class="sd">    Used to keep the primary's finalize hook and the residual's resume state</span>
+<span class="sd">    from sharing one object, since a user ``finalize_checkpoint()`` may mutate</span>
+<span class="sd">    the mark.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">checkpoint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">get_checkpoint_mark_coder</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_close_reader_if_open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Idempotent reader release. Called by the EOF and split paths, and by</span>
+<span class="sd">    the DoFn's ``finally`` so an exception inside ``process()`` does not leak</span>
+<span class="sd">    sockets / file descriptors held by the live :class:`UnboundedReader`.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">'Error closing UnboundedReader'</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_claim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Advances the reader by one record.</span>
+
+<span class="sd">    ``out[0]`` receives ``(value, record_timestamp, source_watermark)`` on the</span>
+<span class="sd">    has-data path, or the :data:`_NO_DATA` sentinel otherwise. The watermark is</span>
+<span class="sd">    the source's reported watermark, not the record's event time: the DoFn</span>
+<span class="sd">    advances the output watermark with the former and timestamps the record</span>
+<span class="sd">    with the latter. The argument doubles as the output holder (the</span>
+<span class="sd">    ``RestrictionTracker`` ABC treats it as a claim position), which the</span>
+<span class="sd">    threadsafe-tracker chain forwards opaquely.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_claim_inner</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+      <span class="c1"># Reader state is now indeterminate; release it before re-raising.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_close_reader_if_open</span><span class="p">()</span>
+      <span class="k">raise</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_try_claim_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">is_done</span><span class="p">:</span>
+      <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_NO_DATA</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_ensure_reader</span><span class="p">()</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="p">:</span>
+      <span class="n">has_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">has_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">advance</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">has_data</span><span class="p">:</span>
+      <span class="c1"># Emit an available record before checking the watermark: a reader may</span>
+      <span class="c1"># report its last record and a MAX_TIMESTAMP watermark on the same call,</span>
+      <span class="c1"># and EOF is realized on the next data-less claim.</span>
+      <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_current</span><span class="p">(),</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_current_timestamp</span><span class="p">(),</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_watermark</span><span class="p">())</span>
+      <span class="k">return</span> <span class="kc">True</span>
+    <span class="n">watermark</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_watermark</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">watermark</span> <span class="o">&gt;=</span> <span class="n">MAX_TIMESTAMP</span><span class="p">:</span>
+      <span class="c1"># No data and watermark at MAX: cut a final checkpoint, close, mark done.</span>
+      <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_checkpoint_mark</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_close_reader_if_open</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span>
+          <span class="n">checkpoint_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># nothing left to resume from</span>
+          <span class="n">watermark</span><span class="o">=</span><span class="n">MAX_TIMESTAMP</span><span class="p">,</span>
+          <span class="n">is_done</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">finalization_checkpoint_mark</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_taken</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_NO_DATA</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="c1"># No data is available now. Refresh the watermark before deferring.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">watermark</span><span class="o">=</span><span class="n">watermark</span><span class="p">)</span>
+    <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_NO_DATA</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_split</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">fraction_of_remainder</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">_UnboundedSourceRestriction</span><span class="p">,</span>
+                      <span class="n">_UnboundedSourceRestriction</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Cuts a checkpoint, returning (primary, residual) or None.</span>
+
+<span class="sd">    The cut checkpoint goes into ``primary.finalization_checkpoint_mark`` so</span>
+<span class="sd">    the DoFn can register a bundle-finalize callback for it. The same</span>
+<span class="sd">    checkpoint object also goes into ``residual.checkpoint_mark`` so the</span>
+<span class="sd">    resumed reader rebuilds at the correct position. The two fields are</span>
+<span class="sd">    independent on purpose (see :class:`_UnboundedSourceRestriction`</span>
+<span class="sd">    docstring): a runner that re-processes the primary alone must not see</span>
+<span class="sd">    a stale resume state, and a residual must not register finalize again</span>
+<span class="sd">    until ITS checkpoint is cut in a future bundle.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_split_inner</span><span class="p">(</span><span class="n">fraction_of_remainder</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_close_reader_if_open</span><span class="p">()</span>
+      <span class="k">raise</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_try_split_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fraction_of_remainder</span><span class="p">):</span>
+    <span class="c1"># Only self-checkpoint (fraction 0) is supported; decline runner-initiated</span>
+    <span class="c1"># dynamic splits.</span>
+    <span class="k">if</span> <span class="n">fraction_of_remainder</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">is_done</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_checkpoint_mark</span><span class="p">()</span>
+    <span class="c1"># The residual watermark is advisory; the SDF watermark estimator state is</span>
+    <span class="c1"># the authoritative cross-bundle watermark.</span>
+    <span class="n">watermark</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader</span><span class="o">.</span><span class="n">get_watermark</span><span class="p">()</span>
+    <span class="c1"># Keep the two channels independent: the primary carries only the finalize</span>
+    <span class="c1"># hook, the residual only the resume state. The residual gets its own clone</span>
+    <span class="c1"># so a finalize_checkpoint() that mutates the primary's mark cannot corrupt</span>
+    <span class="c1"># the residual's resume position before the runner encodes it.</span>
+    <span class="n">primary</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span>
+        <span class="n">checkpoint_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_done</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">finalization_checkpoint_mark</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">)</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">(</span>
+        <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+        <span class="n">checkpoint_mark</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_clone_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
+        <span class="n">watermark</span><span class="o">=</span><span class="n">watermark</span><span class="p">,</span>
+        <span class="n">is_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">finalization_checkpoint_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">primary</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_taken</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Park the reader so the resuming bundle reclaims it; on a cache miss the</span>
+    <span class="c1"># residual rebuilds one from its checkpoint mark.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_park_or_close_reader</span><span class="p">(</span><span class="n">residual</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">primary</span><span class="p">,</span> <span class="n">residual</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">check_done</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># Called after every process(); must raise if work is left unaccounted for.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">is_done</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_taken</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s1">'UnboundedSource restriction was neither finished nor checkpointed; '</span>
+        <span class="s1">'process() must self-checkpoint via defer_remainder() or run to EOF: '</span>
+        <span class="s1">'</span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'iobase.RestrictionProgress'</span><span class="p">:</span>
+    <span class="c1"># Backlog-based progress is not implemented; report a coarse done/not-done</span>
+    <span class="c1"># signal via ``completed`` / ``remaining``.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">is_done</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionProgress</span><span class="p">(</span><span class="n">completed</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">remaining</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionProgress</span><span class="p">(</span><span class="n">completed</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">remaining</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_UnboundedSourceRestrictionProvider</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">RestrictionProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Wraps an :class:`UnboundedSource` element as an SDF restriction.</span>
+
+<span class="sd">  Stateless module-level singleton (see :data:`_PROVIDER`): all</span>
+<span class="sd">  source-specific state (e.g. the source's checkpoint coder) is derived</span>
+<span class="sd">  per-call from the restriction's ``source`` field, which lets</span>
+<span class="sd">  :class:`_ReadFromUnboundedSourceDoFn` live at module level too. The provider</span>
+<span class="sd">  currently passes ``None`` for the ``options`` forwarded to</span>
+<span class="sd">  :meth:`UnboundedSource.split`.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction_coder</span> <span class="o">=</span> <span class="n">_UnboundedSourceRestrictionCoder</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_restriction</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">UnboundedSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">UnboundedSource</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+          <span class="s1">'ReadFromUnboundedSource expected an UnboundedSource element, got </span><span class="si">%r</span><span class="s1">'</span>
+          <span class="o">%</span> <span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="p">))</span>
+    <span class="k">return</span> <span class="n">_UnboundedSourceRestriction</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">element</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_tracker</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">:</span> <span class="n">_UnboundedSourceRestriction</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_UnboundedSourceRestrictionTracker</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_UnboundedSourceRestrictionTracker</span><span class="p">(</span><span class="n">restriction</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span>
+            <span class="n">restriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">_UnboundedSourceRestriction</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">restriction</span><span class="o">.</span><span class="n">is_done</span> <span class="ow">or</span> <span class="n">restriction</span><span class="o">.</span><span class="n">checkpoint_mark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">restriction</span>
+      <span class="k">return</span>
+
+    <span class="c1"># ``source.split`` is user code and may refuse to split; fall back to a</span>
+    <span class="c1"># single restriction on error.</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">split_sources</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+          <span class="n">restriction</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">_DEFAULT_DESIRED_NUM_SPLITS</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s1">'Exception while splitting UnboundedSource. Source not split.'</span><span class="p">,</span>
+          <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">restriction</span>
+      <span class="k">return</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">split_sources</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">restriction</span>
+      <span class="k">return</span>
+
+    <span class="c1"># A non-UnboundedSource split result is a contract violation, not a</span>
+    <span class="c1"># refusal, so fail loudly (outside the try/except above).</span>
+    <span class="k">for</span> <span class="n">split_source</span> <span class="ow">in</span> <span class="n">split_sources</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">split_source</span><span class="p">,</span> <span class="n">UnboundedSource</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s1">'UnboundedSource.split() produced </span><span class="si">%r</span><span class="s1">, expected UnboundedSource'</span> <span class="o">%</span>
+            <span class="p">(</span><span class="n">split_source</span><span class="p">,</span> <span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">split_source</span> <span class="ow">in</span> <span class="n">split_sources</span><span class="p">:</span>
+      <span class="k">yield</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+          <span class="n">restriction</span><span class="p">,</span>
+          <span class="n">source</span><span class="o">=</span><span class="n">split_source</span><span class="p">,</span>
+          <span class="n">checkpoint_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+          <span class="n">is_done</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">finalization_checkpoint_mark</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">restriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="c1"># TODO(https://github.com/apache/beam/issues/19137): implement backlog</span>
+    <span class="c1"># estimation.</span>
+    <span class="k">return</span> <span class="mi">1</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction_coder</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">truncate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">restriction</span><span class="p">):</span>
+    <span class="c1"># On drain, stop emitting new records.</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="c1"># Module-level stateless singleton, captured via ``RestrictionParam`` at the</span>
+<span class="c1"># DoFn's class-definition time.</span>
+<span class="n">_PROVIDER</span> <span class="o">=</span> <span class="n">_UnboundedSourceRestrictionProvider</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_FinalizeCheckpointOnce</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint_mark</span><span class="p">:</span> <span class="n">CheckpointMark</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_mark</span> <span class="o">=</span> <span class="n">checkpoint_mark</span>
+    <span class="c1"># The lock keeps finalization idempotent if a runner ever invokes the</span>
+    <span class="c1"># callback more than once.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span><span class="p">:</span>
+        <span class="k">return</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_finalized</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="c1"># Finalization is best effort: log and swallow so a failing user override</span>
+    <span class="c1"># does not fail the bundle (matches CheckpointMark.finalize_checkpoint).</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_mark</span><span class="o">.</span><span class="n">finalize_checkpoint</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s1">'Error finalizing UnboundedSource checkpoint mark.'</span><span class="p">,</span> <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReadFromUnboundedSourceDoFn</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""SDF wrapper driving an :class:`UnboundedReader` for one restriction.</span>
+
+<span class="sd">  Module-level so stdlib pickle and cloudpickle can serialise the DoFn. The</span>
+<span class="sd">  restriction provider is the module-level :data:`_PROVIDER` singleton.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_POLL_INTERVAL_SECONDS</span><span class="p">,</span>
+      <span class="n">max_records_per_bundle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_DEFAULT_MAX_RECORDS_PER_BUNDLE</span><span class="p">,</span>
+      <span class="n">max_read_time_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_MAX_READ_TIME_SECONDS</span><span class="p">,</span>
+      <span class="n">_now</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_records_per_bundle</span> <span class="o">=</span> <span class="n">max_records_per_bundle</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_time_seconds</span> <span class="o">=</span> <span class="n">max_read_time_seconds</span>
+    <span class="c1"># Monotonic clock seam; tests inject a deterministic clock.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="n">_now</span>
+    <span class="c1"># Per-worker reader cache; created in setup(), never serialized.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[_ReaderCache]</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="o">=</span> <span class="n">_ReaderCache</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span><span class="o">.</span><span class="n">close_all</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="nd">@core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">unbounded_per_element</span><span class="p">()</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">unused_element</span><span class="p">,</span>
+      <span class="n">bundle_finalizer</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">BundleFinalizerParam</span><span class="p">,</span>
+      <span class="n">tracker</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">RestrictionParam</span><span class="p">(</span><span class="n">_PROVIDER</span><span class="p">),</span>
+      <span class="n">watermark_estimator</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">WatermarkEstimatorParam</span><span class="p">(</span>
+          <span class="n">ManualWatermarkEstimator</span><span class="o">.</span><span class="n">default_provider</span><span class="p">())):</span>
+    <span class="c1"># Positional params (element, bundle finalizer) must precede the</span>
+    <span class="c1"># kwarg-injected ones (tracker, watermark estimator).</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">sdf_utils</span><span class="o">.</span><span class="n">RestrictionTrackerView</span><span class="p">)</span>
+    <span class="n">inner_tracker</span> <span class="o">=</span> <span class="n">_unwrap_tracker</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">inner_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># Let this bundle reclaim a reader parked by the prior bundle and re-park</span>
+      <span class="c1"># it on self-checkpoint. No cache means setup() was skipped.</span>
+      <span class="n">inner_tracker</span><span class="o">.</span><span class="n">_reader_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reader_cache</span>
+    <span class="n">initial</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span>
+    <span class="n">records_emitted</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1"># Armed on the first emitted record so reader startup is excluded.</span>
+    <span class="n">read_deadline</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[float]</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">holder</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">holder</span><span class="p">):</span>
+          <span class="c1"># EOF: advance the estimator to the tracker's MAX watermark so</span>
+          <span class="c1"># downstream event-time windows can close.</span>
+          <span class="n">_set_watermark_if_greater</span><span class="p">(</span>
+              <span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span><span class="o">.</span><span class="n">watermark</span><span class="p">)</span>
+          <span class="k">break</span>
+        <span class="n">record</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">record</span> <span class="ow">is</span> <span class="n">_NO_DATA</span><span class="p">:</span>
+          <span class="c1"># No data now: advance the watermark and self-checkpoint with the</span>
+          <span class="c1"># poll delay so an idle source backs off before resuming.</span>
+          <span class="n">_set_watermark_if_greater</span><span class="p">(</span>
+              <span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span><span class="o">.</span><span class="n">watermark</span><span class="p">)</span>
+          <span class="n">tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">(</span><span class="n">Duration</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">))</span>
+          <span class="k">break</span>
+        <span class="c1"># The third tuple field is the source watermark. The record timestamp</span>
+        <span class="c1"># remains the output event time. Emit the element before advancing the</span>
+        <span class="c1"># estimator so a reader that reports MAX on the same claim as its final</span>
+        <span class="c1"># record cannot push the output watermark past that record first.</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">record_timestamp</span><span class="p">,</span> <span class="n">source_watermark</span> <span class="o">=</span> <span class="n">record</span>
+        <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">record_timestamp</span><span class="p">)</span>
+        <span class="n">_set_watermark_if_greater</span><span class="p">(</span><span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">source_watermark</span><span class="p">)</span>
+        <span class="n">records_emitted</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">read_deadline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">read_deadline</span> <span class="o">=</span> <span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_time_seconds</span>
+        <span class="c1"># A busy reader never hits the EOF or no-data branch. Bound the bundle</span>
+        <span class="c1"># by record count and elapsed time so the runner commits the checkpoint</span>
+        <span class="c1"># and runs finalization, then resume with no delay. The deadline is</span>
+        <span class="c1"># checked between records; a reader that blocks inside advance() can</span>
+        <span class="c1"># overrun it, so the record cap is the hard backstop.</span>
+        <span class="n">reached_record_cap</span> <span class="o">=</span> <span class="n">records_emitted</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_records_per_bundle</span>
+        <span class="k">if</span> <span class="n">reached_record_cap</span> <span class="ow">or</span> <span class="n">now</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">read_deadline</span><span class="p">:</span>
+          <span class="n">tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">()</span>
+          <span class="k">break</span>
+    <span class="k">finally</span><span class="p">:</span>
+      <span class="n">current</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Register finalization only when a checkpoint was cut this bundle.</span>
+        <span class="c1"># The SDK bundle finalizer applies no deadline, so finalization is</span>
+        <span class="c1"># unbounded best effort.</span>
+        <span class="n">finalize_mark</span> <span class="o">=</span> <span class="n">current</span><span class="o">.</span><span class="n">finalization_checkpoint_mark</span>
+        <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">initial</span> <span class="ow">and</span> <span class="n">finalize_mark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">bundle_finalizer</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">_FinalizeCheckpointOnce</span><span class="p">(</span><span class="n">finalize_mark</span><span class="p">))</span>
+      <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># The EOF and self-checkpoint paths already closed or parked the</span>
+        <span class="c1"># reader, so this is a no-op there. It closes a reader still held when</span>
+        <span class="c1"># process() exits early, e.g. a downstream yield raised before any</span>
+        <span class="c1"># checkpoint.</span>
+        <span class="k">if</span> <span class="n">inner_tracker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">inner_tracker</span><span class="o">.</span><span class="n">_close_reader_if_open</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+              <span class="s1">'UnboundedSource DoFn could not close a reader because the SDF '</span>
+              <span class="s1">'tracker wrapper did not expose '</span>
+              <span class="s1">'_UnboundedSourceRestrictionTracker (got </span><span class="si">%s</span><span class="s1">). Reader resources '</span>
+              <span class="s1">'may remain open until garbage collection.'</span><span class="p">,</span>
+              <span class="nb">type</span><span class="p">(</span><span class="n">tracker</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_unwrap_tracker</span><span class="p">(</span>
+    <span class="n">tracker</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">'_UnboundedSourceRestrictionTracker'</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Returns the :class:`_UnboundedSourceRestrictionTracker` behind the SDF</span>
+<span class="sd">  view and threadsafe wrappers, or None when the chain is unexpected."""</span>
+  <span class="n">inner</span> <span class="o">=</span> <span class="n">tracker</span>
+  <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="s1">'_threadsafe_restriction_tracker'</span><span class="p">):</span>
+    <span class="n">inner</span> <span class="o">=</span> <span class="n">inner</span><span class="o">.</span><span class="n">_threadsafe_restriction_tracker</span>
+  <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="s1">'_restriction_tracker'</span><span class="p">):</span>
+    <span class="n">inner</span> <span class="o">=</span> <span class="n">inner</span><span class="o">.</span><span class="n">_restriction_tracker</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inner</span><span class="p">,</span> <span class="n">_UnboundedSourceRestrictionTracker</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">inner</span>
+  <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_watermark_if_greater</span><span class="p">(</span>
+    <span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">new_watermark</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="c1"># ManualWatermarkEstimator.set_watermark raises on regression, so only ever</span>
+  <span class="c1"># advance it (a regressing reader watermark is absorbed here).</span>
+  <span class="n">current</span> <span class="o">=</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">new_watermark</span> <span class="o">&gt;</span> <span class="n">current</span><span class="p">:</span>
+    <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">new_watermark</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ReadFromUnboundedSource">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.ReadFromUnboundedSource">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadFromUnboundedSource</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Reads an :class:`UnboundedSource`.</span>
+
+<span class="sd">  Most users should prefer :class:`apache_beam.io.Read`, which dispatches an</span>
+<span class="sd">  ``UnboundedSource`` here automatically::</span>
+
+<span class="sd">      p | beam.io.Read(MyUnboundedSource())</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    source: the :class:`UnboundedSource` to read.</span>
+<span class="sd">    poll_interval: resume delay in seconds applied when the reader has no data,</span>
+<span class="sd">      which bounds how often an idle source is polled. Must be &gt;= 0.</span>
+<span class="sd">    max_records_per_bundle: a busy reader self-checkpoints after emitting this</span>
+<span class="sd">      many records in one bundle. Must be &gt;= 1. Defaults to 10000.</span>
+<span class="sd">    max_read_time_seconds: a busy reader self-checkpoints after this many</span>
+<span class="sd">      seconds in one bundle. Must be &gt; 0. Defaults to 10.0. The deadline is</span>
+<span class="sd">      checked between records, so a reader that blocks inside ``advance()`` may</span>
+<span class="sd">      overrun it; ``max_records_per_bundle`` is the hard backstop.</span>
+
+<span class="sd">  The bundle self-checkpoints as soon as either cap is reached.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">source</span><span class="p">:</span> <span class="n">UnboundedSource</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_POLL_INTERVAL_SECONDS</span><span class="p">,</span>
+      <span class="n">max_records_per_bundle</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_DEFAULT_MAX_RECORDS_PER_BUNDLE</span><span class="p">,</span>
+      <span class="n">max_read_time_seconds</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_DEFAULT_MAX_READ_TIME_SECONDS</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">UnboundedSource</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">'source must be an UnboundedSource, got </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">))</span>
+    <span class="k">if</span> <span class="n">max_records_per_bundle</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'max_records_per_bundle must be &gt;= 1, got </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">max_records_per_bundle</span><span class="p">,</span> <span class="p">))</span>
+    <span class="k">if</span> <span class="n">max_read_time_seconds</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'max_read_time_seconds must be &gt; 0, got </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span>
+          <span class="p">(</span><span class="n">max_read_time_seconds</span><span class="p">,</span> <span class="p">))</span>
+    <span class="k">if</span> <span class="n">poll_interval</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'poll_interval must be &gt;= 0, got </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">poll_interval</span><span class="p">,</span> <span class="p">))</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_source</span> <span class="o">=</span> <span class="n">source</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_records_per_bundle</span> <span class="o">=</span> <span class="n">max_records_per_bundle</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_time_seconds</span> <span class="o">=</span> <span class="n">max_read_time_seconds</span>
+
+<div class="viewcode-block" id="ReadFromUnboundedSource.expand">
+<a class="viewcode-back" href="../../../apache_beam.io.unbounded_source.html#apache_beam.io.unbounded_source.ReadFromUnboundedSource.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+    <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span>
+    <span class="n">output_coder</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">default_output_coder</span><span class="p">()</span>
+    <span class="c1"># The source is the SDF element used to derive the initial restriction.</span>
+    <span class="c1"># process() reads from the restriction, so it does not use the element</span>
+    <span class="c1"># directly.</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pbegin</span>
+        <span class="o">|</span> <span class="s1">'Create'</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">Create</span><span class="p">([</span><span class="n">source</span><span class="p">])</span>
+        <span class="o">|</span> <span class="s1">'ReadUnbounded'</span> <span class="o">&gt;&gt;</span> <span class="n">core</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+            <span class="n">_ReadFromUnboundedSourceDoFn</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_records_per_bundle</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_read_time_seconds</span><span class="p">)))</span>
+    <span class="c1"># Surface an element type only when the global registry already maps it to</span>
+    <span class="c1"># an equivalent coder. Avoid mutating ``coders.registry`` for a</span>
+    <span class="c1"># parameterized coder whose instance state would be lost.</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">type_hint</span> <span class="o">=</span> <span class="n">output_coder</span><span class="o">.</span><span class="n">to_type_hint</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+      <span class="n">type_hint</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">type_hint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">try</span><span class="p">:</span>
+        <span class="n">registered_coder</span> <span class="o">=</span> <span class="n">coders</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_coder</span><span class="p">(</span><span class="n">type_hint</span><span class="p">)</span>
+      <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">'Could not look up the registered coder for element type </span><span class="si">%s</span><span class="s1">.'</span><span class="p">,</span>
+            <span class="n">type_hint</span><span class="p">,</span>
+            <span class="n">exc_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">registered_coder</span> <span class="o">==</span> <span class="n">output_coder</span><span class="p">:</span>
+          <span class="n">output</span><span class="o">.</span><span class="n">element_type</span> <span class="o">=</span> <span class="n">type_hint</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_infer_output_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_coder</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">default_output_coder</span><span class="p">()</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Internal in-memory counting source, shared by Beam's own tests and examples.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+<span class="c1"># Realistic event-time base away from the Unix epoch.</span>
+<span class="n">_EVENT_TIME_BASE</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="p">(</span><span class="mi">1729987200</span><span class="p">)</span>  <span class="c1"># 2024-10-27T00:00:00Z</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_CountingCheckpointMark</span><span class="p">(</span><span class="n">CheckpointMark</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_index</span><span class="p">,</span> <span class="n">finalize_log</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span> <span class="o">=</span> <span class="n">last_index</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span> <span class="o">=</span> <span class="n">finalize_log</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">finalize_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_index</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_CountingCheckpointMark</span><span class="p">)</span> <span class="ow">and</span>
+        <span class="n">other</span><span class="o">.</span><span class="n">last_index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_index</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_index</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">'_CountingCheckpointMark(last_index=</span><span class="si">%r</span><span class="s1">)'</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_index</span><span class="p">,</span> <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_CountingReader</span><span class="p">(</span><span class="n">UnboundedReader</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">start_index</span><span class="p">,</span> <span class="n">finalize_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">modulus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">residue</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="n">count</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">=</span> <span class="n">start_index</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span> <span class="o">=</span> <span class="n">modulus</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_residue</span> <span class="o">=</span> <span class="n">residue</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_exhausted</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span> <span class="o">=</span> <span class="n">finalize_log</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_read_next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">:</span>
+      <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_residue</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_exhausted</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_next</span><span class="p">()</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">advance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_next</span><span class="p">()</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_current</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_current_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_EVENT_TIME_BASE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exhausted</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">MAX_TIMESTAMP</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">MIN_TIMESTAMP</span>
+    <span class="k">return</span> <span class="n">_EVENT_TIME_BASE</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_checkpoint_mark</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">_CountingCheckpointMark</span><span class="p">(</span><span class="n">last</span><span class="p">,</span> <span class="n">finalize_log</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span><span class="p">)</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">closed</span> <span class="o">=</span> <span class="kc">True</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">UnboundedCountingSource</span><span class="p">(</span><span class="n">UnboundedSource</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""In-memory counting source for Beam's own tests and examples.</span>
+
+<span class="sd">  Internal: not part of the public ``UnboundedSource`` API. Emits integers</span>
+<span class="sd">  ``0..count-1`` with event time ``_EVENT_TIME_BASE + index``, self-terminates</span>
+<span class="sd">  at EOF, resumes from ``last_index + 1``, and optionally splits into</span>
+<span class="sd">  independent even/odd sub-sources.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">count</span><span class="p">,</span>
+      <span class="n">finalize_log</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">is_splittable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+      <span class="n">modulus</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+      <span class="n">residue</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="n">count</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span> <span class="o">=</span> <span class="n">finalize_log</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_splittable</span> <span class="o">=</span> <span class="n">is_splittable</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span> <span class="o">=</span> <span class="n">modulus</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_residue</span> <span class="o">=</span> <span class="n">residue</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_reader</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_num_splits</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_splittable</span> <span class="ow">or</span> <span class="n">desired_num_splits</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="p">]</span>
+    <span class="c1"># Split into independent even/odd sub-sources (each non-splittable).</span>
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="n">UnboundedCountingSource</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">,</span>
+            <span class="n">finalize_log</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span><span class="p">,</span>
+            <span class="n">modulus</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">residue</span><span class="o">=</span><span class="n">residue</span><span class="p">)</span> <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">]</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_reader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">checkpoint_mark</span><span class="p">):</span>
+    <span class="n">start_index</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mi">0</span> <span class="k">if</span> <span class="n">checkpoint_mark</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">checkpoint_mark</span><span class="o">.</span><span class="n">last_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_reader</span> <span class="o">=</span> <span class="n">_CountingReader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">,</span>
+        <span class="n">start_index</span><span class="p">,</span>
+        <span class="n">finalize_log</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_finalize_log</span><span class="p">,</span>
+        <span class="n">modulus</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_modulus</span><span class="p">,</span>
+        <span class="n">residue</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_residue</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_reader</span>
+
+  <span class="nd">@override</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_checkpoint_mark_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">coders</span><span class="o">.</span><span class="n">PickleCoder</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

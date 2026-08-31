@@ -1,0 +1,797 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.spanner &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.spanner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.spanner</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="sd">"""Cloud Spanner vector store writer for RAG pipelines.</span>
+
+<span class="sd">This module provides a writer for storing embeddings and associated metadata</span>
+<span class="sd">in Google Cloud Spanner. It supports flexible schema configuration with the</span>
+<span class="sd">ability to flatten metadata fields into dedicated columns.</span>
+
+<span class="sd">Example usage:</span>
+
+<span class="sd">    Default schema (id, embedding, content, metadata):</span>
+<span class="sd">    &gt;&gt;&gt; config = SpannerVectorWriterConfig(</span>
+<span class="sd">    ...     project_id="my-project",</span>
+<span class="sd">    ...     instance_id="my-instance",</span>
+<span class="sd">    ...     database_id="my-db",</span>
+<span class="sd">    ...     table_name="embeddings"</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">    Flattened metadata fields:</span>
+<span class="sd">    &gt;&gt;&gt; specs = (</span>
+<span class="sd">    ...     SpannerColumnSpecsBuilder()</span>
+<span class="sd">    ...     .with_id_spec()</span>
+<span class="sd">    ...     .with_embedding_spec()</span>
+<span class="sd">    ...     .with_content_spec()</span>
+<span class="sd">    ...     .add_metadata_field("source", str)</span>
+<span class="sd">    ...     .add_metadata_field("page_number", int, default=0)</span>
+<span class="sd">    ...     .with_metadata_spec()</span>
+<span class="sd">    ...     .build()</span>
+<span class="sd">    ... )</span>
+<span class="sd">    &gt;&gt;&gt; config = SpannerVectorWriterConfig(</span>
+<span class="sd">    ...     project_id="my-project",</span>
+<span class="sd">    ...     instance_id="my-instance",</span>
+<span class="sd">    ...     database_id="my-db",</span>
+<span class="sd">    ...     table_name="embeddings",</span>
+<span class="sd">    ...     column_specs=specs</span>
+<span class="sd">    ... )</span>
+
+<span class="sd">Spanner schema example:</span>
+
+<span class="sd">    CREATE TABLE embeddings (</span>
+<span class="sd">        id STRING(1024) NOT NULL,</span>
+<span class="sd">        embedding ARRAY&lt;FLOAT32&gt;(vector_length=&gt;768),</span>
+<span class="sd">        content STRING(MAX),</span>
+<span class="sd">        source STRING(MAX),</span>
+<span class="sd">        page_number INT64,</span>
+<span class="sd">        metadata JSON</span>
+<span class="sd">    ) PRIMARY KEY (id)</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NamedTuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.row_coder</span><span class="w"> </span><span class="kn">import</span> <span class="n">RowCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.gcp</span><span class="w"> </span><span class="kn">import</span> <span class="n">spanner</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.ingestion.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">VectorDatabaseWriteConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddableItem</span>
+
+
+<div class="viewcode-block" id="SpannerColumnSpec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpec">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpannerColumnSpec</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Column specification for Spanner vector writes.</span>
+
+<span class="sd">  Defines how to extract and format values from EmbeddableItems</span>
+<span class="sd">  for insertion into</span>
+<span class="sd">  Spanner table columns. Each spec maps to one column in the target table.</span>
+
+<span class="sd">  Attributes:</span>
+<span class="sd">      column_name: Name of the Spanner table column</span>
+<span class="sd">      python_type: Python type for the NamedTuple field (required for RowCoder)</span>
+<span class="sd">      value_fn: Function to extract value from an EmbeddableItem</span>
+
+<span class="sd">  Examples:</span>
+<span class="sd">      String column:</span>
+<span class="sd">      &gt;&gt;&gt; SpannerColumnSpec(</span>
+<span class="sd">      ...     column_name="id",</span>
+<span class="sd">      ...     python_type=str,</span>
+<span class="sd">      ...     value_fn=lambda embeddable: embeddable.id</span>
+<span class="sd">      ... )</span>
+
+<span class="sd">      Array column with conversion:</span>
+<span class="sd">      &gt;&gt;&gt; SpannerColumnSpec(</span>
+<span class="sd">      ...     column_name="embedding",</span>
+<span class="sd">      ...     python_type=List[float],</span>
+<span class="sd">      ...     value_fn=lambda embeddable: embeddable.embedding.dense_embedding</span>
+<span class="sd">      ... )</span>
+<span class="sd">  """</span>
+  <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span>
+  <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_and_convert</span><span class="p">(</span><span class="n">extract_fn</span><span class="p">,</span> <span class="n">convert_fn</span><span class="p">,</span> <span class="n">embeddable</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">convert_fn</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">extract_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">extract_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpannerColumnSpecsBuilder</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Builder for creating Spanner column specifications.</span>
+
+<span class="sd">  Provides a fluent API for defining table schemas and how to populate them</span>
+<span class="sd">  from EmbeddableItem objects. Supports standard EmbeddableItem fields (id, embedding, content,</span>
+<span class="sd">  metadata) and flattening metadata fields into dedicated columns.</span>
+
+<span class="sd">  Example:</span>
+<span class="sd">      &gt;&gt;&gt; specs = (</span>
+<span class="sd">      ...     SpannerColumnSpecsBuilder()</span>
+<span class="sd">      ...     .with_id_spec()</span>
+<span class="sd">      ...     .with_embedding_spec()</span>
+<span class="sd">      ...     .with_content_spec()</span>
+<span class="sd">      ...     .add_metadata_field("source", str)</span>
+<span class="sd">      ...     .with_metadata_spec()</span>
+<span class="sd">      ...     .build()</span>
+<span class="sd">      ... )</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpannerColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.with_defaults">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.with_defaults">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_defaults</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create builder with default schema.</span>
+
+<span class="sd">    Default schema includes:</span>
+<span class="sd">    - id (STRING): EmbeddableItem ID</span>
+<span class="sd">    - embedding (ARRAY&lt;FLOAT32&gt;): Dense embedding vector</span>
+<span class="sd">    - content (STRING): EmbeddableItem content text</span>
+<span class="sd">    - metadata (JSON): Full metadata as JSON</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Builder with default column specifications</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">SpannerColumnSpecsBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">with_id_spec</span><span class="p">()</span><span class="o">.</span><span class="n">with_embedding_spec</span><span class="p">()</span><span class="o">.</span>
+        <span class="n">with_content_spec</span><span class="p">()</span><span class="o">.</span><span class="n">with_metadata_spec</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.with_id_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.with_id_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_id_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"id"</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add ID column specification.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        column_name: Column name (default: "id")</span>
+<span class="sd">        python_type: Python type (default: str)</span>
+<span class="sd">        convert_fn: Optional converter (e.g., to cast to int)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Default string ID:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_id_spec()</span>
+<span class="sd">        </span>
+<span class="sd">        Integer ID with conversion:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_id_spec(</span>
+<span class="sd">        ...     python_type=int,</span>
+<span class="sd">        ...     convert_fn=lambda id: int(id.split('_')[1])</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">_extract_and_convert</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">embeddable</span><span class="p">:</span> <span class="n">embeddable</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="n">convert_fn</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.with_embedding_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.with_embedding_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_embedding_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"embedding"</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add embedding array column (ARRAY&lt;FLOAT32&gt; or ARRAY&lt;FLOAT64&gt;).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        column_name: Column name (default: "embedding")</span>
+<span class="sd">        convert_fn: Optional converter (e.g., normalize, quantize)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Default embedding:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_embedding_spec()</span>
+<span class="sd">        </span>
+<span class="sd">        Normalized embedding:</span>
+<span class="sd">        &gt;&gt;&gt; def normalize(vec):</span>
+<span class="sd">        ...     norm = (sum(x**2 for x in vec) ** 0.5) or 1.0</span>
+<span class="sd">        ...     return [x/norm for x in vec]</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_embedding_spec(convert_fn=normalize)</span>
+<span class="sd">        </span>
+<span class="sd">        Rounded precision:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_embedding_spec(</span>
+<span class="sd">        ...     convert_fn=lambda vec: [round(x, 4) for x in vec]</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">embeddable</span><span class="o">.</span><span class="n">dense_embedding</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'EmbeddableItem must contain embedding: </span><span class="si">{</span><span class="n">embeddable</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">embeddable</span><span class="o">.</span><span class="n">dense_embedding</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">_extract_and_convert</span><span class="p">,</span> <span class="n">extract_fn</span><span class="p">,</span> <span class="n">convert_fn</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.with_content_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.with_content_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_content_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"content"</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add content column.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        column_name: Column name (default: "content")</span>
+<span class="sd">        python_type: Python type (default: str)</span>
+<span class="sd">        convert_fn: Optional converter</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Default text content:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_content_spec()</span>
+<span class="sd">        </span>
+<span class="sd">        Content length as integer:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_content_spec(</span>
+<span class="sd">        ...     column_name="content_length",</span>
+<span class="sd">        ...     python_type=int,</span>
+<span class="sd">        ...     convert_fn=lambda text: len(text.split())</span>
+<span class="sd">        ... )</span>
+<span class="sd">        </span>
+<span class="sd">        Truncated content:</span>
+<span class="sd">        &gt;&gt;&gt; builder.with_content_spec(</span>
+<span class="sd">        ...     convert_fn=lambda text: text[:1000]</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">embeddable</span><span class="o">.</span><span class="n">content_string</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">_extract_and_convert</span><span class="p">,</span> <span class="n">extract_fn</span><span class="p">,</span> <span class="n">convert_fn</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.with_metadata_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.with_metadata_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_metadata_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"metadata"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add metadata JSON column.</span>
+<span class="sd">    </span>
+<span class="sd">    Stores the full metadata dictionary as a JSON string in Spanner.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        column_name: Column name (default: "metadata")</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Metadata is automatically converted to JSON string using json.dumps()</span>
+<span class="sd">    """</span>
+    <span class="n">value_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">embeddable</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">embeddable</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">python_type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.add_metadata_field">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.add_metadata_field">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_metadata_field</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Flatten a metadata field into its own column.</span>
+<span class="sd">    </span>
+<span class="sd">    Extracts a specific field from embeddable.metadata and stores it in a</span>
+<span class="sd">    dedicated table column.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        field: Key in embeddable.metadata to extract</span>
+<span class="sd">        python_type: Python type (must be explicitly specified)</span>
+<span class="sd">        column_name: Column name (default: same as field)</span>
+<span class="sd">        convert_fn: Optional converter for type casting/transformation</span>
+<span class="sd">        default: Default value if field is missing from metadata</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        String field:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_metadata_field("source", str)</span>
+<span class="sd">        </span>
+<span class="sd">        Integer with default:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">        ...     "page_number",</span>
+<span class="sd">        ...     int,</span>
+<span class="sd">        ...     default=0</span>
+<span class="sd">        ... )</span>
+<span class="sd">        </span>
+<span class="sd">        Float with conversion:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">        ...     "confidence",</span>
+<span class="sd">        ...     float,</span>
+<span class="sd">        ...     convert_fn=lambda x: round(float(x), 2),</span>
+<span class="sd">        ...     default=0.0</span>
+<span class="sd">        ... )</span>
+<span class="sd">        </span>
+<span class="sd">        List of strings:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">        ...     "tags",</span>
+<span class="sd">        ...     List[str],</span>
+<span class="sd">        ...     default=[]</span>
+<span class="sd">        ... )</span>
+<span class="sd">        </span>
+<span class="sd">        Timestamp with conversion:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">        ...     "created_at",</span>
+<span class="sd">        ...     str,</span>
+<span class="sd">        ...     convert_fn=lambda ts: ts.isoformat()</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">column_name</span> <span class="ow">or</span> <span class="n">field</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">embeddable</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">_extract_and_convert</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">,</span> <span class="n">convert_fn</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.add_column">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.add_column">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_column</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+      <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">'SpannerColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add a custom column with full control.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        column_name: Column name</span>
+<span class="sd">        python_type: Python type (required)</span>
+<span class="sd">        value_fn: Value extraction function</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+<span class="sd">    </span>
+<span class="sd">    Examples:</span>
+<span class="sd">        Boolean flag:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_column(</span>
+<span class="sd">        ...     column_name="has_code",</span>
+<span class="sd">        ...     python_type=bool,</span>
+<span class="sd">        ...     value_fn=lambda embeddable: "```" in embeddable.content.text</span>
+<span class="sd">        ... )</span>
+<span class="sd">        </span>
+<span class="sd">        Computed value:</span>
+<span class="sd">        &gt;&gt;&gt; builder.add_column(</span>
+<span class="sd">        ...     column_name="word_count",</span>
+<span class="sd">        ...     python_type=int,</span>
+<span class="sd">        ...     value_fn=lambda embeddable: len(embeddable.content.text.split())</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">SpannerColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="SpannerColumnSpecsBuilder.build">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerColumnSpecsBuilder.build">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpannerColumnSpec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Build the final list of column specifications.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List of SpannerColumnSpec objects</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SpannerSchemaBuilder</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Internal: Builds NamedTuple schema and registers RowCoder.</span>
+<span class="sd">  </span>
+<span class="sd">  Creates a NamedTuple type from column specifications and registers it</span>
+<span class="sd">  with Beam's RowCoder for serialization.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">SpannerColumnSpec</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Initialize schema builder.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        table_name: Table name (used in NamedTuple type name)</span>
+<span class="sd">        column_specs: List of column specifications</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If duplicate column names are found</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span> <span class="o">=</span> <span class="n">column_specs</span>
+
+    <span class="c1"># Validate no duplicates</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_specs</span><span class="p">]</span>
+    <span class="n">duplicates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">names</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">duplicates</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Duplicate column names: </span><span class="si">{</span><span class="n">duplicates</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="c1"># Create NamedTuple type</span>
+    <span class="n">fields</span> <span class="o">=</span> <span class="p">[(</span><span class="n">col</span><span class="o">.</span><span class="n">column_name</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">python_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">column_specs</span><span class="p">]</span>
+    <span class="n">type_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SpannerVectorRecord_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">"</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span> <span class="o">=</span> <span class="n">NamedTuple</span><span class="p">(</span><span class="n">type_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="c1"># Register coder</span>
+    <span class="n">registry</span><span class="o">.</span><span class="n">register_coder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">,</span> <span class="n">RowCoder</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">NamedTuple</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Create converter function from EmbeddableItem to NamedTuple record.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Function that converts an EmbeddableItem to a NamedTuple record</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">embeddable</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+          <span class="n">col</span><span class="o">.</span><span class="n">column_name</span><span class="p">:</span> <span class="n">col</span><span class="o">.</span><span class="n">value_fn</span><span class="p">(</span><span class="n">embeddable</span><span class="p">)</span>
+          <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_specs</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">record_type</span><span class="p">(</span><span class="o">**</span><span class="n">values</span><span class="p">)</span>  <span class="c1"># type: ignore</span>
+
+    <span class="k">return</span> <span class="n">convert</span>
+
+
+<div class="viewcode-block" id="SpannerVectorWriterConfig">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerVectorWriterConfig">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpannerVectorWriterConfig</span><span class="p">(</span><span class="n">VectorDatabaseWriteConfig</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Configuration for writing vectors to Cloud Spanner.</span>
+<span class="sd">  </span>
+<span class="sd">  Supports flexible schema configuration through column specifications and</span>
+<span class="sd">  provides control over Spanner-specific write parameters.</span>
+<span class="sd">  </span>
+<span class="sd">  Examples:</span>
+<span class="sd">      Default schema:</span>
+<span class="sd">      &gt;&gt;&gt; config = SpannerVectorWriterConfig(</span>
+<span class="sd">      ...     project_id="my-project",</span>
+<span class="sd">      ...     instance_id="my-instance",</span>
+<span class="sd">      ...     database_id="my-db",</span>
+<span class="sd">      ...     table_name="embeddings"</span>
+<span class="sd">      ... )</span>
+<span class="sd">      </span>
+<span class="sd">      Custom schema with flattened metadata:</span>
+<span class="sd">      &gt;&gt;&gt; specs = (</span>
+<span class="sd">      ...     SpannerColumnSpecsBuilder()</span>
+<span class="sd">      ...     .with_id_spec()</span>
+<span class="sd">      ...     .with_embedding_spec()</span>
+<span class="sd">      ...     .with_content_spec()</span>
+<span class="sd">      ...     .add_metadata_field("source", str)</span>
+<span class="sd">      ...     .add_metadata_field("page_number", int, default=0)</span>
+<span class="sd">      ...     .with_metadata_spec()</span>
+<span class="sd">      ...     .build()</span>
+<span class="sd">      ... )</span>
+<span class="sd">      &gt;&gt;&gt; config = SpannerVectorWriterConfig(</span>
+<span class="sd">      ...     project_id="my-project",</span>
+<span class="sd">      ...     instance_id="my-instance",</span>
+<span class="sd">      ...     database_id="my-db",</span>
+<span class="sd">      ...     table_name="embeddings",</span>
+<span class="sd">      ...     column_specs=specs</span>
+<span class="sd">      ... )</span>
+<span class="sd">      </span>
+<span class="sd">      With emulator:</span>
+<span class="sd">      &gt;&gt;&gt; config = SpannerVectorWriterConfig(</span>
+<span class="sd">      ...     project_id="test-project",</span>
+<span class="sd">      ...     instance_id="test-instance",</span>
+<span class="sd">      ...     database_id="test-db",</span>
+<span class="sd">      ...     table_name="embeddings",</span>
+<span class="sd">      ...     emulator_host="http://localhost:9010"</span>
+<span class="sd">      ... )</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">instance_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">database_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="c1"># Schema configuration</span>
+      <span class="n">column_specs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">SpannerColumnSpec</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="c1"># Write operation type</span>
+      <span class="n">write_mode</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"INSERT"</span><span class="p">,</span> <span class="s2">"UPDATE"</span><span class="p">,</span> <span class="s2">"REPLACE"</span><span class="p">,</span>
+                          <span class="s2">"INSERT_OR_UPDATE"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"INSERT_OR_UPDATE"</span><span class="p">,</span>
+      <span class="c1"># Batching configuration</span>
+      <span class="n">max_batch_size_bytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_number_mutations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_number_rows</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">grouping_factor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="c1"># Networking</span>
+      <span class="n">host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">emulator_host</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">expansion_service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="c1"># Retry/deadline configuration</span>
+      <span class="n">commit_deadline</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_cumulative_backoff</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="c1"># Error handling</span>
+      <span class="n">failure_mode</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+          <span class="n">spanner</span><span class="o">.</span><span class="n">FailureMode</span><span class="p">]</span> <span class="o">=</span> <span class="n">spanner</span><span class="o">.</span><span class="n">FailureMode</span><span class="o">.</span><span class="n">REPORT_FAILURES</span><span class="p">,</span>
+      <span class="n">high_priority</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="c1"># Additional Spanner arguments</span>
+      <span class="o">**</span><span class="n">spanner_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Initialize Spanner vector writer configuration.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        project_id: GCP project ID</span>
+<span class="sd">        instance_id: Spanner instance ID</span>
+<span class="sd">        database_id: Spanner database ID</span>
+<span class="sd">        table_name: Target table name</span>
+<span class="sd">        column_specs: Schema configuration using SpannerColumnSpecsBuilder.</span>
+<span class="sd">            If None, uses default schema (id, embedding, content, metadata)</span>
+<span class="sd">        write_mode: Spanner write operation type:</span>
+<span class="sd">            - INSERT: Fail if row exists</span>
+<span class="sd">            - UPDATE: Fail if row doesn't exist</span>
+<span class="sd">            - REPLACE: Delete then insert</span>
+<span class="sd">            - INSERT_OR_UPDATE: Insert or update if exists (default)</span>
+<span class="sd">        max_batch_size_bytes: Maximum bytes per mutation batch (default: 1MB)</span>
+<span class="sd">        max_number_mutations: Maximum cell mutations per batch (default: 5000)</span>
+<span class="sd">        max_number_rows: Maximum rows per batch (default: 500)</span>
+<span class="sd">        grouping_factor: Multiple of max mutation for sorting (default: 1000)</span>
+<span class="sd">        host: Spanner host URL (usually not needed)</span>
+<span class="sd">        emulator_host: Spanner emulator host (e.g., "http://localhost:9010")</span>
+<span class="sd">        expansion_service: Java expansion service address (host:port)</span>
+<span class="sd">        commit_deadline: Commit API deadline in seconds (default: 15)</span>
+<span class="sd">        max_cumulative_backoff: Max retry backoff seconds (default: 900)</span>
+<span class="sd">        failure_mode: Error handling strategy:</span>
+<span class="sd">            - FAIL_FAST: Throw exception for any failure</span>
+<span class="sd">            - REPORT_FAILURES: Continue processing (default)</span>
+<span class="sd">        high_priority: Use high priority for operations (default: False)</span>
+<span class="sd">        **spanner_kwargs: Additional keyword arguments to pass to the</span>
+<span class="sd">            underlying Spanner write transform. Use this to pass any</span>
+<span class="sd">            Spanner-specific parameters not explicitly exposed by this config.</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span> <span class="o">=</span> <span class="n">project_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">instance_id</span> <span class="o">=</span> <span class="n">instance_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">database_id</span> <span class="o">=</span> <span class="n">database_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">write_mode</span> <span class="o">=</span> <span class="n">write_mode</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_batch_size_bytes</span> <span class="o">=</span> <span class="n">max_batch_size_bytes</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_number_mutations</span> <span class="o">=</span> <span class="n">max_number_mutations</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_number_rows</span> <span class="o">=</span> <span class="n">max_number_rows</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">grouping_factor</span> <span class="o">=</span> <span class="n">grouping_factor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">host</span> <span class="o">=</span> <span class="n">host</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">emulator_host</span> <span class="o">=</span> <span class="n">emulator_host</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">expansion_service</span> <span class="o">=</span> <span class="n">expansion_service</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">commit_deadline</span> <span class="o">=</span> <span class="n">commit_deadline</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">max_cumulative_backoff</span> <span class="o">=</span> <span class="n">max_cumulative_backoff</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">failure_mode</span> <span class="o">=</span> <span class="n">failure_mode</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">high_priority</span> <span class="o">=</span> <span class="n">high_priority</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">spanner_kwargs</span> <span class="o">=</span> <span class="n">spanner_kwargs</span>
+
+    <span class="c1"># Use defaults if not provided</span>
+    <span class="n">specs</span> <span class="o">=</span> <span class="n">column_specs</span> <span class="ow">or</span> <span class="n">SpannerColumnSpecsBuilder</span><span class="o">.</span><span class="n">with_defaults</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+    <span class="c1"># Create schema builder (NamedTuple + RowCoder registration)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schema_builder</span> <span class="o">=</span> <span class="n">_SpannerSchemaBuilder</span><span class="p">(</span><span class="n">table_name</span><span class="p">,</span> <span class="n">specs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpannerVectorWriterConfig.create_write_transform">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.spanner.html#apache_beam.ml.rag.ingestion.spanner.SpannerVectorWriterConfig.create_write_transform">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_write_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create the Spanner write PTransform.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        PTransform for writing to Spanner</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">_WriteToSpannerVectorDatabase</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WriteToSpannerVectorDatabase</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Internal: PTransform for writing to Spanner vector database."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">SpannerVectorWriterConfig</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Initialize write transform.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        config: Spanner writer configuration</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schema_builder</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">schema_builder</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">EmbeddableItem</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">"""Expand the transform.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pcoll: PCollection of EmbeddableItems to write</span>
+<span class="sd">    """</span>
+    <span class="c1"># Select appropriate Spanner write transform based on write_mode</span>
+    <span class="n">write_transform_class</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"INSERT"</span><span class="p">:</span> <span class="n">spanner</span><span class="o">.</span><span class="n">SpannerInsert</span><span class="p">,</span>
+        <span class="s2">"UPDATE"</span><span class="p">:</span> <span class="n">spanner</span><span class="o">.</span><span class="n">SpannerUpdate</span><span class="p">,</span>
+        <span class="s2">"REPLACE"</span><span class="p">:</span> <span class="n">spanner</span><span class="o">.</span><span class="n">SpannerReplace</span><span class="p">,</span>
+        <span class="s2">"INSERT_OR_UPDATE"</span><span class="p">:</span> <span class="n">spanner</span><span class="o">.</span><span class="n">SpannerInsertOrUpdate</span><span class="p">,</span>
+    <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">write_mode</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">pcoll</span>
+        <span class="o">|</span> <span class="s2">"Convert to Records"</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">schema_builder</span><span class="o">.</span><span class="n">create_converter</span><span class="p">())</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">schema_builder</span><span class="o">.</span><span class="n">record_type</span><span class="p">)</span>
+        <span class="o">|</span> <span class="s2">"Write to Spanner"</span> <span class="o">&gt;&gt;</span> <span class="n">write_transform_class</span><span class="p">(</span>
+            <span class="n">project_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">instance_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">instance_id</span><span class="p">,</span>
+            <span class="n">database_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">database_id</span><span class="p">,</span>
+            <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">table_name</span><span class="p">,</span>
+            <span class="n">max_batch_size_bytes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_batch_size_bytes</span><span class="p">,</span>
+            <span class="n">max_number_mutations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_number_mutations</span><span class="p">,</span>
+            <span class="n">max_number_rows</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_number_rows</span><span class="p">,</span>
+            <span class="n">grouping_factor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">grouping_factor</span><span class="p">,</span>
+            <span class="n">host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">host</span><span class="p">,</span>
+            <span class="n">emulator_host</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">emulator_host</span><span class="p">,</span>
+            <span class="n">commit_deadline</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">commit_deadline</span><span class="p">,</span>
+            <span class="n">max_cumulative_backoff</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">max_cumulative_backoff</span><span class="p">,</span>
+            <span class="n">failure_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">failure_mode</span><span class="p">,</span>
+            <span class="n">expansion_service</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">expansion_service</span><span class="p">,</span>
+            <span class="n">high_priority</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">high_priority</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">spanner_kwargs</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

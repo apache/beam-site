@@ -1,0 +1,1066 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.io.watch &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.io.watch</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.io.watch</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Experimental ``Watch`` transform for the Python SDK.</span>
+
+<span class="sd">``Watch`` continuously watches a growing set of outputs for each input element,</span>
+<span class="sd">calling a user poll function on an interval until a per-input termination</span>
+<span class="sd">condition fires. It is the engine behind periodic file-discovery and any</span>
+<span class="sd">periodic polling source.</span>
+
+<span class="sd">For every input element the transform runs an independent loop::</span>
+
+<span class="sd">    poll -&gt; keep never-seen-before outputs -&gt; emit them (timestamped) -&gt;</span>
+<span class="sd">    update watermark -&gt; check termination -&gt; wait(poll_interval) -&gt; poll -&gt; ...</span>
+
+<span class="sd">The output is an unbounded ``PCollection`` of ``(input, output)`` pairs. Each</span>
+<span class="sd">output carries the event time the poll function first reported it. Dedup</span>
+<span class="sd">hashes each output's key: the output itself by default, or</span>
+<span class="sd">``output_key_fn(output)`` when one is given. The key coder is inferred when</span>
+<span class="sd">not passed explicitly and converted to its deterministic form, so equal keys</span>
+<span class="sd">hash equally across workers and restarts.</span>
+
+<span class="sd">By default, the Watch transform internally stores the hash of all items</span>
+<span class="sd">seen. If the incremental items returned by the poll function guarantee</span>
+<span class="sd">monotonic timestamp growth (new items on the next poll have timestamps</span>
+<span class="sd">larger than the largest of the previous poll), consider setting</span>
+<span class="sd">``timestamp_cursor=True`` for better performance, as it replaces the hash</span>
+<span class="sd">dedup with an O(1) event-time cursor; see :class:`Watch`.</span>
+
+<span class="sd">Example::</span>
+
+<span class="sd">    from apache_beam.io.watch import Watch, PollResult, after_total_of</span>
+<span class="sd">    from apache_beam.transforms.window import TimestampedValue</span>
+<span class="sd">    from apache_beam.utils.timestamp import Duration, Timestamp</span>
+
+<span class="sd">    def poll(prefix) -&gt; PollResult[str]:</span>
+<span class="sd">      now = Timestamp.now()</span>
+<span class="sd">      outputs = [TimestampedValue(prefix + str(i), now) for i in range(3)]</span>
+<span class="sd">      return PollResult.complete(outputs)</span>
+
+<span class="sd">    watched = inputs | Watch(</span>
+<span class="sd">        poll,</span>
+<span class="sd">        poll_interval=Duration(seconds=5),</span>
+<span class="sd">        termination=after_total_of(60))</span>
+
+<span class="sd">This API is experimental and may change in backwards-incompatible ways.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Generic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="kn">import</span> <span class="n">coders</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">Coder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">NullableCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.coders.coders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TupleCoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">iobase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.watermark_estimators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManualWatermarkEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">sdf_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">PTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.window</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampedValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.typehints</span><span class="w"> </span><span class="kn">import</span> <span class="n">native_type_compatibility</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timestamp</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'Watch'</span><span class="p">,</span>
+    <span class="s1">'PollResult'</span><span class="p">,</span>
+    <span class="s1">'PollFn'</span><span class="p">,</span>
+    <span class="s1">'TerminationCondition'</span><span class="p">,</span>
+    <span class="s1">'never'</span><span class="p">,</span>
+    <span class="s1">'after_total_of'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">_HASH_DIGEST_SIZE</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># 128-bit digest width.</span>
+
+<span class="n">OutputT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'OutputT'</span><span class="p">)</span>
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Public API.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<div class="viewcode-block" id="PollResult">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollResult">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PollResult</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">OutputT</span><span class="p">]):</span>
+<span class="w">  </span><span class="sd">"""Outputs produced by one poll, plus an optional explicit watermark.</span>
+
+<span class="sd">  ``watermark`` of ``None`` lets the transform infer the watermark from the</span>
+<span class="sd">  earliest new output. A watermark of ``MAX_TIMESTAMP`` (set by</span>
+<span class="sd">  :meth:`complete`) marks the input finished, so polling stops.</span>
+
+<span class="sd">  The ``OutputT`` type parameter can annotate a poll function's return type,</span>
+<span class="sd">  as in ``-&gt; PollResult[str]``; the transform infers the output coder from it.</span>
+<span class="sd">  """</span>
+  <span class="n">outputs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TimestampedValue</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+  <span class="n">watermark</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">watermark</span> <span class="o">==</span> <span class="n">MAX_TIMESTAMP</span>
+
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_normalize</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">TimestampedValue</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+    <span class="c1"># One default timestamp per call, so raw outputs share an event time.</span>
+    <span class="k">if</span> <span class="n">timestamp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">default_ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">default_ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">normalized</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">TimestampedValue</span><span class="p">):</span>
+        <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">normalized</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TimestampedValue</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">default_ts</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PollResult.incomplete">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollResult.incomplete">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">incomplete</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'PollResult'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Reports outputs and expects more; the transform infers the watermark.</span>
+
+<span class="sd">    A raw (non-:class:`TimestampedValue`) output is stamped with ``timestamp``</span>
+<span class="sd">    when given, else with the current processing time. The inferred watermark</span>
+<span class="sd">    is safe only for non-decreasing event-time enumerations; out-of-order</span>
+<span class="sd">    sources should call :meth:`with_watermark`.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">PollResult</span><span class="p">(</span><span class="n">PollResult</span><span class="o">.</span><span class="n">_normalize</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">),</span> <span class="n">watermark</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PollResult.complete">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollResult.complete">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">complete</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'PollResult'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Reports the final outputs for an input, after which polling stops.</span>
+
+<span class="sd">    A raw (non-:class:`TimestampedValue`) output is stamped with ``timestamp``</span>
+<span class="sd">    when given, else with the current processing time. The watermark is</span>
+<span class="sd">    released to ``MAX_TIMESTAMP`` so downstream event-time windows close.</span>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="n">PollResult</span><span class="p">(</span>
+        <span class="n">PollResult</span><span class="o">.</span><span class="n">_normalize</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">),</span> <span class="n">watermark</span><span class="o">=</span><span class="n">MAX_TIMESTAMP</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PollResult.with_watermark">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollResult.with_watermark">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_watermark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'PollResult'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Sets an explicit watermark, a promise that no future output for this</span>
+<span class="sd">    input will have an event time below ``watermark``."""</span>
+    <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watermark</span><span class="o">=</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">watermark</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PollFn">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollFn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PollFn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Optional base for a poll function ``input -&gt; PollResult``.</span>
+
+<span class="sd">  Any callable with that signature works; subclass only to attach an output</span>
+<span class="sd">  coder hint via :meth:`default_output_coder`::</span>
+
+<span class="sd">      from apache_beam import coders</span>
+
+<span class="sd">      class ListFiles(PollFn):</span>
+<span class="sd">        def __call__(self, prefix):</span>
+<span class="sd">          return PollResult.incomplete(list_files(prefix))</span>
+
+<span class="sd">        def default_output_coder(self):</span>
+<span class="sd">          return coders.StrUtf8Coder()</span>
+
+<span class="sd">  A plain function can instead annotate its return type as ``PollResult[V]``</span>
+<span class="sd">  and have the output coder inferred from ``V``.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PollResult</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="PollFn.default_output_coder">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.PollFn.default_output_coder">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">default_output_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Coder</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TerminationCondition">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TerminationCondition</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Per-input stop policy with immutable, encodable state.</span>
+
+<span class="sd">  Hooks follow the lifecycle of one input's polling loop. ``state`` flows from</span>
+<span class="sd">  :meth:`for_new_input` through the per-round hooks and is serialized with</span>
+<span class="sd">  :meth:`state_coder`.</span>
+<span class="sd">  """</span>
+<div class="viewcode-block" id="TerminationCondition.for_new_input">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition.for_new_input">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_new_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">element</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="TerminationCondition.on_seen_new_output">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition.on_seen_new_output">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">on_seen_new_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">state</span></div>
+
+
+<div class="viewcode-block" id="TerminationCondition.on_poll_complete">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition.on_poll_complete">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">on_poll_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">state</span></div>
+
+
+<div class="viewcode-block" id="TerminationCondition.can_stop_polling">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition.can_stop_polling">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">can_stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="n">Timestamp</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="TerminationCondition.state_coder">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.TerminationCondition.state_coder">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">state_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Never</span><span class="p">(</span><span class="n">TerminationCondition</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Polls until the poll function returns :meth:`PollResult.complete`."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_new_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">can_stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">state_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">coders</span><span class="o">.</span><span class="n">VarIntCoder</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AfterTotalOf</span><span class="p">(</span><span class="n">TerminationCondition</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Stops once the wall-clock time since the input was first seen exceeds a</span>
+<span class="sd">  fixed duration."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="n">Duration</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_duration_micros</span> <span class="o">=</span> <span class="n">duration</span><span class="o">.</span><span class="n">micros</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">for_new_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_duration_micros</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">can_stop_polling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">duration_micros</span> <span class="o">=</span> <span class="n">state</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span><span class="o">.</span><span class="n">micros</span> <span class="o">&gt;</span> <span class="n">duration_micros</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">state_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TupleCoder</span><span class="p">([</span><span class="n">TimestampCoder</span><span class="p">(),</span> <span class="n">coders</span><span class="o">.</span><span class="n">VarIntCoder</span><span class="p">()])</span>
+
+
+<div class="viewcode-block" id="never">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.never">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">never</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">TerminationCondition</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Polls until :meth:`PollResult.complete`."""</span>
+  <span class="k">return</span> <span class="n">_Never</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="after_total_of">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.after_total_of">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">after_total_of</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TerminationCondition</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Stops polling an input after ``duration`` (a :class:`Duration` or seconds)</span>
+<span class="sd">  has elapsed since it was first seen."""</span>
+  <span class="k">return</span> <span class="n">_AfterTotalOf</span><span class="p">(</span><span class="n">_as_duration</span><span class="p">(</span><span class="n">duration</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Restriction state.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GrowthState</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Base for the two restriction variants a Watch input can hold."""</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_PollingGrowthState</span><span class="p">(</span><span class="n">_GrowthState</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Keep-polling state: dedup state, watermark, termination state.</span>
+
+<span class="sd">  ``completed`` maps a 16-byte output-key hash to the event time it was first</span>
+<span class="sd">  seen; it is insertion-ordered and treated as immutable. In timestamp-cursor</span>
+<span class="sd">  mode ``completed`` is empty and ``cursor`` is the greatest emitted event</span>
+<span class="sd">  time.</span>
+<span class="sd">  """</span>
+  <span class="n">completed</span><span class="p">:</span> <span class="s1">'collections.OrderedDict[bytes, Timestamp]'</span>
+  <span class="n">poll_watermark</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]</span>
+  <span class="n">termination_state</span><span class="p">:</span> <span class="n">Any</span>
+  <span class="n">cursor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_NonPollingGrowthState</span><span class="p">(</span><span class="n">_GrowthState</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Replay-then-stop state: the outputs already emitted this round.</span>
+
+<span class="sd">  Produced as the checkpoint primary so a bundle retry re-emits exactly those</span>
+<span class="sd">  outputs.</span>
+<span class="sd">  """</span>
+  <span class="n">pending</span><span class="p">:</span> <span class="n">PollResult</span>
+
+
+<span class="c1"># Primary used when a checkpoint arrives before any claim; replays nothing.</span>
+<span class="n">_EMPTY_STATE</span> <span class="o">=</span> <span class="n">_NonPollingGrowthState</span><span class="p">(</span><span class="n">PollResult</span><span class="p">((),</span> <span class="kc">None</span><span class="p">))</span>
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Coders.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_TimestampedValueCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Coder for :class:`TimestampedValue`.</span>
+
+<span class="sd">  ``TimestampedValue`` is normally unwrapped into a ``WindowedValue`` on the</span>
+<span class="sd">  wire, so the SDK ships no standalone coder for it. Watch keeps it inside the</span>
+<span class="sd">  restriction state, so this encodes the ``(value, timestamp)`` pair with a</span>
+<span class="sd">  :class:`TupleCoder` and rebuilds the ``TimestampedValue`` on decode.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">([</span><span class="n">value_coder</span><span class="p">,</span> <span class="n">TimestampCoder</span><span class="p">()])</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">TimestampedValue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span><span class="n">value</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">value</span><span class="o">.</span><span class="n">timestamp</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimestampedValue</span><span class="p">:</span>
+    <span class="n">value</span><span class="p">,</span> <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tuple_coder</span><span class="o">.</span><span class="n">is_deterministic</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_StateTag</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Envelope tag selecting the encoded restriction variant."""</span>
+  <span class="n">POLLING</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">NON_POLLING</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">CURSOR_POLLING</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GrowthStateCoder</span><span class="p">(</span><span class="n">Coder</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Encodes a :class:`_PollingGrowthState` or :class:`_NonPollingGrowthState`.</span>
+
+<span class="sd">  A ``(tag, payload)`` envelope selects the variant; the payload is a</span>
+<span class="sd">  variant-specific :class:`TupleCoder`. ``completed`` is encoded as an ordered</span>
+<span class="sd">  list of ``(hash, timestamp)`` pairs so insertion order survives a round</span>
+<span class="sd">  trip. A cursor state encodes only its termination state and cursor; the</span>
+<span class="sd">  watermark is restored from the estimator state the runner persists. Hash</span>
+<span class="sd">  states keep the pre-cursor byte format. This format is internal to the</span>
+<span class="sd">  Python SDK.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">,</span> <span class="n">termination</span><span class="p">:</span> <span class="n">TerminationCondition</span><span class="p">):</span>
+    <span class="n">nullable_ts</span> <span class="o">=</span> <span class="n">NullableCoder</span><span class="p">(</span><span class="n">TimestampCoder</span><span class="p">())</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_envelope_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">coders</span><span class="o">.</span><span class="n">VarIntCoder</span><span class="p">(),</span> <span class="n">coders</span><span class="o">.</span><span class="n">BytesCoder</span><span class="p">()])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_polling_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">([</span>
+        <span class="n">termination</span><span class="o">.</span><span class="n">state_coder</span><span class="p">(),</span>
+        <span class="n">nullable_ts</span><span class="p">,</span>
+        <span class="n">coders</span><span class="o">.</span><span class="n">ListCoder</span><span class="p">(</span><span class="n">TupleCoder</span><span class="p">([</span><span class="n">coders</span><span class="o">.</span><span class="n">BytesCoder</span><span class="p">(),</span> <span class="n">TimestampCoder</span><span class="p">()])),</span>
+    <span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_cursor_polling_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">([</span>
+        <span class="n">termination</span><span class="o">.</span><span class="n">state_coder</span><span class="p">(),</span>
+        <span class="n">TimestampCoder</span><span class="p">(),</span>
+    <span class="p">])</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_non_polling_coder</span> <span class="o">=</span> <span class="n">TupleCoder</span><span class="p">([</span>
+        <span class="n">nullable_ts</span><span class="p">,</span>
+        <span class="n">coders</span><span class="o">.</span><span class="n">ListCoder</span><span class="p">(</span><span class="n">_TimestampedValueCoder</span><span class="p">(</span><span class="n">output_coder</span><span class="p">)),</span>
+    <span class="p">])</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">_GrowthState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">_PollingGrowthState</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polling_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">termination_state</span><span class="p">,</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">poll_watermark</span><span class="p">,</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">completed</span><span class="o">.</span><span class="n">items</span><span class="p">())))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envelope_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span><span class="n">_StateTag</span><span class="o">.</span><span class="n">POLLING</span><span class="p">,</span> <span class="n">payload</span><span class="p">))</span>
+      <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cursor_polling_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+          <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">termination_state</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">cursor</span><span class="p">))</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envelope_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span><span class="n">_StateTag</span><span class="o">.</span><span class="n">CURSOR_POLLING</span><span class="p">,</span> <span class="n">payload</span><span class="p">))</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_polling_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">watermark</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">outputs</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envelope_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">((</span><span class="n">_StateTag</span><span class="o">.</span><span class="n">NON_POLLING</span><span class="p">,</span> <span class="n">payload</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">decode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GrowthState</span><span class="p">:</span>
+    <span class="n">tag</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_envelope_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">_StateTag</span><span class="o">.</span><span class="n">POLLING</span><span class="p">:</span>
+      <span class="n">termination_state</span><span class="p">,</span> <span class="n">poll_watermark</span><span class="p">,</span> <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polling_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+          <span class="n">payload</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_PollingGrowthState</span><span class="p">(</span>
+          <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">poll_watermark</span><span class="p">,</span> <span class="n">termination_state</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">_StateTag</span><span class="o">.</span><span class="n">NON_POLLING</span><span class="p">:</span>
+      <span class="n">watermark</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_polling_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_NonPollingGrowthState</span><span class="p">(</span><span class="n">PollResult</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span> <span class="n">watermark</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">_StateTag</span><span class="o">.</span><span class="n">CURSOR_POLLING</span><span class="p">:</span>
+      <span class="n">termination_state</span><span class="p">,</span> <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cursor_polling_coder</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">payload</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">_PollingGrowthState</span><span class="p">(</span>
+          <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(),</span> <span class="kc">None</span><span class="p">,</span> <span class="n">termination_state</span><span class="p">,</span> <span class="n">cursor</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'unknown Watch growth state tag: </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_deterministic</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Restriction tracker.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_identity</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hash_output</span><span class="p">(</span><span class="n">key_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">blake2b</span><span class="p">(</span>
+      <span class="n">key_coder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">digest_size</span><span class="o">=</span><span class="n">_HASH_DIGEST_SIZE</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_max_watermark</span><span class="p">(</span><span class="n">left</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">],</span>
+                   <span class="n">right</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]:</span>
+  <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">right</span>
+  <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">left</span>
+  <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_never_seen_before</span><span class="p">(</span>
+    <span class="n">restriction</span><span class="p">:</span> <span class="n">_PollingGrowthState</span><span class="p">,</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">PollResult</span><span class="p">,</span>
+    <span class="n">key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">key_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PollResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Filters a poll result down to outputs whose key was never seen before.</span>
+
+<span class="sd">  Dedup hashes ``key_fn(output.value)`` against the restriction's completed</span>
+<span class="sd">  set, also dropping in-round duplicates. Outputs are sorted by timestamp so</span>
+<span class="sd">  the earliest one can serve as the inferred watermark.</span>
+<span class="sd">  """</span>
+  <span class="n">new_outputs</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">seen_this_round</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+  <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+    <span class="n">key_hash</span> <span class="o">=</span> <span class="n">_hash_output</span><span class="p">(</span><span class="n">key_coder</span><span class="p">,</span> <span class="n">key_fn</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">key_hash</span> <span class="ow">in</span> <span class="n">restriction</span><span class="o">.</span><span class="n">completed</span> <span class="ow">or</span> <span class="n">key_hash</span> <span class="ow">in</span> <span class="n">seen_this_round</span><span class="p">:</span>
+      <span class="k">continue</span>
+    <span class="n">seen_this_round</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key_hash</span><span class="p">)</span>
+    <span class="n">new_outputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+  <span class="n">new_outputs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">output</span><span class="p">:</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cursor_of</span><span class="p">(</span><span class="n">restriction</span><span class="p">:</span> <span class="n">_PollingGrowthState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Timestamp</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""The dedup cursor: the stored one, or for a restriction switched over</span>
+<span class="sd">  from hash dedup, the greatest event time its hash map recorded."""</span>
+  <span class="k">if</span> <span class="n">restriction</span><span class="o">.</span><span class="n">cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">restriction</span><span class="o">.</span><span class="n">cursor</span>
+  <span class="k">if</span> <span class="n">restriction</span><span class="o">.</span><span class="n">completed</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">restriction</span><span class="o">.</span><span class="n">completed</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+  <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_past_cursor</span><span class="p">(</span>
+    <span class="n">restriction</span><span class="p">:</span> <span class="n">_PollingGrowthState</span><span class="p">,</span> <span class="n">result</span><span class="p">:</span> <span class="n">PollResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PollResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Filters a poll result down to outputs strictly past the cursor, sorted</span>
+<span class="sd">  by timestamp so the earliest infers the watermark and the latest advances</span>
+<span class="sd">  the cursor."""</span>
+  <span class="n">cursor</span> <span class="o">=</span> <span class="n">_cursor_of</span><span class="p">(</span><span class="n">restriction</span><span class="p">)</span>
+  <span class="n">new_outputs</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="n">output</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">outputs</span>
+      <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&gt;</span> <span class="n">cursor</span>
+  <span class="p">]</span>
+  <span class="n">new_outputs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">output</span><span class="p">:</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">outputs</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">new_outputs</span><span class="p">))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GrowthRestrictionTracker</span><span class="p">(</span><span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionTracker</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Tracks one input's polling restriction over claimed poll rounds.</span>
+
+<span class="sd">  The claimed position is one poll round: a ``(PollResult, termination_state)``</span>
+<span class="sd">  pair whose ``PollResult`` holds only never-seen-before outputs. ``process()``</span>
+<span class="sd">  polls and dedups before claiming, so a slow poll never holds the tracker</span>
+<span class="sd">  lock; the tracker validates each claim against the restriction and derives</span>
+<span class="sd">  the checkpoint split from the claimed round in :meth:`try_split`.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">restriction</span><span class="p">:</span> <span class="n">_GrowthState</span><span class="p">,</span>
+      <span class="n">key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+      <span class="n">key_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">,</span>
+      <span class="n">timestamp_cursor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">restriction</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_key_fn</span> <span class="o">=</span> <span class="n">key_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_key_coder</span> <span class="o">=</span> <span class="n">key_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span> <span class="o">=</span> <span class="n">timestamp_cursor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[PollResult]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_termination_state</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Any</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_hashes</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: Optional[collections.OrderedDict]</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span> <span class="o">=</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_hash_output</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key_coder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_fn</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GrowthState</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_claim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">PollResult</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Claims one poll round; at most one claim succeeds per ``process()``.</span>
+
+<span class="sd">    The claim is rejected after a checkpoint already stopped this invocation,</span>
+<span class="sd">    when a claimed output key was already completed, or when a replay does not</span>
+<span class="sd">    match the pending outputs exactly.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">False</span>
+    <span class="n">result</span><span class="p">,</span> <span class="n">termination_state</span> <span class="o">=</span> <span class="n">position</span>
+    <span class="n">claimed_hashes</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">:</span>
+      <span class="c1"># Cursor mode validates by timestamps and never hashes.</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">_PollingGrowthState</span><span class="p">):</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">_cursor_of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&lt;=</span> <span class="n">cursor</span>
+                                      <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">outputs</span><span class="p">):</span>
+          <span class="k">return</span> <span class="kc">False</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Values may lack stable equality without a deterministic coder, so a</span>
+        <span class="c1"># replay is identified by its timestamps.</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expected</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">outputs</span><span class="p">):</span>
+          <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">claimed_hashes</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+      <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+        <span class="n">claimed_hashes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">)]</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">_PollingGrowthState</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">key_hash</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">completed</span>
+               <span class="k">for</span> <span class="n">key_hash</span> <span class="ow">in</span> <span class="n">claimed_hashes</span><span class="p">):</span>
+          <span class="k">return</span> <span class="kc">False</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hash</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">outputs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">expected</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">claimed_hashes</span><span class="p">):</span>
+          <span class="k">return</span> <span class="kc">False</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_termination_state</span> <span class="o">=</span> <span class="n">termination_state</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_hashes</span> <span class="o">=</span> <span class="n">claimed_hashes</span>
+    <span class="k">return</span> <span class="kc">True</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">try_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fraction_of_remainder</span><span class="p">):</span>
+    <span class="c1"># Every split checkpoints at the claimed poll round; splitting a round</span>
+    <span class="c1"># further is not supported.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># No claim happened this invocation: the residual is all the work and</span>
+      <span class="c1"># the primary replays nothing.</span>
+      <span class="n">residual</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">_EMPTY_STATE</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">_NonPollingGrowthState</span><span class="p">):</span>
+      <span class="c1"># The claimed replay was the entire restriction, so nothing remains.</span>
+      <span class="n">residual</span> <span class="o">=</span> <span class="n">_EMPTY_STATE</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="c1"># The primary becomes a replay of the claimed round; the residual</span>
+      <span class="c1"># resumes polling with the claimed round folded into the dedup state.</span>
+      <span class="c1"># A state holds hashes or a cursor, never both, so each mode drops the</span>
+      <span class="c1"># other mode's leftovers after a switch.</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">:</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">completed</span>
+        <span class="k">if</span> <span class="n">completed</span><span class="p">:</span>
+          <span class="n">completed</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+          <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="n">cursor</span> <span class="o">=</span> <span class="n">_cursor_of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_hashes</span><span class="p">:</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">completed</span><span class="p">)</span>
+        <span class="n">completed</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_claimed_hashes</span><span class="p">)</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># An idle round reuses the parent map so empty polls stay O(1).</span>
+        <span class="n">completed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">completed</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="kc">None</span>
+      <span class="n">residual</span> <span class="o">=</span> <span class="n">_PollingGrowthState</span><span class="p">(</span>
+          <span class="n">completed</span><span class="p">,</span>
+          <span class="n">_max_watermark</span><span class="p">(</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="o">.</span><span class="n">poll_watermark</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span><span class="o">.</span><span class="n">watermark</span><span class="p">),</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_claimed_termination_state</span><span class="p">,</span>
+          <span class="n">cursor</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span> <span class="o">=</span> <span class="n">_NonPollingGrowthState</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_claimed_result</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">residual</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">check_done</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># Called after every process(); the single claim or a split sets the flag.</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span><span class="p">:</span>
+      <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s1">'Watch restriction was neither claimed nor checkpointed: </span><span class="si">%r</span><span class="s1">'</span> <span class="o">%</span>
+        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">current_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'iobase.RestrictionProgress'</span><span class="p">:</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_should_stop</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionProgress</span><span class="p">(</span><span class="n">completed</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">remaining</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">iobase</span><span class="o">.</span><span class="n">RestrictionProgress</span><span class="p">(</span><span class="n">completed</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">remaining</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">is_bounded</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="c1"># A polling restriction is unbounded; a replay-then-stop one is bounded.</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_restriction</span><span class="p">,</span> <span class="n">_NonPollingGrowthState</span><span class="p">)</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Splittable DoFn (its own restriction provider).</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_WatchGrowthDoFn</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="p">,</span> <span class="n">core</span><span class="o">.</span><span class="n">RestrictionProvider</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Polling SDF that emits ``(input, output)`` pairs.</span>
+
+<span class="sd">  The DoFn is its own ``RestrictionProvider``: ``RestrictionParam()`` with no</span>
+<span class="sd">  argument resolves the provider to the DoFn instance, so the provider methods</span>
+<span class="sd">  read the transform-level spec (poll function, coders, termination) off</span>
+<span class="sd">  ``self``. Provider methods run on a separately deserialized copy and before</span>
+<span class="sd">  ``setup()``, so the spec is immutable state set in ``__init__``.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">poll_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">PollResult</span><span class="p">],</span>
+      <span class="n">termination</span><span class="p">:</span> <span class="n">TerminationCondition</span><span class="p">,</span>
+      <span class="n">poll_interval</span><span class="p">:</span> <span class="n">Duration</span><span class="p">,</span>
+      <span class="n">output_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">,</span>
+      <span class="n">key_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+      <span class="n">key_coder</span><span class="p">:</span> <span class="n">Coder</span><span class="p">,</span>
+      <span class="n">timestamp_cursor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">now_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span> <span class="o">=</span> <span class="n">poll_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span> <span class="o">=</span> <span class="n">termination</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_coder</span> <span class="o">=</span> <span class="n">output_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_key_fn</span> <span class="o">=</span> <span class="n">key_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_key_coder</span> <span class="o">=</span> <span class="n">key_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span> <span class="o">=</span> <span class="n">timestamp_cursor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="n">now_fn</span> <span class="ow">or</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_restriction_coder</span> <span class="o">=</span> <span class="n">_GrowthStateCoder</span><span class="p">(</span><span class="n">output_coder</span><span class="p">,</span> <span class="n">termination</span><span class="p">)</span>
+    <span class="c1"># Count of late emissions seen on this worker, for throttled warnings.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_late_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_PollingGrowthState</span><span class="p">:</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">_PollingGrowthState</span><span class="p">(</span>
+        <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(),</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span><span class="o">.</span><span class="n">for_new_input</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">element</span><span class="p">))</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_GrowthRestrictionTracker</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_GrowthRestrictionTracker</span><span class="p">(</span>
+        <span class="n">restriction</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_coder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_coder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_restriction_coder</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">restriction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">1</span>
+
+  <span class="nd">@core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">unbounded_per_element</span><span class="p">()</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">,</span>
+      <span class="n">timestamp</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">TimestampParam</span><span class="p">,</span>
+      <span class="n">tracker</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">RestrictionParam</span><span class="p">(),</span>
+      <span class="n">watermark_estimator</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">WatermarkEstimatorParam</span><span class="p">(</span>
+          <span class="n">ManualWatermarkEstimator</span><span class="o">.</span><span class="n">default_provider</span><span class="p">())):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tracker</span><span class="p">,</span> <span class="n">sdf_utils</span><span class="o">.</span><span class="n">RestrictionTrackerView</span><span class="p">)</span>
+    <span class="c1"># Java seeds the manual estimator with the element timestamp; the Python</span>
+    <span class="c1"># default provider starts at None, which a runner reads as MIN_TIMESTAMP</span>
+    <span class="c1"># and would pin the stage's output watermark until the first output.</span>
+    <span class="k">if</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="n">restriction</span> <span class="o">=</span> <span class="n">tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">restriction</span><span class="p">,</span> <span class="n">_NonPollingGrowthState</span><span class="p">):</span>
+      <span class="c1"># Replay the outputs already emitted this round, then stop. No poll.</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">((</span><span class="n">restriction</span><span class="o">.</span><span class="n">pending</span><span class="p">,</span> <span class="kc">None</span><span class="p">)):</span>
+        <span class="k">return</span>
+      <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">restriction</span><span class="o">.</span><span class="n">pending</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">((</span><span class="n">element</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span> <span class="ow">and</span> <span class="n">restriction</span><span class="o">.</span><span class="n">cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+        <span class="n">restriction</span><span class="o">.</span><span class="n">cursor</span> <span class="o">&gt;=</span> <span class="n">MAX_TIMESTAMP</span><span class="p">):</span>
+      <span class="c1"># Nothing can be past a cursor at MAX; claim an empty round and stop.</span>
+      <span class="n">tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">((</span><span class="n">PollResult</span><span class="p">(()),</span> <span class="n">restriction</span><span class="o">.</span><span class="n">termination_state</span><span class="p">))</span>
+      <span class="k">return</span>
+    <span class="c1"># Poll before claiming so a slow poll never holds the tracker lock, which</span>
+    <span class="c1"># would block runner progress checks and checkpoints.</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+    <span class="c1"># Read the clock after the poll so a slow poll counts against termination.</span>
+    <span class="n">now</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">())</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">:</span>
+      <span class="n">new_results</span> <span class="o">=</span> <span class="n">_past_cursor</span><span class="p">(</span><span class="n">restriction</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">new_results</span> <span class="o">=</span> <span class="n">_never_seen_before</span><span class="p">(</span>
+          <span class="n">restriction</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_coder</span><span class="p">)</span>
+    <span class="n">termination_state</span> <span class="o">=</span> <span class="n">restriction</span><span class="o">.</span><span class="n">termination_state</span>
+    <span class="k">if</span> <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+      <span class="n">termination_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span><span class="o">.</span><span class="n">on_seen_new_output</span><span class="p">(</span>
+          <span class="n">now</span><span class="p">,</span> <span class="n">termination_state</span><span class="p">)</span>
+    <span class="n">termination_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span><span class="o">.</span><span class="n">on_poll_complete</span><span class="p">(</span><span class="n">termination_state</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">((</span><span class="n">new_results</span><span class="p">,</span> <span class="n">termination_state</span><span class="p">)):</span>
+      <span class="c1"># A checkpoint already stopped this invocation; emit nothing.</span>
+      <span class="k">return</span>
+    <span class="c1"># Emit before advancing the watermark so a round's own watermark cannot</span>
+    <span class="c1"># make its outputs late. Late outputs are warned about only once the</span>
+    <span class="c1"># watermark has advanced past the element-timestamp seed.</span>
+    <span class="n">current_watermark</span> <span class="o">=</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()</span>
+    <span class="n">warn_on_late</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">current_watermark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">current_watermark</span> <span class="o">&gt;</span> <span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">output</span> <span class="ow">in</span> <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">warn_on_late</span> <span class="ow">and</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&lt;</span> <span class="n">current_watermark</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_warn_late</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">,</span> <span class="n">current_watermark</span><span class="p">)</span>
+      <span class="k">yield</span> <span class="n">TimestampedValue</span><span class="p">((</span><span class="n">element</span><span class="p">,</span> <span class="n">output</span><span class="o">.</span><span class="n">value</span><span class="p">),</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">new_results</span><span class="o">.</span><span class="n">watermark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">watermark</span> <span class="o">=</span> <span class="n">new_results</span><span class="o">.</span><span class="n">watermark</span>
+    <span class="k">elif</span> <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span><span class="p">:</span>
+      <span class="c1"># Outputs are timestamp-sorted, so the first one is the earliest.</span>
+      <span class="n">watermark</span> <span class="o">=</span> <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">watermark</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">:</span>
+      <span class="n">new_cursor</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">timestamp</span>
+          <span class="k">if</span> <span class="n">new_results</span><span class="o">.</span><span class="n">outputs</span> <span class="k">else</span> <span class="n">restriction</span><span class="o">.</span><span class="n">cursor</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">new_cursor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">new_cursor</span> <span class="o">&gt;=</span> <span class="n">MAX_TIMESTAMP</span><span class="p">:</span>
+        <span class="c1"># A cursor at MAX is terminal; polling on would only drop outputs.</span>
+        <span class="k">return</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span><span class="o">.</span><span class="n">can_stop_polling</span><span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">termination_state</span><span class="p">):</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="n">watermark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">watermark</span> <span class="o">&gt;=</span> <span class="n">MAX_TIMESTAMP</span><span class="p">:</span>
+      <span class="c1"># No more output is possible (PollResult.complete), so polling stops.</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="n">watermark</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">_set_watermark_if_greater</span><span class="p">(</span><span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">watermark</span><span class="p">)</span>
+    <span class="n">tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_warn_late</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">output_timestamp</span><span class="p">,</span> <span class="n">watermark</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Log at powers of two to keep an ongoing problem visible without spam.</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_late_count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_late_count</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_late_count</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s1">'Watch emitted output for input </span><span class="si">%r</span><span class="s1"> at </span><span class="si">%s</span><span class="s1">, behind the watermark </span><span class="si">%s</span><span class="s1">; '</span>
+          <span class="s1">'downstream event-time windowing may drop it as late. Use '</span>
+          <span class="s1">'PollResult.with_watermark for out-of-order sources. '</span>
+          <span class="s1">'(</span><span class="si">%d</span><span class="s1"> late emissions on this worker)'</span><span class="p">,</span>
+          <span class="n">element</span><span class="p">,</span>
+          <span class="n">output_timestamp</span><span class="p">,</span>
+          <span class="n">watermark</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">_late_count</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_set_watermark_if_greater</span><span class="p">(</span><span class="n">watermark_estimator</span><span class="p">,</span> <span class="n">new_watermark</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="c1"># set_watermark raises on regression, so only ever advance the watermark.</span>
+  <span class="n">current</span> <span class="o">=</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">current</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">new_watermark</span> <span class="o">&gt;</span> <span class="n">current</span><span class="p">:</span>
+    <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">new_watermark</span><span class="p">)</span>
+
+
+<span class="c1"># ------------------------------------------------------------------------------</span>
+<span class="c1"># Public PTransform.</span>
+<span class="c1"># ------------------------------------------------------------------------------</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_return_type</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""The return type annotation of ``fn`` or its ``__call__``, else ``Any``."""</span>
+  <span class="n">target</span> <span class="o">=</span> <span class="n">fn</span> <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isroutine</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="k">else</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fn</span><span class="p">),</span> <span class="s1">'__call__'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">Any</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="n">hints</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_type_hints</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+  <span class="k">except</span> <span class="p">(</span><span class="ne">NameError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Any</span>
+  <span class="k">return</span> <span class="n">hints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'return'</span><span class="p">,</span> <span class="n">Any</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_poll_output_type</span><span class="p">(</span><span class="n">poll_fn</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""The ``V`` of a ``PollResult[V]`` return annotation on ``poll_fn``.</span>
+
+<span class="sd">  This mirrors the Java SDK, which infers the output coder from the</span>
+<span class="sd">  ``PollFn``'s ``OutputT`` type parameter. Returns ``Any`` when ``poll_fn``</span>
+<span class="sd">  carries no such annotation.</span>
+<span class="sd">  """</span>
+  <span class="n">hint</span> <span class="o">=</span> <span class="n">_return_type</span><span class="p">(</span><span class="n">poll_fn</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_origin</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span> <span class="ow">is</span> <span class="n">PollResult</span><span class="p">:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">get_args</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="k">return</span> <span class="n">Any</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_coder_for_hint</span><span class="p">(</span><span class="n">hint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Coder</span><span class="p">:</span>
+  <span class="c1"># typing and native generic hints such as tuple[str, float] must be</span>
+  <span class="c1"># converted to Beam typehints, or the registry falls back to pickling.</span>
+  <span class="k">return</span> <span class="n">coders</span><span class="o">.</span><span class="n">registry</span><span class="o">.</span><span class="n">get_coder</span><span class="p">(</span>
+      <span class="n">native_type_compatibility</span><span class="o">.</span><span class="n">convert_to_beam_type</span><span class="p">(</span><span class="n">hint</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="Watch">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.Watch">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Watch</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Watches a growing set of outputs per input via a periodic poll function.</span>
+
+<span class="sd">  The output is an unbounded ``PCollection`` of ``(input, output)`` pairs.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    poll_fn: callable ``input -&gt; PollResult``, invoked once per poll round.</span>
+<span class="sd">    poll_interval: delay between two poll rounds for one input, as a</span>
+<span class="sd">      :class:`Duration` or in seconds.</span>
+<span class="sd">    termination: per-input stop policy; defaults to :func:`never`.</span>
+<span class="sd">    output_coder: coder for the poll outputs, used to keep them in the</span>
+<span class="sd">      restriction state. Inferred when omitted: from a :class:`PollFn`'s</span>
+<span class="sd">      :meth:`~PollFn.default_output_coder`, else from the registered coder for</span>
+<span class="sd">      the ``V`` of a ``PollResult[V]`` return annotation on ``poll_fn``.</span>
+<span class="sd">    output_key_fn: derives the dedup key from an output; an output is emitted</span>
+<span class="sd">      only when its key was never seen before. Defaults to the output itself.</span>
+<span class="sd">    output_key_coder: coder whose encoding of the key is hashed for dedup;</span>
+<span class="sd">      inferred like ``output_coder`` when omitted. It is converted with</span>
+<span class="sd">      ``as_deterministic_coder`` so equal keys always hash equally; a coder</span>
+<span class="sd">      with no deterministic form is rejected.</span>
+<span class="sd">    timestamp_cursor: dedup by event time instead of by key. Each round emits</span>
+<span class="sd">      only outputs strictly past the greatest event time already emitted, so</span>
+<span class="sd">      the per-input state is a single timestamp. Requires every new output to</span>
+<span class="sd">      carry an event time strictly greater than all previously emitted ones;</span>
+<span class="sd">      re-listed old outputs at or below the cursor are dropped as already</span>
+<span class="sd">      seen. For sources whose new outputs can arrive at or below the cursor,</span>
+<span class="sd">      keep the default hash dedup. Incompatible with ``output_key_fn`` and</span>
+<span class="sd">      ``output_key_coder``.</span>
+<span class="sd">    now_fn: clock used for termination decisions; tests can inject one.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">poll_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">PollResult</span><span class="p">],</span>
+      <span class="n">poll_interval</span><span class="p">,</span>
+      <span class="n">termination</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">TerminationCondition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_coder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Coder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_key_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_key_coder</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Coder</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">timestamp_cursor</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">now_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">poll_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Watch requires a poll_interval'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">timestamp_cursor</span> <span class="ow">and</span> <span class="p">(</span><span class="n">output_key_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span>
+                             <span class="n">output_key_coder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s1">'timestamp_cursor dedups by event time, not by key; do not pass '</span>
+          <span class="s1">'output_key_fn or output_key_coder with timestamp_cursor=True.'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span> <span class="o">=</span> <span class="n">poll_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">_as_duration</span><span class="p">(</span><span class="n">poll_interval</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span> <span class="o">=</span> <span class="n">termination</span> <span class="ow">or</span> <span class="n">never</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_coder</span> <span class="o">=</span> <span class="n">output_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_fn</span> <span class="o">=</span> <span class="n">output_key_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_coder</span> <span class="o">=</span> <span class="n">output_key_coder</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span> <span class="o">=</span> <span class="n">timestamp_cursor</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_now</span> <span class="o">=</span> <span class="n">now_fn</span>
+
+<div class="viewcode-block" id="Watch.expand">
+<a class="viewcode-back" href="../../../apache_beam.io.watch.html#apache_beam.io.watch.Watch.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+    <span class="n">output_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_coder</span>
+    <span class="k">if</span> <span class="n">output_coder</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span><span class="p">,</span> <span class="n">PollFn</span><span class="p">):</span>
+      <span class="n">output_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span><span class="o">.</span><span class="n">default_output_coder</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">output_coder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">output_coder</span> <span class="o">=</span> <span class="n">_coder_for_hint</span><span class="p">(</span><span class="n">_poll_output_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span><span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">:</span>
+      <span class="c1"># Cursor dedup never hashes, so no deterministic key coder is needed.</span>
+      <span class="n">key_fn</span> <span class="o">=</span> <span class="n">_identity</span>
+      <span class="n">key_coder</span> <span class="o">=</span> <span class="n">output_coder</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># The output is its own dedup key, so the key coder is the output</span>
+        <span class="c1"># coder.</span>
+        <span class="n">key_fn</span> <span class="o">=</span> <span class="n">_identity</span>
+        <span class="n">key_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_coder</span> <span class="ow">or</span> <span class="n">output_coder</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">key_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_fn</span>
+        <span class="n">key_coder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_key_coder</span> <span class="ow">or</span> <span class="n">_coder_for_hint</span><span class="p">(</span>
+            <span class="n">_return_type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_key_fn</span><span class="p">))</span>
+      <span class="c1"># Dedup hashes the encoded key, so equal keys must encode equally; use</span>
+      <span class="c1"># the coder's deterministic form and reject coders that have none.</span>
+      <span class="n">key_coder</span> <span class="o">=</span> <span class="n">key_coder</span><span class="o">.</span><span class="n">as_deterministic_coder</span><span class="p">(</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span>
+          <span class="s1">'Watch dedups by hashing the encoded output key, so the key coder '</span>
+          <span class="s1">'must be deterministic. </span><span class="si">%s</span><span class="s1"> has no deterministic form; pass a '</span>
+          <span class="s1">'deterministic output_key_coder (or output_coder).'</span> <span class="o">%</span>
+          <span class="nb">type</span><span class="p">(</span><span class="n">key_coder</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="c1"># Type the (input, output) pairs from the input type and the resolved</span>
+    <span class="c1"># coder's type, so downstream transforms are typed and coder inference does</span>
+    <span class="c1"># not fall back to pickling.</span>
+    <span class="n">input_type</span> <span class="o">=</span> <span class="n">pcoll</span><span class="o">.</span><span class="n">element_type</span> <span class="ow">or</span> <span class="n">Any</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">value_type</span> <span class="o">=</span> <span class="n">output_coder</span><span class="o">.</span><span class="n">to_type_hint</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">NotImplementedError</span><span class="p">:</span>
+      <span class="n">value_type</span> <span class="o">=</span> <span class="n">Any</span>
+    <span class="k">return</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="n">core</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span>
+        <span class="n">_WatchGrowthDoFn</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_fn</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_termination</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">,</span>
+            <span class="n">output_coder</span><span class="p">,</span>
+            <span class="n">key_fn</span><span class="p">,</span>
+            <span class="n">key_coder</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_cursor</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_now</span><span class="p">))</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="nb">tuple</span><span class="p">[</span><span class="n">input_type</span><span class="p">,</span> <span class="n">value_type</span><span class="p">])</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_as_duration</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Duration</span><span class="p">:</span>
+  <span class="k">return</span> <span class="n">value</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Duration</span><span class="p">)</span> <span class="k">else</span> <span class="n">Duration</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,697 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.rag.ingestion.postgres_common &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.rag.ingestion.postgres_common</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.rag.ingestion.postgres_common</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.rag.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmbeddableItem</span>
+
+
+<div class="viewcode-block" id="chunk_embedding_fn">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.chunk_embedding_fn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chunk_embedding_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Convert embedding to PostgreSQL array string.</span>
+
+<span class="sd">    Formats dense embedding as a PostgreSQL-compatible array string.</span>
+<span class="sd">    Example: [1.0, 2.0] -&gt; '{1.0,2.0}'</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        chunk: Input EmbeddableItem object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: PostgreSQL array string representation of the embedding.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If chunk has no dense embedding.</span>
+<span class="sd">    """</span>
+  <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">dense_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Expected chunk to contain embedding. </span><span class="si">{</span><span class="n">chunk</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+  <span class="k">return</span> <span class="s1">'{'</span> <span class="o">+</span> <span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">dense_embedding</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'}'</span></div>
+
+
+
+<div class="viewcode-block" id="ColumnSpec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnSpec</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Mapping of EmbeddableItem fields to SQL columns for insertion.</span>
+
+<span class="sd">  Defines how to extract and format values from EmbeddableItems into</span>
+<span class="sd">  database columns, handling the full pipeline from Python value to</span>
+<span class="sd">  SQL insertion.</span>
+
+<span class="sd">  The insertion process works as follows:</span>
+<span class="sd">  - value_fn extracts a value from the EmbeddableItem and formats it as needed</span>
+<span class="sd">  - The value is stored in a NamedTuple field with the specified python_type</span>
+<span class="sd">  - During SQL insertion, the value is bound to a ? placeholder</span>
+
+<span class="sd">  Attributes:</span>
+<span class="sd">      column_name: The column name in the database table.</span>
+<span class="sd">      python_type: :class:`~apache_beam.coders.row_coder.RowCoder` compatible</span>
+<span class="sd">          python type.</span>
+<span class="sd">      value_fn: Function to extract and format the value from an</span>
+<span class="sd">          EmbeddableItem.</span>
+<span class="sd">      sql_typecast: Optional SQL type cast to append to the ? placeholder.</span>
+<span class="sd">          Common examples:</span>
+<span class="sd">          - "::float[]" for vector arrays</span>
+<span class="sd">          - "::jsonb" for JSON data</span>
+
+<span class="sd">  Examples:</span>
+<span class="sd">      Basic text column (uses standard JDBC type mapping):</span>
+<span class="sd">      &gt;&gt;&gt; ColumnSpec.text(</span>
+<span class="sd">      ...     column_name="content",</span>
+<span class="sd">      ...     value_fn=lambda chunk: chunk.content.text</span>
+<span class="sd">      ... )</span>
+<span class="sd">      # Results in: INSERT INTO table (content) VALUES (?)</span>
+
+<span class="sd">      Vector column with explicit array casting:</span>
+<span class="sd">      &gt;&gt;&gt; ColumnSpec.vector(</span>
+<span class="sd">      ...     column_name="embedding",</span>
+<span class="sd">      ...     value_fn=lambda chunk: '{' +</span>
+<span class="sd">      ...         ','.join(map(str, chunk.embedding.dense_embedding)) + '}'</span>
+<span class="sd">      ... )</span>
+<span class="sd">      # Results in: INSERT INTO table (embedding) VALUES (?::float[])</span>
+<span class="sd">      # The value_fn formats [1.0, 2.0] as '{1.0,2.0}' for PostgreSQL array</span>
+
+<span class="sd">      Timestamp from metadata with explicit casting:</span>
+<span class="sd">      &gt;&gt;&gt; ColumnSpec(</span>
+<span class="sd">      ...     column_name="created_at",</span>
+<span class="sd">      ...     python_type=str,</span>
+<span class="sd">      ...     value_fn=lambda chunk: chunk.metadata.get("timestamp"),</span>
+<span class="sd">      ...     sql_typecast="::timestamp"</span>
+<span class="sd">      ... )</span>
+<span class="sd">      # Results in: INSERT INTO table (created_at) VALUES (?::timestamp)</span>
+<span class="sd">      # Allows inserting string timestamps with proper PostgreSQL casting</span>
+
+<span class="sd">  Factory Methods:</span>
+<span class="sd">      text: Creates a text column specification (no type cast).</span>
+<span class="sd">      integer: Creates an integer column specification (no type cast).</span>
+<span class="sd">      float: Creates a float column specification (no type cast).</span>
+<span class="sd">      vector: Creates a vector column specification with float[] casting.</span>
+<span class="sd">      jsonb: Creates a JSONB column specification with jsonb casting.</span>
+<span class="sd">  """</span>
+  <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span>
+  <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
+  <span class="n">sql_typecast</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+  <span class="nd">@property</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">placeholder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Get SQL placeholder with optional typecast."""</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"?</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sql_typecast</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">''</span><span class="si">}</span><span class="s2">"</span>
+
+<div class="viewcode-block" id="ColumnSpec.text">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec.text">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">text</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span>
+                                                <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpec'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a text column specification."""</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpec.integer">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec.integer">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">integer</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span>
+                                                <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpec'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create an integer column specification."""</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpec.float">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec.float">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">float</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span>
+                                                <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpec'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a float column specification."""</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpec.vector">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec.vector">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">vector</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">chunk_embedding_fn</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpec'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a vector column specification."""</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">,</span> <span class="s2">"::float[]"</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpec.jsonb">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpec.jsonb">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">jsonb</span><span class="p">(</span>
+      <span class="bp">cls</span><span class="p">,</span> <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">EmbeddableItem</span><span class="p">],</span>
+                                                <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpec'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Create a JSONB column specification."""</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">column_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_fn</span><span class="p">,</span> <span class="s2">"::jsonb"</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColumnSpecsBuilder</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Builder for :class:`.ColumnSpec`'s with chainable methods."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_defaults">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_defaults">[docs]</a>
+  <span class="nd">@staticmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_defaults</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add all default column specifications."""</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">ColumnSpecsBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">with_id_spec</span><span class="p">()</span><span class="o">.</span><span class="n">with_embedding_spec</span><span class="p">()</span><span class="o">.</span>
+        <span class="n">with_content_spec</span><span class="p">()</span><span class="o">.</span><span class="n">with_metadata_spec</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_id_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_id_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_id_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"id"</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">sql_typecast</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add ID :class:`.ColumnSpec` with optional type and conversion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column_name: Name for the ID column (defaults to "id")</span>
+<span class="sd">            python_type: Python type for the column (defaults to str)</span>
+<span class="sd">            convert_fn: Optional function to convert the chunk ID</span>
+<span class="sd">                       If None, uses ID as-is</span>
+<span class="sd">            sql_typecast: Optional SQL type cast</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Self for method chaining</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; builder.with_id_spec(</span>
+<span class="sd">            ...     column_name="doc_id",</span>
+<span class="sd">            ...     python_type=int,</span>
+<span class="sd">            ...     convert_fn=lambda id: int(id.split('_')[1])</span>
+<span class="sd">            ... )</span>
+<span class="sd">        """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">id</span>
+      <span class="k">return</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">convert_fn</span> <span class="k">else</span> <span class="n">value</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">ColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">,</span>
+            <span class="n">sql_typecast</span><span class="o">=</span><span class="n">sql_typecast</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_content_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_content_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_content_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"content"</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">sql_typecast</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add content :class:`.ColumnSpec` with optional type and conversion.</span>
+
+<span class="sd">      Args:</span>
+<span class="sd">          column_name: Name for the content column (defaults to "content")</span>
+<span class="sd">          python_type: Python type for the column (defaults to str)</span>
+<span class="sd">          convert_fn: Optional function to convert the content text</span>
+<span class="sd">                      If None, uses content text as-is</span>
+<span class="sd">          sql_typecast: Optional SQL type cast</span>
+
+<span class="sd">      Returns:</span>
+<span class="sd">          Self for method chaining</span>
+
+<span class="sd">      Example:</span>
+<span class="sd">          &gt;&gt;&gt; builder.with_content_spec(</span>
+<span class="sd">          ...     column_name="content_length",</span>
+<span class="sd">          ...     python_type=int,</span>
+<span class="sd">          ...     convert_fn=len  # Store content length instead of content</span>
+<span class="sd">          ... )</span>
+<span class="sd">      """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">content_string</span>
+      <span class="k">return</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="n">convert_fn</span> <span class="k">else</span> <span class="n">value</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">ColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">,</span>
+            <span class="n">sql_typecast</span><span class="o">=</span><span class="n">sql_typecast</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_metadata_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_metadata_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_metadata_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"metadata"</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">sql_typecast</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"::jsonb"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add metadata :class:`.ColumnSpec` with optional type and conversion.</span>
+
+<span class="sd">      Args:</span>
+<span class="sd">          column_name: Name for the metadata column (defaults to "metadata")</span>
+<span class="sd">          python_type: Python type for the column (defaults to str)</span>
+<span class="sd">          convert_fn: Optional function to convert the metadata dictionary</span>
+<span class="sd">                      If None and python_type is str, converts to JSON string</span>
+<span class="sd">          sql_typecast: Optional SQL type cast (defaults to "::jsonb")</span>
+
+<span class="sd">      Returns:</span>
+<span class="sd">          Self for method chaining</span>
+
+<span class="sd">      Example:</span>
+<span class="sd">          &gt;&gt;&gt; builder.with_metadata_spec(</span>
+<span class="sd">          ...     column_name="meta_tags",</span>
+<span class="sd">          ...     python_type=list,</span>
+<span class="sd">          ...     convert_fn=lambda meta: list(meta.keys()),</span>
+<span class="sd">          ...     sql_typecast="::text[]"</span>
+<span class="sd">          ... )</span>
+<span class="sd">      """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">convert_fn</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+          <span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="p">)</span> <span class="k">if</span> <span class="n">python_type</span> <span class="o">==</span> <span class="nb">str</span> <span class="k">else</span> <span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">ColumnSpec</span><span class="p">(</span>
+            <span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span>
+            <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+            <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">,</span>
+            <span class="n">sql_typecast</span><span class="o">=</span><span class="n">sql_typecast</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_embedding_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_embedding_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_embedding_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"embedding"</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add embedding :class:`.ColumnSpec` with optional conversion.</span>
+
+<span class="sd">      Args:</span>
+<span class="sd">          column_name: Name for the embedding column (defaults to "embedding")</span>
+<span class="sd">          convert_fn: Optional function to convert the dense embedding values</span>
+<span class="sd">                      If None, uses default PostgreSQL array format</span>
+
+<span class="sd">      Returns:</span>
+<span class="sd">          Self for method chaining</span>
+
+<span class="sd">      Example:</span>
+<span class="sd">          &gt;&gt;&gt; builder.with_embedding_spec(</span>
+<span class="sd">          ...     column_name="embedding_vector",</span>
+<span class="sd">          ...     convert_fn=lambda values: '{' + ','.join(f"{x:.4f}"</span>
+<span class="sd">          ...       for x in values) + '}'</span>
+<span class="sd">          ... )</span>
+<span class="sd">      """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">dense_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Expected chunk to contain embedding. </span><span class="si">{</span><span class="n">chunk</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+      <span class="n">values</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">dense_embedding</span>
+      <span class="k">if</span> <span class="n">convert_fn</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+      <span class="k">return</span> <span class="s1">'{'</span> <span class="o">+</span> <span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'}'</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">ColumnSpec</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.with_sparse_embedding_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.with_sparse_embedding_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_sparse_embedding_spec</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"sparse_embedding"</span><span class="p">,</span>
+      <span class="n">conv_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add sparse embedding :class:`.ColumnSpec` with optional conversion.</span>
+
+<span class="sd">      Args:</span>
+<span class="sd">          column_name: Name for the sparse embedding column</span>
+<span class="sd">            (defaults to "sparse_embedding")</span>
+<span class="sd">          conv_fn: Optional function to convert the sparse embedding tuple</span>
+<span class="sd">                      If None, converts to PostgreSQL-compatible JSON format</span>
+
+<span class="sd">      Returns:</span>
+<span class="sd">          Self for method chaining</span>
+
+<span class="sd">      Example:</span>
+<span class="sd">          &gt;&gt;&gt; builder.with_sparse_embedding_spec(</span>
+<span class="sd">          ...     column_name="sparse_vector",</span>
+<span class="sd">          ...     convert_fn=lambda sparse: dict(zip(sparse[0], sparse[1]))</span>
+<span class="sd">          ... )</span>
+<span class="sd">      """</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">sparse_embedding</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Expected chunk to contain sparse embedding. </span><span class="si">{</span><span class="n">chunk</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+      <span class="n">sparse_embedding</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">embedding</span><span class="o">.</span><span class="n">sparse_embedding</span>
+      <span class="k">if</span> <span class="n">conv_fn</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">conv_fn</span><span class="p">(</span><span class="n">sparse_embedding</span><span class="p">)</span>
+      <span class="c1"># Default: convert to dict format for JSON storage.</span>
+      <span class="n">indices</span><span class="p">,</span> <span class="n">values</span> <span class="o">=</span> <span class="n">sparse_embedding</span>
+      <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">)))</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="n">ColumnSpec</span><span class="o">.</span><span class="n">jsonb</span><span class="p">(</span><span class="n">column_name</span><span class="o">=</span><span class="n">column_name</span><span class="p">,</span> <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">))</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.add_metadata_field">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.add_metadata_field">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_metadata_field</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">field</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">python_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
+      <span class="n">column_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">convert_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">default</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">sql_typecast</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""""Add a :class:`.ColumnSpec` that extracts and converts a field from</span>
+<span class="sd">        chunk metadata.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            field: Key to extract from chunk metadata</span>
+<span class="sd">            python_type: Python type for the column (e.g. str, int, float)</span>
+<span class="sd">            column_name: Name for the column (defaults to metadata field name)</span>
+<span class="sd">            convert_fn: Optional function to convert the extracted value to</span>
+<span class="sd">                      desired type. If None, value is used as-is</span>
+<span class="sd">            default: Default value if field is missing from metadata</span>
+<span class="sd">            sql_typecast: Optional SQL type cast (e.g. "::timestamp")</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Self for chaining</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">            Simple string field:</span>
+<span class="sd">            &gt;&gt;&gt; builder.add_metadata_field("source", str)</span>
+
+<span class="sd">            Integer with default:</span>
+
+<span class="sd">            &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">            ...     field="count",</span>
+<span class="sd">            ...     python_type=int,</span>
+<span class="sd">            ...     column_name="item_count",</span>
+<span class="sd">            ...     default=0</span>
+<span class="sd">            ... )</span>
+
+<span class="sd">            Float with conversion and default:</span>
+
+<span class="sd">            &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">            ...     field="confidence",</span>
+<span class="sd">            ...     python_type=float,</span>
+<span class="sd">            ...     convert_fn=lambda x: round(float(x), 2),</span>
+<span class="sd">            ...     default=0.0</span>
+<span class="sd">            ... )</span>
+
+<span class="sd">            Timestamp with conversion and type cast:</span>
+
+<span class="sd">            &gt;&gt;&gt; builder.add_metadata_field(</span>
+<span class="sd">            ...     field="created_at",</span>
+<span class="sd">            ...     python_type=str,</span>
+<span class="sd">            ...     convert_fn=lambda ts: ts.replace('T', ' '),</span>
+<span class="sd">            ...     sql_typecast="::timestamp"</span>
+<span class="sd">            ... )</span>
+<span class="sd">        """</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">column_name</span> <span class="ow">or</span> <span class="n">field</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">value_fn</span><span class="p">(</span><span class="n">chunk</span><span class="p">:</span> <span class="n">EmbeddableItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="n">chunk</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+      <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">convert_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">convert_fn</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">value</span>
+
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">ColumnSpec</span><span class="p">(</span>
+        <span class="n">column_name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">python_type</span><span class="o">=</span><span class="n">python_type</span><span class="p">,</span>
+        <span class="n">value_fn</span><span class="o">=</span><span class="n">value_fn</span><span class="p">,</span>
+        <span class="n">sql_typecast</span><span class="o">=</span><span class="n">sql_typecast</span><span class="p">)</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.add_custom_column_spec">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.add_custom_column_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">add_custom_column_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">ColumnSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'ColumnSpecsBuilder'</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Add a custom :class:`.ColumnSpec` to the builder.</span>
+
+<span class="sd">    Use this method when you need complete control over the :class:`.ColumnSpec`</span>
+<span class="sd">    , including custom value extraction and type handling.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        spec: A :class:`.ColumnSpec` instance defining the column name, type,</span>
+<span class="sd">            value extraction, and optional SQL type casting.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Self for method chaining</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Custom text column from chunk metadata:</span>
+
+<span class="sd">        &gt;&gt;&gt; builder.add_custom_column_spec(</span>
+<span class="sd">        ...     ColumnSpec.text(</span>
+<span class="sd">        ...         name="source_and_id",</span>
+<span class="sd">        ...         value_fn=lambda chunk: \</span>
+<span class="sd">        ...             f"{chunk.metadata.get('source')}_{chunk.id}"</span>
+<span class="sd">        ...     )</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="ColumnSpecsBuilder.build">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ColumnSpecsBuilder.build">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColumnSpec</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Build the final list of column specifications."""</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_specs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ConflictResolution">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ConflictResolution">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConflictResolution</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Specification for how to handle conflicts during insert.</span>
+
+<span class="sd">    Configures conflict handling behavior when inserting records that may</span>
+<span class="sd">    violate unique constraints.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        on_conflict_fields: Field(s) that determine uniqueness. Can be a single</span>
+<span class="sd">            field name or list of field names for composite constraints.</span>
+<span class="sd">        action: How to handle conflicts - either "UPDATE" or "IGNORE".</span>
+<span class="sd">            UPDATE: Updates existing record with new values.</span>
+<span class="sd">            IGNORE: Skips conflicting records.</span>
+<span class="sd">        update_fields: Optional list of fields to update on conflict. If None,</span>
+<span class="sd">            all non-conflict fields are updated.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        Simple primary key:</span>
+
+<span class="sd">        &gt;&gt;&gt; ConflictResolution("id")</span>
+
+<span class="sd">        Composite key with specific update fields:</span>
+
+<span class="sd">        &gt;&gt;&gt; ConflictResolution(</span>
+<span class="sd">        ...     on_conflict_fields=["source", "timestamp"],</span>
+<span class="sd">        ...     action="UPDATE",</span>
+<span class="sd">        ...     update_fields=["embedding", "content"]</span>
+<span class="sd">        ... )</span>
+
+<span class="sd">        Ignore conflicts:</span>
+
+<span class="sd">        &gt;&gt;&gt; ConflictResolution(</span>
+<span class="sd">        ...     on_conflict_fields="id",</span>
+<span class="sd">        ...     action="IGNORE"</span>
+<span class="sd">        ... )</span>
+<span class="sd">    """</span>
+  <span class="n">on_conflict_fields</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+  <span class="n">action</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"UPDATE"</span><span class="p">,</span> <span class="s2">"IGNORE"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"UPDATE"</span>
+  <span class="n">update_fields</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ConflictResolution.maybe_set_default_update_fields">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ConflictResolution.maybe_set_default_update_fields">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">maybe_set_default_update_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">!=</span> <span class="s2">"UPDATE"</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+
+    <span class="n">conflict_fields</span> <span class="o">=</span> <span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">conflict_fields</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ConflictResolution.get_conflict_clause">
+<a class="viewcode-back" href="../../../../../apache_beam.ml.rag.ingestion.postgres_common.html#apache_beam.ml.rag.ingestion.postgres_common.ConflictResolution.get_conflict_clause">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">get_conflict_clause</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Get conflict clause with update fields."""</span>
+    <span class="n">conflict_fields</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span><span class="p">]</span> \
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> \
+        <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_conflict_fields</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">action</span> <span class="o">==</span> <span class="s2">"IGNORE"</span><span class="p">:</span>
+      <span class="n">conflict_fields_string</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conflict_fields</span><span class="p">)</span><span class="si">}</span><span class="s2">)"</span> \
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conflict_fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">""</span>
+      <span class="k">return</span> <span class="sa">f</span><span class="s2">"ON CONFLICT </span><span class="si">{</span><span class="n">conflict_fields_string</span><span class="si">}</span><span class="s2"> DO NOTHING"</span>
+
+    <span class="c1"># update_fields should be set by query builder before this is called</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> \
+      <span class="s2">"update_fields must be set before generating conflict clause"</span>
+    <span class="n">updates</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2"> = EXCLUDED.</span><span class="si">{</span><span class="n">field</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_fields</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"ON CONFLICT "</span> \
+      <span class="sa">f</span><span class="s2">"(</span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">conflict_fields</span><span class="p">)</span><span class="si">}</span><span class="s2">) DO UPDATE SET </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">updates</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

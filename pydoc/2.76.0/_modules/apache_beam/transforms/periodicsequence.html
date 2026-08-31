@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.transforms.periodicsequence &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.transforms.periodicsequence</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.transforms.periodicsequence</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.restriction_trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetRange</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.restriction_trackers</span><span class="w"> </span><span class="kn">import</span> <span class="n">OffsetRestrictionTracker</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.watermark_estimators</span><span class="w"> </span><span class="kn">import</span> <span class="n">ManualWatermarkEstimator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.runners</span><span class="w"> </span><span class="kn">import</span> <span class="n">sdf_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">window</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.ptransform</span><span class="w"> </span><span class="kn">import</span> <span class="n">PTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.window</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampedValue</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">timestamp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_TIMESTAMP</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Duration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">Timestamp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils.timestamp</span><span class="w"> </span><span class="kn">import</span> <span class="n">TimestampTypes</span>
+
+
+<div class="viewcode-block" id="ImpulseSeqGenRestrictionProvider">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenRestrictionProvider">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImpulseSeqGenRestrictionProvider</span><span class="p">(</span><span class="n">core</span><span class="o">.</span><span class="n">RestrictionProvider</span><span class="p">):</span>
+<div class="viewcode-block" id="ImpulseSeqGenRestrictionProvider.initial_restriction">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenRestrictionProvider.initial_restriction">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">initial_restriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">interval</span> <span class="o">=</span> <span class="n">element</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span>
+      <span class="n">start</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span>
+      <span class="n">end</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">interval_duration</span> <span class="o">=</span> <span class="n">Duration</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">start</span> <span class="o">&lt;=</span> <span class="n">end</span>
+    <span class="k">assert</span> <span class="n">interval</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">total_duration</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">total_outputs</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">total_duration</span><span class="o">.</span><span class="n">micros</span> <span class="o">/</span> <span class="n">interval_duration</span><span class="o">.</span><span class="n">micros</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">OffsetRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_outputs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ImpulseSeqGenRestrictionProvider.create_tracker">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenRestrictionProvider.create_tracker">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_tracker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">restriction</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">OffsetRestrictionTracker</span><span class="p">(</span><span class="n">restriction</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ImpulseSeqGenRestrictionProvider.restriction_size">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenRestrictionProvider.restriction_size">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">restriction_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">restriction</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_sequence_backlog_bytes</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span> <span class="n">restriction</span><span class="p">)</span></div>
+
+
+  <span class="c1"># On drain, immediately stop emitting new elements</span>
+<div class="viewcode-block" id="ImpulseSeqGenRestrictionProvider.truncate">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenRestrictionProvider.truncate">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">truncate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unused_element</span><span class="p">,</span> <span class="n">unused_restriction</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_sequence_backlog_bytes</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">offset_range</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">'''</span>
+<span class="sd">  Calculates size of the output that the sequence should have emitted up to now.</span>
+<span class="sd">  '''</span>
+  <span class="n">start</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">interval</span> <span class="o">=</span> <span class="n">element</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">micros</span> <span class="o">/</span> <span class="mi">1000000</span>
+  <span class="k">assert</span> <span class="n">interval</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+  <span class="n">now_index</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">now</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">/</span> <span class="n">interval</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">now_index</span> <span class="o">&lt;</span> <span class="n">offset_range</span><span class="o">.</span><span class="n">start</span><span class="p">:</span>
+    <span class="k">return</span> <span class="mi">0</span>
+  <span class="c1"># We attempt to be precise as some runners scale based upon bytes and</span>
+  <span class="c1"># output byte throughput.</span>
+  <span class="k">return</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">offset_range</span><span class="o">.</span><span class="n">stop</span><span class="p">,</span> <span class="n">now_index</span><span class="p">)</span> <span class="o">-</span> <span class="n">offset_range</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ImpulseSeqGenDoFn">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenDoFn">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImpulseSeqGenDoFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">'''</span>
+<span class="sd">  ImpulseSeqGenDoFn fn receives tuple elements with three parts:</span>
+
+<span class="sd">  * first_timestamp = The timestamp of the first element to be generated</span>
+<span class="sd">    (inclusive).</span>
+<span class="sd">  * last_timestamp = The timestamp marking the end of the generation period</span>
+<span class="sd">    (exclusive). No elements will be generated at or after this time.</span>
+<span class="sd">  * fire_interval = how often to fire an element.</span>
+
+<span class="sd">  For each input element received, ImpulseSeqGenDoFn fn will start</span>
+<span class="sd">  generating output elements in following pattern:</span>
+
+<span class="sd">  * if element timestamp is less than current runtime then output element.</span>
+<span class="sd">  * if element timestamp is greater than current runtime, wait until next</span>
+<span class="sd">    element timestamp.</span>
+
+<span class="sd">  ImpulseSeqGenDoFn can't guarantee that each element is output at exact time.</span>
+<span class="sd">  ImpulseSeqGenDoFn guarantees that elements would not be output prior to</span>
+<span class="sd">  given runtime timestamp.</span>
+
+<span class="sd">  The output mode of the DoFn is based on the input `data`:</span>
+
+<span class="sd">    - **None**: If `data` is None (by default), the output element will be the</span>
+<span class="sd">      timestamp.</span>
+<span class="sd">    - **Non-Timestamped Data**: If `data` is a sequence of arbitrary values</span>
+<span class="sd">      (e.g., `[v1, v2, ...]`), the DoFn will assign a timestamp to each</span>
+<span class="sd">      emitted element.</span>
+<span class="sd">    - **Pre-Timestamped Data**: If `data` is a sequence of tuples, where each</span>
+<span class="sd">      tuple is `(apache_beam.utils.timestamp.Timestamp, value)`, the DoFn</span>
+<span class="sd">      will use the provided timestamp for the emitted element.</span>
+
+<span class="sd">  See the parameter description of `PeriodicImpulse` for more information.</span>
+<span class="sd">  '''</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_is_pre_timestamped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> \
+        <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> \
+        <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">current_output_timestamp</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">TimestampedValue</span><span class="p">(</span>
+          <span class="n">current_output_timestamp</span><span class="p">,</span> <span class="n">current_output_timestamp</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pre_timestamped</span><span class="p">:</span>
+      <span class="n">event_time</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">event_time</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="n">index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span><span class="p">]</span>
+      <span class="k">return</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">current_output_timestamp</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ImpulseSeqGenDoFn.process">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.ImpulseSeqGenDoFn.process">[docs]</a>
+  <span class="nd">@beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">unbounded_per_element</span><span class="p">()</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">element</span><span class="p">,</span>
+      <span class="n">restriction_tracker</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">RestrictionParam</span><span class="p">(</span>
+          <span class="n">ImpulseSeqGenRestrictionProvider</span><span class="p">()),</span>
+      <span class="n">watermark_estimator</span><span class="o">=</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="o">.</span><span class="n">WatermarkEstimatorParam</span><span class="p">(</span>
+          <span class="n">ManualWatermarkEstimator</span><span class="o">.</span><span class="n">default_provider</span><span class="p">())):</span>
+<span class="w">    </span><span class="sd">'''</span>
+<span class="sd">    :param element: (start_timestamp, end_timestamp, interval)</span>
+<span class="sd">    :param restriction_tracker:</span>
+<span class="sd">    :return: yields elements at processing real-time intervals with value of</span>
+<span class="sd">      target output timestamp for the element.</span>
+<span class="sd">    '''</span>
+    <span class="n">start</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">interval</span> <span class="o">=</span> <span class="n">element</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">Timestamp</span><span class="p">):</span>
+      <span class="n">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">micros</span> <span class="o">/</span> <span class="mi">1000000</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">restriction_tracker</span><span class="p">,</span> <span class="n">sdf_utils</span><span class="o">.</span><span class="n">RestrictionTrackerView</span><span class="p">)</span>
+
+    <span class="n">current_output_index</span> <span class="o">=</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">current_restriction</span><span class="p">()</span><span class="o">.</span><span class="n">start</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+      <span class="n">current_output_timestamp</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">interval</span> <span class="o">*</span> <span class="n">current_output_index</span>
+
+      <span class="k">if</span> <span class="n">current_output_timestamp</span> <span class="o">&gt;</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">():</span>
+        <span class="c1"># we are too ahead of time, let's wait.</span>
+        <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">defer_remainder</span><span class="p">(</span>
+            <span class="n">timestamp</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">(</span><span class="n">current_output_timestamp</span><span class="p">))</span>
+        <span class="k">break</span>
+
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">restriction_tracker</span><span class="o">.</span><span class="n">try_claim</span><span class="p">(</span><span class="n">current_output_index</span><span class="p">):</span>
+        <span class="c1"># nothing to claim, just stop</span>
+        <span class="k">break</span>
+
+      <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_output</span><span class="p">(</span><span class="n">current_output_index</span><span class="p">,</span> <span class="n">current_output_timestamp</span><span class="p">)</span>
+
+      <span class="n">current_watermark</span> <span class="o">=</span> <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">current_watermark</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">current_watermark</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">output</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">&gt;</span> <span class="n">current_watermark</span><span class="p">:</span>
+        <span class="c1"># ensure watermark is monotonic</span>
+        <span class="n">watermark_estimator</span><span class="o">.</span><span class="n">set_watermark</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">timestamp</span><span class="p">)</span>
+
+      <span class="k">yield</span> <span class="n">output</span>
+
+      <span class="n">current_output_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
+</div>
+
+
+    <span class="c1"># Don't yield any values here so that the generator</span>
+    <span class="c1"># raises StopIteration when we break out of the while loop.</span>
+
+
+<div class="viewcode-block" id="PeriodicSequence">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.PeriodicSequence">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PeriodicSequence</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">'''</span>
+<span class="sd">  PeriodicSequence transform receives tuple elements with three parts:</span>
+
+<span class="sd">  * first_timestamp = first timestamp to output element for.</span>
+<span class="sd">  * last_timestamp = last timestamp/time to output element for.</span>
+<span class="sd">  * fire_interval = how often to fire an element.</span>
+
+<span class="sd">  For each input element received, PeriodicSequence transform will start</span>
+<span class="sd">  generating output elements in following pattern:</span>
+
+<span class="sd">  * if element timestamp is less than current runtime then output element.</span>
+<span class="sd">  * if element timestamp is greater than current runtime, wait until next</span>
+<span class="sd">    element timestamp.</span>
+
+<span class="sd">  PeriodicSequence can't guarantee that each element is output at exact time.</span>
+<span class="sd">  PeriodicSequence guarantees that elements would not be output prior to given</span>
+<span class="sd">  runtime timestamp.</span>
+<span class="sd">  The PCollection generated by PeriodicSequence is unbounded.</span>
+<span class="sd">  '''</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="PeriodicSequence.expand">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.PeriodicSequence.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">pcoll</span>
+        <span class="o">|</span> <span class="s1">'GenSequence'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">ImpulseSeqGenDoFn</span><span class="p">())</span>
+        <span class="o">|</span> <span class="s1">'MapToTimestamped'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tt</span><span class="p">:</span> <span class="n">TimestampedValue</span><span class="p">(</span><span class="n">tt</span><span class="p">,</span> <span class="n">tt</span><span class="p">)))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RebaseMode">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.RebaseMode">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RebaseMode</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">'''Controls how the start and stop timestamps are rebased to execution time.</span>
+
+<span class="sd">  Attributes:</span>
+<span class="sd">    REBASE_NONE: Timestamps are not changed.</span>
+<span class="sd">    REBASE_ALL: Both start and stop timestamps are rebased, preserving the</span>
+<span class="sd">      original duration.</span>
+<span class="sd">    REBASE_START: Only the start timestamp is rebased; the stop timestamp</span>
+<span class="sd">      is unchanged.</span>
+<span class="sd">  '''</span>
+  <span class="n">REBASE_NONE</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">REBASE_ALL</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="n">REBASE_START</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+
+<div class="viewcode-block" id="PeriodicImpulse">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.PeriodicImpulse">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PeriodicImpulse</span><span class="p">(</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">'''</span>
+<span class="sd">  PeriodicImpulse transform generates an infinite sequence of elements with</span>
+<span class="sd">  given runtime interval.</span>
+
+<span class="sd">  PeriodicImpulse transform behaves same as {@link PeriodicSequence} transform,</span>
+<span class="sd">  but can be used as first transform in pipeline.</span>
+<span class="sd">  The PCollection generated by PeriodicImpulse is unbounded.</span>
+<span class="sd">  '''</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_validate_and_adjust_duration</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="c1"># The total time we need to impulse all the data.</span>
+    <span class="n">data_duration</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">Duration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+
+    <span class="n">is_pre_timestamped</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span> \
+      <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">Timestamp</span><span class="p">)</span>
+
+    <span class="n">start_ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_ts</span><span class="p">)</span>
+    <span class="n">stop_ts</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">stop_ts</span> <span class="o">==</span> <span class="n">MAX_TIMESTAMP</span><span class="p">:</span>
+      <span class="c1"># When the stop timestamp is unbounded (MAX_TIMESTAMP), set it to the</span>
+      <span class="c1"># data's actual end time plus an extra fire interval, because the</span>
+      <span class="c1"># impulse duration's upper bound is exclusive.</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span> <span class="o">=</span> <span class="n">start_ts</span> <span class="o">+</span> <span class="n">data_duration</span> <span class="o">+</span> <span class="n">Duration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
+      <span class="n">stop_ts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span>
+
+    <span class="c1"># The total time for the impulse signal which occurs in [start, end).</span>
+    <span class="n">impulse_duration</span> <span class="o">=</span> <span class="n">stop_ts</span> <span class="o">-</span> <span class="n">start_ts</span>
+    <span class="k">if</span> <span class="n">data_duration</span> <span class="o">+</span> <span class="n">Duration</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">impulse_duration</span><span class="p">:</span>
+      <span class="c1"># We don't have enough data for the impulse.</span>
+      <span class="c1"># If we can fit at least one more data point in the impulse duration,</span>
+      <span class="c1"># then we will be in the repeat mode.</span>
+      <span class="n">message</span> <span class="o">=</span> <span class="s1">'The number of elements in the provided pre-timestamped '</span> \
+        <span class="s1">'data sequence is not enough to span the full impulse duration. '</span> \
+        <span class="sa">f</span><span class="s1">'Expected duration: </span><span class="si">{</span><span class="n">impulse_duration</span><span class="si">}</span><span class="s1">, '</span> \
+        <span class="sa">f</span><span class="s1">'actual data duration: </span><span class="si">{</span><span class="n">data_duration</span><span class="si">}</span><span class="s1">.'</span>
+
+      <span class="k">if</span> <span class="n">is_pre_timestamped</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s1"> Please either provide more data or decrease '</span>
+            <span class="s1">'`stop_timestamp`.'</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s1"> As a result, the data sequence will be repeated to '</span>
+            <span class="s1">'generate elements for the entire duration.'</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">start_timestamp</span><span class="p">:</span> <span class="n">TimestampTypes</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span>
+      <span class="n">stop_timestamp</span><span class="p">:</span> <span class="n">TimestampTypes</span> <span class="o">=</span> <span class="n">MAX_TIMESTAMP</span><span class="p">,</span>
+      <span class="n">fire_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">360.0</span><span class="p">,</span>
+      <span class="n">apply_windowing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+      <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">rebase</span><span class="p">:</span> <span class="n">RebaseMode</span> <span class="o">=</span> <span class="n">RebaseMode</span><span class="o">.</span><span class="n">REBASE_NONE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">'''</span>
+<span class="sd">    :param start_timestamp: Timestamp for first element.</span>
+<span class="sd">    :param stop_timestamp: Timestamp at or after which no elements will be</span>
+<span class="sd">      output.</span>
+<span class="sd">    :param fire_interval: Interval in seconds at which to output elements.</span>
+<span class="sd">    :param apply_windowing: Whether each element should be assigned to</span>
+<span class="sd">      individual window. If false, all elements will reside in global window.</span>
+<span class="sd">    :param data: A sequence of elements to emit. The behavior depends on the</span>
+<span class="sd">      content:</span>
+
+<span class="sd">      - **None (default):** The transform emits the event timestamps as</span>
+<span class="sd">        the element values, starting from start_timestamp and incrementing by</span>
+<span class="sd">        `fire_interval` up to the `stop_timestamp` (exclusive)</span>
+<span class="sd">      - **Sequence of raw values (e.g., `['a', 'b']`)**: The transform emits</span>
+<span class="sd">        each value in the sequence, assigning it an event timestamp that is</span>
+<span class="sd">        calculated in the same manner as the default scenario. The sequence</span>
+<span class="sd">        is repeated if the impulse duration requires more elements than</span>
+<span class="sd">        are in the sequence (a warning will be given in this case).</span>
+<span class="sd">      - **Sequence of pre-timestamped tuples (e.g.,</span>
+<span class="sd">        `[(t1, v1), (t2, v2)]`)**: The transform emits each value with its</span>
+<span class="sd">        explicitly provided event time. The format must be</span>
+<span class="sd">        `(apache_beam.utils.timestamp.Timestamp, value)`. The provided</span>
+<span class="sd">        timestamps are used directly, overriding the calculated ones.</span>
+<span class="sd">        Note that the elements in the sequence is NOT required to be ordered</span>
+<span class="sd">        by event time; an element with a timestamp earlier than a preceding one</span>
+<span class="sd">        will be treated as a potential late event.</span>
+<span class="sd">        **Important**: In this mode, the number of elements in `data` must be</span>
+<span class="sd">        sufficient to cover the duration defined by `start_timestamp`,</span>
+<span class="sd">        `stop_timestamp`, and `fire_interval`; otherwise, a `ValueError` is</span>
+<span class="sd">        raised.</span>
+
+<span class="sd">    :param rebase: Controls how the start and stop timestamps are rebased to</span>
+<span class="sd">      execution time. See `RebaseMode` for more details. Defaults to</span>
+<span class="sd">      `REBASE_NONE`.</span>
+<span class="sd">    '''</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_ts</span> <span class="o">=</span> <span class="n">start_timestamp</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span> <span class="o">=</span> <span class="n">stop_timestamp</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">fire_interval</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">apply_windowing</span> <span class="o">=</span> <span class="n">apply_windowing</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">rebase</span> <span class="o">=</span> <span class="n">rebase</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_validate_and_adjust_duration</span><span class="p">()</span>
+
+<div class="viewcode-block" id="PeriodicImpulse.expand">
+<a class="viewcode-back" href="../../../apache_beam.transforms.periodicsequence.html#apache_beam.transforms.periodicsequence.PeriodicImpulse.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbegin</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebase</span> <span class="o">==</span> <span class="n">RebaseMode</span><span class="o">.</span><span class="n">REBASE_ALL</span><span class="p">:</span>
+      <span class="n">duration</span> <span class="o">=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span><span class="p">)</span> <span class="o">-</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">of</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_ts</span><span class="p">)</span>
+      <span class="n">impulse_element</span> <span class="o">=</span> <span class="n">pbegin</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Impulse</span><span class="p">()</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+          <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="p">[</span><span class="n">now</span> <span class="o">:=</span> <span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="n">now</span> <span class="o">+</span> <span class="n">duration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rebase</span> <span class="o">==</span> <span class="n">RebaseMode</span><span class="o">.</span><span class="n">REBASE_START</span><span class="p">:</span>
+      <span class="n">impulse_element</span> <span class="o">=</span> <span class="n">pbegin</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Impulse</span><span class="p">()</span> <span class="o">|</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span>
+          <span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="p">[</span><span class="n">Timestamp</span><span class="o">.</span><span class="n">now</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">impulse_element</span> <span class="o">=</span> <span class="n">pbegin</span> <span class="o">|</span> <span class="s1">'ImpulseElement'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Create</span><span class="p">(</span>
+          <span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stop_ts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)])</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">impulse_element</span>
+        <span class="o">|</span> <span class="s1">'GenSequence'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">ImpulseSeqGenDoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span>
+      <span class="c1"># This step is actually an identity transform, because the Timestamped</span>
+      <span class="c1"># values have already been generated in `ImpulseSeqGenDoFn`.</span>
+      <span class="c1"># We keep this step here to prevent the current PeriodicImpulse from</span>
+      <span class="c1"># breaking the compatibility.</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">result</span> <span class="o">|</span> <span class="s1">'MapToTimestamped'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">tt</span><span class="p">:</span> <span class="n">tt</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_windowing</span><span class="p">:</span>
+      <span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="o">|</span> <span class="s1">'ApplyWindowing'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">WindowInto</span><span class="p">(</span>
+          <span class="n">window</span><span class="o">.</span><span class="n">FixedWindows</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

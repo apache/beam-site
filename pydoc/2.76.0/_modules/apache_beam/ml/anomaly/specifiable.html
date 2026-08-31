@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.anomaly.specifiable &mdash; Apache Beam 2.76.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=f68839fd"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.anomaly.specifiable</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.anomaly.specifiable</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""</span>
+<span class="sd">A module that provides utilities to turn a class into a Specifiable subclass.</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">overload</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">runtime_checkable</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Self</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Spec"</span><span class="p">,</span> <span class="s2">"Specifiable"</span><span class="p">,</span> <span class="s2">"specifiable"</span><span class="p">]</span>
+
+<span class="n">_FALLBACK_SUBSPACE</span> <span class="o">=</span> <span class="s2">"*"</span>
+
+<span class="n">_ACCEPTED_SUBSPACES</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"EnsembleAnomalyDetector"</span><span class="p">,</span>
+    <span class="s2">"AnomalyDetector"</span><span class="p">,</span>
+    <span class="s2">"BaseTracker"</span><span class="p">,</span>
+    <span class="s2">"ThresholdFn"</span><span class="p">,</span>
+    <span class="s2">"AggregationFn"</span><span class="p">,</span>
+    <span class="n">_FALLBACK_SUBSPACE</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="c1">#: A nested dictionary for efficient lookup of Specifiable subclasses.</span>
+<span class="c1">#: Structure: `_KNOWN_SPECIFIABLE[subspace][spec_type]`, where `subspace` is one</span>
+<span class="c1">#: of the accepted subspaces that the class belongs to and `spec_type` is the</span>
+<span class="c1">#: class name by default. Users can also specify a different value for</span>
+<span class="c1">#: `spec_type` when applying the `specifiable` decorator to an existing class.</span>
+<span class="n">_KNOWN_SPECIFIABLE</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'T'</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="nb">type</span><span class="p">)</span>
+<span class="n">BUILTIN_TYPES_IN_SPEC</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">complex</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_class_to_subspace</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""</span>
+<span class="sd">  Search the class hierarchy to find the subspace: the closest ancestor class in</span>
+<span class="sd">  the class's method resolution order (MRO) whose name is found in the accepted</span>
+<span class="sd">  subspace list. This is usually called when registering a new specifiable</span>
+<span class="sd">  class.</span>
+<span class="sd">  """</span>
+  <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">"mro"</span><span class="p">):</span>
+    <span class="c1"># some classes do not have "mro", such as functions.</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">mro</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="vm">__name__</span> <span class="ow">in</span> <span class="n">_ACCEPTED_SUBSPACES</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="vm">__name__</span>
+
+  <span class="k">return</span> <span class="n">_FALLBACK_SUBSPACE</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_spec_type_to_subspace</span><span class="p">(</span><span class="n">spec_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""</span>
+<span class="sd">  Look for the subspace for a spec type. This is usually called to retrieve</span>
+<span class="sd">  the subspace of a registered specifiable class.</span>
+<span class="sd">  """</span>
+  <span class="k">for</span> <span class="n">subspace</span> <span class="ow">in</span> <span class="n">_ACCEPTED_SUBSPACES</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">spec_type</span> <span class="ow">in</span> <span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">]:</span>
+      <span class="k">return</span> <span class="n">subspace</span>
+
+  <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"subspace for </span><span class="si">{</span><span class="n">spec_type</span><span class="si">}</span><span class="s2"> not found."</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Spec">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Spec">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Spec</span><span class="p">():</span>
+<span class="w">  </span><span class="sd">"""</span>
+<span class="sd">  Dataclass for storing specifications of specifiable objects.</span>
+<span class="sd">  Objects can be initialized using the data in their corresponding spec.</span>
+<span class="sd">  """</span>
+  <span class="c1">#: A string indicating the concrete `Specifiable` class</span>
+  <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="c1">#: An optional dictionary of keyword arguments for the `__init__` method of</span>
+  <span class="c1">#: the class. If None, when we materialize this Spec, we only return the</span>
+  <span class="c1">#: class without instantiate any objects from it.</span>
+  <span class="n">config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_specifiable_from_spec_helper</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_run_init</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Spec</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_run_init</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_specifiable_from_spec_helper</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">_run_init</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+
+  <span class="c1"># TODO: support spec treatment for more types</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">BUILTIN_TYPES_IN_SPEC</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="s2">"Type </span><span class="si">%s</span><span class="s2"> is not a recognized supported type for the "</span>
+        <span class="s2">"specification. It will be included without conversion."</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="n">v</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_specifiable_to_spec_helper</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">Specifiable</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">to_spec</span><span class="p">()</span>
+
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">_specifiable_to_spec_helper</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">v</span><span class="p">]</span>
+
+  <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s2">"spec_type"</span><span class="p">):</span>
+      <span class="n">_register</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">inject_spec_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Spec</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">_get_default_spec_type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s2">"spec_type"</span><span class="p">):</span>
+      <span class="n">_register</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">inject_spec_type</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Spec</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">_get_default_spec_type</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">config</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+  <span class="c1"># TODO: support spec treatment for more types</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">BUILTIN_TYPES_IN_SPEC</span><span class="p">):</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+        <span class="s2">"Type </span><span class="si">%s</span><span class="s2"> is not a recognized supported type for the "</span>
+        <span class="s2">"specification. It will be included without conversion."</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="n">v</span>
+
+
+<div class="viewcode-block" id="Specifiable">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable">[docs]</a>
+<span class="nd">@runtime_checkable</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Specifiable</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Protocol that a specifiable class needs to implement."""</span>
+<div class="viewcode-block" id="Specifiable.spec_type">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable.spec_type">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">spec_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Specifiable.from_spec">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable.from_spec">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">from_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span>
+                <span class="n">spec</span><span class="p">:</span> <span class="n">Spec</span><span class="p">,</span>
+                <span class="n">_run_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Self</span><span class="p">,</span> <span class="nb">type</span><span class="p">[</span><span class="n">Self</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Generate a `Specifiable` subclass object based on a spec.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      spec: the specification of a `Specifiable` subclass object</span>
+<span class="sd">      _run_init: whether to call `__init__` or not for the initial instantiation</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Self: the `Specifiable` subclass object</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spec type not found in </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="n">subspace</span> <span class="o">=</span> <span class="n">_spec_type_to_subspace</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+    <span class="n">subclass</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">Self</span><span class="p">]</span> <span class="o">=</span> <span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">subclass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown spec type '</span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">' in </span><span class="si">{</span><span class="n">spec</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">config</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="c1"># when functions or classes are used as arguments, we won't try to</span>
+      <span class="c1"># create an instance.</span>
+      <span class="k">return</span> <span class="n">subclass</span>
+
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">_specifiable_from_spec_helper</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_run_init</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">_run_init</span><span class="p">:</span>
+      <span class="n">kwargs</span><span class="p">[</span><span class="s2">"_run_init"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">subclass</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Specifiable.to_spec">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable.to_spec">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">to_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Spec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Generate a spec from a `Specifiable` subclass object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Spec: The specification of the instance.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="s1">'spec_type'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' not registered as Specifiable. "</span>
+          <span class="sa">f</span><span class="s2">"Decorate (</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">) with @specifiable"</span><span class="p">)</span>
+
+    <span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">_specifiable_to_spec_helper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">Spec</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">spec_type</span><span class="p">(),</span> <span class="n">config</span><span class="o">=</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Specifiable.run_original_init">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable.run_original_init">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">run_original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Invoke the original __init__ method with original keyword arguments"""</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="Specifiable.unspecifiable">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.Specifiable.unspecifiable">[docs]</a>
+  <span class="nd">@classmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">unspecifiable</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Resume the class structure prior to specifiable"""</span>
+    <span class="k">pass</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_default_spec_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+  <span class="n">spec_type</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+  <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"&lt;lambda&gt;"</span><span class="p">:</span>
+    <span class="c1"># for lambda functions, we need to include more information to distinguish</span>
+    <span class="c1"># among them</span>
+    <span class="n">spec_type</span> <span class="o">=</span> <span class="s1">'&lt;lambda at </span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&gt;'</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_filename</span><span class="p">),</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_firstlineno</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">spec_type</span>
+
+
+<span class="c1"># Register a `Specifiable` subclass in `KNOWN_SPECIFIABLE`</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">spec_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inject_spec_type</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+  <span class="k">assert</span> <span class="n">spec_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">inject_spec_type</span><span class="p">,</span> \
+      <span class="s2">"need to inject spec_type to class if spec_type is not None"</span>
+  <span class="k">if</span> <span class="n">spec_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># Use default spec_type for a class if users do not specify one.</span>
+    <span class="n">spec_type</span> <span class="o">=</span> <span class="n">_get_default_spec_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+
+  <span class="n">subspace</span> <span class="o">=</span> <span class="n">_class_to_subspace</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">spec_type</span> <span class="ow">in</span> <span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">][</span><span class="n">spec_type</span><span class="p">]:</span>
+      <span class="c1"># only raise exception if we register the same spec type with a different</span>
+      <span class="c1"># class</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">spec_type</span><span class="si">}</span><span class="s2"> is already registered for "</span>
+          <span class="sa">f</span><span class="s2">"specifiable class </span><span class="si">{</span><span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">][</span><span class="n">spec_type</span><span class="p">]</span><span class="si">}</span><span class="s2">. "</span>
+          <span class="s2">"Please specify a different spec_type by @specifiable(spec_type=...)."</span>
+      <span class="p">)</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">_KNOWN_SPECIFIABLE</span><span class="p">[</span><span class="n">subspace</span><span class="p">][</span><span class="n">spec_type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">cls</span>
+
+  <span class="k">if</span> <span class="n">inject_spec_type</span><span class="p">:</span>
+    <span class="nb">setattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s1">'__spec_type'</span><span class="p">,</span> <span class="n">spec_type</span><span class="p">)</span>
+    <span class="c1"># cls.__spec_type = spec_type</span>
+
+
+<span class="c1"># Keep a copy of arguments that are used to call the `__init__` method when the</span>
+<span class="c1"># object is initialized.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_init_kwargs</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="n">init_method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+  <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+      <span class="nb">zip</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="n">init_method</span><span class="p">)</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="n">args</span><span class="p">))</span>
+  <span class="k">del</span> <span class="n">params</span><span class="p">[</span><span class="s1">'self'</span><span class="p">]</span>
+  <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">params</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">specifiable</span><span class="p">(</span>
+    <span class="n">my_cls</span><span class="p">:</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">spec_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">on_demand_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">just_in_time_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]:</span>
+  <span class="k">pass</span>
+
+
+<span class="nd">@overload</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">specifiable</span><span class="p">(</span>
+    <span class="n">my_cls</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">spec_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">on_demand_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">just_in_time_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+  <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="specifiable">
+<a class="viewcode-back" href="../../../../apache_beam.ml.anomaly.specifiable.html#apache_beam.ml.anomaly.specifiable.specifiable">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">specifiable</span><span class="p">(</span>
+    <span class="n">my_cls</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="o">/</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">spec_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">on_demand_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">just_in_time_init</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">T</span><span class="p">],</span> <span class="n">T</span><span class="p">]]:</span>
+<span class="w">  </span><span class="sd">"""A decorator that turns a class into a `Specifiable` subclass by</span>
+<span class="sd">  implementing the `Specifiable` protocol.</span>
+
+<span class="sd">  To use the decorator, simply place `@specifiable` before the class</span>
+<span class="sd">  definition::</span>
+
+<span class="sd">    @specifiable</span>
+<span class="sd">    class Foo():</span>
+<span class="sd">      ...</span>
+
+<span class="sd">  For finer control, the decorator can accept arguments::</span>
+
+<span class="sd">    @specifiable(spec_type="My Class", on_demand_init=False)</span>
+<span class="sd">    class Bar():</span>
+<span class="sd">      ...</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    spec_type: The value of the `type` field in the Spec of a `Specifiable`</span>
+<span class="sd">      subclass. If not provided, the class name is used. This argument is useful</span>
+<span class="sd">      when registering multiple classes with the same base name; in such cases,</span>
+<span class="sd">      one can specify `spec_type` to different values to resolve conflict.</span>
+<span class="sd">    on_demand_init: If True, allow on-demand object initialization. The original</span>
+<span class="sd">      `__init__` method will be called when `_run_init=True` is passed to the</span>
+<span class="sd">      object's initialization function.</span>
+<span class="sd">    just_in_time_init: If True, allow just-in-time object initialization. The</span>
+<span class="sd">      original `__init__` method will be called when the first time an attribute</span>
+<span class="sd">      is accessed.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">_wrapper</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_in_init</span> <span class="o">=</span> <span class="kc">False</span>
+
+      <span class="n">run_init_request</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="k">if</span> <span class="s2">"_run_init"</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">run_init_request</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"_run_init"</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">"_run_init"</span><span class="p">]</span>
+
+      <span class="k">if</span> <span class="s1">'init_kwargs'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="c1"># If it is a child specifiable (i.e.g init_kwargs not set), we determine</span>
+        <span class="c1"># whether to skip the original __init__ call based on options:</span>
+        <span class="c1"># on_demand_init, just_in_time_init and _run_init.</span>
+        <span class="c1"># Otherwise (i.e. init_kwargs is set), we always call the original</span>
+        <span class="c1"># __init__ method for ancestor specifiable.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span> <span class="o">=</span> <span class="n">_get_init_kwargs</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">original_init</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Record init params in </span><span class="si">%s</span><span class="s2">.new_init"</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">on_demand_init</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">run_init_request</span><span class="p">)</span> <span class="ow">or</span> \
+            <span class="p">(</span><span class="ow">not</span> <span class="n">on_demand_init</span> <span class="ow">and</span> <span class="n">just_in_time_init</span><span class="p">):</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Skip original </span><span class="si">%s</span><span class="s2">.__init__"</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+          <span class="k">return</span>
+
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Call original </span><span class="si">%s</span><span class="s2">.__init__ in new_init"</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+
+      <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">      </span><span class="sd">"""Execute the original `__init__` method with its saved arguments.</span>
+
+<span class="sd">      For instances of the `Specifiable` class, initialization is deferred</span>
+<span class="sd">      (lazy initialization). This function forces the execution of the</span>
+<span class="sd">      original `__init__` method using the arguments captured during</span>
+<span class="sd">      the object's initial instantiation.</span>
+<span class="sd">      """</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_in_init</span> <span class="o">=</span> <span class="kc">True</span>
+      <span class="n">original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_in_init</span> <span class="o">=</span> <span class="kc">False</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># __getattr__ is only called when an attribute is not found in the object</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">new_getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+          <span class="s2">"Trying to access </span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">, but it is not found."</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+      <span class="c1"># Fix the infinite loop issue when pickling a Specifiable</span>
+      <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"_in_init"</span><span class="p">,</span> <span class="s2">"__getstate__"</span><span class="p">]</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' object has no attribute '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+
+      <span class="c1"># If the attribute is not found during or after initialization, then</span>
+      <span class="c1"># it is a missing attribute.</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_init</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">' object has no attribute '</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+
+      <span class="c1"># Here, we know the object is not initialized, then we will call original</span>
+      <span class="c1"># init method.</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Call original </span><span class="si">%s</span><span class="s2">.__init__ in new_getattr"</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+      <span class="n">run_original_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+      <span class="c1"># __getattribute__ is call for every attribute regardless whether it is</span>
+      <span class="c1"># present in the object. In this case, we don't cause an infinite loop</span>
+      <span class="c1"># if the attribute does not exist.</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+          <span class="s2">"Call original </span><span class="si">%s</span><span class="s2">.__getattribute__(</span><span class="si">%s</span><span class="s2">) in new_getattr"</span><span class="p">,</span>
+          <span class="n">class_name</span><span class="p">,</span>
+          <span class="n">name</span><span class="p">)</span>
+      <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__getattribute__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">spec_type_func</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+      <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec_type_attr_name</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">unspecifiable</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec_type_attr_name</span><span class="p">)</span>
+      <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="n">original_init</span>
+      <span class="k">if</span> <span class="n">just_in_time_init</span><span class="p">:</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'__getattr__'</span><span class="p">)</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'spec_type'</span><span class="p">)</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'run_original_init'</span><span class="p">)</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'to_spec'</span><span class="p">)</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'from_spec'</span><span class="p">)</span>
+      <span class="nb">delattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">'unspecifiable'</span><span class="p">)</span>
+
+    <span class="n">spec_type_attr_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="s2">"__spec_type"</span>
+
+    <span class="c1"># the class is registered</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec_type_attr_name</span><span class="p">):</span>
+      <span class="k">return</span> <span class="bp">cls</span>
+
+    <span class="c1"># start of the function body of _wrapper</span>
+    <span class="n">_register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec_type</span><span class="p">)</span>
+
+    <span class="n">class_name</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
+    <span class="n">original_init</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span>  <span class="c1"># type: ignore[misc]</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__init__</span> <span class="o">=</span> <span class="n">new_init</span>  <span class="c1"># type: ignore[misc]</span>
+    <span class="k">if</span> <span class="n">just_in_time_init</span><span class="p">:</span>
+      <span class="bp">cls</span><span class="o">.</span><span class="fm">__getattr__</span> <span class="o">=</span> <span class="n">new_getattr</span>
+
+    <span class="bp">cls</span><span class="o">.</span><span class="n">spec_type</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">spec_type_func</span><span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">run_original_init</span> <span class="o">=</span> <span class="n">run_original_init</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">to_spec</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">to_spec</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">from_spec</span> <span class="o">=</span> <span class="n">Specifiable</span><span class="o">.</span><span class="n">from_spec</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="n">unspecifiable</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">unspecifiable</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="bp">cls</span>
+    <span class="c1"># end of the function body of _wrapper</span>
+
+  <span class="c1"># When this decorator is called with arguments, i.e..</span>
+  <span class="c1"># "@specifiable(arg1=...,arg2=...)", it is equivalent to assigning</span>
+  <span class="c1"># specifiable(arg1=..., arg2=...) to a variable, say decor_func, and then</span>
+  <span class="c1"># calling "@decor_func".</span>
+  <span class="k">if</span> <span class="n">my_cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_wrapper</span>
+
+  <span class="c1"># When this decorator is called without an argument, i.e. "@specifiable",</span>
+  <span class="c1"># we return the augmented class.</span>
+  <span class="k">return</span> <span class="n">_wrapper</span><span class="p">(</span><span class="n">my_cls</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
