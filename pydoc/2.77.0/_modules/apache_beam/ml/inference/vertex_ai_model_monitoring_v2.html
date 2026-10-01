@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.inference.vertex_ai_model_monitoring_v2 &mdash; Apache Beam 2.77.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=875d73a4"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.inference.vertex_ai_model_monitoring_v2</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.inference.vertex_ai_model_monitoring_v2</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""A PTransform for integrating Vertex AI Model Monitoring v2 with Apache Beam RunInference.</span>
+
+<span class="sd">Vertex AI Model Monitoring v2 provides drift and skew detection on arbitrary</span>
+<span class="sd">models by evaluating input features, predictions, and attribution stats logged</span>
+<span class="sd">to BigQuery against a training baseline.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.gcp.bigquery</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.io.gcp.bigquery</span><span class="w"> </span><span class="kn">import</span> <span class="n">WriteToBigQuery</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PredictionResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.options.pipeline_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaitOn</span>
+
+<span class="k">try</span><span class="p">:</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">google.api_core</span><span class="w"> </span><span class="kn">import</span> <span class="n">exceptions</span>
+  <span class="kn">from</span><span class="w"> </span><span class="nn">vertexai.resources.preview</span><span class="w"> </span><span class="kn">import</span> <span class="n">ml_monitoring</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="n">exceptions</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="n">ml_monitoring</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'VertexModelMonitoringV2'</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_V2JobManager</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Base DoFn for managing Vertex AI Model Monitoring v2 lifecycle."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_monitoring_schema</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">training_dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">tabular_objective_spec</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">model_monitor_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">explanation_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">notification_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span> <span class="o">=</span> <span class="n">project_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_version_id</span> <span class="o">=</span> <span class="n">model_version_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_monitoring_schema</span> <span class="o">=</span> <span class="n">model_monitoring_schema</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span> <span class="o">=</span> <span class="n">training_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span> <span class="o">=</span> <span class="n">tabular_objective_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span> <span class="o">=</span> <span class="n">model_monitor_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span> <span class="o">=</span> <span class="n">explanation_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span> <span class="o">=</span> <span class="n">output_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span> <span class="o">=</span> <span class="n">notification_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="o">=</span> <span class="n">credentials</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_model_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Creates a ModelMonitor with a deterministic ID or retrieves existing one."""</span>
+    <span class="k">if</span> <span class="n">ml_monitoring</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+          <span class="s1">'Vertex AI Model Monitoring v2 dependencies are not installed.'</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">return</span> <span class="n">ml_monitoring</span><span class="o">.</span><span class="n">model_monitors</span><span class="o">.</span><span class="n">ModelMonitor</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+          <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+          <span class="n">model_version_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version_id</span><span class="p">,</span>
+          <span class="n">training_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span><span class="p">,</span>
+          <span class="n">display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span>
+          <span class="n">model_monitoring_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitoring_schema</span><span class="p">,</span>
+          <span class="n">tabular_objective_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span><span class="p">,</span>
+          <span class="n">output_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span><span class="p">,</span>
+          <span class="n">notification_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span><span class="p">,</span>
+          <span class="n">explanation_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span><span class="p">,</span>
+          <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+          <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+          <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+          <span class="n">model_monitor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span><span class="p">,</span>
+          <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+      <span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">AlreadyExists</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">Conflict</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">Conflict</span><span class="p">):</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s2">"Model monitor '</span><span class="si">%s</span><span class="s2">' already exists; retrieving existing instance."</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ml_monitoring</span><span class="o">.</span><span class="n">model_monitors</span><span class="o">.</span><span class="n">ModelMonitor</span><span class="p">(</span>
+            <span class="n">model_monitor_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span><span class="p">,</span>
+            <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+            <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+            <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+        <span class="p">)</span>
+      <span class="n">monitors</span> <span class="o">=</span> <span class="n">ml_monitoring</span><span class="o">.</span><span class="n">model_monitors</span><span class="o">.</span><span class="n">ModelMonitor</span><span class="o">.</span><span class="n">list</span><span class="p">(</span>
+          <span class="nb">filter</span><span class="o">=</span><span class="sa">f</span><span class="s1">'display_name="</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="si">}</span><span class="s1">"'</span><span class="p">,</span>
+          <span class="n">project</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+          <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+          <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="k">if</span> <span class="n">monitors</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">monitors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">raise</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_V2JobManagerBatch</span><span class="p">(</span><span class="n">_V2JobManager</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""DoFn to manage batch / ad-hoc monitoring jobs."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">target_dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">monitoring_job_display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span> <span class="o">=</span> <span class="n">target_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span> <span class="o">=</span> <span class="n">monitoring_job_display_name</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_model_monitor</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+          <span class="n">target_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span><span class="p">,</span>
+          <span class="n">display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="c1"># Ensure the background job creation RPC completes on Vertex AI before the DoFn finishes.</span>
+      <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">60</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">'_gca_resource'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">break</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="s1">'_gca_resource'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+              <span class="s2">"Model monitoring job '</span><span class="si">%s</span><span class="s2">' submitted but confirmation timed out."</span><span class="p">,</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span><span class="p">,</span>
+          <span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">AlreadyExists</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">Conflict</span><span class="p">):</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s2">"Monitoring job '</span><span class="si">%s</span><span class="s2">' already submitted; skipping duplicate run."</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span><span class="p">,</span>
+      <span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_V2JobManagerStreaming</span><span class="p">(</span><span class="n">_V2JobManager</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""DoFn to manage continuous scheduled monitoring jobs for streaming."""</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">target_dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">schedule_display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">cron</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">monitoring_job_display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+  <span class="p">):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span> <span class="o">=</span> <span class="n">target_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cron</span> <span class="o">=</span> <span class="n">cron</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span> <span class="o">=</span> <span class="n">schedule_display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span> <span class="o">=</span> <span class="n">monitoring_job_display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_model_monitor</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_schedule_already_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Checks if an identical schedule already exists on the model monitor."""</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">existing_schedules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">list_schedules</span><span class="p">()</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">existing_schedules</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+      <span class="k">for</span> <span class="n">schedule</span> <span class="ow">in</span> <span class="n">existing_schedules</span><span class="p">:</span>
+        <span class="n">sched_display_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">schedule</span><span class="p">,</span> <span class="s1">'display_name'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sched_cron</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">schedule</span><span class="p">,</span> <span class="s1">'cron'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">schedule</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+          <span class="n">sched_display_name</span> <span class="o">=</span> <span class="n">schedule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'display_name'</span><span class="p">,</span> <span class="n">sched_display_name</span><span class="p">)</span>
+          <span class="n">sched_cron</span> <span class="o">=</span> <span class="n">schedule</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'cron'</span><span class="p">,</span> <span class="n">sched_cron</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sched_display_name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cron</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">sched_cron</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="p">)):</span>
+          <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+          <span class="s2">"Failed to list existing schedules: </span><span class="si">%s</span><span class="s2">. Attempting creation."</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="c1"># Ignore schedule creation if a corresponding one already exists (e.g.</span>
+    <span class="c1"># multiple streaming pipelines utilize the same model and write to the</span>
+    <span class="c1"># same BigQuery table for monitoring.)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schedule_already_exists</span><span class="p">():</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s2">"Schedule '</span><span class="si">%s</span><span class="s2">'</span><span class="si">%s</span><span class="s2"> already exists; skipping schedule creation."</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span><span class="p">,</span>
+          <span class="sa">f</span><span class="s2">" with cron '</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="si">}</span><span class="s2">'"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cron</span> <span class="k">else</span> <span class="s2">""</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="k">return</span>
+    <span class="c1"># No cron provided, but no schedule exists either so no monitoring jobs</span>
+    <span class="c1"># will be executed.</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+          <span class="s2">"No cron schedule provided for VertexModelMonitoringV2 in "</span>
+          <span class="s2">"streaming pipeline and no pre-existing schedule was found. "</span>
+          <span class="s2">"Provide a cron schedule or create a model monitor manually before "</span>
+          <span class="s2">"pipeline execution."</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">manager</span><span class="o">.</span><span class="n">create_schedule</span><span class="p">(</span>
+          <span class="n">cron</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="p">,</span>
+          <span class="n">target_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span><span class="p">,</span>
+          <span class="n">display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span><span class="p">,</span>
+          <span class="n">model_monitoring_job_display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span><span class="p">,</span>
+          <span class="n">start_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+          <span class="n">end_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
+          <span class="n">tabular_objective_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span><span class="p">,</span>
+          <span class="n">baseline_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span><span class="p">,</span>
+          <span class="n">output_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span><span class="p">,</span>
+          <span class="n">notification_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span><span class="p">,</span>
+          <span class="n">explanation_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span><span class="p">,</span>
+      <span class="p">)</span>
+    <span class="c1"># Catch race condition between two workers trying to create the schedule.</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">exceptions</span><span class="o">.</span><span class="n">AlreadyExists</span><span class="p">,</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">Conflict</span><span class="p">):</span>
+      <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+          <span class="s2">"Schedule '</span><span class="si">%s</span><span class="s2">' already exists; skipping schedule creation."</span><span class="p">,</span>
+          <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span><span class="p">,</span>
+      <span class="p">)</span>
+
+
+<div class="viewcode-block" id="VertexModelMonitoringV2">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vertex_ai_model_monitoring_v2.html#apache_beam.ml.inference.vertex_ai_model_monitoring_v2.VertexModelMonitoringV2">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VertexModelMonitoringV2</span><span class="p">(</span>
+    <span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">[</span><span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">],</span>
+                    <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]]):</span>
+<span class="w">  </span><span class="sd">"""A composite PTransform that exports inference outputs to BigQuery and coordinates</span>
+<span class="sd">  Vertex AI Model Monitoring v2 jobs.</span>
+
+<span class="sd">  In batch pipelines, it blocks until inference records are committed to BigQuery</span>
+<span class="sd">  before triggering an asynchronous ad-hoc monitoring job. In streaming pipelines,</span>
+<span class="sd">  it provisions a recurring monitoring schedule at startup.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">project_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">display_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_version_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">model_monitoring_schema</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">training_dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">tabular_objective_spec</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">target_dataset</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+      <span class="n">unpack_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PredictionResult</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+      <span class="n">bigquery_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">bigquery_schema</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">write_to_bigquery_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">model_monitor_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">cron</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">schedule_display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">monitoring_job_display_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">explanation_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">output_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">notification_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">credentials</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">start_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+  <span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Args:</span>
+<span class="sd">      project_id: GCP project ID where the model monitor is created.</span>
+<span class="sd">      location: GCP location/region (e.g. 'us-central1').</span>
+<span class="sd">      display_name: User-visible display name for the model monitor.</span>
+<span class="sd">      model_name: Resource name or ID of the monitored model.</span>
+<span class="sd">      model_version_id: Version ID of the model.</span>
+<span class="sd">      model_monitoring_schema: Schema specification describing input and output features.</span>
+<span class="sd">      training_dataset: Baseline dataset specification (e.g. Training dataset).</span>
+<span class="sd">      tabular_objective_spec: Drift and skew objective parameters.</span>
+<span class="sd">      target_dataset: Target dataset specification pointing to production BigQuery logs.</span>
+<span class="sd">      unpack_fn: Callable converting PredictionResult into a dictionary matching BigQuery table schema.</span>
+<span class="sd">      bigquery_table: Destination BigQuery table spec in the format 'project:dataset.table' or 'dataset.table'.</span>
+<span class="sd">      bigquery_schema: BigQuery schema definition for the destination table.</span>
+<span class="sd">      write_to_bigquery_kwargs: Optional dictionary of keyword arguments passed to WriteToBigQuery.</span>
+<span class="sd">      model_monitor_id: Optional deterministic resource ID for the model monitor.</span>
+<span class="sd">        If omitted, Vertex AI generates an ID automatically.</span>
+<span class="sd">      cron: Cron expression defining the recurring schedule for streaming pipelines (e.g. '@daily', '0 * * * *').</span>
+<span class="sd">        Required for streaming pipelines.</span>
+<span class="sd">      schedule_display_name: Display name for the streaming monitoring schedule.</span>
+<span class="sd">      monitoring_job_display_name: Display name for the monitoring job.</span>
+<span class="sd">      explanation_spec: Optional feature attribution monitoring specification.</span>
+<span class="sd">      output_spec: Optional output specification for monitoring statistics.</span>
+<span class="sd">      notification_spec: Optional alerting and notification configuration.</span>
+<span class="sd">      credentials: Optional google.auth credentials.</span>
+<span class="sd">      start_time: Optional start timestamp for streaming schedule.</span>
+<span class="sd">      end_time: Optional end timestamp for streaming schedule.</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project_id</span> <span class="o">=</span> <span class="n">project_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">display_name</span> <span class="o">=</span> <span class="n">display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_version_id</span> <span class="o">=</span> <span class="n">model_version_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_monitoring_schema</span> <span class="o">=</span> <span class="n">model_monitoring_schema</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span> <span class="o">=</span> <span class="n">training_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span> <span class="o">=</span> <span class="n">tabular_objective_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span> <span class="o">=</span> <span class="n">target_dataset</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">unpack_fn</span> <span class="o">=</span> <span class="n">unpack_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">bigquery_table</span> <span class="o">=</span> <span class="n">bigquery_table</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">bigquery_schema</span> <span class="o">=</span> <span class="n">bigquery_schema</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">write_to_bigquery_kwargs</span> <span class="o">=</span> <span class="n">write_to_bigquery_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span> <span class="o">=</span> <span class="n">model_monitor_id</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">cron</span> <span class="o">=</span> <span class="n">cron</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span> <span class="o">=</span> <span class="n">schedule_display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span> <span class="o">=</span> <span class="n">monitoring_job_display_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span> <span class="o">=</span> <span class="n">explanation_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span> <span class="o">=</span> <span class="n">output_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span> <span class="o">=</span> <span class="n">notification_spec</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">credentials</span> <span class="o">=</span> <span class="n">credentials</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">start_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">end_time</span> <span class="o">=</span> <span class="n">end_time</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+<div class="viewcode-block" id="VertexModelMonitoringV2.annotations">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vertex_ai_model_monitoring_v2.html#apache_beam.ml.inference.vertex_ai_model_monitoring_v2.VertexModelMonitoringV2.annotations">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">'model_identifier'</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+        <span class="o">**</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">annotations</span><span class="p">(),</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="VertexModelMonitoringV2.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.vertex_ai_model_monitoring_v2.html#apache_beam.ml.inference.vertex_ai_model_monitoring_v2.VertexModelMonitoringV2.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">pcoll</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">ml_monitoring</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+          <span class="s1">'Vertex AI Model Monitoring v2 dependencies are not installed.'</span><span class="p">)</span>
+
+    <span class="n">pipeline</span> <span class="o">=</span> <span class="n">pcoll</span><span class="o">.</span><span class="n">pipeline</span>
+    <span class="n">is_streaming</span> <span class="o">=</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">view_as</span><span class="p">(</span><span class="n">StandardOptions</span><span class="p">)</span><span class="o">.</span><span class="n">streaming</span>
+
+    <span class="c1"># 1. Unpack PredictionResult records for BigQuery</span>
+    <span class="n">bq_rows</span> <span class="o">=</span> <span class="n">pcoll</span> <span class="o">|</span> <span class="s1">'UnpackPredictionResult'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack_fn</span><span class="p">)</span>
+
+    <span class="c1"># 2. Write rows to BigQuery</span>
+    <span class="n">written</span> <span class="o">=</span> <span class="n">bq_rows</span> <span class="o">|</span> <span class="s1">'WriteToBigQuery'</span> <span class="o">&gt;&gt;</span> <span class="n">WriteToBigQuery</span><span class="p">(</span>
+        <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bigquery_table</span><span class="p">,</span>
+        <span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bigquery_schema</span><span class="p">,</span>
+        <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">write_to_bigquery_kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_streaming</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="p">:</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s1">'A cron schedule was not provided, so a new monitoring job will '</span>
+            <span class="s1">'not be created. Inferences will still be written to the BigQuery '</span>
+            <span class="sa">f</span><span class="s1">'table </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bigquery_table</span><span class="si">}</span><span class="s1">. This configuration will fail if '</span>
+            <span class="s1">'a pre-existing model monitoring schedule does not already exist.'</span><span class="p">)</span>
+      <span class="n">manager</span> <span class="o">=</span> <span class="n">_V2JobManagerStreaming</span><span class="p">(</span>
+          <span class="n">project_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+          <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+          <span class="n">display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span>
+          <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+          <span class="n">model_version_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version_id</span><span class="p">,</span>
+          <span class="n">model_monitoring_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitoring_schema</span><span class="p">,</span>
+          <span class="n">training_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span><span class="p">,</span>
+          <span class="n">tabular_objective_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span><span class="p">,</span>
+          <span class="n">target_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span><span class="p">,</span>
+          <span class="n">model_monitor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span><span class="p">,</span>
+          <span class="n">cron</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cron</span><span class="p">,</span>
+          <span class="n">schedule_display_name</span><span class="o">=</span><span class="p">(</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">schedule_display_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="si">}</span><span class="s1">_schedule'</span><span class="p">),</span>
+          <span class="n">monitoring_job_display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span><span class="p">,</span>
+          <span class="n">explanation_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span><span class="p">,</span>
+          <span class="n">output_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span><span class="p">,</span>
+          <span class="n">notification_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span><span class="p">,</span>
+          <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+          <span class="n">start_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">start_time</span><span class="p">,</span>
+          <span class="n">end_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">end_time</span><span class="p">,</span>
+          <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">pipeline</span>
+          <span class="o">|</span> <span class="s1">'StreamingImpulse'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Impulse</span><span class="p">()</span>
+          <span class="o">|</span> <span class="s1">'CreateMonitoringSchedule'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">manager</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">manager</span> <span class="o">=</span> <span class="n">_V2JobManagerBatch</span><span class="p">(</span>
+          <span class="n">project_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project_id</span><span class="p">,</span>
+          <span class="n">location</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">location</span><span class="p">,</span>
+          <span class="n">display_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="p">,</span>
+          <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
+          <span class="n">model_version_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version_id</span><span class="p">,</span>
+          <span class="n">model_monitoring_schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitoring_schema</span><span class="p">,</span>
+          <span class="n">training_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">training_dataset</span><span class="p">,</span>
+          <span class="n">tabular_objective_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tabular_objective_spec</span><span class="p">,</span>
+          <span class="n">target_dataset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">target_dataset</span><span class="p">,</span>
+          <span class="n">model_monitor_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_monitor_id</span><span class="p">,</span>
+          <span class="n">monitoring_job_display_name</span><span class="o">=</span><span class="p">(</span>
+              <span class="bp">self</span><span class="o">.</span><span class="n">monitoring_job_display_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">display_name</span><span class="si">}</span><span class="s1">_job'</span><span class="p">),</span>
+          <span class="n">explanation_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">explanation_spec</span><span class="p">,</span>
+          <span class="n">output_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_spec</span><span class="p">,</span>
+          <span class="n">notification_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">notification_spec</span><span class="p">,</span>
+          <span class="n">credentials</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">credentials</span><span class="p">,</span>
+          <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">,</span>
+      <span class="p">)</span>
+
+      <span class="c1"># Handle WriteResult from WriteToBigQuery to extract completion PCollection for WaitOn</span>
+      <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">written</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">pvalue</span><span class="o">.</span><span class="n">PCollection</span><span class="p">):</span>
+        <span class="n">wait_target</span> <span class="o">=</span> <span class="n">written</span>
+      <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">written</span><span class="p">,</span> <span class="n">WriteResult</span><span class="p">):</span>
+        <span class="c1"># Extract destination load job id pairs from batch file loads</span>
+        <span class="n">wait_target</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">written</span><span class="p">,</span> <span class="s1">'_destination_load_jobid_pairs'</span>
+                   <span class="p">)</span> <span class="ow">and</span> <span class="n">written</span><span class="o">.</span><span class="n">_destination_load_jobid_pairs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="n">wait_target</span> <span class="o">=</span> <span class="n">written</span><span class="o">.</span><span class="n">destination_load_jobid_pairs</span>
+          <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">wait_target</span> <span class="o">=</span> <span class="n">written</span><span class="o">.</span><span class="n">_destination_load_jobid_pairs</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">written</span><span class="p">,</span> <span class="s1">'_destination_copy_jobid_pairs'</span>
+                     <span class="p">)</span> <span class="ow">and</span> <span class="n">written</span><span class="o">.</span><span class="n">_destination_copy_jobid_pairs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="k">try</span><span class="p">:</span>
+            <span class="n">wait_target</span> <span class="o">=</span> <span class="n">written</span><span class="o">.</span><span class="n">destination_copy_jobid_pairs</span>
+          <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">wait_target</span> <span class="o">=</span> <span class="n">written</span><span class="o">.</span><span class="n">_destination_copy_jobid_pairs</span>
+        <span class="k">if</span> <span class="n">wait_target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+          <span class="n">wait_target</span> <span class="o">=</span> <span class="n">bq_rows</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">wait_target</span> <span class="o">=</span> <span class="n">bq_rows</span>
+
+      <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
+          <span class="n">pipeline</span>
+          <span class="o">|</span> <span class="s1">'Impulse'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Impulse</span><span class="p">()</span>
+          <span class="o">|</span> <span class="s1">'WaitOnBigQueryWrite'</span> <span class="o">&gt;&gt;</span> <span class="n">WaitOn</span><span class="p">(</span><span class="n">wait_target</span><span class="p">)</span>
+          <span class="o">|</span> <span class="s1">'ManageModelMonitoring'</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">manager</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">pcoll</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
