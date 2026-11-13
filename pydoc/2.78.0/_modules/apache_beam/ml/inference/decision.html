@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.inference.decision &mdash; Apache Beam 2.78.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=314edc20"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.inference.decision</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.inference.decision</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""Typed questions and a Beam transform for decision models.</span>
+
+<span class="sd">A decision model evaluates named questions against each input state. Choice</span>
+<span class="sd">selects a label, Boolean estimates the probability of a true statement, and</span>
+<span class="sd">Score evaluates an ordered rubric. Adapters translate these types to a local</span>
+<span class="sd">model or a service's API.</span>
+
+<span class="sd">Use the same questions and transform when changing providers::</span>
+
+<span class="sd">  from apache_beam.ml.inference.decision import ChoiceQuestion</span>
+<span class="sd">  from apache_beam.ml.inference.decision import EvaluateDecisions</span>
+
+<span class="sd">  questions = {</span>
+<span class="sd">      'team': ChoiceQuestion(</span>
+<span class="sd">          'Which team should handle this message?',</span>
+<span class="sd">          {'billing': 'Invoices and refunds', 'support': 'Technical problems'})</span>
+<span class="sd">  }</span>
+<span class="sd">  decisions = events | EvaluateDecisions(model, questions)</span>
+
+<span class="sd">Each output is a :class:`DecisionResult` containing the original state,</span>
+<span class="sd">normalized answers, provider metadata, and request latency. Applications apply</span>
+<span class="sd">thresholds and route these results with ordinary Beam transforms.</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">Metrics</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'ChoiceQuestion'</span><span class="p">,</span>
+    <span class="s1">'BooleanQuestion'</span><span class="p">,</span>
+    <span class="s1">'ScoreQuestion'</span><span class="p">,</span>
+    <span class="s1">'Question'</span><span class="p">,</span>
+    <span class="s1">'ChoiceAnswer'</span><span class="p">,</span>
+    <span class="s1">'BooleanAnswer'</span><span class="p">,</span>
+    <span class="s1">'ScoreAnswer'</span><span class="p">,</span>
+    <span class="s1">'Answer'</span><span class="p">,</span>
+    <span class="s1">'DecisionResponse'</span><span class="p">,</span>
+    <span class="s1">'DecisionResult'</span><span class="p">,</span>
+    <span class="s1">'DecisionModel'</span><span class="p">,</span>
+    <span class="s1">'EvaluateDecisions'</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="ChoiceQuestion">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.ChoiceQuestion">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChoiceQuestion</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Select one label from ``criteria``, a mapping of labels to descriptions."""</span>
+  <span class="n">instructions</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">criteria</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="BooleanQuestion">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.BooleanQuestion">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BooleanQuestion</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Estimate the probability that the statement in ``instructions`` is true."""</span>
+  <span class="n">instructions</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+
+<div class="viewcode-block" id="ScoreQuestion">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.ScoreQuestion">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScoreQuestion</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Score an ordered rubric whose ``criteria`` levels are indexed from zero.</span>
+
+<span class="sd">  Providers may interpolate between levels, returning a fractional score.</span>
+<span class="sd">  """</span>
+  <span class="n">instructions</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">criteria</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span></div>
+
+
+
+<span class="n">Question</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ChoiceQuestion</span><span class="p">,</span> <span class="n">BooleanQuestion</span><span class="p">,</span> <span class="n">ScoreQuestion</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ChoiceAnswer">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.ChoiceAnswer">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChoiceAnswer</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""A selected label, with optional label probabilities and confidence.</span>
+
+<span class="sd">  Probabilities and confidence use [0, 1]. Confidence is a provider's estimate</span>
+<span class="sd">  of answer certainty; ``None`` means the provider did not supply it.</span>
+<span class="sd">  """</span>
+  <span class="n">choice</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">probabilities</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+  <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="BooleanAnswer">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.BooleanAnswer">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BooleanAnswer</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Probability in [0, 1] that the statement is true.</span>
+
+<span class="sd">  Applications choose their own threshold for acting on this probability.</span>
+<span class="sd">  """</span>
+  <span class="n">probability</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="ScoreAnswer">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.ScoreAnswer">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ScoreAnswer</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Rubric score, optional probabilities by level index, and confidence.</span>
+
+<span class="sd">  The score uses the question's zero-based scale. Probabilities and confidence</span>
+<span class="sd">  use [0, 1]; ``None`` confidence means the provider did not supply it.</span>
+<span class="sd">  """</span>
+  <span class="n">score</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">probabilities</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
+  <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<span class="n">Answer</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">ChoiceAnswer</span><span class="p">,</span> <span class="n">BooleanAnswer</span><span class="p">,</span> <span class="n">ScoreAnswer</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DecisionResponse">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.DecisionResponse">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DecisionResponse</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""One answer per question name, plus the model and provider identifiers."""</span>
+  <span class="n">answers</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Answer</span><span class="p">]</span>
+  <span class="n">model</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">provider</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">request_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+
+<div class="viewcode-block" id="DecisionResult">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.DecisionResult">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DecisionResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""An input state, its decision response, and evaluation time in milliseconds."""</span>
+  <span class="n">state</span><span class="p">:</span> <span class="n">Any</span>
+  <span class="n">response</span><span class="p">:</span> <span class="n">DecisionResponse</span>
+  <span class="n">latency_ms</span><span class="p">:</span> <span class="nb">float</span></div>
+
+
+
+<div class="viewcode-block" id="DecisionModel">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.DecisionModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DecisionModel</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Adapter contract for hosted and local decision models.</span>
+
+<span class="sd">  Implement :meth:`evaluate` to return the shared answer types. Override the</span>
+<span class="sd">  context manager methods to open and close clients or load model weights.</span>
+<span class="sd">  Constructors hold serializable configuration; Beam enters the context on</span>
+<span class="sd">  the worker and reuses it across elements and bundles on that DoFn instance.</span>
+
+<span class="sd">  An adapter owns provider timeouts, retries, and conversion to the shared</span>
+<span class="sd">  types. Input states must be serializable by Beam and accepted by the adapter.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">'DecisionModel'</span><span class="p">:</span>
+    <span class="k">return</span> <span class="bp">self</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="DecisionModel.evaluate">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.DecisionModel.evaluate">[docs]</a>
+  <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+  <span class="k">def</span><span class="w"> </span><span class="nf">evaluate</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">questions</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Question</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DecisionResponse</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Evaluate each named question against the same state.</span>
+
+<span class="sd">    Return exactly one answer of the corresponding type for each question.</span>
+<span class="sd">    Choice labels must belong to the question's criteria; score levels use</span>
+<span class="sd">    their zero-based indices. Raise an exception if evaluation fails.</span>
+<span class="sd">    """</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EvaluateDecisions">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.EvaluateDecisions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EvaluateDecisions</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">PTransform</span><span class="p">):</span>
+<span class="w">  </span><span class="sd">"""Evaluate typed questions for every input element with a reusable model.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    model: A serializable :class:`DecisionModel` adapter. Its context is entered</span>
+<span class="sd">      once per DoFn instance and closed during teardown, which is best effort.</span>
+<span class="sd">    questions: A mapping of question names to Choice, Boolean, or Score</span>
+<span class="sd">      questions. All questions are evaluated against each input state.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    A PCollection of :class:`DecisionResult` objects, preserving each element's</span>
+<span class="sd">    timestamp and window. Calls run synchronously on the processing thread.</span>
+<span class="sd">    The ``EvaluateDecisions`` metrics namespace records ``requests``,</span>
+<span class="sd">    ``failures``, and the ``request_latency_ms`` distribution for successful</span>
+<span class="sd">    evaluations. Exceptions propagate to the runner.</span>
+<span class="sd">  """</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">DecisionModel</span><span class="p">,</span> <span class="n">questions</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Question</span><span class="p">]):</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_questions</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">questions</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_exception_handling</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="EvaluateDecisions.with_exception_handling">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.EvaluateDecisions.with_exception_handling">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">with_exception_handling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return successful decisions and failed states as tagged PCollections.</span>
+
+<span class="sd">    Uses :meth:`apache_beam.ParDo.with_exception_handling` with the supplied</span>
+<span class="sd">    options. The default tags are ``good`` and ``bad``; bad records contain</span>
+<span class="sd">    the original state and exception details. Only processing failures are</span>
+<span class="sd">    caught. Model setup and teardown failures still propagate to the runner.</span>
+<span class="sd">    """</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_exception_handling</span> <span class="o">=</span> <span class="n">kwargs</span>
+    <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="EvaluateDecisions.expand">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.decision.html#apache_beam.ml.inference.decision.EvaluateDecisions.expand">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">):</span>
+    <span class="n">evaluate</span> <span class="o">=</span> <span class="n">beam</span><span class="o">.</span><span class="n">ParDo</span><span class="p">(</span><span class="n">_EvaluateDecisionsDoFn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_questions</span><span class="p">))</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exception_handling</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">evaluate</span> <span class="o">=</span> <span class="n">evaluate</span><span class="o">.</span><span class="n">with_exception_handling</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_exception_handling</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">states</span> <span class="o">|</span> <span class="n">evaluate</span></div>
+</div>
+
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_EvaluateDecisionsDoFn</span><span class="p">(</span><span class="n">beam</span><span class="o">.</span><span class="n">DoFn</span><span class="p">):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">questions</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_questions</span> <span class="o">=</span> <span class="n">questions</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_model</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_requests</span> <span class="o">=</span> <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'EvaluateDecisions'</span><span class="p">,</span> <span class="s1">'requests'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_failures</span> <span class="o">=</span> <span class="n">Metrics</span><span class="o">.</span><span class="n">counter</span><span class="p">(</span><span class="s1">'EvaluateDecisions'</span><span class="p">,</span> <span class="s1">'failures'</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_latency</span> <span class="o">=</span> <span class="n">Metrics</span><span class="o">.</span><span class="n">distribution</span><span class="p">(</span>
+        <span class="s1">'EvaluateDecisions'</span><span class="p">,</span> <span class="s1">'request_latency_ms'</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_active_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_requests</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+    <span class="n">started</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_questions</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_failures</span><span class="o">.</span><span class="n">inc</span><span class="p">()</span>
+      <span class="k">raise</span>
+    <span class="n">elapsed_ms</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">started</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_latency</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">elapsed_ms</span><span class="p">))</span>
+    <span class="k">yield</span> <span class="n">DecisionResult</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">response</span><span class="p">,</span> <span class="n">elapsed_ms</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">teardown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_active_model</span> <span class="o">=</span> <span class="kc">None</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
