@@ -1,0 +1,605 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.testing.benchmarks.tpcds.tpcds_launcher &mdash; Apache Beam 2.78.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=314edc20"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.testing.benchmarks.tpcds.tpcds_launcher</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.testing.benchmarks.tpcds.tpcds_launcher</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""TPC-DS launcher for Apache Beam Python using cross-language SqlTransform and PrismRunner.</span>
+
+<span class="sd">Example usage via Gradle:</span>
+<span class="sd">  ./gradlew :sdks:python:apache_beam:testing:benchmarks:tpcds:run \\</span>
+<span class="sd">      -Ptpcds.args="--queries=supported --data_size=10MB"</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dataclasses</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">apache_beam</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">beam</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.options.pipeline_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">PipelineOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.portability.api</span><span class="w"> </span><span class="kn">import</span> <span class="n">schema_pb2</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNOWN_FAILING_QUERIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">PLANNER_TIMEOUT_QUERIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_query_tables</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_query_selection</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_queries</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_query</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_table_names</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_table_row_class</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_csv_line</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.transforms.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SqlTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.typehints</span><span class="w"> </span><span class="kn">import</span> <span class="n">schemas</span> <span class="k">as</span> <span class="n">beam_schemas</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">subprocess_server</span>
+
+<span class="n">_LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">DEFAULT_DATA_DIRECTORY</span> <span class="o">=</span> <span class="s2">"gs://beam-tpcds/datasets/text"</span>
+<span class="n">SUPPORTED_DATA_SIZES</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"10M"</span><span class="p">,</span>
+    <span class="s2">"10MB"</span><span class="p">,</span>
+    <span class="s2">"1G"</span><span class="p">,</span>
+    <span class="s2">"1GB"</span><span class="p">,</span>
+    <span class="s2">"10G"</span><span class="p">,</span>
+    <span class="s2">"10GB"</span><span class="p">,</span>
+    <span class="s2">"100G"</span><span class="p">,</span>
+    <span class="s2">"100GB"</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="check_and_normalize_data_size">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.check_and_normalize_data_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_and_normalize_data_size</span><span class="p">(</span><span class="n">data_size</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Validates data_size against SUPPORTED_DATA_SIZES and normalizes '10M' -&gt; '10MB', etc."""</span>
+  <span class="n">cleaned</span> <span class="o">=</span> <span class="n">data_size</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">cleaned</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SUPPORTED_DATA_SIZES</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"The data size </span><span class="si">{</span><span class="n">data_size</span><span class="si">!r}</span><span class="s2"> has not been supported. "</span>
+        <span class="sa">f</span><span class="s2">"Supported sizes: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">SUPPORTED_DATA_SIZES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">cleaned</span><span class="o">.</span><span class="n">endswith</span><span class="p">((</span><span class="s2">"M"</span><span class="p">,</span> <span class="s2">"G"</span><span class="p">)):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">cleaned</span><span class="si">}</span><span class="s2">B"</span>
+  <span class="k">return</span> <span class="n">cleaned</span></div>
+
+
+
+<span class="c1"># TODO(https://github.com/apache/beam/issues/40698) remove this contextmanager once Python</span>
+<span class="c1"># Row supports arbitrary field name</span>
+<span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_sql_schema_field_sanitizer</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Temporarily allows NamedTuple schema decoding for SQL aliases like EXPR$n or &gt;120 days."""</span>
+  <span class="n">orig_fn</span> <span class="o">=</span> <span class="n">beam_schemas</span><span class="o">.</span><span class="n">SchemaTranslation</span><span class="o">.</span><span class="n">named_tuple_from_schema</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_sanitized_named_tuple_from_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">fields</span><span class="p">):</span>
+      <span class="n">copied</span> <span class="o">=</span> <span class="n">schema_pb2</span><span class="o">.</span><span class="n">Schema</span><span class="p">()</span>
+      <span class="n">copied</span><span class="o">.</span><span class="n">CopyFrom</span><span class="p">(</span><span class="n">schema</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">copied</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">isidentifier</span><span class="p">():</span>
+          <span class="n">sanitized</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+              <span class="n">ch</span> <span class="k">if</span> <span class="p">(</span><span class="n">ch</span><span class="o">.</span><span class="n">isalnum</span><span class="p">()</span> <span class="ow">or</span> <span class="n">ch</span> <span class="o">==</span> <span class="s2">"_"</span><span class="p">)</span> <span class="k">else</span> <span class="s2">"_"</span> <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+          <span class="k">if</span> <span class="ow">not</span> <span class="n">sanitized</span> <span class="ow">or</span> <span class="n">sanitized</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+            <span class="n">sanitized</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"col_</span><span class="si">{</span><span class="n">sanitized</span><span class="si">}</span><span class="s2">"</span>
+          <span class="n">field</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">sanitized</span>
+      <span class="n">schema</span> <span class="o">=</span> <span class="n">copied</span>
+    <span class="k">return</span> <span class="n">orig_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">schema</span><span class="p">)</span>
+
+  <span class="n">beam_schemas</span><span class="o">.</span><span class="n">SchemaTranslation</span><span class="o">.</span><span class="n">named_tuple_from_schema</span> <span class="o">=</span> <span class="p">(</span>
+      <span class="n">_sanitized_named_tuple_from_schema</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">yield</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="n">beam_schemas</span><span class="o">.</span><span class="n">SchemaTranslation</span><span class="o">.</span><span class="n">named_tuple_from_schema</span> <span class="o">=</span> <span class="n">orig_fn</span>
+
+
+<div class="viewcode-block" id="TpcdsQueryResult">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.TpcdsQueryResult">[docs]</a>
+<span class="nd">@dataclasses</span><span class="o">.</span><span class="n">dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TpcdsQueryResult</span><span class="p">:</span>
+  <span class="n">query_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">job_name</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">data_size</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">dialect</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">is_successful</span><span class="p">:</span> <span class="nb">bool</span>
+  <span class="n">status</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">start_time</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">end_time</span><span class="p">:</span> <span class="nb">str</span>
+  <span class="n">elapsed_sec</span><span class="p">:</span> <span class="nb">float</span>
+  <span class="n">row_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">error_message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span></div>
+
+
+
+<div class="viewcode-block" id="build_table_pcollections">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.build_table_pcollections">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_table_pcollections</span><span class="p">(</span>
+    <span class="n">pipeline</span><span class="p">:</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">,</span>
+    <span class="n">table_names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">data_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DATA_DIRECTORY</span><span class="p">,</span>
+    <span class="n">data_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"10MB"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Creates schema-typed input PCollections from TPC-DS .dat files."""</span>
+  <span class="n">normalized_size</span> <span class="o">=</span> <span class="n">check_and_normalize_data_size</span><span class="p">(</span><span class="n">data_size</span><span class="p">)</span>
+  <span class="n">tables</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">beam</span><span class="o">.</span><span class="n">PCollection</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+  <span class="n">base_dir</span> <span class="o">=</span> <span class="n">data_directory</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">table_name</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
+    <span class="n">row_cls</span> <span class="o">=</span> <span class="n">get_table_row_class</span><span class="p">(</span><span class="n">table_name</span><span class="p">)</span>
+    <span class="n">file_pattern</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">normalized_size</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">.dat"</span>
+    <span class="n">tables</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">pipeline</span>
+        <span class="o">|</span> <span class="sa">f</span><span class="s2">"Read_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ReadFromText</span><span class="p">(</span><span class="n">file_pattern</span><span class="p">)</span>
+        <span class="o">|</span> <span class="sa">f</span><span class="s2">"Parse_</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">FlatMap</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">line</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">table_name</span><span class="p">:</span>
+            <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="n">parse_csv_line</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">line</span><span class="p">)]</span>
+             <span class="k">if</span> <span class="n">r</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">])</span><span class="o">.</span><span class="n">with_output_types</span><span class="p">(</span><span class="n">row_cls</span><span class="p">))</span>
+  <span class="k">return</span> <span class="n">tables</span></div>
+
+
+
+<div class="viewcode-block" id="run_single_query">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.run_single_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_single_query</span><span class="p">(</span>
+    <span class="n">query_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">query_sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">pipeline_args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">data_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">DEFAULT_DATA_DIRECTORY</span><span class="p">,</span>
+    <span class="n">data_size</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"10MB"</span><span class="p">,</span>
+    <span class="n">results_directory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">skip_planner_timeouts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TpcdsQueryResult</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Executes a single TPC-DS query via SqlTransform."""</span>
+  <span class="n">normalized_size</span> <span class="o">=</span> <span class="n">check_and_normalize_data_size</span><span class="p">(</span><span class="n">data_size</span><span class="p">)</span>
+  <span class="n">start_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+  <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span>
+  <span class="n">job_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">query_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1000</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">if</span> <span class="n">skip_planner_timeouts</span> <span class="ow">and</span> <span class="n">query_name</span> <span class="ow">in</span> <span class="n">PLANNER_TIMEOUT_QUERIES</span><span class="p">:</span>
+    <span class="n">err_msg</span> <span class="o">=</span> <span class="n">KNOWN_FAILING_QUERIES</span><span class="p">[</span><span class="n">query_name</span><span class="p">]</span>
+    <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">TpcdsQueryResult</span><span class="p">(</span>
+        <span class="n">query_name</span><span class="o">=</span><span class="n">query_name</span><span class="p">,</span>
+        <span class="n">job_name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span>
+        <span class="n">data_size</span><span class="o">=</span><span class="n">normalized_size</span><span class="p">,</span>
+        <span class="n">dialect</span><span class="o">=</span><span class="s2">"Calcite"</span><span class="p">,</span>
+        <span class="n">is_successful</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">status</span><span class="o">=</span><span class="s2">"Failed (PLANNING)"</span><span class="p">,</span>
+        <span class="n">start_time</span><span class="o">=</span><span class="n">start_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+        <span class="n">end_time</span><span class="o">=</span><span class="n">end_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+        <span class="n">elapsed_sec</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">error_message</span><span class="o">=</span><span class="n">err_msg</span><span class="p">,</span>
+    <span class="p">)</span>
+  <span class="n">table_names</span> <span class="o">=</span> <span class="n">get_query_tables</span><span class="p">(</span><span class="n">query_sql</span><span class="p">)</span>
+
+  <span class="n">opts_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pipeline_args</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"--runner"</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">opts_list</span><span class="p">):</span>
+    <span class="n">opts_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"--runner=PrismRunner"</span><span class="p">)</span>
+
+  <span class="n">options</span> <span class="o">=</span> <span class="n">PipelineOptions</span><span class="p">(</span><span class="n">opts_list</span><span class="p">)</span>
+
+  <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">"tpcds_</span><span class="si">{</span><span class="n">query_name</span><span class="si">}</span><span class="s2">_"</span><span class="p">)</span> <span class="k">as</span> <span class="n">tmp_dir</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">results_directory</span><span class="p">:</span>
+      <span class="n">out_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">results_directory</span><span class="p">,</span> <span class="n">normalized_size</span><span class="p">)</span>
+      <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+      <span class="n">out_prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">query_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">out_prefix</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">"out"</span><span class="p">)</span>
+    <span class="n">stage</span> <span class="o">=</span> <span class="s2">"PLANNING"</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="k">with</span> <span class="n">_sql_schema_field_sanitizer</span><span class="p">():</span>
+        <span class="k">with</span> <span class="n">beam</span><span class="o">.</span><span class="n">Pipeline</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span> <span class="k">as</span> <span class="n">p</span><span class="p">:</span>
+          <span class="n">tables</span> <span class="o">=</span> <span class="n">build_table_pcollections</span><span class="p">(</span>
+              <span class="n">p</span><span class="p">,</span>
+              <span class="n">table_names</span><span class="o">=</span><span class="n">table_names</span><span class="p">,</span>
+              <span class="n">data_directory</span><span class="o">=</span><span class="n">data_directory</span><span class="p">,</span>
+              <span class="n">data_size</span><span class="o">=</span><span class="n">normalized_size</span><span class="p">,</span>
+          <span class="p">)</span>
+          <span class="n">sql_input</span> <span class="o">=</span> <span class="n">tables</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">tables</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+          <span class="n">sql_out</span> <span class="o">=</span> <span class="n">sql_input</span> <span class="o">|</span> <span class="sa">f</span><span class="s2">"Sql_</span><span class="si">{</span><span class="n">query_name</span><span class="si">}</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="n">SqlTransform</span><span class="p">(</span><span class="n">query_sql</span><span class="p">)</span>
+          <span class="n">_</span> <span class="o">=</span> <span class="p">(</span>
+              <span class="n">sql_out</span>
+              <span class="o">|</span> <span class="sa">f</span><span class="s2">"Format_</span><span class="si">{</span><span class="n">query_name</span><span class="si">}</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+              <span class="o">|</span> <span class="sa">f</span><span class="s2">"Write_</span><span class="si">{</span><span class="n">query_name</span><span class="si">}</span><span class="s2">"</span> <span class="o">&gt;&gt;</span> <span class="n">beam</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">WriteToText</span><span class="p">(</span>
+                  <span class="n">out_prefix</span><span class="p">,</span> <span class="n">file_name_suffix</span><span class="o">=</span><span class="s2">".txt"</span><span class="p">,</span> <span class="n">num_shards</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+          <span class="n">stage</span> <span class="o">=</span> <span class="s2">"RUNTIME"</span>
+
+      <span class="n">row_count</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">for</span> <span class="n">fpath</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">out_prefix</span><span class="si">}</span><span class="s2">*.txt"</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+          <span class="n">row_count</span> <span class="o">+=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+
+      <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+      <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+
+      <span class="n">is_successful</span> <span class="o">=</span> <span class="n">row_count</span> <span class="o">&gt;</span> <span class="mi">0</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">is_successful</span><span class="p">:</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"Output records counter for job </span><span class="si">%r</span><span class="s2"> is </span><span class="si">%d</span><span class="s2">"</span><span class="p">,</span> <span class="n">job_name</span><span class="p">,</span> <span class="n">row_count</span><span class="p">)</span>
+
+      <span class="k">return</span> <span class="n">TpcdsQueryResult</span><span class="p">(</span>
+          <span class="n">query_name</span><span class="o">=</span><span class="n">query_name</span><span class="p">,</span>
+          <span class="n">job_name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span>
+          <span class="n">data_size</span><span class="o">=</span><span class="n">normalized_size</span><span class="p">,</span>
+          <span class="n">dialect</span><span class="o">=</span><span class="s2">"Calcite"</span><span class="p">,</span>
+          <span class="n">is_successful</span><span class="o">=</span><span class="n">is_successful</span><span class="p">,</span>
+          <span class="n">status</span><span class="o">=</span><span class="s2">"Successful"</span> <span class="k">if</span> <span class="n">is_successful</span> <span class="k">else</span> <span class="s2">"Failed (EMPTY_RESULT)"</span><span class="p">,</span>
+          <span class="n">start_time</span><span class="o">=</span><span class="n">start_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+          <span class="n">end_time</span><span class="o">=</span><span class="n">end_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+          <span class="n">elapsed_sec</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+          <span class="n">row_count</span><span class="o">=</span><span class="n">row_count</span><span class="p">,</span>
+          <span class="n">error_message</span><span class="o">=</span><span class="s2">""</span> <span class="k">if</span> <span class="n">is_successful</span> <span class="k">else</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+      <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pylint: disable=broad-except</span>
+      <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">monotonic</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span>
+      <span class="n">end_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+      <span class="n">err_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
+      <span class="n">first_line</span> <span class="o">=</span> <span class="n">err_str</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">err_str</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"UnsupportedOperationException"</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">or</span> <span class="s2">"CannotPlanException"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+          <span class="n">first_line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+          <span class="k">break</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"</span><span class="si">%s</span><span class="s2"> failed at </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">query_name</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="n">first_line</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">TpcdsQueryResult</span><span class="p">(</span>
+          <span class="n">query_name</span><span class="o">=</span><span class="n">query_name</span><span class="p">,</span>
+          <span class="n">job_name</span><span class="o">=</span><span class="n">job_name</span><span class="p">,</span>
+          <span class="n">data_size</span><span class="o">=</span><span class="n">normalized_size</span><span class="p">,</span>
+          <span class="n">dialect</span><span class="o">=</span><span class="s2">"Calcite"</span><span class="p">,</span>
+          <span class="n">is_successful</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">status</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Failed (</span><span class="si">{</span><span class="n">stage</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+          <span class="n">start_time</span><span class="o">=</span><span class="n">start_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+          <span class="n">end_time</span><span class="o">=</span><span class="n">end_dt</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ"</span><span class="p">),</span>
+          <span class="n">elapsed_sec</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">elapsed</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+          <span class="n">error_message</span><span class="o">=</span><span class="n">err_str</span><span class="p">,</span>
+      <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="format_summary_table">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.format_summary_table">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_summary_table</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TpcdsQueryResult</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Formats the TPC-DS execution summary table."""</span>
+  <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="s2">"Query Name"</span><span class="p">,</span>
+      <span class="s2">"Data Size"</span><span class="p">,</span>
+      <span class="s2">"Dialect"</span><span class="p">,</span>
+      <span class="s2">"Status"</span><span class="p">,</span>
+      <span class="s2">"Rows"</span><span class="p">,</span>
+      <span class="s2">"Elapsed(s)"</span><span class="p">,</span>
+      <span class="s2">"Details / Notes"</span><span class="p">,</span>
+  <span class="p">]</span>
+  <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">is_successful</span><span class="p">:</span>
+      <span class="n">note</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Returned </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">row_count</span><span class="si">}</span><span class="s2"> row(s)"</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">note</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">error_message</span> <span class="k">else</span> <span class="s2">""</span>
+      <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s2">"UnsupportedOperationException"</span> <span class="ow">in</span> <span class="n">line</span> <span class="ow">or</span> <span class="s2">"CannotPlanException"</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+          <span class="n">note</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+          <span class="k">break</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">note</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">85</span><span class="p">:</span>
+      <span class="n">note</span> <span class="o">=</span> <span class="n">note</span><span class="p">[:</span><span class="mi">82</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"..."</span>
+    <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">data_size</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">dialect</span><span class="p">,</span>
+        <span class="n">r</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">row_count</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">is_successful</span> <span class="k">else</span> <span class="s2">"-"</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">elapsed_sec</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+        <span class="n">note</span><span class="p">,</span>
+    <span class="p">])</span>
+
+  <span class="n">widths</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+      <span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell</span><span class="p">))</span>
+
+  <span class="n">sep</span> <span class="o">=</span> <span class="s2">"+"</span> <span class="o">+</span> <span class="s2">"+"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"-"</span> <span class="o">*</span> <span class="p">(</span><span class="n">w</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">widths</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"+"</span>
+  <span class="n">header_line</span> <span class="o">=</span> <span class="s2">"|"</span> <span class="o">+</span> <span class="s2">"|"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+      <span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">h</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">}</span><span class="s2"> "</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"|"</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"</span><span class="se">\n</span><span class="s2">TPC-DS Query Execution Summary:"</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header_line</span><span class="p">,</span> <span class="n">sep</span><span class="p">]</span>
+  <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+        <span class="s2">"|"</span> <span class="o">+</span> <span class="s2">"|"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">" </span><span class="si">{</span><span class="n">c</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">widths</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="si">}</span><span class="s2"> "</span>
+                       <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">))</span> <span class="o">+</span> <span class="s2">"|"</span><span class="p">)</span>
+  <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
+  <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="main">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.main">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">argv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">TpcdsQueryResult</span><span class="p">]:</span>
+  <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+      <span class="n">description</span><span class="o">=</span><span class="s2">"Run Apache Beam Python TPC-DS benchmark suite."</span><span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--queries"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="s2">"supported"</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span>
+      <span class="s2">"Comma-separated query numbers (e.g. '3,7,96'), 'canonical13', 'supported', or 'all'."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--data_directory"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_DATA_DIRECTORY</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span>
+      <span class="s2">"Path or GCS URI containing TPC-DS text data files (&lt;data_size&gt;/&lt;table&gt;.dat)."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--data_size"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="s2">"10MB"</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span>
+      <span class="s2">"Dataset scale factor ('10M', '10MB', '1G', '1GB', '10G', '10GB', '100G', '100GB')."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--queries_directory"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span><span class="s2">"Optional path to directory containing query*.sql files."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--results_directory"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span><span class="s2">"Optional directory to write query results."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--summary_json"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span><span class="s2">"Optional file path to write JSON execution summary."</span><span class="p">,</span>
+  <span class="p">)</span>
+  <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+      <span class="s2">"--check_regression"</span><span class="p">,</span>
+      <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+      <span class="n">action</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">BooleanOptionalAction</span><span class="p">,</span>
+      <span class="n">help</span><span class="o">=</span><span class="s2">"Verify query outcomes against KNOWN_FAILING_QUERIES. Queries not in "</span>
+      <span class="s2">"KNOWN_FAILING_QUERIES must succeed; queries in KNOWN_FAILING_QUERIES must "</span>
+      <span class="s2">"fail with an error matching their expected error substring."</span><span class="p">,</span>
+  <span class="p">)</span>
+
+  <span class="n">known_args</span><span class="p">,</span> <span class="n">pipeline_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">(</span><span class="n">argv</span><span class="p">)</span>
+  <span class="c1"># Fail early if tpcds/build/schemas has not been populated by Gradle.</span>
+  <span class="n">get_all_table_names</span><span class="p">()</span>
+  <span class="n">normalized_size</span> <span class="o">=</span> <span class="n">check_and_normalize_data_size</span><span class="p">(</span><span class="n">known_args</span><span class="o">.</span><span class="n">data_size</span><span class="p">)</span>
+  <span class="n">query_names</span> <span class="o">=</span> <span class="n">parse_query_selection</span><span class="p">(</span><span class="n">known_args</span><span class="o">.</span><span class="n">queries</span><span class="p">)</span>
+
+  <span class="n">all_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">TpcdsQueryResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">with</span> <span class="n">subprocess_server</span><span class="o">.</span><span class="n">SubprocessServer</span><span class="o">.</span><span class="n">cache_subprocesses</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">qname</span> <span class="ow">in</span> <span class="n">query_names</span><span class="p">:</span>
+      <span class="n">query_sql</span> <span class="o">=</span> <span class="n">read_query</span><span class="p">(</span><span class="n">qname</span><span class="p">,</span> <span class="n">known_args</span><span class="o">.</span><span class="n">queries_directory</span><span class="p">)</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="n">run_single_query</span><span class="p">(</span>
+          <span class="n">query_name</span><span class="o">=</span><span class="n">qname</span><span class="p">,</span>
+          <span class="n">query_sql</span><span class="o">=</span><span class="n">query_sql</span><span class="p">,</span>
+          <span class="n">pipeline_args</span><span class="o">=</span><span class="n">pipeline_args</span><span class="p">,</span>
+          <span class="n">data_directory</span><span class="o">=</span><span class="n">known_args</span><span class="o">.</span><span class="n">data_directory</span><span class="p">,</span>
+          <span class="n">data_size</span><span class="o">=</span><span class="n">normalized_size</span><span class="p">,</span>
+          <span class="n">results_directory</span><span class="o">=</span><span class="n">known_args</span><span class="o">.</span><span class="n">results_directory</span><span class="p">,</span>
+          <span class="n">skip_planner_timeouts</span><span class="o">=</span><span class="n">known_args</span><span class="o">.</span><span class="n">check_regression</span><span class="p">,</span>
+      <span class="p">)</span>
+      <span class="n">all_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+  <span class="nb">print</span><span class="p">(</span><span class="n">format_summary_table</span><span class="p">(</span><span class="n">all_results</span><span class="p">))</span>
+
+  <span class="k">if</span> <span class="n">known_args</span><span class="o">.</span><span class="n">summary_json</span><span class="p">:</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">known_args</span><span class="o">.</span><span class="n">summary_json</span><span class="p">)),</span>
+        <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">known_args</span><span class="o">.</span><span class="n">summary_json</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+      <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span>
+          <span class="p">[</span><span class="n">dataclasses</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">all_results</span><span class="p">],</span>
+          <span class="n">f</span><span class="p">,</span>
+          <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+          <span class="n">default</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+      <span class="p">)</span>
+
+  <span class="k">if</span> <span class="n">known_args</span><span class="o">.</span><span class="n">check_regression</span><span class="p">:</span>
+    <span class="n">verify_no_regressions</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">all_results</span></div>
+
+
+
+<div class="viewcode-block" id="verify_no_regressions">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_launcher.html#apache_beam.testing.benchmarks.tpcds.tpcds_launcher.verify_no_regressions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">verify_no_regressions</span><span class="p">(</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">TpcdsQueryResult</span><span class="p">],</span>
+    <span class="n">known_failing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Verifies that query results match SUPPORTED_QUERIES and KNOWN_FAILING_QUERIES.</span>
+
+<span class="sd">  Raises RuntimeError if:</span>
+<span class="sd">    - A query in SUPPORTED_QUERIES fails, or</span>
+<span class="sd">    - A query in KNOWN_FAILING_QUERIES fails with an unexpected error message, or</span>
+<span class="sd">    - A query is unclassified (in neither SUPPORTED_QUERIES nor KNOWN_FAILING_QUERIES).</span>
+
+<span class="sd">  Queries in KNOWN_FAILING_QUERIES that succeed are tolerated with a warning.</span>
+<span class="sd">  """</span>
+  <span class="n">expected_map</span> <span class="o">=</span> <span class="n">KNOWN_FAILING_QUERIES</span> <span class="k">if</span> <span class="n">known_failing</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">known_failing</span>
+  <span class="n">supported_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">parse_query_selection</span><span class="p">(</span><span class="s2">"supported"</span><span class="p">))</span>
+  <span class="n">regressions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">unexpected_passes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">expected_failures_matched</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">passed_queries</span> <span class="o">=</span> <span class="mi">0</span>
+
+  <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="n">expected_err</span> <span class="o">=</span> <span class="n">expected_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">expected_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">is_successful</span><span class="p">:</span>
+        <span class="n">warn_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"[UNEXPECTED PASS] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2"> is listed in "</span>
+            <span class="sa">f</span><span class="s2">"KNOWN_FAILING_QUERIES (</span><span class="si">{</span><span class="n">expected_err</span><span class="si">!r}</span><span class="s2">) but succeeded! "</span>
+            <span class="sa">f</span><span class="s2">"Consider moving it to SUPPORTED_QUERIES if non-flaky."</span><span class="p">)</span>
+        <span class="n">_LOGGER</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">warn_msg</span><span class="p">)</span>
+        <span class="n">unexpected_passes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">warn_msg</span><span class="p">)</span>
+      <span class="k">elif</span> <span class="n">expected_err</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="p">:</span>
+        <span class="n">regressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"[ERROR MISMATCH] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2"> failed with "</span>
+            <span class="sa">f</span><span class="s2">"unexpected error: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="si">!r}</span><span class="s2"> (expected substring: </span><span class="si">{</span><span class="n">expected_err</span><span class="si">!r}</span><span class="s2">)"</span>
+        <span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">expected_failures_matched</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">r</span><span class="o">.</span><span class="n">query_name</span> <span class="ow">in</span> <span class="n">supported_set</span><span class="p">:</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="o">.</span><span class="n">is_successful</span><span class="p">:</span>
+        <span class="n">regressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"[REGRESSION] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2"> is in SUPPORTED_QUERIES "</span>
+            <span class="sa">f</span><span class="s2">"but failed with: </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">passed_queries</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">regressions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+          <span class="sa">f</span><span class="s2">"[UNCLASSIFIED] </span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">query_name</span><span class="si">}</span><span class="s2"> is in neither SUPPORTED_QUERIES "</span>
+          <span class="sa">f</span><span class="s2">"nor KNOWN_FAILING_QUERIES (status=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">, error=</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">error_message</span><span class="si">!r}</span><span class="s2">)"</span>
+      <span class="p">)</span>
+
+  <span class="n">_LOGGER</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+      <span class="s2">"TPC-DS Regression Check Summary: </span><span class="si">%d</span><span class="s2"> passed as expected, "</span>
+      <span class="s2">"</span><span class="si">%d</span><span class="s2"> known failures matched expected error, "</span>
+      <span class="s2">"</span><span class="si">%d</span><span class="s2"> unexpected pass warning(s), "</span>
+      <span class="s2">"</span><span class="si">%d</span><span class="s2"> regression(s)."</span><span class="p">,</span>
+      <span class="n">passed_queries</span><span class="p">,</span>
+      <span class="n">expected_failures_matched</span><span class="p">,</span>
+      <span class="nb">len</span><span class="p">(</span><span class="n">unexpected_passes</span><span class="p">),</span>
+      <span class="nb">len</span><span class="p">(</span><span class="n">regressions</span><span class="p">))</span>
+  <span class="k">if</span> <span class="n">regressions</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">regressions</span><span class="p">:</span>
+      <span class="n">_LOGGER</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"  - </span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"TPC-DS regression check failed with </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">regressions</span><span class="p">)</span><span class="si">}</span><span class="s2"> issue(s):</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span>
+        <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">regressions</span><span class="p">))</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+  <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+  <span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
