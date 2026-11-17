@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.ml.inference.openai_inference &mdash; Apache Beam 2.78.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=314edc20"></script>
+      <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.ml.inference.openai_inference</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.ml.inference.openai_inference</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""A ModelHandler for OpenAI models using the OpenAI Python SDK.</span>
+
+<span class="sd">This module provides an integration between Apache Beam's RunInference</span>
+<span class="sd">transform and OpenAI's API, enabling batch inference and embeddings in</span>
+<span class="sd">Beam pipelines.</span>
+
+<span class="sd">Example usage::</span>
+
+<span class="sd">  import apache_beam as beam</span>
+<span class="sd">  from apache_beam.ml.inference.base import RunInference</span>
+<span class="sd">  from apache_beam.ml.inference.openai_inference import (</span>
+<span class="sd">      OpenAIModelHandler,</span>
+<span class="sd">      chat_completion_from_string,</span>
+<span class="sd">  )</span>
+
+<span class="sd">  # Basic text generation with chat completions</span>
+<span class="sd">  model_handler = OpenAIModelHandler(</span>
+<span class="sd">      model_name='gpt-4o-mini',</span>
+<span class="sd">      api_key='your-api-key',</span>
+<span class="sd">      request_fn=chat_completion_from_string,</span>
+<span class="sd">  )</span>
+
+<span class="sd">  # With system prompt and structured output passed via inference_args</span>
+<span class="sd">  inference_args = {</span>
+<span class="sd">      'system': 'You are a helpful assistant that responds concisely.',</span>
+<span class="sd">      'response_format': {</span>
+<span class="sd">          'type': 'json_schema',</span>
+<span class="sd">          'json_schema': {</span>
+<span class="sd">              'name': 'answer_response',</span>
+<span class="sd">              'schema': {</span>
+<span class="sd">                  'type': 'object',</span>
+<span class="sd">                  'properties': {</span>
+<span class="sd">                      'answer': {'type': 'string'},</span>
+<span class="sd">                      'confidence': {'type': 'number'},</span>
+<span class="sd">                  },</span>
+<span class="sd">                  'required': ['answer', 'confidence'],</span>
+<span class="sd">                  'additionalProperties': False,</span>
+<span class="sd">              },</span>
+<span class="sd">              'strict': True,</span>
+<span class="sd">          },</span>
+<span class="sd">      },</span>
+<span class="sd">  }</span>
+
+<span class="sd">  with beam.Pipeline() as p:</span>
+<span class="sd">    results = (</span>
+<span class="sd">        p</span>
+<span class="sd">        | beam.Create(['What is Apache Beam?', 'Explain MapReduce.'])</span>
+<span class="sd">        | RunInference(model_handler, inference_args=inference_args)</span>
+<span class="sd">    )</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIConnectionError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIStatusError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">PredictionResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">RemoteModelHandler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.ml.inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_validate_batching_args</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">'OpenAIModelHandler'</span><span class="p">,</span>
+    <span class="s1">'chat_completion_from_string'</span><span class="p">,</span>
+    <span class="s1">'chat_completion_from_conversation'</span><span class="p">,</span>
+    <span class="s1">'embedding_from_string'</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">LOGGER</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">"OpenAIModelHandler"</span><span class="p">)</span>
+
+<span class="c1"># Upper bound on the number of in-flight HTTP requests issued concurrently for</span>
+<span class="c1"># a single batch by request functions that call per-item endpoints (e.g. chat</span>
+<span class="c1"># completions). Bounds thread usage when adaptive batching produces large</span>
+<span class="c1"># batches; use max_batch_size to further limit per-batch concurrency.</span>
+<span class="n">_MAX_CONCURRENT_REQUESTS_PER_BATCH</span> <span class="o">=</span> <span class="mi">32</span>
+
+<span class="n">_InputT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'_InputT'</span><span class="p">)</span>
+<span class="n">_OutputT</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">'_OutputT'</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_retry_on_appropriate_error</span><span class="p">(</span><span class="n">exception</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Retry filter that returns True for retriable OpenAI API errors.</span>
+
+<span class="sd">  Retries on HTTP 429 (rate limiting), HTTP 5xx (server errors), and</span>
+<span class="sd">  connection / timeout errors.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    exception: the exception encountered during the request/response loop.</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    True if the exception is retriable (429, 5xx, or connection error),</span>
+<span class="sd">    False otherwise.</span>
+<span class="sd">  """</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="n">APIConnectionError</span><span class="p">):</span>
+    <span class="k">return</span> <span class="kc">True</span>
+  <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">exception</span><span class="p">,</span> <span class="n">APIStatusError</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">exception</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">429</span> <span class="ow">or</span> <span class="n">exception</span><span class="o">.</span><span class="n">status_code</span> <span class="o">&gt;=</span> <span class="mi">500</span>
+  <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fan_out</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_InputT</span><span class="p">],</span> <span class="n">_OutputT</span><span class="p">],</span>
+             <span class="n">items</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_InputT</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">_OutputT</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Applies fn to each item concurrently and returns results in input order.</span>
+
+<span class="sd">  The synchronous OpenAI client is safe to share across threads (its</span>
+<span class="sd">  underlying connection pool is guarded by thread locks), so per-item requests</span>
+<span class="sd">  are dispatched on a bounded thread pool while reusing the client's pooled</span>
+<span class="sd">  connections. If any request raises, pending requests are cancelled and the</span>
+<span class="sd">  first exception (in input order) is propagated so Beam's retry logic can</span>
+<span class="sd">  handle the batch.</span>
+<span class="sd">  """</span>
+  <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">fn</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
+  <span class="n">executor</span> <span class="o">=</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span>
+      <span class="n">max_workers</span><span class="o">=</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">_MAX_CONCURRENT_REQUESTS_PER_BATCH</span><span class="p">),</span>
+      <span class="n">thread_name_prefix</span><span class="o">=</span><span class="s1">'OpenAIModelHandler'</span><span class="p">)</span>
+  <span class="k">try</span><span class="p">:</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">items</span><span class="p">))</span>
+  <span class="k">finally</span><span class="p">:</span>
+    <span class="n">executor</span><span class="o">.</span><span class="n">shutdown</span><span class="p">(</span><span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cancel_futures</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="chat_completion_from_string">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.chat_completion_from_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chat_completion_from_string</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">OpenAI</span><span class="p">,</span>
+    <span class="n">inference_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Request function that sends string prompts to OpenAI's Chat Completions API.</span>
+
+<span class="sd">  The Chat Completions endpoint accepts a single conversation per HTTP</span>
+<span class="sd">  request, so each string in the batch is sent as a separate user message</span>
+<span class="sd">  request, dispatched concurrently. If a 'system' parameter is provided in</span>
+<span class="sd">  inference_args, a system message is prepended. The results are returned as a</span>
+<span class="sd">  list of ChatCompletion response objects matching the batch order.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    model_name: the OpenAI model to use (e.g. 'gpt-4o', 'gpt-4o-mini').</span>
+<span class="sd">    batch: the string prompts to send to OpenAI.</span>
+<span class="sd">    client: the OpenAI client instance.</span>
+<span class="sd">    inference_args: additional arguments passed to the chat.completions.create</span>
+<span class="sd">      call (e.g. 'temperature', 'max_tokens', 'response_format', 'system').</span>
+<span class="sd">  """</span>
+  <span class="n">inf_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inference_args</span><span class="p">)</span>
+  <span class="n">system</span> <span class="o">=</span> <span class="n">inf_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'system'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_request</span><span class="p">(</span><span class="n">prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">system</span><span class="p">})</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">prompt</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span> <span class="o">**</span><span class="n">inf_args</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">_fan_out</span><span class="p">(</span><span class="n">_request</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="chat_completion_from_conversation">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.chat_completion_from_conversation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">chat_completion_from_conversation</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]],</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">OpenAI</span><span class="p">,</span>
+    <span class="n">inference_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Request function that sends multi-turn conversations to OpenAI.</span>
+
+<span class="sd">  Each element in the batch is a list of message dicts (e.g. with 'role' and</span>
+<span class="sd">  'content' keys), representing a multi-turn conversation. Conversations are</span>
+<span class="sd">  sent as separate requests, dispatched concurrently. If a 'system' parameter</span>
+<span class="sd">  is provided in inference_args, a system message is prepended.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    model_name: the OpenAI model to use.</span>
+<span class="sd">    batch: a sequence of conversations (each a list of message dicts).</span>
+<span class="sd">    client: the OpenAI client instance.</span>
+<span class="sd">    inference_args: additional arguments passed to the chat.completions.create</span>
+<span class="sd">      call.</span>
+<span class="sd">  """</span>
+  <span class="n">inf_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inference_args</span><span class="p">)</span>
+  <span class="n">system</span> <span class="o">=</span> <span class="n">inf_args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'system'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+  <span class="k">def</span><span class="w"> </span><span class="nf">_request</span><span class="p">(</span><span class="n">conversation</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">system</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="n">system</span><span class="p">})</span>
+    <span class="n">messages</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">conversation</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">client</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">completions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="n">messages</span><span class="p">,</span> <span class="o">**</span><span class="n">inf_args</span><span class="p">)</span>
+
+  <span class="k">return</span> <span class="n">_fan_out</span><span class="p">(</span><span class="n">_request</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="embedding_from_string">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.embedding_from_string">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">embedding_from_string</span><span class="p">(</span>
+    <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">client</span><span class="p">:</span> <span class="n">OpenAI</span><span class="p">,</span>
+    <span class="n">inference_args</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Request function that sends string inputs to OpenAI's Embeddings API.</span>
+
+<span class="sd">  The Embeddings endpoint natively accepts a list of inputs, so the entire</span>
+<span class="sd">  batch is sent in a single request to ``client.embeddings.create``. The</span>
+<span class="sd">  returned embeddings are sorted by their index to guarantee ordering matches</span>
+<span class="sd">  the batch.</span>
+
+<span class="sd">  Args:</span>
+<span class="sd">    model_name: the OpenAI embedding model to use (e.g. 'text-embedding-3-small').</span>
+<span class="sd">    batch: the string inputs to embed.</span>
+<span class="sd">    client: the OpenAI client instance.</span>
+<span class="sd">    inference_args: additional arguments passed to the embeddings.create call</span>
+<span class="sd">      (e.g. 'dimensions', 'encoding_format').</span>
+
+<span class="sd">  Returns:</span>
+<span class="sd">    A list of Embedding objects matching the batch order.</span>
+<span class="sd">  """</span>
+  <span class="n">inf_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inference_args</span><span class="p">)</span>
+  <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">embeddings</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+      <span class="n">model</span><span class="o">=</span><span class="n">model_name</span><span class="p">,</span> <span class="nb">input</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">batch</span><span class="p">),</span> <span class="o">**</span><span class="n">inf_args</span><span class="p">)</span>
+  <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">index</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OpenAIModelHandler">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.OpenAIModelHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenAIModelHandler</span><span class="p">(</span><span class="n">RemoteModelHandler</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">PredictionResult</span><span class="p">,</span> <span class="n">OpenAI</span><span class="p">]):</span>
+  <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+      <span class="n">request_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">OpenAI</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Any</span><span class="p">],</span>
+      <span class="n">api_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">*</span><span class="p">,</span>
+      <span class="n">organization</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">base_url</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">client_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">min_batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_batch_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_batch_duration_secs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">max_batch_weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">element_size_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">batch_length_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="n">batch_bucket_boundaries</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+      <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Implementation of the ModelHandler interface for OpenAI models.</span>
+
+<span class="sd">    **NOTE:** This API and its implementation are under development and</span>
+<span class="sd">    do not provide backward compatibility guarantees.</span>
+
+<span class="sd">    This handler connects to the OpenAI API using the OpenAI Python SDK</span>
+<span class="sd">    to run inference using models such as GPT-4o, GPT-4o-mini, or embedding</span>
+<span class="sd">    models. It supports chat completions from string prompts or multi-turn</span>
+<span class="sd">    conversations (with each batch's per-item requests dispatched</span>
+<span class="sd">    concurrently), natively batched embeddings, system prompts, structured</span>
+<span class="sd">    outputs, and custom OpenAI-compatible endpoints via `base_url`.</span>
+
+<span class="sd">    A single thread-safe ``OpenAI`` client is created per worker process and</span>
+<span class="sd">    shared across bundle-processing threads, so pooled HTTP connections are</span>
+<span class="sd">    reused across batches.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      model_name: the OpenAI model to send requests to (e.g.</span>
+<span class="sd">        'gpt-4o', 'gpt-4o-mini', 'text-embedding-3-small').</span>
+<span class="sd">      request_fn: the function to use to send requests. Should take the</span>
+<span class="sd">        model name, batch, client, and inference_args and return the</span>
+<span class="sd">        responses from OpenAI. Built-in options are chat_completion_from_string,</span>
+<span class="sd">        chat_completion_from_conversation, and embedding_from_string.</span>
+<span class="sd">      api_key: the OpenAI API key. If not provided, the client will</span>
+<span class="sd">        look for the OPENAI_API_KEY environment variable.</span>
+<span class="sd">      organization: optional OpenAI organization ID. If not provided,</span>
+<span class="sd">        the client will look for the OPENAI_ORG_ID environment variable.</span>
+<span class="sd">      project: optional OpenAI project ID. If not provided, the client</span>
+<span class="sd">        will look for the OPENAI_PROJECT_ID environment variable.</span>
+<span class="sd">      base_url: optional base URL for the API requests. This can be used</span>
+<span class="sd">        to target OpenAI-compatible servers (such as vLLM, Ollama, or</span>
+<span class="sd">        Azure OpenAI endpoints).</span>
+<span class="sd">      client_args: optional dictionary of additional keyword arguments</span>
+<span class="sd">        passed when instantiating the OpenAI client (e.g. timeout,</span>
+<span class="sd">        default_headers).</span>
+<span class="sd">      min_batch_size: optional. the minimum batch size to use when</span>
+<span class="sd">        batching inputs.</span>
+<span class="sd">      max_batch_size: optional. the maximum batch size to use when</span>
+<span class="sd">        batching inputs.</span>
+<span class="sd">      max_batch_duration_secs: optional. the maximum amount of time to</span>
+<span class="sd">        buffer a batch before emitting; used in streaming contexts.</span>
+<span class="sd">      max_batch_weight: the maximum total weight of a batch. Cannot be</span>
+<span class="sd">        combined with batch_length_fn or batch_bucket_boundaries.</span>
+<span class="sd">      element_size_fn: a function that returns the size (weight) of an element.</span>
+<span class="sd">      batch_length_fn: a callable that returns the length of an element for</span>
+<span class="sd">        length-aware batching. Cannot be used together with max_batch_weight.</span>
+<span class="sd">      batch_bucket_boundaries: a sorted list of positive boundary values for</span>
+<span class="sd">        length-aware batching buckets. Cannot be used together with</span>
+<span class="sd">        max_batch_weight.</span>
+<span class="sd">      **kwargs: optional arguments passed to RemoteModelHandler (e.g.</span>
+<span class="sd">        num_retries, throttle_delay_secs, rate_limiter).</span>
+<span class="sd">    """</span>
+    <span class="n">_validate_batching_args</span><span class="p">(</span>
+        <span class="n">max_batch_weight</span><span class="o">=</span><span class="n">max_batch_weight</span><span class="p">,</span>
+        <span class="n">element_size_fn</span><span class="o">=</span><span class="n">element_size_fn</span><span class="p">,</span>
+        <span class="n">batch_length_fn</span><span class="o">=</span><span class="n">batch_length_fn</span><span class="p">,</span>
+        <span class="n">batch_bucket_boundaries</span><span class="o">=</span><span class="n">batch_bucket_boundaries</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_env_vars</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'env_vars'</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">if</span> <span class="n">min_batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s2">"min_batch_size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_batch_size</span>
+    <span class="k">if</span> <span class="n">max_batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s2">"max_batch_size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_batch_size</span>
+    <span class="k">if</span> <span class="n">max_batch_duration_secs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s2">"max_batch_duration_secs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_batch_duration_secs</span>
+    <span class="k">if</span> <span class="n">max_batch_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s2">"max_batch_weight"</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_batch_weight</span>
+    <span class="k">if</span> <span class="n">element_size_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s1">'element_size_fn'</span><span class="p">]</span> <span class="o">=</span> <span class="n">element_size_fn</span>
+    <span class="k">if</span> <span class="n">batch_length_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s1">'length_fn'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_length_fn</span>
+    <span class="k">if</span> <span class="n">batch_bucket_boundaries</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span><span class="p">[</span><span class="s1">'bucket_boundaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">batch_bucket_boundaries</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="n">model_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">request_fn</span> <span class="o">=</span> <span class="n">request_fn</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">organization</span> <span class="o">=</span> <span class="n">organization</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="o">=</span> <span class="n">project</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">client_args</span> <span class="o">=</span> <span class="n">client_args</span>
+
+    <span class="n">retry_filter</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">'retry_filter'</span><span class="p">,</span> <span class="n">_retry_on_appropriate_error</span><span class="p">)</span>
+
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="n">namespace</span><span class="o">=</span><span class="s1">'OpenAIModelHandler'</span><span class="p">,</span> <span class="n">retry_filter</span><span class="o">=</span><span class="n">retry_filter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OpenAIModelHandler.batch_elements_kwargs">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.OpenAIModelHandler.batch_elements_kwargs">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">batch_elements_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batching_kwargs</span></div>
+
+
+<div class="viewcode-block" id="OpenAIModelHandler.create_client">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.OpenAIModelHandler.create_client">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">create_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OpenAI</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Creates the OpenAI client used to send requests.</span>
+
+<span class="sd">    Sets ``max_retries=0`` by default so that Apache Beam's</span>
+<span class="sd">    ``RemoteModelHandler`` retry and client-side throttling mechanics are the</span>
+<span class="sd">    sole retry layer. If api_key, organization, project, base_url, or</span>
+<span class="sd">    client_args were provided at construction time, they are passed to the</span>
+<span class="sd">    OpenAI constructor. Otherwise, the client falls back to standard</span>
+<span class="sd">    environment variables (OPENAI_API_KEY, OPENAI_ORG_ID, etc.).</span>
+<span class="sd">    """</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'max_retries'</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">params</span><span class="p">[</span><span class="s1">'api_key'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">organization</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">params</span><span class="p">[</span><span class="s1">'organization'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">organization</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">params</span><span class="p">[</span><span class="s1">'project'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">project</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">params</span><span class="p">[</span><span class="s1">'base_url'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">client_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">client_args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">OpenAI</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OpenAIModelHandler.request">
+<a class="viewcode-back" href="../../../../apache_beam.ml.inference.openai_inference.html#apache_beam.ml.inference.openai_inference.OpenAIModelHandler.request">[docs]</a>
+  <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span>
+      <span class="bp">self</span><span class="p">,</span>
+      <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+      <span class="n">model</span><span class="p">:</span> <span class="n">OpenAI</span><span class="p">,</span>
+      <span class="n">inference_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">PredictionResult</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""Sends a prediction request to the OpenAI API.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      batch: a sequence of inputs to be passed to the request function.</span>
+<span class="sd">      model: an OpenAI client instance.</span>
+<span class="sd">      inference_args: additional arguments to send as part of the</span>
+<span class="sd">        prediction request (e.g. temperature, max_tokens, system,</span>
+<span class="sd">        response_format).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      An iterable of PredictionResults.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">inference_args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="n">inference_args</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">inference_args</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">inference_args</span><span class="p">)</span>
+
+    <span class="n">responses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">request_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">inference_args</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">_convert_to_result</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">responses</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

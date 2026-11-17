@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>apache_beam.testing.benchmarks.tpcds.tpcds_queries &mdash; Apache Beam 2.78.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=314edc20"></script>
+      <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            Apache Beam
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.coders.html">apache_beam.coders package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.dataframe.html">apache_beam.dataframe package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.io.html">apache_beam.io package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.metrics.html">apache_beam.metrics package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.ml.html">apache_beam.ml package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.options.html">apache_beam.options package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.portability.html">apache_beam.portability package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.runners.html">apache_beam.runners package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.testing.html">apache_beam.testing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.transforms.html">apache_beam.transforms package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.typehints.html">apache_beam.typehints package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.utils.html">apache_beam.utils package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.yaml.html">apache_beam.yaml package</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.error.html">apache_beam.error module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pipeline.html">apache_beam.pipeline module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../apache_beam.pvalue.html">apache_beam.pvalue module</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">Apache Beam</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">apache_beam.testing.benchmarks.tpcds.tpcds_queries</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for apache_beam.testing.benchmarks.tpcds.tpcds_queries</h1><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Licensed to the Apache Software Foundation (ASF) under one or more</span>
+<span class="c1"># contributor license agreements.  See the NOTICE file distributed with</span>
+<span class="c1"># this work for additional information regarding copyright ownership.</span>
+<span class="c1"># The ASF licenses this file to You under the Apache License, Version 2.0</span>
+<span class="c1"># (the "License"); you may not use this file except in compliance with</span>
+<span class="c1"># the License.  You may obtain a copy of the License at</span>
+<span class="c1">#</span>
+<span class="c1">#    http://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="c1">#</span>
+<span class="c1"># Unless required by applicable law or agreed to in writing, software</span>
+<span class="c1"># distributed under the License is distributed on an "AS IS" BASIS,</span>
+<span class="c1"># WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span class="c1"># See the License for the specific language governing permissions and</span>
+<span class="c1"># limitations under the License.</span>
+<span class="c1">#</span>
+
+<span class="sd">"""TPC-DS SQL query loader and table identifier extraction."""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Set</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">TPCDS_BUILD_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">apache_beam.testing.benchmarks.tpcds.tpcds_schemas</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_all_table_names</span>
+
+<span class="n">TPCDS_QUERIES_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TPCDS_BUILD_DIR</span><span class="p">,</span> <span class="s2">"queries"</span><span class="p">)</span>
+
+<span class="c1"># The 13 canonical multi-table TPC-DS star/snowflake aggregate queries.</span>
+<span class="n">CANONICAL_13_QUERIES</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"3"</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"13"</span><span class="p">,</span> <span class="s2">"15"</span><span class="p">,</span> <span class="s2">"19"</span><span class="p">,</span> <span class="s2">"26"</span><span class="p">,</span> <span class="s2">"42"</span><span class="p">,</span> <span class="s2">"43"</span><span class="p">,</span> <span class="s2">"48"</span><span class="p">,</span> <span class="s2">"52"</span><span class="p">,</span> <span class="s2">"55"</span><span class="p">,</span> <span class="s2">"91"</span><span class="p">,</span> <span class="s2">"96"</span>
+<span class="p">]</span>
+
+<span class="c1"># TPC-DS queries supported by Beam Calcite SQL (returning &gt; 0 rows).</span>
+<span class="c1"># Together with KNOWN_FAILING_QUERIES, this partitions all 103 TPC-DS queries.</span>
+<span class="c1"># yapf: disable</span>
+<span class="n">SUPPORTED_QUERIES</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"1"</span><span class="p">,</span> <span class="s2">"3"</span><span class="p">,</span> <span class="s2">"4"</span><span class="p">,</span> <span class="s2">"7"</span><span class="p">,</span> <span class="s2">"9"</span><span class="p">,</span> <span class="s2">"10"</span><span class="p">,</span> <span class="s2">"11"</span><span class="p">,</span> <span class="s2">"12"</span><span class="p">,</span> <span class="s2">"15"</span><span class="p">,</span> <span class="s2">"17"</span><span class="p">,</span>
+    <span class="s2">"19"</span><span class="p">,</span> <span class="s2">"20"</span><span class="p">,</span> <span class="s2">"21"</span><span class="p">,</span> <span class="s2">"26"</span><span class="p">,</span> <span class="s2">"31"</span><span class="p">,</span> <span class="s2">"32"</span><span class="p">,</span> <span class="s2">"33"</span><span class="p">,</span> <span class="s2">"34"</span><span class="p">,</span> <span class="s2">"35"</span><span class="p">,</span> <span class="s2">"38"</span><span class="p">,</span>
+    <span class="s2">"40"</span><span class="p">,</span> <span class="s2">"42"</span><span class="p">,</span> <span class="s2">"43"</span><span class="p">,</span> <span class="s2">"45"</span><span class="p">,</span> <span class="s2">"46"</span><span class="p">,</span> <span class="s2">"49"</span><span class="p">,</span> <span class="s2">"50"</span><span class="p">,</span> <span class="s2">"52"</span><span class="p">,</span> <span class="s2">"53"</span><span class="p">,</span> <span class="s2">"55"</span><span class="p">,</span>
+    <span class="s2">"56"</span><span class="p">,</span> <span class="s2">"59"</span><span class="p">,</span> <span class="s2">"60"</span><span class="p">,</span> <span class="s2">"61"</span><span class="p">,</span> <span class="s2">"63"</span><span class="p">,</span> <span class="s2">"65"</span><span class="p">,</span> <span class="s2">"66"</span><span class="p">,</span> <span class="s2">"68"</span><span class="p">,</span> <span class="s2">"69"</span><span class="p">,</span> <span class="s2">"71"</span><span class="p">,</span>
+    <span class="s2">"73"</span><span class="p">,</span> <span class="s2">"74"</span><span class="p">,</span> <span class="s2">"75"</span><span class="p">,</span> <span class="s2">"76"</span><span class="p">,</span> <span class="s2">"79"</span><span class="p">,</span> <span class="s2">"82"</span><span class="p">,</span> <span class="s2">"84"</span><span class="p">,</span> <span class="s2">"87"</span><span class="p">,</span> <span class="s2">"88"</span><span class="p">,</span> <span class="s2">"89"</span><span class="p">,</span>
+    <span class="s2">"90"</span><span class="p">,</span> <span class="s2">"92"</span><span class="p">,</span> <span class="s2">"93"</span><span class="p">,</span> <span class="s2">"96"</span><span class="p">,</span> <span class="s2">"97"</span><span class="p">,</span> <span class="s2">"98"</span><span class="p">,</span> <span class="s2">"99"</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="c1"># yapf: enable</span>
+
+<span class="c1"># Known failing TPC-DS queries on Beam Calcite SQL with their expected error substring.</span>
+<span class="c1"># Used by `--check_regression` and `:sdks:python:apache_beam:testing:benchmarks:tpcds:checkAllQueries`</span>
+<span class="c1"># to verify that all SUPPORTED_QUERIES succeed on PrismRunner and that the remaining known</span>
+<span class="c1"># failing queries fail with their expected diagnostic without regressing.</span>
+<span class="c1"># pylint: disable=line-too-long</span>
+<span class="n">KNOWN_FAILING_QUERIES</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"query2"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Only support column reference or struct field access in conjunction clause"</span><span class="p">,</span>
+    <span class="s2">"query5"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query6"</span><span class="p">:</span> <span class="s2">"VolcanoPlanner timeout (correlated subquery + SINGLE_VALUE join permutation search)"</span><span class="p">,</span>
+    <span class="s2">"query8"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Only support column reference or struct field access in conjunction clause"</span><span class="p">,</span>
+    <span class="s2">"query13"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Operator OR is not supported in join condition"</span><span class="p">,</span>
+    <span class="s2">"query14a"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query14b"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query16"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Does not support COUNT DISTINCT"</span><span class="p">,</span>
+    <span class="s2">"query18"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query22"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query23a"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query23b"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query24a"</span><span class="p">:</span> <span class="s2">"VolcanoPlanner timeout (&gt;12-table join permutation search)"</span><span class="p">,</span>
+    <span class="s2">"query24b"</span><span class="p">:</span> <span class="s2">"VolcanoPlanner timeout (&gt;12-table join permutation search)"</span><span class="p">,</span>
+    <span class="s2">"query25"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query27"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query28"</span><span class="p">:</span> <span class="s2">"ParseException: Unable to parse query"</span><span class="p">,</span>
+    <span class="s2">"query29"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query30"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Cross join with a residual (non-equi) condition is not supported yet."</span><span class="p">,</span>
+    <span class="s2">"query36"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query37"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query39a"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query39b"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query41"</span><span class="p">:</span> <span class="s2">"ParseException: Unable to parse query"</span><span class="p">,</span>
+    <span class="s2">"query44"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query47"</span><span class="p">:</span> <span class="s2">"IllegalArgumentException: DECIMAL NOT NULL is not nullable"</span><span class="p">,</span>
+    <span class="s2">"query48"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Operator OR is not supported in join condition"</span><span class="p">,</span>
+    <span class="s2">"query51"</span><span class="p">:</span> <span class="s2">"IllegalArgumentException: DECIMAL NOT NULL is not nullable"</span><span class="p">,</span>
+    <span class="s2">"query54"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query57"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query58"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Aggregator [SINGLE_VALUE] is not supported"</span><span class="p">,</span>
+    <span class="s2">"query62"</span><span class="p">:</span> <span class="s2">"Error while applying rule JoinPushExpressionsRule"</span><span class="p">,</span>
+    <span class="s2">"query64"</span><span class="p">:</span> <span class="s2">"VolcanoPlanner timeout (36-table join permutation search)"</span><span class="p">,</span>
+    <span class="s2">"query67"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query70"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query72"</span><span class="p">:</span> <span class="s2">"ParseException: Unable to parse query"</span><span class="p">,</span>
+    <span class="s2">"query77"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query78"</span><span class="p">:</span> <span class="s2">"CalcFn failed to evaluate"</span><span class="p">,</span>
+    <span class="s2">"query80"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query81"</span><span class="p">:</span> <span class="s2">"UnsupportedOperationException: Cross join with a residual (non-equi) condition is not supported yet."</span><span class="p">,</span>
+    <span class="s2">"query83"</span><span class="p">:</span> <span class="s2">"Error decoding input stream with coder"</span><span class="p">,</span>
+    <span class="s2">"query85"</span><span class="p">:</span> <span class="s2">"Returned 0 rows"</span><span class="p">,</span>
+    <span class="s2">"query86"</span><span class="p">:</span> <span class="s2">"Error while applying rule BeamBasicAggregationRule"</span><span class="p">,</span>
+    <span class="s2">"query91"</span><span class="p">:</span> <span class="s2">"VolcanoPlanner timeout (7-table join permutation search)"</span><span class="p">,</span>
+    <span class="s2">"query94"</span><span class="p">:</span> <span class="s2">"Error while applying rule JoinPushExpressionsRule"</span><span class="p">,</span>
+    <span class="s2">"query95"</span><span class="p">:</span> <span class="s2">"Error while applying rule JoinPushExpressionsRule"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="c1"># pylint: enable=line-too-long</span>
+
+<span class="c1"># Subset of KNOWN_FAILING_QUERIES where Calcite's VolcanoPlanner explores exponential join</span>
+<span class="c1"># permutations (7 to 36 table joins) before failing with CannotPlanException.</span>
+<span class="n">PLANNER_TIMEOUT_QUERIES</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"query6"</span><span class="p">,</span> <span class="s2">"query24a"</span><span class="p">,</span> <span class="s2">"query24b"</span><span class="p">,</span> <span class="s2">"query64"</span><span class="p">,</span> <span class="s2">"query91"</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_require_queries_dir</span><span class="p">(</span><span class="n">queries_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="n">target_dir</span> <span class="o">=</span> <span class="n">queries_dir</span> <span class="ow">or</span> <span class="n">TPCDS_QUERIES_DIR</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">target_dir</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"TPC-DS queries directory not found at </span><span class="si">{</span><span class="n">target_dir</span><span class="si">}</span><span class="s2">. "</span>
+        <span class="s2">"Running TPC-DS as a standalone apache-beam module is not supported; "</span>
+        <span class="s2">"run via Gradle (:sdks:python:apache_beam:testing:benchmarks:tpcds:copyTpcdsResources) "</span>
+        <span class="s2">"to populate tpcds/build."</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">target_dir</span>
+
+
+<div class="viewcode-block" id="get_all_query_names">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_queries.html#apache_beam.testing.benchmarks.tpcds.tpcds_queries.get_all_query_names">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_query_names</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Returns all 103 TPC-DS query names (query1 .. query99 including a/b variants)."""</span>
+  <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="n">split_queries</span> <span class="o">=</span> <span class="p">{</span><span class="mi">14</span><span class="p">,</span> <span class="mi">23</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">39</span><span class="p">}</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">split_queries</span><span class="p">:</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"query</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">a"</span><span class="p">)</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"query</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">b"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"query</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">names</span></div>
+
+
+
+<div class="viewcode-block" id="normalize_query_name">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_queries.html#apache_beam.testing.benchmarks.tpcds.tpcds_queries.normalize_query_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_query_name</span><span class="p">(</span><span class="n">q</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Normalizes '3', '03', 'q03', 'query3' -&gt; 'query3'."""</span>
+  <span class="n">cleaned</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^(?:query|q)?0*(\d+[ab]?)$"</span><span class="p">,</span> <span class="n">cleaned</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"query</span><span class="si">{</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">return</span> <span class="n">cleaned</span></div>
+
+
+
+<div class="viewcode-block" id="parse_query_selection">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_queries.html#apache_beam.testing.benchmarks.tpcds.tpcds_queries.parse_query_selection">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_query_selection</span><span class="p">(</span><span class="n">queries_arg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Parses a --queries argument ('canonical13', 'supported', 'all', or comma-separated list)."""</span>
+  <span class="n">cleaned</span> <span class="o">=</span> <span class="n">queries_arg</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+  <span class="k">if</span> <span class="n">cleaned</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"canonical13"</span><span class="p">,</span> <span class="s2">"canonical"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">normalize_query_name</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">CANONICAL_13_QUERIES</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">cleaned</span> <span class="o">==</span> <span class="s2">"supported"</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">normalize_query_name</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">SUPPORTED_QUERIES</span><span class="p">]</span>
+  <span class="k">if</span> <span class="n">cleaned</span> <span class="o">==</span> <span class="s2">"all"</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">get_all_query_names</span><span class="p">()</span>
+  <span class="n">all_valid</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">get_all_query_names</span><span class="p">())</span>
+  <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[\s,]+"</span><span class="p">,</span> <span class="n">queries_arg</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="p">:</span>
+      <span class="k">continue</span>
+    <span class="n">qname</span> <span class="o">=</span> <span class="n">normalize_query_name</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">qname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_valid</span><span class="p">:</span>
+      <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported TPC-DS query name: </span><span class="si">{</span><span class="n">part</span><span class="si">!r}</span><span class="s2"> (</span><span class="si">{</span><span class="n">qname</span><span class="si">}</span><span class="s2">)"</span><span class="p">)</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qname</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="read_query">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_queries.html#apache_beam.testing.benchmarks.tpcds.tpcds_queries.read_query">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_query</span><span class="p">(</span><span class="n">query_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">queries_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">  </span><span class="sd">"""Reads a TPC-DS SQL query by name (e.g. 'query3' or '3') from tpcds/build/queries."""</span>
+  <span class="n">qname</span> <span class="o">=</span> <span class="n">normalize_query_name</span><span class="p">(</span><span class="n">query_name</span><span class="p">)</span>
+  <span class="n">target_dir</span> <span class="o">=</span> <span class="n">_require_queries_dir</span><span class="p">(</span><span class="n">queries_dir</span><span class="p">)</span>
+  <span class="n">candidate</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">target_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">qname</span><span class="si">}</span><span class="s2">.sql"</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">candidate</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"Could not find SQL file for </span><span class="si">{</span><span class="n">qname</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">candidate</span><span class="si">}</span><span class="s2">. "</span>
+        <span class="s2">"Run via Gradle (:sdks:python:apache_beam:testing:benchmarks:tpcds:copyTpcdsResources)."</span>
+    <span class="p">)</span>
+  <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">candidate</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">_strip_sql_comments</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_strip_sql_comments</span><span class="p">(</span><span class="n">sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+  <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sql</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"--"</span><span class="p">):</span>
+      <span class="k">continue</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+  <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_query_tables">
+<a class="viewcode-back" href="../../../../../apache_beam.testing.benchmarks.tpcds.tpcds_queries.html#apache_beam.testing.benchmarks.tpcds.tpcds_queries.get_query_tables">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_query_tables</span><span class="p">(</span><span class="n">query_sql</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">  </span><span class="sd">"""Extracts the TPC-DS table names referenced in the given SQL query."""</span>
+  <span class="n">tokens</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+      <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\b[a-zA-Z_][a-zA-Z0-9_]*\b"</span><span class="p">,</span> <span class="n">query_sql</span><span class="o">.</span><span class="n">lower</span><span class="p">()))</span>
+  <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">get_all_table_names</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright %Y, Apache Beam.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
